@@ -1,18 +1,18 @@
-import { useRef } from 'react';
-import styled from 'styled-components';
+import { useRef } from "react";
+import styled from "styled-components";
 
-import { useAnimationEnd } from '@entities/hook/useAnimationEnd';
-import { useCauseAnswer } from '@entities/hook/useCauseAnswer';
-import { useOnScreen } from '@entities/hook/useOnScreen';
+import { useAnimationEnd } from "@utils/hook/useAnimationEnd";
+import { useCauseAnswer } from "@utils/hook/useCauseAnswer";
+import { useOnScreen } from "@utils/hook/useOnScreen";
 
 interface AnswerProps {
   cause:
-    | 'covid'
-    | 'avoid_arguments'
-    | 'excessive_news'
-    | 'negative_mood'
-    | 'unessential'
-    | 'untrustworthy';
+    | "covid"
+    | "avoid_arguments"
+    | "excessive_news"
+    | "negative_mood"
+    | "unessential"
+    | "untrustworthy";
   left: boolean;
 }
 
@@ -29,12 +29,17 @@ export default function AnswerLabel({ cause, left }: AnswerProps) {
         <ImgWrapper>
           <ImgBack
             style={{
-              boxShadow: `0 0 18px -10px ${shadowOn ? curColor : 'white'}`,
+              boxShadow: `0 0 18px -10px ${shadowOn ? curColor : "white"}`,
             }}
           />
           <Img src={curImage} width="125px" height="125px" />
         </ImgWrapper>
-        <AnswerBox color={curColor} title={curTitle} body={curAnswer} state={isOn} />
+        <AnswerBox
+          color={curColor}
+          title={curTitle}
+          body={curAnswer}
+          state={isOn}
+        />
       </BodyWrapper>
       <Viewer ref={viewerRef} />
       <Back color={curColor} state={isOn} />
@@ -42,11 +47,16 @@ export default function AnswerLabel({ cause, left }: AnswerProps) {
   ) : (
     <Wrapper>
       <BodyWrapper>
-        <AnswerBox color={curColor} title={curTitle} body={curAnswer} state={isOn} />
+        <AnswerBox
+          color={curColor}
+          title={curTitle}
+          body={curAnswer}
+          state={isOn}
+        />
         <ImgWrapper>
           <ImgBack
             style={{
-              boxShadow: `0 0 18px -10px ${shadowOn ? curColor : 'white'}`,
+              boxShadow: `0 0 18px -10px ${shadowOn ? curColor : "white"}`,
             }}
           />
           <Img src={curImage} width="125px" height="125px" />
@@ -76,7 +86,7 @@ function AnswerBox({
         {title}
       </BoxHeader>
       <BoxBody state={isOn} color={color}>
-        {body.split('.').map((sentence, idx) => {
+        {body.split(".").map((sentence, idx) => {
           return <p key={idx}>{sentence}</p>;
         })}
       </BoxBody>
@@ -112,7 +122,8 @@ interface BackProps {
 const Back = styled.div<BackProps>`
   width: 100%;
   height: 100%;
-  background-color: ${({ color, state }) => (state ? color : 'rgb(255, 255, 255)')};
+  background-color: ${({ color, state }) =>
+    state ? color : "rgb(255, 255, 255)"};
   opacity: 0.1;
   transition-duration: 1s;
   position: absolute;
@@ -159,7 +170,7 @@ const CircleWrapper = styled.svg<CircleWrapper>`
   position: absolute;
   top: 0;
   left: 0;
-  transform: ${({ left }) => (left ? null : 'rotateY(180deg)')};
+  transform: ${({ left }) => (left ? null : "rotateY(180deg)")};
 `;
 
 interface CircleProps {

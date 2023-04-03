@@ -1,13 +1,13 @@
-import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useRouter } from "next/router";
+import { useRef } from "react";
+import styled from "styled-components";
 
-import Logo from '@assets/img/yvote.png';
-import { useAnimationEnd } from '@entities/hook/useAnimationEnd';
-import { useOnScreen } from '@entities/hook/useOnScreen';
+import Logo from "@assets/img/yvote.png";
+import { useAnimationEnd } from "@utils/hook/useAnimationEnd";
+import { useOnScreen } from "@utils/hook/useOnScreen";
 
-export default function InitialBody() {
-  const navigation = useNavigate();
+export default function HomeBody() {
+  const navigation = useRouter();
 
   const firstComp = useRef(null);
   const firstCompOn = useOnScreen(firstComp);
@@ -20,29 +20,36 @@ export default function InitialBody() {
     <Wrapper>
       <FirstComp>
         <ImgWrapper>
-          <LogoImg src={Logo} alt={'hmm'} width="450px" height="450px" state={firstCompImgEnd} />
+          <LogoImg
+            src={Logo}
+            alt={"hmm"}
+            width="450px"
+            height="450px"
+            state={firstCompImgEnd}
+          />
         </ImgWrapper>
         <FirstBodyWrapper>
           <FirstBody state={firstBodyEnd}>
-            {' '}
+            {" "}
             <p>
               뉴스 큐레이팅 서비스 <Highlight>Y보트</Highlight>는
             </p>
             <p>
-              <Highlight ref={firstComp}>나</Highlight>의 생각이 다듬어지는 경험을 제공합니다
+              <Highlight ref={firstComp}>나</Highlight>의 생각이 다듬어지는
+              경험을 제공합니다
             </p>
           </FirstBody>
           <ButtonWrapper state={firstButtonEnd}>
             <NewsButton
               onClick={() => {
-                navigation('/news');
+                navigation.push("/news");
               }}
             >
               뉴스 모아보기
             </NewsButton>
             <KeywordButton
               onClick={() => {
-                navigation('/keywords');
+                navigation.push("/keywords");
               }}
             >
               키워드 모아보기
