@@ -1,18 +1,18 @@
-import { useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useRef } from "react";
+import styled from "styled-components";
 
-import { useAnimationEnd } from '@entities/hook/useAnimationEnd';
-import { useOnScreen } from '@entities/hook/useOnScreen';
-import { useTypeEffect } from '@entities/hook/useTypeEffect';
+import { useAnimationEnd } from "@utils/hook/useAnimationEnd";
+import { useOnScreen } from "@utils/hook/useOnScreen";
+import { useTypeEffect } from "@utils/hook/useTypeEffect";
 
 export default function InitialHeader() {
   const viewer = useRef(null);
   const onScreen = useOnScreen(viewer);
   const typeStart = useAnimationEnd(onScreen);
   const [curInd, curText, isEnd] = useTypeEffect(
-    '어려운 뉴스 읽기 Y보트와 함께 시작해보세요!.',
+    "어려운 뉴스 읽기 Y보트와 함께 시작해보세요!.",
     40,
-    typeStart,
+    typeStart
   );
 
   return (
@@ -69,7 +69,8 @@ const Cursor = styled.div<Cursor>`
   margin-left: 3px;
   width: 5px;
   height: 25px;
-  background-color: ${({ curInd }) => (curInd ? 'rgb(61, 152, 247)' : 'rgba(61, 162, 274, 0.8)')};
+  background-color: ${({ curInd }) =>
+    curInd ? "rgb(61, 152, 247)" : "rgba(61, 162, 274, 0.8)"};
   opacity: ${({ isEnd }) => (isEnd ? 0 : 1)};
 `;
 

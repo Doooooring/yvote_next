@@ -1,16 +1,16 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { useCause } from '@entities/hook/useCause';
-import { useNumberIncreasing } from '@entities/hook/useNumberIncreasing';
+import { useCause } from "@utils/hook/useCause";
+import { useNumberIncreasing } from "@utils/hook/useNumberIncreasing";
 
 interface CauseBoxProps {
   cause:
-    | 'covid'
-    | 'avoid_arguments'
-    | 'excessive_news'
-    | 'negative_mood'
-    | 'unessential'
-    | 'untrustworthy';
+    | "covid"
+    | "avoid_arguments"
+    | "excessive_news"
+    | "negative_mood"
+    | "unessential"
+    | "untrustworthy";
 }
 
 interface TitleHighlightProps extends CauseBoxProps {
@@ -31,48 +31,48 @@ function Highlight({ color, str }: { color: string; str: string }) {
 }
 
 function TitleHighlight({ cause, title, color }: TitleHighlightProps) {
-  if (cause === 'covid') {
+  if (cause === "covid") {
     const titleSplited = title.split(/정치/);
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'정치'} />
+        <Highlight color={color} str={"정치"} />
         {titleSplited[1]}
       </Title>
     );
-  } else if (cause === 'avoid_arguments') {
+  } else if (cause === "avoid_arguments") {
     const titleSplited = title.split(/싸움/);
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'싸움'} />
+        <Highlight color={color} str={"싸움"} />
         {titleSplited[1]}
       </Title>
     );
-  } else if (cause === 'excessive_news') {
+  } else if (cause === "excessive_news") {
     const titleSplited = title.split(/너무 많아요../);
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'너무 많아요..'} />
+        <Highlight color={color} str={"너무 많아요.."} />
         {titleSplited[1]}
       </Title>
     );
-  } else if (cause === 'negative_mood') {
+  } else if (cause === "negative_mood") {
     const titleSplited = title.split(/부정적 기사/);
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'부정적 기사'} />
+        <Highlight color={color} str={"부정적 기사"} />
         {titleSplited[1]}
       </Title>
     );
-  } else if (cause === 'unessential') {
+  } else if (cause === "unessential") {
     const titleSplited = title.split(/뭐가 달라지나요/);
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'뭐가 달라지나요'} />
+        <Highlight color={color} str={"뭐가 달라지나요"} />
         {titleSplited[1]}
       </Title>
     );
@@ -81,7 +81,7 @@ function TitleHighlight({ cause, title, color }: TitleHighlightProps) {
     return (
       <Title>
         {titleSplited[0]}
-        <Highlight color={color} str={'어느 쪽 말이 맞는지'} />
+        <Highlight color={color} str={"어느 쪽 말이 맞는지"} />
         {titleSplited[1]}
       </Title>
     );
@@ -94,7 +94,9 @@ export default function CauseBox({ cause }: CauseBoxProps) {
 
   return (
     <Wrapper>
-      <PercentWrapper fontColor={`${curColor}`}>{`${curPercent}%`}</PercentWrapper>
+      <PercentWrapper
+        fontColor={`${curColor}`}
+      >{`${curPercent}%`}</PercentWrapper>
       <BodyWrapper>
         <ImageWrapper />
         <Expanded>
