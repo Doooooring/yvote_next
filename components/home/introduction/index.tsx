@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 import Image from "next/image";
 
-import newsImage from "@assets/img/news_image.png";
 import CauseBox from "@components/home/causeBox";
+import newsImage from "@images/news_image.png";
 import { useOnScreen } from "@utils/hook/useOnScreen";
 import { usePopAnimation } from "@utils/hook/usePopAnimation";
 

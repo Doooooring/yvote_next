@@ -2,10 +2,10 @@ import styled from "styled-components";
 
 import Image from "next/image";
 
-import icoClose from "@assets/img/ico_close.png";
 import Journals from "@components/news/newsContents/journals";
 import NewsHistory from "@components/news/newsContents/newsHistory";
 import VoteBox from "@components/news/newsContents/voteBox";
+import icoClose from "@images/ico_close.png";
 import { News } from "@utils/interface/news";
 
 type newsContent = undefined | News;

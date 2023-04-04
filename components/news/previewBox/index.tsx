@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useCallback, useRef } from "react";
 import styled from "styled-components";
 
-import icoNew from "@assets/img/ico_new.png";
-import defaultImg from "@assets/img/img_thumb@2x.png";
+import icoNew from "@images/ico_new.png";
+import defaultImg from "@images/img_thumb@2x.png";
 import NewsRepository from "@repositories/news";
 import { HOST_URL } from "@url";
 import { News, Preview } from "@utils/interface/news";
@@ -81,6 +81,7 @@ export default function PreviewBox({
         <Image
           src={`${HOST_URL}/images/news/${order}`}
           alt=""
+          width="100"
           height="100"
           onError={(e) => {
             onErrorImg(e);

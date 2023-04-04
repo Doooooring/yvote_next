@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 
-import logo from "@assets/img/ico_logo.png";
+import logo from "@images/ico_logo.png";
 
 interface NavBoxProps {
   link: string;
@@ -16,6 +16,8 @@ function NavBox({ link, comment }: NavBoxProps) {
 
 export default function Header() {
   const navigation = useRouter();
+
+  console.log(navigation.pathname);
 
   return (
     <Wrapper>

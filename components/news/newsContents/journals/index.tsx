@@ -3,12 +3,12 @@ import styled from "styled-components";
 
 import Image from "next/image";
 
-import icoChosun from "@assets/img/ico_chosun.png";
-import icoDonga from "@assets/img/ico_donga.png";
-import icoHankyoreh from "@assets/img/ico_hankyoreh.png";
-import icoHankyung from "@assets/img/ico_hankyung.png";
-import icoJoongang from "@assets/img/ico_joongang.png";
-import icoMk from "@assets/img/ico_mk.png";
+import icoChosun from "@images/ico_chosun.png";
+import icoDonga from "@images/ico_donga.png";
+import icoHankyoreh from "@images/ico_hankyoreh.png";
+import icoHankyung from "@images/ico_hankyung.png";
+import icoJoongang from "@images/ico_joongang.png";
+import icoMk from "@images/ico_mk.png";
 import { News } from "@utils/interface/news";
 
 interface JournalsProps {

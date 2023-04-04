@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useRef } from "react";
 import styled from "styled-components";
 
-import Logo from "@assets/img/yvote.png";
+import Logo from "@images/yvote.png";
 import { useAnimationEnd } from "@utils/hook/useAnimationEnd";
 import { useOnScreen } from "@utils/hook/useOnScreen";
 import Image from "next/image";
@@ -24,8 +24,8 @@ export default function HomeBody() {
           <Image
             src={Logo}
             alt={"hmm"}
-            width={firstCompImgEnd ? 450 : 0}
-            height={firstCompImgEnd ? 450 : 0}
+            width={firstCompImgEnd ? 450 : 1}
+            height={firstCompImgEnd ? 450 : 1}
           />
         </ImgWrapper>
         <FirstBodyWrapper>

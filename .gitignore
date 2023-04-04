@@ -1,1 +1,11 @@
 node_modules
+# OS
+.DS_Store
+*.swp
+*.swo
+*.swl
+*.swm
+*.swn
+.vscode
+.idea
+*.code-workspace
