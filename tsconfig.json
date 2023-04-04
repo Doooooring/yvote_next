@@ -19,7 +19,8 @@
       "@pages/*": ["./pages/*"],
       "@components/*": ["./components/*"],
       "@utils/*": ["./utils/*"],
-      "@images/*": ["./public/assets/img/*"]
+      "@images/*": ["./public/assets/img/*"],
+      "@url": ["./public/assets/url"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
