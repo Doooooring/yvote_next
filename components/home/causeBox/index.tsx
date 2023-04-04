@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import Image from "next/image";
+
 import { useCause } from "@utils/hook/useCause";
 import { useNumberIncreasing } from "@utils/hook/useNumberIncreasing";
 
@@ -100,7 +102,7 @@ export default function CauseBox({ cause }: CauseBoxProps) {
       <BodyWrapper>
         <ImageWrapper />
         <Expanded>
-          <Image src={curImage} width="70px" height="70px" />
+          <Image src={curImage} width="70" height="70" alt="hmm" />
           <ContentsWrapper>
             <TitleWrapper>
               <TitleHighlight cause={cause} title={curTitle} color={curColor} />
@@ -162,14 +164,13 @@ const Expanded = styled.div`
   flex-direction: row;
   align-items: center;
   position: relative;
-`;
-
-const Image = styled.img`
-  background-color: white;
-  position: absolute;
-  border-radius: 20px;
-  left: -85px;
-  z-index: 4;
+  & > img {
+    background-color: white;
+    position: absolute;
+    border-radius: 20px;
+    left: -85px;
+    z-index: 4;
+  }
 `;
 
 const ContentsWrapper = styled.div`

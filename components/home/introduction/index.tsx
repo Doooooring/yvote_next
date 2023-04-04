@@ -1,10 +1,12 @@
-import { useRef } from 'react';
-import styled from 'styled-components';
+import { useRef } from "react";
+import styled from "styled-components";
 
-import newsImage from '@assets/img/news_image.png';
-import CauseBox from '@components/initial/causeBox';
-import { useOnScreen } from '@entities/hook/useOnScreen';
-import { usePopAnimation } from '@entities/hook/usePopAnimation';
+import Image from "next/image";
+
+import newsImage from "@assets/img/news_image.png";
+import CauseBox from "@components/home/causeBox";
+import { useOnScreen } from "@utils/hook/useOnScreen";
+import { usePopAnimation } from "@utils/hook/usePopAnimation";
 
 export default function IntroductionComp() {
   const stateArray = usePopAnimation(7, 150);
@@ -16,15 +18,15 @@ export default function IntroductionComp() {
     <IntroductionWrapper>
       <IntroductTitleWrapper>
         <IntroductTitle>
-          <Highlight>{'Q. '}</Highlight>
-          {'오늘 '}
-          <Highlight>뉴스 </Highlight> {'보셨나요? '}
+          <Highlight>{"Q. "}</Highlight>
+          {"오늘 "}
+          <Highlight>뉴스 </Highlight> {"보셨나요? "}
         </IntroductTitle>
       </IntroductTitleWrapper>
       <Introduction>
         <IntroductionBack>
           <NewsImageWrapper>
-            <NewsImage src={newsImage} width="400px" />
+            <Image src={newsImage} width="400" alt="hmm" />
           </NewsImageWrapper>
         </IntroductionBack>
         <IntroductionFront>
@@ -122,10 +124,9 @@ const NewsImageWrapper = styled.div`
   width: 400px;
   height: 603px;
   position: relative;
-`;
-
-const NewsImage = styled.img`
-  box-shadow: 0 0 30px -15px black;
+  & > img {
+    box-shadow: 0 0 30px -15px black;
+  }
 `;
 
 interface CompProps {

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Logo from "@assets/img/yvote.png";
 import { useAnimationEnd } from "@utils/hook/useAnimationEnd";
 import { useOnScreen } from "@utils/hook/useOnScreen";
+import Image from "next/image";
 
 export default function HomeBody() {
   const navigation = useRouter();
@@ -19,13 +20,12 @@ export default function HomeBody() {
   return (
     <Wrapper>
       <FirstComp>
-        <ImgWrapper>
-          <LogoImg
+        <ImgWrapper state={firstCompImgEnd}>
+          <Image
             src={Logo}
             alt={"hmm"}
-            width="450px"
-            height="450px"
-            state={firstCompImgEnd}
+            width={firstCompImgEnd ? 450 : 0}
+            height={firstCompImgEnd ? 450 : 0}
           />
         </ImgWrapper>
         <FirstBodyWrapper>
@@ -90,20 +90,17 @@ const FirstComp = styled(Row)`
   align-items: center;
 `;
 
-const ImgWrapper = styled(Column)`
-  align-items: center;
-  justify-content: center;
-`;
-
 interface LogoImgProps {
   state: boolean;
 }
 
-const LogoImg = styled.img<LogoImgProps>`
-  width: ${({ width, state }) => (state ? `${width}px` : 0)};
-  height: ${({ height, state }) => (state ? `${height}px` : 0)};
-  opacity: ${({ state }) => (state ? 1 : 0)};
-  transition-duration: 2s;
+const ImgWrapper = styled(Column)<LogoImgProps>`
+  align-items: center;
+  justify-content: center;
+  & > img {
+    opacity: ${({ state }) => (state ? 1 : 0)};
+    transition-duration: 2s;
+  }
 `;
 
 const FirstBodyWrapper = styled(Column)`
