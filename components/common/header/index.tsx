@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import styled from "styled-components";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
-import logo from "@images/ico_logo.png";
+import logo from '@images/ico_logo.png';
 
 interface NavBoxProps {
   link: string;
@@ -28,13 +28,13 @@ export default function Header() {
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
-          <NavBox link={"/news"} comment="뉴스 모아보기" />
+          <NavBox link={'/news'} comment="뉴스 모아보기" />
           <Blank />
-          <NavBox link={"/keywords"} comment="키워드 모아보기" />
+          <NavBox link={'/keywords'} comment="키워드 모아보기" />
           <Blank />
-          <NavBox link={"/analyze"} comment="정치 성향 테스트" />
+          <NavBox link={'/analyze'} comment="정치 성향 테스트" />
           <Blank />
-          <NavBox link={"/contact"} comment="CONTACT" />
+          <NavBox link={'/contact'} comment="CONTACT" />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>

@@ -1,19 +1,19 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useCallback, useRef } from "react";
-import styled from "styled-components";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useRef } from 'react';
+import styled from 'styled-components';
 
-import icoNew from "@images/ico_new.png";
-import defaultImg from "@images/img_thumb@2x.png";
-import NewsRepository from "@repositories/news";
-import { HOST_URL } from "@url";
-import { News, Preview } from "@utils/interface/news";
+import icoNew from '@images/ico_new.png';
+import defaultImg from '@images/img_thumb@2x.png';
+import NewsRepository from '@repositories/news';
+import { HOST_URL } from '@url';
+import { News, Preview } from '@utils/interface/news';
 
 type newsContent = undefined | News;
 type setNewsContent = (newsContent: newsContent) => void;
-type curClicked = undefined | News["order"];
+type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
-type AnswerState = "left" | "right" | "none" | null;
+type AnswerState = 'left' | 'right' | 'none' | null;
 
 interface PreviewBoxProps {
   Preview: Preview;
@@ -40,20 +40,16 @@ export default function PreviewBox({
   const myRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToElement = () => {
-    myRef.current?.scrollIntoView({ behavior: "smooth" });
+    myRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const onErrorImg = useCallback(
-    (e: React.SyntheticEvent<HTMLImageElement>) => {
-      e.currentTarget.src = defaultImg.src;
-    },
-    []
-  );
+  const onErrorImg = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = defaultImg.src;
+  }, []);
 
   const showNewsContent = async () => {
     try {
-      const newsInfo: getNewsContentResponse =
-        await NewsRepository.getNewsContent(_id);
+      const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(_id);
       const { response, news } = newsInfo;
       setNewsContent(news);
       setCurClicked(order);
@@ -122,7 +118,7 @@ const Wrapper = styled.div<WrapperProps>`
   height: 120px;
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
-  background-color: ${({ state }) => (state ? "rgb(200, 200, 200)" : "white")};
+  background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
   box-shadow: 0px 0px 35px -30px;
   margin-bottom: 20px;
   text-align: left;
@@ -160,7 +156,7 @@ interface NewProps {
 }
 
 const New = styled.span<NewProps>`
-  display: ${({ state }) => (state ? "inline" : "none")};
+  display: ${({ state }) => (state ? 'inline' : 'none')};
   & > img {
     position: relative;
     top: 3px;

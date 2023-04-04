@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import Answer from "@components/home/answer";
-import HomeBody from "@components/home/body";
-import Intent from "@components/home/intent";
-import IntroductionComp from "@components/home/introduction";
+import Answer from '@components/home/answer';
+import HomeBody from '@components/home/body';
+import Intent from '@components/home/intent';
+import IntroductionComp from '@components/home/introduction';
 
 export default function Home() {
   return (
