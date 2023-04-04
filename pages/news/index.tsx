@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
+import { GetServerSideProps } from "next";
+
 import icoNews from "@assets/img/ico_news.png";
 import { SpeechBubble } from "@components/common/figure";
 import NewsContents from "@components/news/newsContents";
@@ -17,20 +19,34 @@ type curClicked = undefined | News["order"];
 type setCurClicked = (curClicked: curClicked) => void;
 
 interface NewsProps {
-  curClicked: curClicked;
-  setCurClicked: setCurClicked;
+  data: Array<Preview>;
 }
 
-export default function NewsPage({ curClicked, setCurClicked }: NewsProps) {
+export const getServerSideProps: GetServerSideProps<NewsProps> = async () => {
+  const data: Array<Preview> = await NewsRepository.getPreviews(0, "");
+  return {
+    props: { data },
+  };
+};
+
+// export async function getServerSideProps(): Promise<{ props: NewsProps }> {
+//   const data: Array<Preview> = await NewsRepository.getPreviews(0, "");
+//   return {
+//     props: { data },
+//   };
+// }
+
+export default function NewsPage({ props }: { props: NewsProps }) {
+  const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [submitWord, setSubmitWord] = useState<string>("");
   const [newsContent, setNewsContent] = useState<newsContent>(undefined);
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
+  const [curPreviews, setCurPreviews] = useState<curPreviewsList>(props.data);
   const [voteHistory, setVoteHistory] = useState<
     "left" | "right" | "none" | null
   >(null);
 
   //무한 스크롤에 필요한 훅들
-  const curPage = useRef<number>(0);
+  const curPage = useRef<number>(10);
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);

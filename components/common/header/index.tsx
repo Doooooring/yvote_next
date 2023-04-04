@@ -1,52 +1,38 @@
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import styled from "styled-components";
 
-import logo from '@assets/img/ico_logo.png';
-import { News } from '@interfaces/news';
-
-interface HeaderProps {
-  setCurClicked: setCurClicked;
-}
+import logo from "@assets/img/ico_logo.png";
 
 interface NavBoxProps {
   link: string;
   comment: string;
-  setCurClicked: setCurClicked;
 }
 
-type curClicked = undefined | News['order'];
-type setCurClicked = (curClicked: curClicked) => void;
-
-function NavBox({ link, comment, setCurClicked }: NavBoxProps) {
-  return (
-    <HomeLink
-      to={`${link}`}
-      onClick={() => {
-        setCurClicked(undefined);
-      }}
-    >
-      {comment}
-    </HomeLink>
-  );
+function NavBox({ link, comment }: NavBoxProps) {
+  return <HomeLink href={`${link}`}>{comment}</HomeLink>;
 }
 
-export default function Header({ setCurClicked }: HeaderProps) {
+export default function Header() {
+  const navigation = useRouter();
+
   return (
     <Wrapper>
       <HeaderBody>
         <LogoImgBox>
-          <HomeLink to="/">
-            <Logo src={logo} alt="hmm" height="40px" />
+          <HomeLink href="/">
+            <Image src={logo} alt="hmm" height="40" />
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
-          <NavBox link={'/news'} comment="뉴스 모아보기" setCurClicked={setCurClicked} />
+          <NavBox link={"/news"} comment="뉴스 모아보기" />
           <Blank />
-          <NavBox link={'/keywords'} comment="키워드 모아보기" setCurClicked={setCurClicked} />
+          <NavBox link={"/keywords"} comment="키워드 모아보기" />
           <Blank />
-          <NavBox link={'/analyze'} comment="정치 성향 테스트" setCurClicked={setCurClicked} />
+          <NavBox link={"/analyze"} comment="정치 성향 테스트" />
           <Blank />
-          <NavBox link={'/contact'} comment="CONTACT" setCurClicked={setCurClicked} />
+          <NavBox link={"/contact"} comment="CONTACT" />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>
@@ -87,7 +73,7 @@ const LogoImgBox = styled.div`
   height: 100%;
 `;
 
-const HomeLink = styled(NavLink)`
+const HomeLink = styled(Link)`
   border-bottom: none;
   color: grey;
   &.active {
