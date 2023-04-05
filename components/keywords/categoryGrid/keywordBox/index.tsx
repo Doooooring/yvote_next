@@ -1,11 +1,13 @@
+import Link from 'next/link';
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import Image from 'next/image';
 
 import icoClose from '@assets/img/ico_close.png';
 import defaultImg from '@assets/img/img_thumb@2x.png';
-import { HOST_URL } from '@assets/url';
-import { Keyword } from '@interfaces/keywords';
+import { HOST_URL } from '@url';
+import { Keyword } from '@utils/interface/keywords';
 
 interface KeywordBoxProps {
   keyword: Keyword['keyword'] | undefined;
@@ -15,12 +17,12 @@ interface KeywordBoxProps {
 export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
   const onErrorImg = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.currentTarget;
-    target.src = defaultImg;
+    target.src = defaultImg.src;
   }, []);
 
   return (
     <LinkWrapper
-      to={`/keywords/${keyword}`}
+      href={`/keywords/${keyword}`}
       state={tail}
       onClick={(e) => {
         if (tail) {
@@ -48,8 +50,8 @@ export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
           <KeywordTitle>{keyword}</KeywordTitle>
         </KeywordWrapper>
         <KeywordBoxTail state={tail}>
-          <Link to="/keywords">
-            <img src={icoClose} alt="hmm" />
+          <Link href="/keywords">
+            <Image src={icoClose} alt="hmm" />
           </Link>
         </KeywordBoxTail>
       </Wrapper>
@@ -84,7 +86,7 @@ const Wrapper = styled.div<WrapperProps>`
   border: 1px solid rgba(200, 200, 200, 0.5);
   background-color: white;
   box-shadow: 0px 0px 30px -25px;
-  overflow: hidden; ;
+  overflow: hidden;
 `;
 
 const ImageWrapper = styled.div`

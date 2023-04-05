@@ -1,14 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { HOST_URL } from "@url";
-import {
-  category,
-  KeywordOnDetail,
-  KeywordToView,
-} from "@utils/interface/keywords";
-import { Preview } from "@utils/interface/news";
+import { HOST_URL } from '@url';
+import { category, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
+import { Preview } from '@utils/interface/news';
 
-interface otherObject {
+export interface otherObject {
   _id: category;
   keywords: Array<KeywordToView>;
 }
@@ -18,7 +14,7 @@ export interface getKeywordsResponse {
   other: Array<otherObject>;
 }
 
-interface getKeywordDetailResponse {
+export interface getKeywordDetailResponse {
   keyword: KeywordOnDetail;
   previews: Array<Preview>;
 }
@@ -30,9 +26,9 @@ class KeywordsRepository {
     return keywords;
   }
 
-  async getKeywordForSearch() {
+  async getKeywordList() {
     const response = await axios.get(`${HOST_URL}/keywords/keyword`);
-    const keylist = response.data;
+    const keylist: string[] = response.data;
     return keylist;
   }
 
@@ -42,7 +38,7 @@ class KeywordsRepository {
 
   async getKeywordDetail(keyword: string, curNum: number) {
     const response = await axios.get(
-      `${HOST_URL}/keywords/detail?keyName=${keyword}&curNum=${curNum}`
+      `${HOST_URL}/keywords/detail?keyName=${keyword}&curNum=${curNum}`,
     );
     const keywordDetail: getKeywordDetailResponse = response.data;
     return keywordDetail;

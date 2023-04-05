@@ -1,29 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
-import { GetServerSideProps } from "next";
+import { GetServerSideProps } from 'next';
 
-import { SpeechBubble } from "@components/common/figure";
-import NewsContents from "@components/news/newsContents";
-import PreviewBox from "@components/news/previewBox";
-import SearchBox from "@components/news/searchBox";
-import icoNews from "@images/ico_news.png";
-import NewsRepository from "@repositories/news";
-import { useOnScreen } from "@utils/hook/useOnScreen";
-import { News, Preview } from "@utils/interface/news";
-import Image from "next/image";
+import { SpeechBubble } from '@components/common/figure';
+import NewsContents from '@components/news/newsContents';
+import PreviewBox from '@components/news/previewBox';
+import SearchBox from '@components/news/searchBox';
+import icoNews from '@images/ico_news.png';
+import NewsRepository from '@repositories/news';
+import { useOnScreen } from '@utils/hook/useOnScreen';
+import { News, Preview } from '@utils/interface/news';
+import Image from 'next/image';
 
 type curPreviewsList = Preview[];
 type newsContent = undefined | News;
-type curClicked = undefined | News["order"];
+type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 
-interface NewsProps {
+interface pageProps {
   data: Array<Preview>;
 }
 
-export const getServerSideProps: GetServerSideProps<NewsProps> = async () => {
-  const data: Array<Preview> = await NewsRepository.getPreviews(0, "");
+export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
+  const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
   console.log(data);
   return {
     props: { data },
@@ -37,14 +37,12 @@ export const getServerSideProps: GetServerSideProps<NewsProps> = async () => {
 //   };
 // }
 
-export default function NewsPage(props: NewsProps) {
+export default function NewsPage(props: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [submitWord, setSubmitWord] = useState<string>("");
+  const [submitWord, setSubmitWord] = useState<string>('');
   const [newsContent, setNewsContent] = useState<newsContent>(undefined);
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>(props.data);
-  const [voteHistory, setVoteHistory] = useState<
-    "left" | "right" | "none" | null
-  >(null);
+  const [voteHistory, setVoteHistory] = useState<'left' | 'right' | 'none' | null>(null);
 
   //무한 스크롤에 필요한 훅들
   const curPage = useRef<number>(10);
@@ -58,7 +56,7 @@ export default function NewsPage(props: NewsProps) {
     try {
       const Previews: Array<Preview> = await NewsRepository.getPreviews(
         curPage.current,
-        submitWord
+        submitWord,
       );
       if (Previews.length === 0) {
         curPage.current = -1;
@@ -76,12 +74,8 @@ export default function NewsPage(props: NewsProps) {
   }, [curPreviews]);
 
   useEffect(() => {
-    getNewsContent();
-  }, []);
-
-  useEffect(() => {
     //요청 중이라면 보내지 않기
-    if (isOnScreen === true && isRequesting === false) {
+    if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
       getNewsContent();
     } else {
       return;
@@ -102,7 +96,7 @@ export default function NewsPage(props: NewsProps) {
         <MainHeaderWrapper>
           <MainHeader>
             <Image src={icoNews} alt="hmm" height="18" />
-            <CategoryName>{"최신 뉴스"}</CategoryName>
+            <CategoryName>{'최신 뉴스'}</CategoryName>
           </MainHeader>
         </MainHeaderWrapper>
         <MainContentsBody>
@@ -118,9 +112,7 @@ export default function NewsPage(props: NewsProps) {
                 />
               </PreviewBoxWrapper>
             ))}
-            <LastLine
-              ref={curPage.current === -1 ? null : elementRef}
-            ></LastLine>
+            <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
           </NewsList>
           <NewsContentsWrapper curClicked={curClicked}>
             <NewsContents
@@ -187,7 +179,7 @@ interface NewsListProps {
 
 const NewsList = styled.div<NewsListProps>`
   width: ${({ curClicked }) => {
-    return curClicked ? "500px" : "1000px";
+    return curClicked ? '500px' : '1000px';
   }};
   display: grid;
   grid-template-columns: repeat(auto-fill, 490px);
@@ -222,5 +214,5 @@ const NewsContentsWrapper = styled.div<NewsContentsWrapperProps>`
   width: 500px;
   height: 800px;
   opacity: ${(curClicked) => (curClicked ? 1 : 0)};
-  pointer-events: ${(curClicked) => (curClicked ? "auto" : "none")};
+  pointer-events: ${(curClicked) => (curClicked ? 'auto' : 'none')};
 `;
