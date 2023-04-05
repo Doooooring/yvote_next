@@ -1,6 +1,6 @@
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import icoNew from '@images/ico_new.png';
@@ -36,6 +36,7 @@ export default function PreviewBox({
   setVoteHistory,
 }: PreviewBoxProps) {
   const { _id, order, title, summary, keywords, state } = Preview;
+  const [imgSrc, setImgSrc] = useState<string | StaticImageData | null>(null);
 
   const myRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,6 +45,7 @@ export default function PreviewBox({
   };
 
   const onErrorImg = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.log('here');
     e.currentTarget.src = defaultImg.src;
   }, []);
 
@@ -76,11 +78,18 @@ export default function PreviewBox({
       <ImgWrapper>
         <Image
           src={`${HOST_URL}/images/news/${order}`}
-          alt=""
+          alt="Image load error"
           width="100"
           height="100"
-          onError={(e) => {
-            onErrorImg(e);
+          onLoadingComplete={(result) => {
+            console.log("it's load error");
+            if (result.naturalWidth === 0) {
+              console.log("it's empty image");
+            }
+          }}
+          onError={() => {
+            console.log("it's error");
+            // onErrorImg(e);
           }}
         />
       </ImgWrapper>
@@ -131,6 +140,7 @@ const ImgWrapper = styled.div`
   display: inline-block;
   border: 1px solid rgb(230, 230, 230);
   border-radius: 10px;
+  width: 100px;
   height: 100px;
   overflow: hidden;
 `;
