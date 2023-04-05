@@ -29,6 +29,7 @@ class KeywordsRepository {
   async getKeywordList() {
     const response = await axios.get(`${HOST_URL}/keywords/keyword`);
     const keylist: string[] = response.data;
+    console.log(keylist);
     return keylist;
   }
 

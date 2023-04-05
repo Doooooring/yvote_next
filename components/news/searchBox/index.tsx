@@ -1,20 +1,15 @@
-import React, {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import styled from "styled-components";
+import React, { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import KeywordsRepository from "@repositories/keywords";
-import NewsRepository from "@repositories/news";
-import { Keyword } from "@utils/interface/keywords";
-import { Preview } from "@utils/interface/news";
-import { getConstantVowel } from "@utils/tools";
+import KeywordsRepository from '@repositories/keywords';
+import NewsRepository from '@repositories/news';
+import { Keyword } from '@utils/interface/keywords';
+import { Preview } from '@utils/interface/news';
+import { getConstantVowel } from '@utils/tools';
 
 type curPreviews = Array<Preview>;
 type setCurPreviews = (curPreviews: curPreviews) => void;
-type KeyName = Keyword["keyword"];
+type KeyName = Keyword['keyword'];
 
 interface SearchBoxProps {
   curPage: MutableRefObject<number>;
@@ -22,23 +17,16 @@ interface SearchBoxProps {
   setCurPreviews: setCurPreviews;
 }
 
-export default function SearchBox({
-  curPage,
-  setSubmitWord,
-  setCurPreviews,
-}: SearchBoxProps) {
-  const [searchWord, setSearchWord] = useState<string>("");
-  const [relatedWords, setRelatedWords] = useState<string[]>([
-    "키워드를 검색해 봅시다.",
-  ]);
+export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: SearchBoxProps) {
+  const [searchWord, setSearchWord] = useState<string>('');
+  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다.']);
   const [keylist, setKeyList] = useState<KeyName[]>([]);
   const [curFocusOnWord, setCurFocusOnWord] = useState<number>(-1);
   const [arrowKeyActive, setArrowKeyActive] = useState<boolean>(false);
 
   const getKeys = useCallback(async () => {
     try {
-      const response: KeyName[] =
-        await KeywordsRepository.getKeywordForSearch();
+      const response: KeyName[] = await KeywordsRepository.getKeywordList();
       setKeyList(response);
     } catch {
       Error();
@@ -52,18 +40,15 @@ export default function SearchBox({
         setSearchWord(relatedWords[curFocusOnWord]);
       }
       curPage.current = 0;
-      const newsList = await NewsRepository.getPreviews(
-        curPage.current,
-        searchWord
-      );
+      const newsList = await NewsRepository.getPreviews(curPage.current, searchWord);
       if (newsList.length !== 0) {
         setSubmitWord(searchWord);
         setCurPreviews(newsList);
       } else {
-        alert("Nothing");
+        alert('Nothing');
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -78,9 +63,9 @@ export default function SearchBox({
     }
     const preValue = e.currentTarget.value;
     setSearchWord(preValue);
-    if (preValue === "") {
+    if (preValue === '') {
       setCurFocusOnWord(-1);
-      setRelatedWords(["키워드를 검색해 봅시다"]);
+      setRelatedWords(['키워드를 검색해 봅시다']);
     } else {
       if (curFocusOnWord !== -1) {
         setCurFocusOnWord(-1);
@@ -99,32 +84,25 @@ export default function SearchBox({
         }
       }
       if (findRelatedWords.length === 0) {
-        setRelatedWords(["그런건 없어용 :)"]);
+        setRelatedWords(['그런건 없어용 :)']);
       } else {
         setRelatedWords(findRelatedWords);
       }
     }
   }
-  async function handleArrowKey(
-    e: React.KeyboardEvent<HTMLInputElement>,
-    searchWord: string
-  ) {
-    if (e.key === "Enter") {
+  async function handleArrowKey(e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) {
+    if (e.key === 'Enter') {
       submit(e, searchWord);
     } else if (
-      e.key === "ArrowUp" ||
-      e.key === "ArrowDown" ||
-      e.key === "ArrowRight" ||
-      e.key === "ArrowLeft"
+      e.key === 'ArrowUp' ||
+      e.key === 'ArrowDown' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'ArrowLeft'
     ) {
-      if (
-        e.key === "ArrowRight" ||
-        e.key === "ArrowLeft" ||
-        searchWord === ""
-      ) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || searchWord === '') {
         return 0;
       } else {
-        if (e.key === "ArrowUp") {
+        if (e.key === 'ArrowUp') {
           if (curFocusOnWord === -1) {
             return 0;
           } else {
@@ -132,7 +110,7 @@ export default function SearchBox({
             setSearchWord(relatedWords[curFocusOnWord - 1]);
             setCurFocusOnWord(curFocusOnWord - 1);
           }
-        } else if (e.key === "ArrowDown") {
+        } else if (e.key === 'ArrowDown') {
           if (curFocusOnWord === relatedWords.length - 1) {
             setArrowKeyActive(true);
             setSearchWord(relatedWords[0]);
@@ -167,7 +145,7 @@ export default function SearchBox({
         <RelatedBox>
           {relatedWords.map((word) => (
             <RelatedWord
-              className={"word"}
+              className={'word'}
               key={word}
               id={`${relatedWords.indexOf(word)}`}
               isFocused={word === relatedWords[curFocusOnWord]}
@@ -214,7 +192,7 @@ const InputBox = styled.input`
   padding-left: 40px;
   padding-top: 4px;
   padding-bottom: 3px;
-  background-image: url("@assets/img/ico_search.png");
+  background-image: url('@assets/img/ico_search.png');
   background-repeat: no-repeat;
   background-position: 6px 6px;
   &::placeholder {
@@ -254,8 +232,7 @@ const RelatedWord = styled.p<RelatedWordProps>`
   font-size: 15px;
   border-style: solid;
   z-index: 1;
-  background-color: ${({ isFocused }) =>
-    isFocused ? "rgb(120, 120, 120)" : "rgba(0,0,0,0)"};
+  background-color: ${({ isFocused }) => (isFocused ? 'rgb(120, 120, 120)' : 'rgba(0,0,0,0)')};
 `;
 
 const SubmitButton = styled.button`

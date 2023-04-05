@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
-import icoNews from '@assets/img/ico_news.png';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
+import icoNews from '@images/ico_news.png';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
 import Image from 'next/image';

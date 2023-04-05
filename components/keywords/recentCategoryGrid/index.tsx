@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import Image from 'next/image';
 
-import icoNews from '@assets/img/ico_news.png';
 import RecentKeywordBox from '@components/keywords/recentCategoryGrid/keywordBox';
+import icoNews from '@images/ico_news.png';
 import { KeywordToView } from '@utils/interface/keywords';
 
 interface RecentCategoryGridProps {

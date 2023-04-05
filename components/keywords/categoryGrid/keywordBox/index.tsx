@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import Image from 'next/image';
 
-import icoClose from '@assets/img/ico_close.png';
-import defaultImg from '@assets/img/img_thumb@2x.png';
+import icoClose from '@images/ico_close.png';
+import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 

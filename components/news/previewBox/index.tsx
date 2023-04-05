@@ -81,13 +81,8 @@ export default function PreviewBox({
           alt="Image load error"
           width="100"
           height="100"
-          onLoadingComplete={(result) => {
-            console.log("it's load error");
-            if (result.naturalWidth === 0) {
-              console.log("it's empty image");
-            }
-          }}
-          onError={() => {
+          onError={(e) => {
+            console.log(e);
             console.log("it's error");
             // onErrorImg(e);
           }}

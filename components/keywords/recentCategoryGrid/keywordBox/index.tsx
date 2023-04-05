@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-import defaultImg from '@assets/img/img_thumb@2x.png';
+import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@url';
 import { KeywordToView } from '@utils/interface/keywords';
 
