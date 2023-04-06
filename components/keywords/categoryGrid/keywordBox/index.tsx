@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useCallback } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import Image from 'next/image';
@@ -15,11 +15,7 @@ interface KeywordBoxProps {
 }
 
 export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
-  const onErrorImg = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.currentTarget;
-    target.src = defaultImg.src;
-  }, []);
-
+  const [loadError, setLoadError] = useState<boolean>(false);
   return (
     <LinkWrapper
       href={`/keywords/${keyword}`}
@@ -31,19 +27,15 @@ export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
       }}
     >
       <Wrapper state={tail}>
-        <ImageWrapper>
-          <CloseImg
-            src={`${HOST_URL}/images/keyword/${keyword}.png`}
+        <ImageWrapper state={tail}>
+          <Image
+            src={loadError ? defaultImg : `${HOST_URL}/images/keyword/${keyword}.png`}
             alt="hmm"
-            width="85px"
-            height="85px"
-            onError={(e) => {
-              onErrorImg(e);
+            width="85"
+            height="85"
+            onError={() => {
+              setLoadError(true);
             }}
-            style={{
-              borderRadius: '5px',
-            }}
-            state={tail}
           />
         </ImageWrapper>
         <KeywordWrapper>
@@ -89,13 +81,23 @@ const Wrapper = styled.div<WrapperProps>`
   overflow: hidden;
 `;
 
-const ImageWrapper = styled.div`
+interface ImageWrapperProps {
+  state: boolean;
+}
+
+const ImageWrapper = styled.div<ImageWrapperProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   padding: 10px;
   padding-left: 5px;
+  & > img {
+    border-radius: '5px';
+    &:hover {
+      cursor: ${({ state }) => (state ? 'pointer' : 'default')};
+    }
+  }
 `;
 
 const KeywordWrapper = styled.div`
@@ -129,9 +131,3 @@ const KeywordBoxTail = styled.div<KeywordBoxTailProps>`
 interface CloseImgProps {
   state: boolean;
 }
-
-const CloseImg = styled.img<CloseImgProps>`
-  &:hover {
-    cursor: ${({ state }) => (state ? 'pointer' : 'default')};
-  }
-`;

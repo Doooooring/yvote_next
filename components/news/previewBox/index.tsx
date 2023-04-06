@@ -1,6 +1,6 @@
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import icoNew from '@images/ico_new.png';
@@ -36,18 +36,13 @@ export default function PreviewBox({
   setVoteHistory,
 }: PreviewBoxProps) {
   const { _id, order, title, summary, keywords, state } = Preview;
-  const [imgSrc, setImgSrc] = useState<string | StaticImageData | null>(null);
 
+  const [loadError, setLoadError] = useState<boolean>(false);
   const myRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToElement = () => {
     myRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const onErrorImg = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
-    console.log('here');
-    e.currentTarget.src = defaultImg.src;
-  }, []);
 
   const showNewsContent = async () => {
     try {
@@ -77,14 +72,12 @@ export default function PreviewBox({
     >
       <ImgWrapper>
         <Image
-          src={`${HOST_URL}/images/news/${order}`}
+          src={loadError ? defaultImg : `${HOST_URL}/images/news/${order}.png`}
           alt="Image load error"
           width="100"
           height="100"
-          onError={(e) => {
-            console.log(e);
-            console.log("it's error");
-            // onErrorImg(e);
+          onError={() => {
+            setLoadError(true);
           }}
         />
       </ImgWrapper>

@@ -52,8 +52,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyName },
     };
   });
-  console.log('is in get static paths');
-  console.log(paths);
   return { paths, fallback: 'blocking' };
 };
 
