@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+
+import Image from 'next/image';
 
 import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@url';
@@ -13,6 +15,8 @@ interface RecentKeywordBoxProps {
 
 export default function RecentKeywordBox({ keyword }: RecentKeywordBoxProps) {
   const navigation = useRouter();
+
+  const [loadError, setLoadError] = useState<boolean>(false);
 
   const onErrorImg = useCallback((e: React.SyntheticEvent) => {
     const target = e.target as HTMLImageElement;
@@ -29,13 +33,13 @@ export default function RecentKeywordBox({ keyword }: RecentKeywordBoxProps) {
         <KeywordTitle>{keyword}</KeywordTitle>
       </KeywordWrapper>
       <ImageWrapper>
-        <img
+        <Image
           src={`${HOST_URL}/images/keyword/${keyword}.png`}
-          height="190px"
-          width="190px"
+          height="190"
+          width="190"
           alt="hmm"
           onError={(e) => {
-            onErrorImg(e);
+            setLoadError(true);
           }}
         />
       </ImageWrapper>
