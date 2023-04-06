@@ -1,10 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { BrickBar } from "@components/common/figure";
-import { News } from "@utils/interface/news";
+import Link from 'next/link';
+
+import { BrickBar } from '@components/common/figure';
+import { News } from '@utils/interface/news';
 
 interface NewsHistoryProps {
-  news: News["news"];
+  news: News['news'];
 }
 
 export default function NewsHistory({ news }: NewsHistoryProps) {
@@ -15,15 +17,10 @@ export default function NewsHistory({ news }: NewsHistoryProps) {
         <HistoryDate>
           {news.map((comp) => {
             console.log(comp);
-            const dateToList = comp.date.split(".");
+            const dateToList = comp.date.split('.');
             const year = dateToList[0];
             const month = dateToList[1];
-            return (
-              <li
-                key={`${comp.date}`}
-                style={{ textAlign: "left" }}
-              >{`${year}.${month}`}</li>
-            );
+            return <li key={`${comp.date}`} style={{ textAlign: 'left' }}>{`${year}.${month}`}</li>;
           })}
         </HistoryDate>
         <BrickBar num={news.length} />
@@ -76,7 +73,7 @@ const HistorySentences = styled(NewsGrid)``;
 
 const SentenceWrapper = styled.div``;
 
-const NewsLink = styled.a`
+const NewsLink = styled(Link)`
   text-decoration: none;
   color: black;
 `;

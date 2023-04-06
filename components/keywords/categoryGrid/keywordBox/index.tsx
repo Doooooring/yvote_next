@@ -16,6 +16,7 @@ interface KeywordBoxProps {
 
 export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
+  console.log(typeof tail);
   return (
     <LinkWrapper
       href={`/keywords/${keyword}`}
@@ -92,11 +93,11 @@ const ImageWrapper = styled.div<ImageWrapperProps>`
   justify-content: center;
   padding: 10px;
   padding-left: 5px;
+  &:hover {
+    cursor: ${({ state }) => (state ? 'pointer' : 'default')};
+  }
   & > img {
     border-radius: '5px';
-    &:hover {
-      cursor: ${({ state }) => (state ? 'pointer' : 'default')};
-    }
   }
 `;
 
@@ -127,7 +128,3 @@ const KeywordBoxTail = styled.div<KeywordBoxTailProps>`
   height: 100%;
   background-color: rgb(200, 200, 200);
 `;
-
-interface CloseImgProps {
-  state: boolean;
-}

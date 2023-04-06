@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
+import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
@@ -32,34 +33,18 @@ interface pageProps {
   };
 }
 
-function ExplanationComp({ explain }: { explain: string | undefined }) {
-  if (explain === undefined) {
-    return <div></div>;
-  }
-  return (
-    <ExplanationWrapper>
-      {explain.split('$').map((s, idx) => {
-        return <Explanation key={idx}>{s}</Explanation>;
-      })}
-    </ExplanationWrapper>
-  );
-}
-
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords: string[] = await keywordRepository.getKeywordList();
-  const paths = keywords.map((keyName: string) => {
+  const paths = keywords.map((keyword: string) => {
     return {
-      params: { keyName },
+      params: { keyword },
     };
   });
   return { paths, fallback: 'blocking' };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  console.log('is in get static props');
-  console.log(context.params);
-  const { keyName } = context.params as IParams;
-  console.log(keyName);
+  const keyName = context.params!.keyword as string;
   const { keyword, previews }: getKeywordDetailResponse = await keywordRepository.getKeywordDetail(
     keyName,
     0,
@@ -77,9 +62,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
+  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>(data.keyword);
   const [curNewsContent, setCurNewsContent] = useState<newsContent>(undefined);
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
+  const [curPreviews, setCurPreviews] = useState<curPreviewsList>(data.previews);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
   // const getKeywordData = async () => {
@@ -102,9 +87,7 @@ export default function KeyExplanation({ data }: pageProps) {
   //   getKeywordData();
   // }, [keyName]);
 
-  return !curKeyword ? (
-    <div></div>
-  ) : (
+  return (
     <Wrapper>
       <SearchWrapper>
         <SearchBox />
@@ -194,29 +177,6 @@ const KeywordWrapper = styled.div`
 
 const KeywordBoxWrapper = styled.div`
   margin-bottom: 20px;
-`;
-
-const ExplanationWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 480px;
-  background-color: white;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 20px;
-  box-shadow: 0 0 30px -25px;
-`;
-
-const Explanation = styled.p`
-  font-family: var(--font-pretendard);
-  font-size: 18px;
-  color: rgb(90, 90, 90);
-  line-height: 1.5;
-  text-align: left;
-  text-indent: 1em;
 `;
 
 const NewsListWrapper = styled.div``;

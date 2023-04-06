@@ -1,18 +1,19 @@
-import { useMemo } from "react";
-import styled from "styled-components";
+import { useMemo } from 'react';
+import styled from 'styled-components';
 
-import Image from "next/image";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import icoChosun from "@images/ico_chosun.png";
-import icoDonga from "@images/ico_donga.png";
-import icoHankyoreh from "@images/ico_hankyoreh.png";
-import icoHankyung from "@images/ico_hankyung.png";
-import icoJoongang from "@images/ico_joongang.png";
-import icoMk from "@images/ico_mk.png";
-import { News } from "@utils/interface/news";
+import icoChosun from '@images/ico_chosun.png';
+import icoDonga from '@images/ico_donga.png';
+import icoHankyoreh from '@images/ico_hankyoreh.png';
+import icoHankyung from '@images/ico_hankyung.png';
+import icoJoongang from '@images/ico_joongang.png';
+import icoMk from '@images/ico_mk.png';
+import { News } from '@utils/interface/news';
 
 interface JournalsProps {
-  journals: News["journals"];
+  journals: News['journals'];
 }
 
 export default function Journals({ journals }: JournalsProps) {
@@ -25,18 +26,14 @@ export default function Journals({ journals }: JournalsProps) {
       한경: icoHankyung,
       매경: icoMk,
     }),
-    []
+    [],
   );
   return (
     <Wrapper>
       <Head>사설 및 칼럼</Head>
       {journals.map((journal) => {
         return (
-          <JournalLink
-            key={journal.press}
-            href={`${journal.link}`}
-            target="_blank"
-          >
+          <JournalLink key={journal.press} href={`${journal.link}`} target="_blank">
             <Journal>
               <Image src={pressImage[journal.press]} alt="hmm" />
               <JournalName>{journal.title}</JournalName>
@@ -65,7 +62,7 @@ const Head = styled.h2`
   margin-bottom: 20px;
 `;
 
-const JournalLink = styled.a`
+const JournalLink = styled(Link)`
   text-decoration: none;
   color: black;
 `;
