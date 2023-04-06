@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
@@ -14,16 +14,11 @@ import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { ParsedUrlQuery } from 'querystring';
 
 type curPreviewsList = Preview[];
 type newsContent = undefined | News;
 type curClicked = undefined | News['order'];
 type AnswerState = 'left' | 'right' | 'none' | null;
-
-interface IParams extends ParsedUrlQuery {
-  keyName: string;
-}
 
 interface pageProps {
   data: {
@@ -40,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyword },
     };
   });
-  return { paths, fallback: 'blocking' };
+  return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -62,30 +57,19 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>(data.keyword);
+  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
   const [curNewsContent, setCurNewsContent] = useState<newsContent>(undefined);
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>(data.previews);
+  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
-  // const getKeywordData = async () => {
-  //   interface KeywordDetail {
-  //     keyword: KeywordOnDetail;
-  //     previews: Array<Preview>;
-  //   }
-  //   if (!keyName) {
-  //     return 0;
-  //   }
-  //   const { keyword, previews }: KeywordDetail = await KeywordsServices.getKeywordDetail(
-  //     keyName,
-  //     0,
-  //   );
-  //   setCurKeyword(keyword);
-  //   setCurPreviews(previews);
-  // };
+  useEffect(() => {
+    setCurKeyword(data.keyword);
+    setCurPreviews(data.previews);
+  }, []);
 
-  // useEffect(() => {
-  //   getKeywordData();
-  // }, [keyName]);
+  if (curKeyword === undefined) {
+    return <div></div>;
+  }
 
   return (
     <Wrapper>
@@ -107,7 +91,7 @@ export default function KeyExplanation({ data }: pageProps) {
               <NewsListHeader>최신 뉴스</NewsListHeader>
             </NewsHeaderWrapper>
             <NewsList curClicked={curClicked}>
-              {curPreviews.map((preview) => {
+              {data.previews.map((preview) => {
                 return (
                   <PreviewBox
                     key={preview._id}

@@ -25,6 +25,7 @@ export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
         if (tail) {
           e.preventDefault();
         }
+        return;
       }}
     >
       <Wrapper state={tail}>
@@ -59,10 +60,11 @@ interface LinkWrapperProps {
 const LinkWrapper = styled(Link)<LinkWrapperProps>`
   display: block;
   width: ${({ state }) => (state ? '255px' : '235px')};
-  text-decoration: none;
+
   &:hover {
     cursor: ${({ state }) => (state ? 'default' : 'pointer')};
   }
+  text-decoration: none;
 `;
 
 interface WrapperProps {
