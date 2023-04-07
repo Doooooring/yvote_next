@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import logo from '@images/ico_logo.png';
@@ -8,33 +9,55 @@ import logo from '@images/ico_logo.png';
 interface NavBoxProps {
   link: string;
   comment: string;
+  state: boolean;
 }
 
-function NavBox({ link, comment }: NavBoxProps) {
-  return <HomeLink href={`${link}`}>{comment}</HomeLink>;
+function NavBox({ link, comment, state }: NavBoxProps) {
+  return (
+    <HomeLink href={`${link}`} state={state}>
+      {comment}
+    </HomeLink>
+  );
 }
 
 export default function Header() {
   const navigation = useRouter();
+  const [curTab, setCurTab] = useState<string>('home');
 
-  console.log(navigation.pathname);
+  useEffect(() => {
+    if (navigation.pathname === '/error') {
+      console.log("it's error");
+      return;
+    }
+    if (navigation.pathname.includes('news')) {
+      setCurTab('news');
+    } else if (navigation.pathname.includes('keywords')) {
+      setCurTab('keywords');
+    } else if (navigation.pathname.includes('analyze')) {
+      setCurTab('analyze');
+    } else if (navigation.pathname.includes('contatct')) {
+      setCurTab('contact');
+    } else {
+      setCurTab('home');
+    }
+  }, [navigation]);
 
   return (
     <Wrapper>
       <HeaderBody>
         <LogoImgBox>
-          <HomeLink href="/">
+          <HomeLink href="/" state={curTab === 'home'}>
             <Image src={logo} alt="hmm" height="40" />
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
-          <NavBox link={'/news'} comment="뉴스 모아보기" />
+          <NavBox link={'/news'} comment="뉴스 모아보기" state={curTab === 'news'} />
           <Blank />
-          <NavBox link={'/keywords'} comment="키워드 모아보기" />
+          <NavBox link={'/keywords'} comment="키워드 모아보기" state={curTab === 'keywords'} />
           <Blank />
-          <NavBox link={'/analyze'} comment="정치 성향 테스트" />
+          <NavBox link={'/analyze'} comment="정치 성향 테스트" state={curTab === 'analyze'} />
           <Blank />
-          <NavBox link={'/contact'} comment="CONTACT" />
+          <NavBox link={'/contact'} comment="CONTACT" state={curTab === 'contact'} />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>
@@ -75,13 +98,14 @@ const LogoImgBox = styled.div`
   height: 100%;
 `;
 
-const HomeLink = styled(Link)`
+interface homeLinkProps {
+  state: boolean;
+}
+
+const HomeLink = styled(Link)<homeLinkProps>`
   border-bottom: none;
-  color: grey;
-  &.active {
-    border-bottom: 3px solid rgb(61, 152, 247);
-    color: rgb(61, 152, 247);
-  }
+  color: ${({ state }) => (state ? 'rgb(61, 152, 247)' : 'grey')};
+  border-bottom: ${({ state }) => (state ? '3px solid rgb(61, 152, 247)' : 'none')};
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
