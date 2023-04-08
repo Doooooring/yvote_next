@@ -33,6 +33,8 @@ class KeywordsRepository {
   }
 
   async getKeywordsWithCategory() {
+    const response = await axios.get(`${HOST_URL}/keywords`);
+
     return 0;
   }
 

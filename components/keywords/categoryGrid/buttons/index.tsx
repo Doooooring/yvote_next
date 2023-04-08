@@ -1,6 +1,8 @@
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import styled from 'styled-components';
 
+
+
 interface LeftButtonProps {
   curView: number;
   viewToLeft: () => void;

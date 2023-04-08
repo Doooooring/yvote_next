@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
@@ -49,16 +49,12 @@ export default function KeywordsPage({ data }: pageProps) {
     };
   }, []);
 
-  const setInitKeywords = useCallback(async () => {
+  useEffect(() => {
     data.other.forEach((comp) => {
       const { _id, keywords } = comp;
       const setState: Dispatch<SetStateAction<KeywordToView[]>> = setStateMap[_id];
       setState(keywords);
     });
-  }, []);
-
-  useEffect(() => {
-    setInitKeywords();
   }, []);
 
   return (

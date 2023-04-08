@@ -34,11 +34,11 @@ export default function RecentKeywordBox({ keyword }: RecentKeywordBoxProps) {
       </KeywordWrapper>
       <ImageWrapper>
         <Image
-          src={`${HOST_URL}/images/keyword/${keyword}.png`}
+          src={loadError ? defaultImg : `${HOST_URL}/images/keyword/${keyword}.png`}
           height="190"
           width="190"
           alt="hmm"
-          onError={(e) => {
+          onError={() => {
             setLoadError(true);
           }}
         />

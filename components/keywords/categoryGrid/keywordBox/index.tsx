@@ -6,6 +6,8 @@ import Image from 'next/image';
 
 import icoClose from '@images/ico_close.png';
 import defaultImg from '@images/img_thumb@2x.png';
+
+
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 
@@ -16,7 +18,7 @@ interface KeywordBoxProps {
 
 export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
-  console.log(typeof tail);
+  
   return (
     <LinkWrapper
       href={`/keywords/${keyword}`}

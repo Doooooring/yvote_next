@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import icoNews from '@images/ico_news.png';
+import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
 import Image from 'next/image';
+import { useCallback } from 'react';
 
 interface CategoryGridProps {
   category: KeywordToView['category'];
@@ -14,8 +16,12 @@ interface CategoryGridProps {
   setKeywords: Dispatch<SetStateAction<KeywordToView[]>>;
 }
 
-export default function CategoryGrid({ category, keywords }: CategoryGridProps) {
+export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
+
+  const getKeywords = useCallback(() => {
+    keywordRepository.getKeywordsWithCategory();
+  }, []);
 
   return (
     <Wrapper>
