@@ -19,6 +19,7 @@ interface CategoryGridProps {
 export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
+  //onClick event에 keyword 추가 콜백 wip
   const getKeywords = useCallback(() => {
     keywordRepository.getKeywordsWithCategory();
   }, []);

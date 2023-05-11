@@ -1,11 +1,11 @@
 export type category =
-  | "human"
-  | "politics"
-  | "policy"
-  | "economics"
-  | "social"
-  | "organization"
-  | "etc";
+  | 'human'
+  | 'politics'
+  | 'policy'
+  | 'economics'
+  | 'social'
+  | 'organization'
+  | 'etc';
 
 export interface Keyword {
   _id: string;
@@ -13,33 +13,32 @@ export interface Keyword {
   explain: string;
   category: category;
   recent: boolean;
-  news: Array<number>;
+  news: Array<string>;
 }
 
 export interface KeywordToView
-  extends Partial<Pick<Keyword, "_id" | "keyword" | "category" | "recent">> {}
+  extends Partial<Pick<Keyword, '_id' | 'keyword' | 'category' | 'recent'>> {}
 
-export interface KeywordOnDetail
-  extends Partial<Pick<Keyword, "_id" | "keyword" | "explain">> {}
+export interface KeywordOnDetail extends Partial<Pick<Keyword, '_id' | 'keyword' | 'explain'>> {}
 
 export interface KeywordInHuman extends KeywordToView {
-  category: "human";
+  category: 'human';
 }
 export interface KeywordInPolitics extends KeywordToView {
-  category: "politics";
+  category: 'politics';
 }
 export interface KeywordInPolicy extends KeywordToView {
-  category: "policy";
+  category: 'policy';
 }
 export interface KeywordInEconomy extends KeywordToView {
-  category: "economics";
+  category: 'economics';
 }
 export interface KeywordInSocial extends KeywordToView {
-  category: "social";
+  category: 'social';
 }
 export interface KeywordInOrganization extends KeywordToView {
-  category: "organization";
+  category: 'organization';
 }
 export interface KeywordInEtc extends KeywordToView {
-  category: "etc";
+  category: 'etc';
 }
