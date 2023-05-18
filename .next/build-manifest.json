@@ -25,16 +25,6 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/keywords": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/keywords.js"
-    ],
-    "/keywords/[keyword]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/keywords/[keyword].js"
-    ],
     "/news": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

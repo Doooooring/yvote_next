@@ -67,7 +67,7 @@ export default function PreviewBox({
           return;
         }
         showNewsContent();
-        scrollToElement();
+        // scrollToElement();
       }}
     >
       <ImgWrapper>
