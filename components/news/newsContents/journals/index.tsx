@@ -22,7 +22,7 @@ export default function Journals({ journals }: JournalsProps) {
       조선: icoChosun,
       중앙: icoJoongang,
       동아: icoDonga,
-      한겨례 : icoHankyoreh,
+      한겨레: icoHankyoreh,
       한경: icoHankyung,
       매경: icoMk,
     }),
