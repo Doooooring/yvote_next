@@ -50,7 +50,7 @@ export default function NewsContent({
             <NewsHistory news={newsContent.news} />
             <Journals journals={newsContent.journals} />
             <VoteBox
-              id={newsContent._id}
+              _id={newsContent._id}
               state={newsContent.state}
               opinions={newsContent.opinions}
               votes={newsContent.votes}

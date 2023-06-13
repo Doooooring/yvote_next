@@ -1,33 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
 
-import VoteGraph from "@components/news/newsContents/voteBox/voteGraph";
-import NewsRepository from "@repositories/news";
-import { News } from "@utils/interface/news";
+import VoteGraph from '@components/news/newsContents/voteBox/voteGraph';
+import NewsRepository from '@repositories/news';
+import { News } from '@utils/interface/news';
 
-type AnswerState = "left" | "right" | "none";
-type SubmitState = "resolve" | "pending" | "error";
+type AnswerState = 'left' | 'right' | 'none';
+type SubmitState = 'resolve' | 'pending' | 'error';
 
-interface VoteBoxProps {
-  id: News["_id"];
-  state: News["state"];
-  opinions: News["opinions"];
-  votes: News["votes"];
-  voteHistory: "left" | "right" | "none" | null;
+interface VoteBoxProps extends Pick<News, '_id' | 'state' | 'opinions' | 'votes'> {
+  voteHistory: 'left' | 'right' | 'none' | null;
 }
 
-export default function VoteBox({
-  id,
-  state,
-  opinions,
-  votes,
-  voteHistory,
-}: VoteBoxProps) {
+export default function VoteBox({ _id, state, opinions, votes, voteHistory }: VoteBoxProps) {
   const [haveThinked, setHaveThinked] = useState<boolean | null>(false);
-  const [checkLeftRight, setCheckLeftRight] = useState<
-    "left" | "right" | "none" | null
-  >(null);
-  const [submitState, setSubmitState] = useState<SubmitState>("pending");
+  const [checkLeftRight, setCheckLeftRight] = useState<'left' | 'right' | 'none' | null>(null);
+  const [submitState, setSubmitState] = useState<SubmitState>('pending');
 
   const voteTotal = useMemo(() => {
     const { left, right, none } = votes;
@@ -36,47 +24,47 @@ export default function VoteBox({
 
   const submitButtonText = useMemo(() => {
     return {
-      resolve: "C 생각이 바뀌었습니다",
-      pending: "✔ 참여하기",
-      error: "! 생각을 하고 왔습니다.",
+      resolve: 'C 생각이 바뀌었습니다',
+      pending: '✔ 참여하기',
+      error: '! 생각을 하고 왔습니다.',
     };
   }, []);
 
   const vote = async (voteAnswer: AnswerState) => {
-    const token = localStorage.getItem("yVote");
-    const response = await NewsRepository.vote(id, voteAnswer, token);
-    localStorage.setItem("yVote", response.token);
+    const token = localStorage.getItem('yVote');
+    const response = await NewsRepository.vote(_id, voteAnswer, token);
+    localStorage.setItem('yVote', response.token);
     return 0;
   };
 
   const handlePendingState = async () => {
     if (haveThinked) {
-      const voteAnswer: AnswerState = checkLeftRight ?? "none";
+      const voteAnswer: AnswerState = checkLeftRight ?? 'none';
       const response = await vote(voteAnswer);
       if (checkLeftRight == null) {
-        setCheckLeftRight("none");
+        setCheckLeftRight('none');
       }
-      setSubmitState("resolve");
+      setSubmitState('resolve');
     } else {
-      setSubmitState("error");
+      setSubmitState('error');
     }
   };
 
   const clickSubmitButton = async () => {
     try {
       switch (submitState) {
-        case "resolve":
-          setSubmitState("pending");
+        case 'resolve':
+          setSubmitState('pending');
           break;
-        case "pending":
+        case 'pending':
           handlePendingState();
           break;
-        case "error":
-          setSubmitState("pending");
+        case 'error':
+          setSubmitState('pending');
           break;
       }
     } catch (e) {
-      alert("다시 시도해 주세요.");
+      alert('다시 시도해 주세요.');
     }
   };
 
@@ -84,13 +72,13 @@ export default function VoteBox({
     if (voteHistory !== null) {
       setHaveThinked(true);
       setCheckLeftRight(voteHistory);
-      setSubmitState("resolve");
+      setSubmitState('resolve');
     } else {
       setHaveThinked(false);
       setCheckLeftRight(null);
-      setSubmitState("pending");
+      setSubmitState('pending');
     }
-  }, [id]);
+  }, [_id]);
 
   return (
     <Wrapper>
@@ -106,7 +94,7 @@ export default function VoteBox({
               onClick={() => {
                 setHaveThinked(true);
               }}
-              disabled={submitState !== "pending"}
+              disabled={submitState !== 'pending'}
             />
             예
           </VotingBlock>
@@ -120,7 +108,7 @@ export default function VoteBox({
                 setHaveThinked(false);
                 setCheckLeftRight(null);
               }}
-              disabled={submitState !== "pending"}
+              disabled={submitState !== 'pending'}
             />
             아니오
           </VotingBlock>
@@ -133,18 +121,18 @@ export default function VoteBox({
             type="radio"
             name="checkbox"
             id="left"
-            checked={checkLeftRight === "left"}
+            checked={checkLeftRight === 'left'}
             onClick={() => {
-              setCheckLeftRight("left");
+              setCheckLeftRight('left');
             }}
-            disabled={haveThinked === false || submitState === "resolve"}
+            disabled={haveThinked === false || submitState === 'resolve'}
           />
           <LRComment>{opinions.left}</LRComment>
         </CheckBoxWrapper>
         <VoteGraph
           vote={votes.left}
           totalVote={voteTotal}
-          backgroundColor={"#e17070"}
+          backgroundColor={'#e17070'}
           submitState={submitState}
         />
         <CheckBoxWrapper>
@@ -152,18 +140,18 @@ export default function VoteBox({
             type="radio"
             name="checkbox"
             id="right"
-            checked={checkLeftRight === "right"}
+            checked={checkLeftRight === 'right'}
             onClick={() => {
-              setCheckLeftRight("right");
+              setCheckLeftRight('right');
             }}
-            disabled={haveThinked === false || submitState === "resolve"}
+            disabled={haveThinked === false || submitState === 'resolve'}
           />
           <LRComment>{opinions.right}</LRComment>
         </CheckBoxWrapper>
         <VoteGraph
           vote={votes.right}
           totalVote={voteTotal}
-          backgroundColor={"#6872c9"}
+          backgroundColor={'#6872c9'}
           submitState={submitState}
         />
         <CheckBoxWrapper>
@@ -171,18 +159,18 @@ export default function VoteBox({
             type="radio"
             name="checkbox"
             id="none"
-            checked={checkLeftRight === "none"}
+            checked={checkLeftRight === 'none'}
             onClick={() => {
-              setCheckLeftRight("none");
+              setCheckLeftRight('none');
             }}
-            disabled={haveThinked === false || submitState === "resolve"}
+            disabled={haveThinked === false || submitState === 'resolve'}
           />
-          <LRComment>{"잘 모르겠다"}</LRComment>
+          <LRComment>{'잘 모르겠다'}</LRComment>
         </CheckBoxWrapper>
         <VoteGraph
           vote={votes.none}
           totalVote={voteTotal}
-          backgroundColor={"grey"}
+          backgroundColor={'grey'}
           submitState={submitState}
         />
       </LeftRightBox>
@@ -239,7 +227,7 @@ const VotingBlock = styled.div`
 const ThinkBox = styled.input`
   margin-right: 10px;
   &:checked + label::after {
-    content: "✔";
+    content: '✔';
     color: red;
     height: 10px;
     width: 20px;
@@ -269,7 +257,7 @@ const CheckBoxWrapper = styled.div`
 const CheckBox = styled.input`
   margin-right: 10px;
   &:checked + label::after {
-    content: "✔";
+    content: '✔';
     color: grey;
     font-size: 5px;
     padding: 0;
@@ -312,7 +300,7 @@ interface BackDropProps {
 }
 
 const BackDrop = styled.div<BackDropProps>`
-  display: ${({ state }) => (state ? "none" : "block")};
+  display: ${({ state }) => (state ? 'none' : 'block')};
   width: 100%;
   height: 100%;
   position: absolute;
