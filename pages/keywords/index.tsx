@@ -61,7 +61,7 @@ export default function KeywordsPage({ data }: pageProps) {
     <Wrapper>
       <SearchWrapper>
         <SearchBox />
-        <SpeechBubble width={200} height={30} />
+        <SpeechBubble />
       </SearchWrapper>
       <GridContainer>
         <RecentCategoryGrid keywords={recentKeywords} setKeywords={setRecentKeywords} />

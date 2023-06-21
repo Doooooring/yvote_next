@@ -75,7 +75,7 @@ export default function KeyExplanation({ data }: pageProps) {
     <Wrapper>
       <SearchWrapper>
         <SearchBox />
-        <SpeechBubble width={200} height={30} />
+        <SpeechBubble />
       </SearchWrapper>
       <MainContents>
         <MainContentsLeft curClicked={curClicked}>

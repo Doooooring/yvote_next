@@ -90,7 +90,7 @@ export default function NewsPage(props: pageProps) {
           setSubmitWord={setSubmitWord}
           setCurPreviews={setCurPreviews}
         />
-        <SpeechBubble width={200} height={30} />
+        <SpeechBubble />
       </SearchWrapper>
       <MainContents>
         <MainHeaderWrapper>

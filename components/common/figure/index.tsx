@@ -5,12 +5,8 @@ interface SpeechBubbleProps {
   height: number;
 }
 
-export function SpeechBubble({ width, height }: SpeechBubbleProps) {
-  return (
-    <Bubble style={{ width: `${width}px`, height: `${height}px` }}>
-      {'간편하게 해시태그로 검색해보세요.'}
-    </Bubble>
-  );
+export function SpeechBubble() {
+  return <Bubble>{'간편하게 해시태그로 검색해보세요.'}</Bubble>;
 }
 
 interface BrickBarProps {
@@ -33,11 +29,12 @@ export function BrickBar({ num }: BrickBarProps) {
 }
 
 const Bubble = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   position: relative;
   background: linear-gradient(90deg, rgb(115, 180, 242), rgb(14, 123, 252));
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 8px;
   color: white;
   font-weight: 600;
   border-radius: 5px;
@@ -53,7 +50,7 @@ const Bubble = styled.div`
     border-right: 7px solid rgba(0, 0, 0, 0);
     position: absolute;
     top: -15px;
-    left: 93px;
+    left: 50%;
   }
 `;
 
