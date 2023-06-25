@@ -73,6 +73,7 @@ export default function SearchBox() {
       if (!keylist.includes(searchWord)) {
         alert('알맞은 키워드를 입력해주세요!');
       } else {
+        console.log(searchWord);
         navigate.push(`/keywords/${searchWord}`);
       }
     } else if (

@@ -99,30 +99,35 @@ export default function NewsPage(props: pageProps) {
             <CategoryName>{'최신 뉴스'}</CategoryName>
           </MainHeader>
         </MainHeaderWrapper>
-        <MainContentsBody>
-          <NewsList curClicked={curClicked}>
-            {curPreviews.map((preview) => (
-              <PreviewBoxWrapper key={preview.order}>
-                <PreviewBox
-                  Preview={preview}
-                  curClicked={curClicked}
-                  setCurClicked={setCurClicked}
-                  setNewsContent={setNewsContent}
-                  setVoteHistory={setVoteHistory}
-                />
-              </PreviewBoxWrapper>
-            ))}
-            <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
-          </NewsList>
-          <NewsContentsWrapper curClicked={curClicked}>
-            <NewsContents
-              curClicked={curClicked}
-              setCurClicked={setCurClicked}
-              newsContent={newsContent}
-              voteHistory={voteHistory}
-            />
-          </NewsContentsWrapper>
-        </MainContentsBody>
+        {curClicked ? (
+          <MainContentsBody>
+            <NewsContentsWrapper>
+              <NewsContents
+                curClicked={curClicked}
+                setCurClicked={setCurClicked}
+                newsContent={newsContent}
+                voteHistory={voteHistory}
+              />
+            </NewsContentsWrapper>
+          </MainContentsBody>
+        ) : (
+          <MainContentsBody>
+            <NewsList>
+              {curPreviews.map((preview) => (
+                <PreviewBoxWrapper key={preview.order}>
+                  <PreviewBox
+                    Preview={preview}
+                    curClicked={curClicked}
+                    setCurClicked={setCurClicked}
+                    setNewsContent={setNewsContent}
+                    setVoteHistory={setVoteHistory}
+                  />
+                </PreviewBoxWrapper>
+              ))}
+              <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
+            </NewsList>
+          </MainContentsBody>
+        )}
       </MainContents>
     </Wrapper>
   );
@@ -133,8 +138,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  height: 1500px;
-  margin-top: 100px;
+  padding-top: 20px;
+  background-color: rgb(242, 242, 242);
 `;
 
 const SearchWrapper = styled.div`
@@ -144,6 +149,7 @@ const SearchWrapper = styled.div`
   border-radius: 10px;
   box-shadow: 0px 0px 30px -20px;
   margin-bottom: 40px;
+  position: relative;
 `;
 
 const MainContents = styled.div``;
@@ -173,14 +179,8 @@ const MainContentsBody = styled.div`
   position: relative;
 `;
 
-interface NewsListProps {
-  curClicked: curClicked;
-}
-
-const NewsList = styled.div<NewsListProps>`
-  width: ${({ curClicked }) => {
-    return curClicked ? '500px' : '1000px';
-  }};
+const NewsList = styled.div`
+  width: 1000px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 490px);
   grid-template-rows: repeat(auto-fill, 130px);
@@ -194,6 +194,7 @@ const NewsList = styled.div<NewsListProps>`
   position: relative;
   overflow: scroll;
   animation: box-sliding 0.5s linear 1;
+  overflow-x: visible;
 `;
 
 const PreviewBoxWrapper = styled.div`
@@ -210,9 +211,7 @@ const LastLine = styled.div`
   height: 10px;
 `;
 
-const NewsContentsWrapper = styled.div<NewsContentsWrapperProps>`
-  width: 500px;
+const NewsContentsWrapper = styled.div`
+  width: 1000px;
   height: 800px;
-  opacity: ${(curClicked) => (curClicked ? 1 : 0)};
-  pointer-events: ${(curClicked) => (curClicked ? 'auto' : 'none')};
 `;

@@ -74,9 +74,8 @@ const Wrapper = styled.header`
   font-size: 15px;
   text-align: left;
   color: black;
-  background-color: white;
   box-shadow: 0px 0px 30px -25px;
-  position: fixed;
+  position: sticky;
   top: 0;
   z-index: 9999;
   border-width: 0px;

@@ -16,10 +16,10 @@ export interface Keyword {
   news: Array<string>;
 }
 
-export interface KeywordToView
-  extends Pick<Keyword, '_id' | 'keyword' | 'category' | 'recent'> {}
+export interface KeywordToView extends Pick<Keyword, '_id' | 'keyword' | 'category' | 'recent'> {}
 
-export interface KeywordOnDetail extends Pick<Keyword, '_id' | 'keyword' | 'explain'> {}
+export interface KeywordOnDetail
+  extends Partial<Pick<Keyword, '_id' | 'keyword' | 'explain' | 'category'>> {}
 
 export interface KeywordInHuman extends KeywordToView {
   category: 'human';

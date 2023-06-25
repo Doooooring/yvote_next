@@ -48,7 +48,42 @@ export default function PreviewBox({
     try {
       const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(_id);
       const { response, news } = newsInfo;
-      setNewsContent(news);
+      setNewsContent({
+        _id: '12hr2oinklernklensbn',
+        order: 0,
+        title: 'dummy',
+        summary:
+          'dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy$dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy$dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy',
+        keywords: ['dummy1', 'dummy2', 'dummy3'],
+        state: true,
+        timeline: [
+          {
+            date: '2023.06.21',
+            title: '더미데이터 입니다. 확인 해주세요',
+          },
+          {
+            date: '2023.06.21',
+            title: '더미데이터 입니다. 확인 해주세요',
+          },
+          {
+            date: '2023.06.21',
+            title: '더미데이터 입니다. 확인 해주세요',
+          },
+          {
+            date: '2023.06.21',
+            title: '더미데이터 입니다. 확인 해주세요',
+          },
+        ],
+        opinions: {
+          left: 'dummy dummy dummy dummy',
+          right: 'dummy dummy dummy dummy',
+        },
+        votes: {
+          left: 1,
+          right: 1,
+          none: 1,
+        },
+      });
       setCurClicked(order);
       setVoteHistory(response);
     } catch (e) {
@@ -112,7 +147,7 @@ const Wrapper = styled.div<WrapperProps>`
   flex-direction: row;
   align-items: center;
   width: 480px;
-  height: 120px;
+
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
   background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
@@ -163,7 +198,10 @@ const New = styled.span<NewProps>`
 
 const Summary = styled.p`
   color: rgb(120, 120, 120);
+  margin: 0;
   padding-top: 5px;
+  font-size: 15px;
+  line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

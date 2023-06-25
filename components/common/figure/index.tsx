@@ -29,16 +29,20 @@ export function BrickBar({ num }: BrickBarProps) {
 }
 
 const Bubble = styled.div`
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: absolute;
+  top: calc(100% + 20px);
+  left: 50%;
+  transform: translateX(-50%);
   background: linear-gradient(90deg, rgb(115, 180, 242), rgb(14, 123, 252));
   color: white;
   font-weight: 600;
   border-radius: 5px;
   font-size: 13px;
+  padding: 0 1em;
   &::before {
     content: '';
     display: block;
@@ -49,7 +53,7 @@ const Bubble = styled.div`
     border-left: 7px solid rgba(0, 0, 0, 0);
     border-right: 7px solid rgba(0, 0, 0, 0);
     position: absolute;
-    top: -15px;
+    top: -12px;
     left: 50%;
   }
 `;

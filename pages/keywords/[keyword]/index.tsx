@@ -1,18 +1,19 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
-import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import icoNews from '@images/ico_news.png';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
+import NewsRepository from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 
+import { useOnScreen } from '@utils/hook/useOnScreen';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 type curPreviewsList = Preview[];
@@ -62,10 +63,47 @@ export default function KeyExplanation({ data }: pageProps) {
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
+  const curPage = useRef<number>(10);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const isOnScreen = useOnScreen(elementRef);
+  const [isRequesting, setIsRequesting] = useState<boolean>(false);
+
   useEffect(() => {
     setCurKeyword(data.keyword);
     setCurPreviews(data.previews);
   }, []);
+
+  //뷰에 들어옴이 감지될 때 요청 보내기
+  const getNewsContent = useCallback(async () => {
+    setIsRequesting(true);
+    try {
+      const Previews: Array<Preview> = await NewsRepository.getPreviews(
+        curPage.current,
+        curKeyword?.keyword,
+      );
+      if (Previews.length === 0) {
+        curPage.current = -1;
+        return;
+      }
+      curPage.current += 10;
+      const newPreviews = curPreviews.concat(Previews);
+      setCurPreviews(newPreviews);
+      return;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRequesting(false);
+    }
+  }, [curPreviews]);
+
+  useEffect(() => {
+    //요청 중이라면 보내지 않기
+    if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
+      getNewsContent();
+    } else {
+      return;
+    }
+  }, [isOnScreen]);
 
   if (curKeyword === undefined) {
     return <div></div>;
@@ -77,43 +115,49 @@ export default function KeyExplanation({ data }: pageProps) {
         <SearchBox />
         <SpeechBubble />
       </SearchWrapper>
+      <KeywordWrapper>
+        <ExplanationComp
+          category={curKeyword.category ?? 'etc'}
+          keyword={curKeyword.keyword!}
+          explain={curKeyword.explain}
+        />
+      </KeywordWrapper>
       <MainContents>
-        <MainContentsLeft curClicked={curClicked}>
-          <KeywordWrapper>
-            <KeywordBoxWrapper>
-              <KeywordBox keyword={data.keyName} tail={true} />
-            </KeywordBoxWrapper>
-            <ExplanationComp explain={curKeyword.explain} />
-          </KeywordWrapper>
-          <NewsListWrapper>
-            <NewsHeaderWrapper>
-              <Image src={icoNews} alt="hmm" height="18" />
-              <NewsListHeader>최신 뉴스</NewsListHeader>
-            </NewsHeaderWrapper>
-            <NewsList curClicked={curClicked}>
-              {data.previews.map((preview) => {
-                return (
+        <MainHeaderWrapper>
+          <MainHeader>
+            <Image src={icoNews} alt="hmm" height="18" />
+            <CategoryName>{'최신 뉴스'}</CategoryName>
+          </MainHeader>
+        </MainHeaderWrapper>
+        {curClicked ? (
+          <MainContentsBody>
+            <NewsContentsWrapper>
+              <NewsContent
+                curClicked={curClicked}
+                setCurClicked={setCurClicked}
+                newsContent={curNewsContent}
+                voteHistory={voteHistory}
+              />
+            </NewsContentsWrapper>
+          </MainContentsBody>
+        ) : (
+          <MainContentsBody>
+            <NewsList>
+              {curPreviews.map((preview) => (
+                <PreviewBoxWrapper key={preview.order}>
                   <PreviewBox
-                    key={preview._id}
                     Preview={preview}
                     curClicked={curClicked}
                     setCurClicked={setCurClicked}
                     setNewsContent={setCurNewsContent}
                     setVoteHistory={setVoteHistory}
                   />
-                );
-              })}
+                </PreviewBoxWrapper>
+              ))}
+              <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
             </NewsList>
-          </NewsListWrapper>
-        </MainContentsLeft>
-        <MainContentsRight>
-          <NewsContent
-            curClicked={curClicked}
-            setCurClicked={setCurClicked}
-            newsContent={curNewsContent}
-            voteHistory={voteHistory}
-          />
-        </MainContentsRight>
+          </MainContentsBody>
+        )}
       </MainContents>
     </Wrapper>
   );
@@ -129,6 +173,7 @@ const Wrapper = styled.div`
 `;
 
 const SearchWrapper = styled.div`
+  position: relative;
   width: 1000px;
   height: 50px;
   background-color: white;
@@ -145,48 +190,46 @@ const MainContents = styled.div`
   position: relative;
 `;
 
-interface MainContentsLeftProps {
-  curClicked: curClicked;
-}
-
-const MainContentsLeft = styled.div<MainContentsLeftProps>`
-  width: ${({ curClicked }) => {
-    return curClicked ? '500px' : '1000px';
-  }};
+const MainHeaderWrapper = styled.div`
+  height: 30px;
 `;
-
-const KeywordWrapper = styled.div`
-  margin-bottom: 30px;
-`;
-
-const KeywordBoxWrapper = styled.div`
-  margin-bottom: 20px;
-`;
-
-const NewsListWrapper = styled.div``;
-
-const NewsHeaderWrapper = styled.div`
-  width: 500px;
-  text-align: left;
-  padding-left: 10px;
-  margin-bottom: 20px;
-`;
-
-const NewsListHeader = styled.p`
+const CategoryName = styled.p`
   display: inline;
+  width: 1000px;
   margin-left: 10px;
   font-weight: 700;
   font-size: 18px;
 `;
 
-interface NewsListProps {
+const MainContentsBody = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 495px);
+  grid-column-gap: 10px;
+  position: relative;
+`;
+
+const MainHeader = styled.div`
+  width: 1000px;
+  text-align: left;
+  padding-left: 10px;
+`;
+
+interface MainContentsLeftProps {
   curClicked: curClicked;
 }
 
-const NewsList = styled.div<NewsListProps>`
-  width: ${({ curClicked }) => {
-    return curClicked ? '500px' : '1000px';
-  }};
+const NewsContentsWrapper = styled.div`
+  width: 1000px;
+  height: 800px;
+`;
+
+const KeywordWrapper = styled.div`
+  width: 1000px;
+  margin-bottom: 30px;
+`;
+
+const NewsList = styled.div`
+  width: 1000px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 490px);
   grid-template-rows: repeat(auto-fill, 120px);
@@ -203,4 +246,12 @@ const NewsList = styled.div<NewsListProps>`
   animation: box-sliding 0.5s linear 1;
 `;
 
-const MainContentsRight = styled.div``;
+const PreviewBoxWrapper = styled.div`
+  display: inline-block;
+  width: 470px;
+`;
+
+const LastLine = styled.div`
+  width: 10px;
+  height: 10px;
+`;

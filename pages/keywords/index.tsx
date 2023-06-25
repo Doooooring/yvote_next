@@ -116,7 +116,7 @@ const SearchWrapper = styled.div`
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 30px -20px;
-  margin-bottom: 80px;
+  margin-bottom: 40px;
   text-align: center;
 `;
 

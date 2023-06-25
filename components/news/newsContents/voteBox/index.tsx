@@ -194,7 +194,7 @@ const Wrapper = styled.div`
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 15px;
-  background-color: rgb(234, 240, 246);
+  background-color: rgba(121, 192, 215, 0.2);
   position: relative;
 `;
 
@@ -283,7 +283,7 @@ const SubmitButton = styled.button`
   border: 0;
   border-radius: 10px;
   box-shadow: 0px 0px 35px -8px rgb(57, 150, 248);
-  background-color: rgb(56, 134, 212);
+  background-color: #79c0d7;
   color: white;
   font-size: 15px;
   font-weight: 600;

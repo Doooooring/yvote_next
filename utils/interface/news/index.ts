@@ -7,15 +7,19 @@ export enum Press {
   동아 = '동아',
 }
 
+export interface Timeline {
+  date: string;
+  title: string;
+}
+
 export interface News {
   _id: string;
   order: number;
   title: string;
   summary: string;
-  news: Array<{ date: string; title: string; link: string }>;
-  journals: Array<{ press: Press; title: string; link: string }>;
   keywords: Array<string>;
   state: boolean;
+  timeline: Array<Timeline>;
   opinions: {
     left: string;
     right: string;
