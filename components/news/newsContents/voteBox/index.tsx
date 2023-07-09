@@ -275,6 +275,7 @@ const LRComment = styled.span`
 const SubmitBlock = styled.div`
   text-align: center;
   margin-top: 30px;
+  border: 0;
 `;
 
 const SubmitButton = styled.button`
@@ -282,7 +283,6 @@ const SubmitButton = styled.button`
   height: 50px;
   border: 0;
   border-radius: 10px;
-  box-shadow: 0px 0px 35px -8px rgb(57, 150, 248);
   background-color: #79c0d7;
   color: white;
   font-size: 15px;
