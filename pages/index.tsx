@@ -339,8 +339,8 @@ export default function Home() {
 }
 
 const Wrapper = styled.div`
+  height: 100vh;
   overflow: scroll;
-  padding-top: 110px;
   padding-bottom: 100px;
 `;
 
