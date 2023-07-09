@@ -183,7 +183,7 @@ const NewsList = styled.div`
   width: 1000px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 490px);
-  grid-template-rows: repeat(auto-fill, 130px);
+  grid-template-rows: repeat(auto-fill, 150px);
   grid-column-gap: 0px;
   justify-items: center;
   border-style: solid;

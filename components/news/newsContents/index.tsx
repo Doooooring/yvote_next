@@ -37,21 +37,21 @@ export default function NewsContent({
   } else {
     return (
       <Wrapper>
-        <NewsBoxClose>
-          <input
-            type="button"
-            style={{ display: 'none' }}
-            id="close-button"
-            onClick={() => {
-              setCurClicked(undefined);
-            }}
-          ></input>
-          <CloseButton htmlFor="close-button">
-            <Image src={icoClose} alt="hmm" />
-          </CloseButton>
-        </NewsBoxClose>
         <Body>
           <BodyLeft>
+            <NewsBoxClose>
+              <input
+                type="button"
+                style={{ display: 'none' }}
+                id="close-button"
+                onClick={() => {
+                  setCurClicked(undefined);
+                }}
+              ></input>
+              <CloseButton htmlFor="close-button">
+                <Image src={icoClose} alt="hmm" />
+              </CloseButton>
+            </NewsBoxClose>
             <ContentBody>
               <div className="content-body-left">
                 <Image
@@ -94,7 +94,11 @@ export default function NewsContent({
                     </ImgWrapper>
                     <div className="timeline-sentence">
                       <p>{timeline.date}</p>
-                      <p>{timeline.title}</p>
+                      <div className="time-line-body">
+                        {timeline.title.split('$').map((title, idx) => {
+                          return <p key={idx}>{title}</p>;
+                        })}
+                      </div>
                     </div>
                   </Timeline>
                 );
@@ -135,9 +139,11 @@ const Wrapper = styled.div`
   }
 `;
 const NewsBoxClose = styled.div`
-  padding-top: 10px;
-  padding-right: 20px;
+  padding-right: 10px;
   text-align: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
 `;
 const CloseButton = styled.label`
   padding-top: 10px;
@@ -161,6 +167,7 @@ const BodyLeft = styled.div`
   min-height: 1000px;
   background-color: white;
   box-shadow: 0 0 35px -30px;
+  position: relative;
 `;
 
 const BodyRight = styled.div`
