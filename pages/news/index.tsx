@@ -7,6 +7,7 @@ import { SpeechBubble } from '@components/common/figure';
 import NewsContents from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import SearchBox from '@components/news/searchBox';
+import indexStore from "@store/indexStore";
 import icoNews from '@images/ico_news.png';
 import NewsRepository from '@repositories/news';
 import { useOnScreen } from '@utils/hook/useOnScreen';
@@ -38,6 +39,9 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 // }
 
 export default function NewsPage(props: pageProps) {
+  const {currentStore} = indexStore();
+  const {isCommentModalUp, setIsCommentModalUp} = currentStore;
+
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [submitWord, setSubmitWord] = useState<string>('');
   const [newsContent, setNewsContent] = useState<newsContent>(undefined);

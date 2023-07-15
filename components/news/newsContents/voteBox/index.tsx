@@ -24,7 +24,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
 
   const submitButtonText = useMemo(() => {
     return {
-      resolve: 'C 생각이 바뀌었습니다',
+      resolve: '생각이 바뀌었습니다',
       pending: '✔ 참여하기',
       error: '! 생각을 하고 왔습니다.',
     };

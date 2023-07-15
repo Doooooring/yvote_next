@@ -18,6 +18,7 @@
       "@*": ["./*"],
       "@pages/*": ["./pages/*"],
       "@components/*": ["./components/*"],
+      "@store/*": ["./store/*"],
       "@utils/*": ["./utils/*"],
       "@assets/*": ["./public/assets/*"],
       "@images/*": ["./public/assets/img/*"],

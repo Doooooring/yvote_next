@@ -198,7 +198,7 @@ export default function Home() {
                       placeholder="이메일"
                     />
                   </div>
-                  <div className="col-12">
+                  <div className="col-12 w-100 age-select-wrapper">
                     <select name="demo-category" id="demo-category">
                       <option value="">- 연령 -</option>
                       <option value="1">청소년</option>
@@ -342,6 +342,14 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: scroll;
   padding-bottom: 100px;
+
+  .age-select-wrapper {
+    padding-right: 2.75em;
+  }
+
+  #demo-category {
+    width: 100%;
+  }
 `;
 
 const FaWrapper = styled.div`
