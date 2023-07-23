@@ -6,14 +6,18 @@ import { useState } from 'react';
 
 import VoteBox from '@components/news/newsContents/voteBox';
 
+import ImageFallback from '@components/common/imageFallback';
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new.png';
 import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@public/assets/url';
-import { News } from '@utils/interface/news';
+import { NewsDetail } from '@repositories/news';
+import currentStore from '@store/currentStore';
+import { News, commentType } from '@utils/interface/news';
+import CommentModal from '../commentModal';
 
-type newsContent = undefined | News;
+type newsContent = undefined | NewsDetail;
 type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 
@@ -31,6 +35,13 @@ export default function NewsContent({
   voteHistory,
 }: NewsContentProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
+  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+  const [curComment, setCurComment] = useState<commentType | null>(null);
+
+  function commentClick(comment: commentType) {
+    setCurComment(comment);
+    setIsCommentModalUp(true);
+  }
 
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
@@ -106,6 +117,19 @@ export default function NewsContent({
             </TimelineBody>
           </BodyLeft>
           <BodyRight>
+            <div className="comment_body">
+              {newsContent.comments.map((comment) => {
+                return (
+                  <div className="comment" onClick={() => {}}>
+                    <ImageFallback
+                      src={`/assets/img/${comment}.png`}
+                      width={60}
+                      height={60}
+                    ></ImageFallback>
+                  </div>
+                );
+              })}
+            </div>
             <VoteBox
               _id={newsContent._id}
               state={newsContent.state}
@@ -115,6 +139,7 @@ export default function NewsContent({
             />
           </BodyRight>
         </Body>
+        <CommentModal id={newsContent._id} comment={curComment} />
       </Wrapper>
     );
   }

@@ -5,12 +5,12 @@ import styled from 'styled-components';
 
 import icoNew from '@images/ico_new.png';
 import defaultImg from '@images/img_thumb@2x.png';
-import NewsRepository from '@repositories/news';
+import NewsRepository, { NewsDetail } from '@repositories/news';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
 
 type newsContent = undefined | News;
-type setNewsContent = (newsContent: newsContent) => void;
+type setNewsContent = (newsContent: NewsDetail) => void;
 type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 type AnswerState = 'left' | 'right' | 'none' | null;
@@ -25,7 +25,7 @@ interface PreviewBoxProps {
 
 interface getNewsContentResponse {
   response: AnswerState;
-  news: News;
+  news: NewsDetail;
 }
 
 export default function PreviewBox({
