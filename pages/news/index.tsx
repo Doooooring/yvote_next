@@ -4,18 +4,19 @@ import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
 
 import { SpeechBubble } from '@components/common/figure';
+import CommentModal from '@components/news/commentModal';
 import NewsContents from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import SearchBox from '@components/news/searchBox';
-import indexStore from "@store/indexStore";
 import icoNews from '@images/ico_news.png';
-import NewsRepository from '@repositories/news';
+import NewsRepository, { NewsDetail } from '@repositories/news';
+import indexStore from '@store/indexStore';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { News, Preview } from '@utils/interface/news';
 import Image from 'next/image';
 
 type curPreviewsList = Preview[];
-type newsContent = undefined | News;
+type newsContent = undefined | NewsDetail;
 type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 
@@ -39,8 +40,8 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 // }
 
 export default function NewsPage(props: pageProps) {
-  const {currentStore} = indexStore();
-  const {isCommentModalUp, setIsCommentModalUp} = currentStore;
+  const { currentStore } = indexStore();
+  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
 
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [submitWord, setSubmitWord] = useState<string>('');
