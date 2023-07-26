@@ -1,6 +1,6 @@
 import defaultImg from '@images/img_thumb@2x.png';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 /** image load error 일 경우 default image 표시 component */
 export default function ImageFallback({
@@ -9,17 +9,25 @@ export default function ImageFallback({
   height,
 }: {
   src: string;
-  width: number;
-  height: number;
+  width: number | string;
+  height: number | string;
 }) {
   const [loadError, setLoadError] = useState<boolean>(false);
+  const imageStyle = useMemo(() => {
+    const style = { width: width, height: height };
+    return style;
+  }, []);
+
   return (
     <Image
       src={loadError ? defaultImg : src}
-      height={height}
-      width={width}
+      height={0}
+      width={0}
       alt="image"
+      style={imageStyle}
       onError={() => {
+        console.log(src);
+        console.log('is image error');
         setLoadError(true);
       }}
     />
