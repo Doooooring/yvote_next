@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
@@ -37,10 +37,15 @@ export default function NewsContent({
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
 
-  function commentClick(comment: commentType) {
-    setCurComment(comment);
+  const commentOpen = useCallback((comment: commentType) => {
     setIsCommentModalUp(true);
-  }
+    setCurComment(comment);
+  }, []);
+
+  const commentClose = useCallback(() => {
+    setIsCommentModalUp(false);
+    setCurComment(null);
+  }, []);
 
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
@@ -122,13 +127,13 @@ export default function NewsContent({
                   <div
                     className="comment"
                     onClick={() => {
-                     commentClick(comment)
+                      commentOpen(comment);
                     }}
                   >
                     <ImageFallback
                       src={`/assets/img/${comment}.png`}
-                      width={60}
-                      height={60}
+                      width={'100%'}
+                      height={'100%'}
                     ></ImageFallback>
                   </div>
                 );
@@ -143,7 +148,12 @@ export default function NewsContent({
             />
           </BodyRight>
         </Body>
-        <CommentModal id={newsContent._id} comment={curComment ?? commentType.국민의힘} />
+        <CommentModal
+          id={newsContent._id}
+          comment={curComment ?? commentType.국민의힘}
+          commentOpen={commentOpen}
+          commentClose={commentClose}
+        />
       </Wrapper>
     );
   }
@@ -202,6 +212,23 @@ const BodyLeft = styled.div`
 const BodyRight = styled.div`
   width: 100%;
   padding: 0 2rem;
+
+  div.comment_body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 10px;
+    column-gap: 10px;
+    margin-bottom: 20px;
+
+    div.comment {
+      width: 100%;
+      padding: 1.75rem;
+      background-color: white;
+      box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 200px;
+      overflow: hidden;
+    }
+  }
 `;
 const ContentHead = styled.h1`
   display: flex;

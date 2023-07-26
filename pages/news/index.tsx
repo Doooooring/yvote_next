@@ -138,6 +138,8 @@ export default function NewsPage(props: pageProps) {
 }
 
 const Wrapper = styled.div`
+  height: 100%;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
