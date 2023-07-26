@@ -10,7 +10,7 @@ interface DropdownProps {
 }
 
 export default function Dropdown({ title, body, style }: DropdownProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   return (
     <Wrapper

@@ -4,9 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import VoteBox from '@components/news/newsContents/voteBox';
-
 import ImageFallback from '@components/common/imageFallback';
+import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new.png';
@@ -120,7 +119,12 @@ export default function NewsContent({
             <div className="comment_body">
               {newsContent.comments.map((comment) => {
                 return (
-                  <div className="comment" onClick={() => {}}>
+                  <div
+                    className="comment"
+                    onClick={() => {
+                     commentClick(comment)
+                    }}
+                  >
                     <ImageFallback
                       src={`/assets/img/${comment}.png`}
                       width={60}
@@ -139,7 +143,7 @@ export default function NewsContent({
             />
           </BodyRight>
         </Body>
-        <CommentModal id={newsContent._id} comment={curComment} />
+        <CommentModal id={newsContent._id} comment={curComment ?? commentType.국민의힘} />
       </Wrapper>
     );
   }

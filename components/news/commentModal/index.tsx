@@ -1,4 +1,3 @@
-import Dropdown from '@components/common/dropdown';
 import ImageFallback from '@components/common/imageFallback';
 import Modal from '@components/common/modal';
 import NewsRepository from '@repositories/news';
@@ -8,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 export default function CommentModal({ id, comment }: { id: string; comment: commentType | null }) {
-  const { currentStore } = indexStore();
+  const { currentStore } = indexStore;
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComments, setCurComments] = useState<
     Array<{
@@ -16,6 +15,8 @@ export default function CommentModal({ id, comment }: { id: string; comment: com
       comment: string;
     }>
   >([]);
+  const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const typeExplain = useMemo(() => {
     return {
@@ -50,6 +51,21 @@ export default function CommentModal({ id, comment }: { id: string; comment: com
     toAsync();
   }, [comment]);
 
+  const getPageBefore = async () => {
+    if (curPage.current === 0) return;
+    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current - 1);
+    setCurComments(response.comments);
+    curPage.current -= 1;
+  };
+  const getPageAfter = async () => {
+    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current + 1);
+    if (response.comments === null || response.comments.length == 0) {
+    } else {
+      setCurComments(response.comments);
+      curPage.current += 1;
+    }
+  };
+
   return (
     <Modal state={isCommentModalUp}>
       {comment ? (
@@ -67,11 +83,54 @@ export default function CommentModal({ id, comment }: { id: string; comment: com
               <div className="type-explain">{typeExplain[comment]}</div>
             </div>
           </div>
-          <div className="modal-body">
-            {curComments.map((comment) => {
-              return <Dropdown title={comment.title} body={comment.comment} style={{}} />;
-            })}
-          </div>
+          {curComment === null ? (
+            <div className="modal-body">
+              <div className="modal-list">
+                {curComments.map((comment) => {
+                  return (
+                    <div className="body-block" onClick={() => {}}>
+                      {comment.title}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="page-button-wrapper">
+                <div
+                  className="button-left"
+                  onClick={() => {
+                    getPageBefore();
+                  }}
+                ></div>
+                <div
+                  className="button-right"
+                  onClick={() => {
+                    getPageAfter();
+                  }}
+                ></div>
+              </div>
+            </div>
+          ) : (
+            <div className="modal-body">
+              <div className="content-wrapper">
+                <p className="content-title">{curComment.title}</p>
+                <div className="content-body">
+                  {curComment.comment.split('$').map((comment) => {
+                    return <p>{comment}</p>;
+                  })}
+                </div>
+              </div>
+              <div className="back-button-wrapper">
+                <button
+                  className="back-button"
+                  onClick={() => {
+                    setCurComment(null);
+                  }}
+                >
+                  목록으로
+                </button>
+              </div>
+            </div>
+          )}
         </Wrapper>
       ) : (
         <></>

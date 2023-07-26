@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
 
 import { SpeechBubble } from '@components/common/figure';
-import CommentModal from '@components/news/commentModal';
 import NewsContents from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import SearchBox from '@components/news/searchBox';
@@ -40,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 // }
 
 export default function NewsPage(props: pageProps) {
-  const { currentStore } = indexStore();
+  const { currentStore } = indexStore;
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
 
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);

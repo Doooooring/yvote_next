@@ -1,7 +1,7 @@
 import currentStore from './currentStore';
 
-const indexStore = () => ({
+const indexStore = {
   currentStore,
-});
+};
 
 export default indexStore;
