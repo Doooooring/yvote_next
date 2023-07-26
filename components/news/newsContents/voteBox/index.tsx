@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import VoteGraph from '@components/news/newsContents/voteBox/voteGraph';
 import NewsRepository from '@repositories/news';
 import { News } from '@utils/interface/news';
 
@@ -129,12 +128,12 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
           />
           <LRComment>{opinions.left}</LRComment>
         </CheckBoxWrapper>
-        <VoteGraph
+        {/* <VoteGraph
           vote={votes.left}
           totalVote={voteTotal}
           backgroundColor={'#e17070'}
           submitState={submitState}
-        />
+        /> */}
         <CheckBoxWrapper>
           <CheckBox
             type="radio"
@@ -148,13 +147,13 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
           />
           <LRComment>{opinions.right}</LRComment>
         </CheckBoxWrapper>
-        <VoteGraph
+        {/* <VoteGraph
           vote={votes.right}
           totalVote={voteTotal}
           backgroundColor={'#6872c9'}
           submitState={submitState}
-        />
-        <CheckBoxWrapper>
+        /> */}
+        {/* <CheckBoxWrapper>
           <CheckBox
             type="radio"
             name="checkbox"
@@ -166,13 +165,13 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
             disabled={haveThinked === false || submitState === 'resolve'}
           />
           <LRComment>{'잘 모르겠다'}</LRComment>
-        </CheckBoxWrapper>
-        <VoteGraph
+        </CheckBoxWrapper> */}
+        {/* <VoteGraph
           vote={votes.none}
           totalVote={voteTotal}
           backgroundColor={'grey'}
           submitState={submitState}
-        />
+        /> */}
       </LeftRightBox>
       <SubmitBlock>
         <SubmitButton
