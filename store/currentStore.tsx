@@ -22,9 +22,9 @@ class Current {
     });
   }
 
-  setIsCommentModalUp(state: boolean) {
+  setIsCommentModalUp = (state: boolean) => {
     this.isCommentModalUp = state;
-  }
+  };
 }
 
 const currentStore = new Current();
