@@ -8,13 +8,14 @@ import NewsContents from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import SearchBox from '@components/news/searchBox';
 import icoNews from '@images/ico_news.png';
-import NewsRepository from '@repositories/news';
+import NewsRepository, { NewsDetail } from '@repositories/news';
+import indexStore from '@store/indexStore';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { News, Preview } from '@utils/interface/news';
 import Image from 'next/image';
 
 type curPreviewsList = Preview[];
-type newsContent = undefined | News;
+type newsContent = undefined | NewsDetail;
 type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 
@@ -38,6 +39,9 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 // }
 
 export default function NewsPage(props: pageProps) {
+  const { currentStore } = indexStore;
+  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [submitWord, setSubmitWord] = useState<string>('');
   const [newsContent, setNewsContent] = useState<newsContent>(undefined);
@@ -134,6 +138,8 @@ export default function NewsPage(props: pageProps) {
 }
 
 const Wrapper = styled.div`
+  height: 100%;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -183,7 +189,7 @@ const NewsList = styled.div`
   width: 1000px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 490px);
-  grid-template-rows: repeat(auto-fill, 130px);
+  grid-template-rows: repeat(auto-fill, 150px);
   grid-column-gap: 0px;
   justify-items: center;
   border-style: solid;

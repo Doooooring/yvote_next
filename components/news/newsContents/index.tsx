@@ -2,18 +2,21 @@ import styled from 'styled-components';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
+import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
-
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new.png';
 import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@public/assets/url';
-import { News } from '@utils/interface/news';
+import { NewsDetail } from '@repositories/news';
+import currentStore from '@store/currentStore';
+import { News, commentType } from '@utils/interface/news';
+import CommentModal from '../commentModal';
 
-type newsContent = undefined | News;
+type newsContent = undefined | NewsDetail;
 type curClicked = undefined | News['order'];
 type setCurClicked = (curClicked: curClicked) => void;
 
@@ -31,27 +34,39 @@ export default function NewsContent({
   voteHistory,
 }: NewsContentProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
+  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+  const [curComment, setCurComment] = useState<commentType | null>(null);
+
+  const commentOpen = useCallback((comment: commentType) => {
+    setIsCommentModalUp(true);
+    setCurComment(comment);
+  }, []);
+
+  const commentClose = useCallback(() => {
+    setIsCommentModalUp(false);
+    setCurComment(null);
+  }, []);
 
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
   } else {
     return (
       <Wrapper>
-        <NewsBoxClose>
-          <input
-            type="button"
-            style={{ display: 'none' }}
-            id="close-button"
-            onClick={() => {
-              setCurClicked(undefined);
-            }}
-          ></input>
-          <CloseButton htmlFor="close-button">
-            <Image src={icoClose} alt="hmm" />
-          </CloseButton>
-        </NewsBoxClose>
         <Body>
           <BodyLeft>
+            <NewsBoxClose>
+              <input
+                type="button"
+                style={{ display: 'none' }}
+                id="close-button"
+                onClick={() => {
+                  setCurClicked(undefined);
+                }}
+              ></input>
+              <CloseButton htmlFor="close-button">
+                <Image src={icoClose} alt="hmm" />
+              </CloseButton>
+            </NewsBoxClose>
             <ContentBody>
               <div className="content-body-left">
                 <Image
@@ -94,7 +109,11 @@ export default function NewsContent({
                     </ImgWrapper>
                     <div className="timeline-sentence">
                       <p>{timeline.date}</p>
-                      <p>{timeline.title}</p>
+                      <div className="time-line-body">
+                        {timeline.title.split('$').map((title, idx) => {
+                          return <p key={idx}>{title}</p>;
+                        })}
+                      </div>
                     </div>
                   </Timeline>
                 );
@@ -102,6 +121,24 @@ export default function NewsContent({
             </TimelineBody>
           </BodyLeft>
           <BodyRight>
+            <div className="comment_body">
+              {newsContent.comments.map((comment) => {
+                return (
+                  <div
+                    className="comment"
+                    onClick={() => {
+                      commentOpen(comment);
+                    }}
+                  >
+                    <ImageFallback
+                      src={`/assets/img/${comment}.png`}
+                      width={'100%'}
+                      height={'100%'}
+                    ></ImageFallback>
+                  </div>
+                );
+              })}
+            </div>
             <VoteBox
               _id={newsContent._id}
               state={newsContent.state}
@@ -111,6 +148,12 @@ export default function NewsContent({
             />
           </BodyRight>
         </Body>
+        <CommentModal
+          id={newsContent._id}
+          comment={curComment ?? commentType.국민의힘}
+          commentOpen={commentOpen}
+          commentClose={commentClose}
+        />
       </Wrapper>
     );
   }
@@ -135,9 +178,11 @@ const Wrapper = styled.div`
   }
 `;
 const NewsBoxClose = styled.div`
-  padding-top: 10px;
-  padding-right: 20px;
+  padding-right: 10px;
   text-align: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
 `;
 const CloseButton = styled.label`
   padding-top: 10px;
@@ -161,11 +206,29 @@ const BodyLeft = styled.div`
   min-height: 1000px;
   background-color: white;
   box-shadow: 0 0 35px -30px;
+  position: relative;
 `;
 
 const BodyRight = styled.div`
   width: 100%;
   padding: 0 2rem;
+
+  div.comment_body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 10px;
+    column-gap: 10px;
+    margin-bottom: 20px;
+
+    div.comment {
+      width: 100%;
+      padding: 1.75rem;
+      background-color: white;
+      box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 200px;
+      overflow: hidden;
+    }
+  }
 `;
 const ContentHead = styled.h1`
   display: flex;

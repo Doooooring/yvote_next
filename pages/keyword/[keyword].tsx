@@ -12,6 +12,7 @@ import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywo
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 
+import { NewsDetail } from '@repositories/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 
@@ -75,7 +76,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function KeyExplanation({ data }: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
-  const [curNewsContent, setCurNewsContent] = useState<newsContent>(undefined);
+  const [curNewsContent, setCurNewsContent] = useState<NewsDetail | undefined>(undefined);
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
@@ -105,7 +106,7 @@ export default function KeyExplanation({ data }: pageProps) {
     <Wrapper>
       <SearchWrapper>
         <SearchBox />
-        <SpeechBubble width={200} height={30} />
+        <SpeechBubble />
       </SearchWrapper>
       <MainContents>
         <MainContentsLeft curClicked={curClicked}>

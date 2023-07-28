@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import VoteGraph from '@components/news/newsContents/voteBox/voteGraph';
 import NewsRepository from '@repositories/news';
 import { News } from '@utils/interface/news';
 
@@ -24,7 +23,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
 
   const submitButtonText = useMemo(() => {
     return {
-      resolve: 'C 생각이 바뀌었습니다',
+      resolve: '생각이 바뀌었습니다',
       pending: '✔ 참여하기',
       error: '! 생각을 하고 왔습니다.',
     };
@@ -129,12 +128,12 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
           />
           <LRComment>{opinions.left}</LRComment>
         </CheckBoxWrapper>
-        <VoteGraph
+        {/* <VoteGraph
           vote={votes.left}
           totalVote={voteTotal}
           backgroundColor={'#e17070'}
           submitState={submitState}
-        />
+        /> */}
         <CheckBoxWrapper>
           <CheckBox
             type="radio"
@@ -148,13 +147,13 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
           />
           <LRComment>{opinions.right}</LRComment>
         </CheckBoxWrapper>
-        <VoteGraph
+        {/* <VoteGraph
           vote={votes.right}
           totalVote={voteTotal}
           backgroundColor={'#6872c9'}
           submitState={submitState}
-        />
-        <CheckBoxWrapper>
+        /> */}
+        {/* <CheckBoxWrapper>
           <CheckBox
             type="radio"
             name="checkbox"
@@ -166,13 +165,13 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
             disabled={haveThinked === false || submitState === 'resolve'}
           />
           <LRComment>{'잘 모르겠다'}</LRComment>
-        </CheckBoxWrapper>
-        <VoteGraph
+        </CheckBoxWrapper> */}
+        {/* <VoteGraph
           vote={votes.none}
           totalVote={voteTotal}
           backgroundColor={'grey'}
           submitState={submitState}
-        />
+        /> */}
       </LeftRightBox>
       <SubmitBlock>
         <SubmitButton
@@ -275,6 +274,7 @@ const LRComment = styled.span`
 const SubmitBlock = styled.div`
   text-align: center;
   margin-top: 30px;
+  border: 0;
 `;
 
 const SubmitButton = styled.button`
@@ -282,7 +282,6 @@ const SubmitButton = styled.button`
   height: 50px;
   border: 0;
   border-radius: 10px;
-  box-shadow: 0px 0px 35px -8px rgb(57, 150, 248);
   background-color: #79c0d7;
   color: white;
   font-size: 15px;

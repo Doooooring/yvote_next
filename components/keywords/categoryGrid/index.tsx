@@ -8,7 +8,7 @@ import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useRef } from 'react';
 
 interface CategoryGridProps {
   category: KeywordToView['category'];
@@ -17,12 +17,22 @@ interface CategoryGridProps {
 }
 
 export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
+  const page = useRef(1);
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
   //onClick event에 keyword 추가 콜백 wip
-  const getKeywords = useCallback(() => {
-    keywordRepository.getKeywordsWithCategory();
-  }, []);
+  const getKeywords = async () => {
+    try {
+      const response = await keywordRepository.getKeywordsByCategory(category, page.current);
+      if (response.length === 0) {
+      } else {
+        setKeywords([...keywords, ...response]);
+        page.current += 1;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Wrapper>
@@ -41,7 +51,12 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
         </GridWrapper>
         <RightButton
           curView={curView}
-          viewToRight={onSlideRight}
+          viewToRight={async () => {
+            if (curView === Math.floor(keywords.length / 8)) {
+              await getKeywords();
+            }
+            onSlideRight();
+          }}
           lastPage={Math.floor(keywords.length / 8)}
         />
       </BodyWrapper>
