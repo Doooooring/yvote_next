@@ -107,7 +107,7 @@ class NewsRepository {
       return data.result;
     } catch (e) {
       return {
-        response: 'none',
+        response: null,
         news: null,
       };
     }

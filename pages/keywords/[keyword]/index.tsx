@@ -9,7 +9,7 @@ import NewsContent from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
 import icoNews from '@images/ico_news.png';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
-import NewsRepository from '@repositories/news';
+import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 
@@ -59,7 +59,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function KeyExplanation({ data }: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
-  const [curNewsContent, setCurNewsContent] = useState<newsContent>(undefined);
+  const [curNewsContent, setCurNewsContent] = useState<NewsDetail | undefined>(undefined);
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 

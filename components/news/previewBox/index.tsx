@@ -25,7 +25,7 @@ interface PreviewBoxProps {
 
 interface getNewsContentResponse {
   response: AnswerState;
-  news: NewsDetail;
+  news: NewsDetail | null;
 }
 
 export default function PreviewBox({
@@ -48,6 +48,10 @@ export default function PreviewBox({
     try {
       const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(_id);
       const { response, news } = newsInfo;
+      if (news === null) {
+        Error('news content error');
+        return;
+      }
       setNewsContent(news);
       // setNewsContent({
       //   _id: '12hr2oinklernklensbn',

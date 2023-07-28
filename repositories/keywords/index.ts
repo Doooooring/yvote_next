@@ -26,7 +26,7 @@ export interface getKeywordsByCategoryResponse {
 }
 
 export interface getKeywordDetailResponse {
-  keyword: KeywordOnDetail;
+  keyword: KeywordOnDetail | null;
   previews: Array<Preview>;
 }
 
@@ -80,7 +80,16 @@ class KeywordsRepository {
       return keywordDetail;
     } catch (e) {
       console.log(e);
-      return null;
+      return {
+        keyword: {
+          _id: '',
+          keyword: '',
+          category: 'etc',
+          recent: false,
+          news: [],
+        },
+        previews: [] as Preview[],
+      } as getKeywordDetailResponse;
     }
   }
 }
