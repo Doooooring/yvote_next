@@ -45,55 +45,15 @@ export default function PreviewBox({
   };
 
   const showNewsContent = async () => {
-    try {
-      const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(_id);
-      const { response, news } = newsInfo;
-      if (news === null) {
-        Error('news content error');
-        return;
-      }
-      setNewsContent(news);
-      // setNewsContent({
-      //   _id: '12hr2oinklernklensbn',
-      //   order: 0,
-      //   title: 'dummy',
-      //   summary:
-      //     'dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy$dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy$dummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydummy',
-      //   keywords: ['dummy1', 'dummy2', 'dummy3'],
-      //   state: true,
-      //   timeline: [
-      //     {
-      //       date: '2023.06.21',
-      //       title: '더미데이터 입니다. 확인 해주세요',
-      //     },
-      //     {
-      //       date: '2023.06.21',
-      //       title: '더미데이터 입니다. 확인 해주세요',
-      //     },
-      //     {
-      //       date: '2023.06.21',
-      //       title: '더미데이터 입니다. 확인 해주세요',
-      //     },
-      //     {
-      //       date: '2023.06.21',
-      //       title: '더미데이터 입니다. 확인 해주세요',
-      //     },
-      //   ],
-      //   opinions: {
-      //     left: 'dummy dummy dummy dummy',
-      //     right: 'dummy dummy dummy dummy',
-      //   },
-      //   votes: {
-      //     left: 1,
-      //     right: 1,
-      //     none: 1,
-      //   },
-      // });
-      setCurClicked(order);
-      setVoteHistory(response);
-    } catch (e) {
-      console.error(e);
+    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(_id);
+    const { response, news } = newsInfo;
+    if (news === null) {
+      Error('news content error');
+      return;
     }
+    setNewsContent(news);
+    setCurClicked(order);
+    setVoteHistory(response);
   };
 
   return (

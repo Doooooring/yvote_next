@@ -6,7 +6,6 @@ import {
   faCog,
   faDesktop,
   faEnvelope,
-  faPhone,
   faWater,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -211,15 +210,10 @@ export default function Home() {
                   </div>
                 </div>
               </form>
-              <ul className="actions special">
+              <ul className="actions special apply-button-wrapper">
                 <li>
                   <a href="#" className="button wide primary">
                     신청하기
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="button wide">
-                    그냥~ 씨발 지금처럼 아무런 생각 없이 살아가기
                   </a>
                 </li>
               </ul>
@@ -319,7 +313,7 @@ export default function Home() {
           <section>
             <h4>모집</h4>
             <p>우리가 구하는 사람들의 종류들을 여기다가 쓰면 좋을까</p>
-            <h4>연락처</h4>
+            {/* <h4>연락처</h4> */}
             <p>
               <FontAwesomeIcon icon={faEnvelope} />
               <span className="icon solid alt fa-envelope label"></span> 8gundogan@yonsei.ac.kr{' '}
@@ -327,9 +321,6 @@ export default function Home() {
               <FontAwesomeIcon icon={faInstagram} />
               <span className="icon brands alt fa-instagram label"></span> @liberalminds_kr
               <br />
-              <FontAwesomeIcon icon={faPhone} />
-              <span className="icon solid alt fa-phone label"></span> 010-7202-4317{' '}
-              <i>(꼬우면 전화하세요)</i>
             </p>
           </section>
         </div>
@@ -345,6 +336,9 @@ const Wrapper = styled.div`
 
   .age-select-wrapper {
     padding-right: 2.75em;
+  }
+
+  .apply-button-wrapper {
   }
 
   #demo-category {

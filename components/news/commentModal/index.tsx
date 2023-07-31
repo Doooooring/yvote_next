@@ -119,9 +119,10 @@ export default function CommentModal({
           {curComment === null ? (
             <div className="modal-body">
               <div className="modal-list">
-                {curComments.map((comment) => {
+                {curComments.map((comment, idx) => {
                   return (
                     <div
+                      key={comment.comment + idx}
                       className="body-block"
                       onClick={() => {
                         setCurComment(comment);
@@ -156,8 +157,8 @@ export default function CommentModal({
               <div className="content-wrapper">
                 <p className="content-title">{curComment.title}</p>
                 <div className="content-body">
-                  {curComment.comment.split('$').map((comment) => {
-                    return <p>{comment}</p>;
+                  {curComment.comment.split('$').map((comment, idx) => {
+                    return <p key={idx}>{comment}</p>;
                   })}
                 </div>
               </div>

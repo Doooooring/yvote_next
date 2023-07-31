@@ -117,8 +117,8 @@ export default function NewsPage(props: pageProps) {
         ) : (
           <MainContentsBody>
             <NewsList>
-              {curPreviews.map((preview) => (
-                <PreviewBoxWrapper key={preview.order}>
+              {curPreviews.map((preview, idx) => (
+                <PreviewBoxWrapper key={preview.order + idx}>
                   <PreviewBox
                     Preview={preview}
                     curClicked={curClicked}
