@@ -12,10 +12,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import styled from 'styled-components';
 
-import EderPage from '@images/eder.jpg';
 import KeywordPage from '@images/keyword.png';
 import NewsPage from '@images/news.png';
 
+import ImageFallback from '@components/common/imageFallback';
 import Pic01 from '@images/pic01.jpg';
 
 export default function Home() {
@@ -134,13 +134,7 @@ export default function Home() {
             </div>
             <div className="col-4 col-12-medium">
               <span className="image fit">
-                <Image
-                  src={EderPage}
-                  alt=""
-                  style={{
-                    height: 'auto',
-                  }}
-                />
+                <ImageFallback src={'/assets/img/eder.jpg'} width={'307px'} height={'216px'} />
               </span>
               <h3>정치성향 테스트</h3>
               <p>

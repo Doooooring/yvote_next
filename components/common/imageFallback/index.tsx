@@ -9,12 +9,12 @@ export default function ImageFallback({
   height,
 }: {
   src: string;
-  width: number | string;
-  height: number | string;
+  width?: number | string;
+  height?: number | string;
 }) {
   const [loadError, setLoadError] = useState<boolean>(false);
   const imageStyle = useMemo(() => {
-    const style = { width: width, height: height };
+    const style = { width: width ?? 'auto', height: height ?? 'auto' };
     return style;
   }, []);
 
