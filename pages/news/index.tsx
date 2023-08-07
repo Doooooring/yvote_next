@@ -188,8 +188,8 @@ const MainContentsBody = styled.div`
 const NewsList = styled.div`
   width: 1000px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 490px);
-  grid-template-rows: repeat(auto-fill, 150px);
+  grid-template-columns: repeat(auto-fill, 500px);
+  grid-template-rows: repeat(auto-fill, 140px);
   grid-column-gap: 0px;
   justify-items: center;
   border-style: solid;
@@ -198,14 +198,13 @@ const NewsList = styled.div`
   opacity: 1;
   height: 1300px;
   position: relative;
-  overflow: scroll;
   animation: box-sliding 0.5s linear 1;
   overflow-x: visible;
 `;
 
 const PreviewBoxWrapper = styled.div`
   display: inline-block;
-  width: 470px;
+  width: 490px;
 `;
 
 interface NewsContentsWrapperProps {
@@ -220,4 +219,5 @@ const LastLine = styled.div`
 const NewsContentsWrapper = styled.div`
   width: 1000px;
   height: 800px;
+  font-size: 13px;
 `;

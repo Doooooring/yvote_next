@@ -111,7 +111,7 @@ const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 480px;
+  width: 490px;
 
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
@@ -165,7 +165,7 @@ const Summary = styled.p`
   color: rgb(120, 120, 120);
   margin: 0;
   padding-top: 5px;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -177,7 +177,7 @@ const KeywordsWrapper = styled.div``;
 const Keyword = styled(Link)`
   display: inline;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   margin-right: 6px;
   color: #3a84e5;
 `;

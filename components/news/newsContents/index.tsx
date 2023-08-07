@@ -202,7 +202,7 @@ const Body = styled.div`
   position: relative;
 `;
 const BodyLeft = styled.div`
-  width: 100%;
+  width: 52%;
   min-height: 1000px;
   background-color: white;
   box-shadow: 0 0 35px -30px;
@@ -210,8 +210,8 @@ const BodyLeft = styled.div`
 `;
 
 const BodyRight = styled.div`
-  width: 100%;
-  padding: 0 2rem;
+  width: 48%;
+  padding: 0 1.5rem;
 
   div.comment_body {
     display: grid;
@@ -230,12 +230,13 @@ const BodyRight = styled.div`
     }
   }
 `;
+
 const ContentHead = styled.h1`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 `;
 const ContentBody = styled.div`
@@ -245,10 +246,11 @@ const ContentBody = styled.div`
   align-items: start;
   gap: 20px;
   padding: 1rem;
+  padding-right: 2em;
 `;
 const Summary = styled.div`
   display: inline-block;
-  font-size: 16px;
+  font-size: 13px;
   line-height: 1.5;
   color: #a1a1a1;
   font-weight: 450;
@@ -276,7 +278,7 @@ interface TimelineProps {
 const Timeline = styled.p`
   display: flex;
   flex-direction: row;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   & {
     div.timeline-sentence {
@@ -302,7 +304,7 @@ const KeywordsWrapper = styled.div`
 const Keyword = styled(Link)`
   display: inline;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 10px;
   margin-right: 6px;
   color: #3a84e5;
 `;

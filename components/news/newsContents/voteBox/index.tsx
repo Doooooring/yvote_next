@@ -284,7 +284,7 @@ const SubmitButton = styled.button`
   border-radius: 10px;
   background-color: #79c0d7;
   color: white;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   &:hover {
     cursor: pointer;
