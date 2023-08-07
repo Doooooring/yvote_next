@@ -2882,7 +2882,7 @@ button:disabled,
   background-color: #333;
   color: rgba(255, 255, 255, 0.75);
   background-attachment: fixed, fixed;
-  background-image: url('../public/assets/img/voting.jpg');
+  background-image: url('../public/assets/img/voting.png');
   background-size: cover;
 }
 
@@ -2977,7 +2977,7 @@ button:disabled,
 
 #header {
   padding: 9em 0 9em 0;
-  background-color: #4686a0;
+  background-color: #ffffff;
   color: rgba(255, 255, 255, 0.75);
   background-image: url('../public/assets/img/intro.png');
   background-position: left;

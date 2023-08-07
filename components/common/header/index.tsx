@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import logo from '@images/ico_logo.png';
+import logo from '@images/김민재 로고.png';
 
 interface NavBoxProps {
   link: string;
@@ -47,7 +47,7 @@ export default function Header() {
       <HeaderBody>
         <LogoImgBox>
           <HomeLink href="/" state={curTab === 'home'}>
-            <Image src={logo} alt="hmm" height="40" />
+            <Image src={logo} alt="hmm" height="27" />
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
