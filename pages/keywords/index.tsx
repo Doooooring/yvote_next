@@ -18,7 +18,7 @@ interface pageProps {
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
   const response: getKeywordsResponse = await KeywordRepository.getKeywords();
-  const { recent, other } = response;
+  const { recent, other } = response.keywords;
   const data = { recent, other };
   return {
     props: {

@@ -150,7 +150,7 @@ export default function NewsContent({
         </Body>
         <CommentModal
           id={newsContent._id}
-          comment={curComment ?? commentType.국민의힘}
+          comment={curComment}
           commentOpen={commentOpen}
           commentClose={commentClose}
         />
@@ -166,7 +166,7 @@ const Wrapper = styled.div`
   border-radius: 10px;
   border-style: solid;
   padding-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 80px;
   text-align: left;
   position: absolute;
   overflow: scroll;
@@ -207,6 +207,7 @@ const BodyLeft = styled.div`
   background-color: white;
   box-shadow: 0 0 35px -30px;
   position: relative;
+  padding-bottom: 80px;
 `;
 
 const BodyRight = styled.div`

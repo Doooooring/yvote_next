@@ -17,8 +17,10 @@ export interface otherObject {
 }
 
 export interface getKeywordsResponse {
-  recent: Array<KeywordToView>;
-  other: Array<otherObject>;
+  keywords: {
+    recent: Array<KeywordToView>;
+    other: Array<otherObject>;
+  };
 }
 
 export interface getKeywordsByCategoryResponse {
@@ -34,13 +36,17 @@ class KeywordsRepository {
   async getKeywords() {
     try {
       const response: Response<getKeywordsResponse> = await axios.get(`${HOST_URL}/keywords`);
+      console.log(response);
+      console.log(response.data);
       const keywords = response.data.result;
       return keywords;
     } catch (e) {
       console.log(e);
       return {
-        recent: [],
-        other: [],
+        keywords: {
+          recent: [] as Array<KeywordToView>,
+          other: [] as Array<otherObject>,
+        },
       };
     }
   }
@@ -64,7 +70,7 @@ class KeywordsRepository {
         `${HOST_URL}/keywords/${category}?page=${page}`,
       );
 
-      return response.data.result.keywords;
+      return response.data?.result?.keywords ?? [];
     } catch (e) {
       console.log(e);
       return [];
@@ -77,7 +83,19 @@ class KeywordsRepository {
         `${HOST_URL}/keywords/detail?keyword=${keyword}&page=${curNum}`,
       );
       const keywordDetail = response.data.result;
-      return keywordDetail;
+      return (
+        keywordDetail ??
+        ({
+          keyword: {
+            _id: '',
+            keyword: '',
+            category: 'etc',
+            recent: false,
+            news: [],
+          },
+          previews: [] as Preview[],
+        } as getKeywordDetailResponse)
+      );
     } catch (e) {
       console.log(e);
       return {

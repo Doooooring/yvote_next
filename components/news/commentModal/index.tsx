@@ -61,28 +61,28 @@ export default function CommentModal({
   useEffect(() => {
     if (comment === null) {
       setCurComments([]);
+      curPage.current = 0;
       return;
     }
     async function toAsync() {
       const response = await NewsRepository.getNewsComment(id, comment!, curPage.current);
       setCurComments(response.comments);
-      curPage.current += 1;
     }
     toAsync();
   }, [comment]);
 
   const getPageBefore = async () => {
     if (curPage.current === 0) return;
-    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current - 1);
+    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current - 10);
     setCurComments(response.comments);
-    curPage.current -= 1;
+    curPage.current -= 10;
   };
   const getPageAfter = async () => {
-    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current + 1);
+    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current + 10);
     if (response.comments === null || response.comments.length == 0) {
     } else {
       setCurComments(response.comments);
-      curPage.current += 1;
+      curPage.current += 10;
     }
   };
 
