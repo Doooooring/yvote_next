@@ -13,6 +13,7 @@ import indexStore from '@store/indexStore';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { News, Preview } from '@utils/interface/news';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 type curPreviewsList = Preview[];
 type newsContent = undefined | NewsDetail;
@@ -39,6 +40,8 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 // }
 
 export default function NewsPage(props: pageProps) {
+  const router = useRouter();
+
   const { currentStore } = indexStore;
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
 
@@ -86,6 +89,19 @@ export default function NewsPage(props: pageProps) {
     }
   }, [isOnScreen]);
 
+  useEffect(() => {
+    router.beforePopState(({ url, as, options }) => {
+      if (curClicked) {
+        window.history.pushState('', '');
+        router.push(router.asPath);
+        setCurClicked(undefined);
+        return false;
+      }
+
+      return true;
+    });
+  }, [curClicked]);
+
   return (
     <Wrapper>
       <SearchWrapper>
@@ -118,7 +134,7 @@ export default function NewsPage(props: pageProps) {
           <MainContentsBody>
             <NewsList>
               {curPreviews.map((preview, idx) => (
-                <PreviewBoxWrapper key={preview.order + idx}>
+                <PreviewBoxWrapper key={idx}>
                   <PreviewBox
                     Preview={preview}
                     curClicked={curClicked}

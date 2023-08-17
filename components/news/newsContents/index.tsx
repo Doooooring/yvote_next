@@ -260,6 +260,7 @@ const Summary = styled.div`
   & {
     p {
       margin: 0 0 0.5em 0;
+      min-height: 10px;
     }
   }
 `;
