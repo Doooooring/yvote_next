@@ -113,12 +113,16 @@ export default function NewsPage(props: pageProps) {
         <SpeechBubble />
       </SearchWrapper>
       <MainContents>
-        <MainHeaderWrapper>
-          <MainHeader>
-            <Image src={icoNews} alt="hmm" height="18" />
-            <CategoryName>{'최신 뉴스'}</CategoryName>
-          </MainHeader>
-        </MainHeaderWrapper>
+        {curClicked ? (
+          <></>
+        ) : (
+          <MainHeaderWrapper>
+            <MainHeader>
+              <Image src={icoNews} alt="hmm" height="18" />
+              <CategoryName>{'최신 뉴스'}</CategoryName>
+            </MainHeader>
+          </MainHeaderWrapper>
+        )}
         {curClicked ? (
           <MainContentsBody>
             <NewsContentsWrapper>

@@ -88,7 +88,7 @@ export default function PreviewBox({
             <Image src={icoNew} alt="hmm" height="16" />
           </New>
         </HeadWrapper>
-        <Summary>{summary}</Summary>
+        <Summary>{summary.replace(/\$/g, '')}</Summary>
         <KeywordsWrapper>
           {keywords?.map((keyword) => {
             return (
