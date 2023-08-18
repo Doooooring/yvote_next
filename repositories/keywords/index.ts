@@ -36,8 +36,6 @@ class KeywordsRepository {
   async getKeywords() {
     try {
       const response: Response<getKeywordsResponse> = await axios.get(`${HOST_URL}/keywords`);
-      console.log(response);
-      console.log(response.data);
       const keywords = response.data.result;
       return keywords;
     } catch (e) {
@@ -53,11 +51,13 @@ class KeywordsRepository {
 
   async getKeywordList() {
     try {
-      const response: Response<{ keywords: string[] }> = await axios.get(
-        `${HOST_URL}/keywords/keyword`,
-      );
-      const keylist: string[] = response.data.result?.keywords ?? [];
-      return keylist;
+      const response: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
+        await axios.get(`${HOST_URL}/keywords/keyword`);
+      const keylist: Array<{ _id: string; keyword: string }> = response.data.result?.keywords ?? [];
+      const result = keylist.map((key) => {
+        return key.keyword;
+      });
+      return result;
     } catch (e) {
       console.log(e);
       return [];

@@ -7,18 +7,18 @@ import Image from 'next/image';
 import icoClose from '@images/ico_close.png';
 import defaultImg from '@images/img_thumb@2x.png';
 
-
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 
 interface KeywordBoxProps {
+  id: Keyword['keyword'] | undefined;
   keyword: Keyword['keyword'] | undefined;
   tail: boolean;
 }
 
-export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
+export default function KeywordBox({ id, keyword, tail }: KeywordBoxProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
-  
+
   return (
     <LinkWrapper
       href={`/keywords/${keyword}`}
@@ -33,7 +33,7 @@ export default function KeywordBox({ keyword, tail }: KeywordBoxProps) {
       <Wrapper state={tail}>
         <ImageWrapper state={tail}>
           <Image
-            src={loadError ? defaultImg : `${HOST_URL}/images/keyword/${keyword}.png`}
+            src={loadError ? defaultImg : `${HOST_URL}/images/keyword/${id}.png`}
             alt="hmm"
             width="85"
             height="85"

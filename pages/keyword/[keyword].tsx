@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import icoNews from '@assets/img/ico_news.png';
 import { SpeechBubble } from '@components/common/figure';
-import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
 import PreviewBox from '@components/news/previewBox';
@@ -110,12 +109,12 @@ export default function KeyExplanation({ data }: pageProps) {
       </SearchWrapper>
       <MainContents>
         <MainContentsLeft curClicked={curClicked}>
-          <KeywordWrapper>
+          {/* <KeywordWrapper>
             <KeywordBoxWrapper>
-              <KeywordBox keyword={data.keyName} tail={true} />
+              <KeywordBox id={'adsfsaf'} keyword={data.keyName} tail={true} />
             </KeywordBoxWrapper>
             <ExplanationComp explain={curKeyword.explain} />
-          </KeywordWrapper>
+          </KeywordWrapper> */}
           <NewsListWrapper>
             <NewsHeaderWrapper>
               <Image src={icoNews} alt="hmm" height="18" />

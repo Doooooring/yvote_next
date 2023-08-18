@@ -17,19 +17,35 @@ export default function ImageFallback({
     const style = { width: width ?? 'auto', height: height ?? 'auto' };
     return style;
   }, []);
-
-  return (
-    <Image
-      src={loadError ? defaultImg : src}
-      height={0}
-      width={0}
-      alt="image"
-      style={imageStyle}
-      onError={() => {
-        console.log(src);
-        console.log('is image error');
-        setLoadError(true);
-      }}
-    />
-  );
+  if (typeof width === 'number' && typeof height === 'number') {
+    return (
+      <Image
+        src={loadError ? defaultImg : src}
+        height={height as number}
+        width={width as number}
+        alt="image"
+        // style={imageStyle}
+        onError={() => {
+          console.log(src);
+          console.log('is image error');
+          setLoadError(true);
+        }}
+      />
+    );
+  } else {
+    return (
+      <Image
+        src={loadError ? defaultImg : src}
+        height={0}
+        width={0}
+        alt="image"
+        style={imageStyle}
+        onError={() => {
+          console.log(src);
+          console.log('is image error');
+          setLoadError(true);
+        }}
+      />
+    );
+  }
 }

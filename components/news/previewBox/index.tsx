@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import ImageFallback from '@components/common/imageFallback';
 import icoNew from '@images/ico_new.png';
-import defaultImg from '@images/img_thumb@2x.png';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
@@ -71,15 +71,7 @@ export default function PreviewBox({
       }}
     >
       <ImgWrapper>
-        <Image
-          src={loadError ? defaultImg : `${HOST_URL}/images/news/${order}.png`}
-          alt="Image load error"
-          width="100"
-          height="100"
-          onError={() => {
-            setLoadError(true);
-          }}
-        />
+        <ImageFallback src={`${HOST_URL}/images/news/${_id}`} width={100} height={100} />
       </ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>

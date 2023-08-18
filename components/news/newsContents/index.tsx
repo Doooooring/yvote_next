@@ -9,7 +9,6 @@ import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new.png';
-import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@public/assets/url';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
@@ -69,14 +68,10 @@ export default function NewsContent({
             </NewsBoxClose>
             <ContentBody>
               <div className="content-body-left">
-                <Image
-                  src={loadError ? defaultImg : `${HOST_URL}/images/news/${newsContent.order}.png`}
-                  alt="Image load error"
-                  width="100"
-                  height="100"
-                  onError={() => {
-                    setLoadError(true);
-                  }}
+                <ImageFallback
+                  src={`${HOST_URL}/images/news/${newsContent._id}`}
+                  width={100}
+                  height={100}
                 />
               </div>
               <div className="content-body-right">
