@@ -184,10 +184,6 @@ const SearchWrapper = styled.div`
 
 const MainContents = styled.div`
   width: 1000px;
-  display: grid;
-  grid-template-columns: repeat(2, 495px);
-  grid-column-gap: 10px;
-  position: relative;
 `;
 
 const MainHeaderWrapper = styled.div`
