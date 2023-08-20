@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 
 import styled from 'styled-components';
 
-import { HOST_URL } from '@url';
+import KeywordRepository from '@repositories/keywords';
 import { Keyword } from '@utils/interface/keywords';
 import { getConstantVowel } from '@utils/tools';
 
@@ -21,11 +20,10 @@ export default function SearchBox() {
 
   const getKeys = useCallback(async () => {
     try {
-      const response = await axios.get(`${HOST_URL}/keywords/keyword`);
-      const keylist = response.data;
-      setKeyList(keylist);
-    } catch {
-      Error();
+      const response = await KeywordRepository.getKeywordList();
+      setKeyList(response);
+    } catch (e) {
+      console.log(e);
     }
   }, []);
 
@@ -73,8 +71,10 @@ export default function SearchBox() {
       if (!keylist.includes(searchWord)) {
         alert('알맞은 키워드를 입력해주세요!');
       } else {
+        console.log('___________');
         console.log(searchWord);
-        navigate.push(`/keywords/${searchWord}`);
+        navigate.push(`keywords/${searchWord}`);
+        console.log('_____________________');
       }
     } else if (
       e.key === 'ArrowUp' ||
