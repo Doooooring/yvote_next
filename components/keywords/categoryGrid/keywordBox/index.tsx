@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import Image from 'next/image';
 
 import icoClose from '@images/ico_close.png';
-import defaultImg from '@images/img_thumb@2x.png';
 
+import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 
@@ -32,15 +32,7 @@ export default function KeywordBox({ id, keyword, tail }: KeywordBoxProps) {
     >
       <Wrapper state={tail}>
         <ImageWrapper state={tail}>
-          <Image
-            src={loadError ? defaultImg : `${HOST_URL}/images/keyword/${id}.png`}
-            alt="hmm"
-            width="85"
-            height="85"
-            onError={() => {
-              setLoadError(true);
-            }}
-          />
+          <ImageFallback src={`${HOST_URL}/images/keyword/${id}`} width={85} height={85} />
         </ImageWrapper>
         <KeywordWrapper>
           <KeywordTitle>{keyword}</KeywordTitle>
@@ -117,6 +109,7 @@ const KeywordTitle = styled.p`
   font-size: 20px;
   font-weight: 600;
   color: rgb(50, 50, 50);
+  margin: 0;
 `;
 
 interface KeywordBoxTailProps {

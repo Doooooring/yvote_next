@@ -117,6 +117,7 @@ export default function KeyExplanation({ data }: pageProps) {
       </SearchWrapper>
       <KeywordWrapper>
         <ExplanationComp
+          id={curKeyword._id!}
           category={curKeyword.category ?? 'etc'}
           keyword={curKeyword.keyword!}
           explain={curKeyword.explain}
@@ -227,19 +228,18 @@ const KeywordWrapper = styled.div`
 const NewsList = styled.div`
   width: 1000px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 490px);
-  grid-template-rows: repeat(auto-fill, 120px);
+  grid-template-columns: repeat(auto-fill, 500px);
+  grid-template-rows: repeat(auto-fill, 140px);
   grid-column-gap: 0px;
-  grid-row-gap: 20px;
   justify-items: center;
   border-style: solid;
   border-radius: 10px;
   border-width: 0px;
   opacity: 1;
-  height: 900px;
+  height: 1300px;
   position: relative;
-  overflow: scroll;
   animation: box-sliding 0.5s linear 1;
+  overflow-x: visible;
 `;
 
 const PreviewBoxWrapper = styled.div`

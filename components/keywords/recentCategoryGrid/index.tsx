@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 import Image from 'next/image';
 
-import RecentKeywordBox from '@components/keywords/recentCategoryGrid/keywordBox';
 import icoNews from '@images/ico_news.png';
 import { KeywordToView } from '@utils/interface/keywords';
+import KeywordBox from '../categoryGrid/keywordBox';
 
 interface RecentCategoryGridProps {
   keywords: Array<KeywordToView>;
@@ -22,7 +22,12 @@ export default function RecentCategoryGrid({ keywords, setKeywords }: RecentCate
       <GridWrapper>
         {keywords.map((keyword) => {
           return (
-            <RecentKeywordBox key={keyword.keyword} keyword={keyword.keyword}></RecentKeywordBox>
+            <KeywordBox
+              key={keyword.keyword}
+              id={keyword._id}
+              keyword={keyword.keyword}
+              tail={false}
+            ></KeywordBox>
           );
         })}
       </GridWrapper>
@@ -34,9 +39,12 @@ const Wrapper = styled.div``;
 
 const GridWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 190px);
-  grid-row-gap: 20px;
-  grid-column-gap: 12.5px;
+  height: 220px;
+  grid-template-rows: repeat(2, 95px);
+  grid-template-columns: repeat(auto-fill, 235px);
+  grid-auto-flow: column;
+  grid-row-gap: 10px;
+  grid-column-gap: 20px;
   width: 1000px;
 `;
 

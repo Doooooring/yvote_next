@@ -2,18 +2,25 @@ import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@public/assets/url';
 import { category } from '@utils/interface/keywords';
 
+import icoClose from '@images/ico_close.png';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 
 export default function ExplanationComp({
+  id,
   explain,
+  category,
   keyword,
 }: {
+  id: string;
   category: category;
   explain: string | undefined;
   keyword: string;
 }) {
+  const navigation = useRouter();
+
   const [keywordTagLoadError, setKeywordTagLoadError] = useState<boolean>(false);
   const [keywordImgLoadError, setKeywordImgLoadError] = useState<boolean>(false);
   if (explain === undefined) {
@@ -21,10 +28,23 @@ export default function ExplanationComp({
   }
   return (
     <ExplanationWrapper>
+      <NewsBoxClose>
+        <input
+          type="button"
+          style={{ display: 'none' }}
+          id="close-button"
+          onClick={() => {
+            navigation.back();
+          }}
+        ></input>
+        <CloseButton htmlFor="close-button">
+          <Image src={icoClose} alt="hmm" />
+        </CloseButton>
+      </NewsBoxClose>
       <ExplanationHeader>
         <p>{keyword}</p>
         <Image
-          src={keywordTagLoadError ? defaultImg : `${HOST_URL}/images/keyword/${keyword}.png`}
+          src={keywordTagLoadError ? defaultImg : `${HOST_URL}/images/${category}`}
           alt="hmm"
           width="20"
           height="20"
@@ -41,7 +61,7 @@ export default function ExplanationComp({
         </ExplanationList>
         <KeywordImg>
           <Image
-            src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${keyword}.png`}
+            src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${id}`}
             alt="hmm"
             width="170"
             height="170"
@@ -63,9 +83,27 @@ const ExplanationWrapper = styled.div`
   background-color: white;
   padding: 2rem 3rem;
   box-shadow: 0 8px 35px -25px;
+  position: relative;
   p {
     margin: 0;
     padding: 0;
+  }
+`;
+
+const NewsBoxClose = styled.div`
+  padding-right: 10px;
+  text-align: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+`;
+
+const CloseButton = styled.label`
+  padding-top: 10px;
+
+  text-align: right;
+  &:hover {
+    cursor: pointer;
   }
 `;
 
