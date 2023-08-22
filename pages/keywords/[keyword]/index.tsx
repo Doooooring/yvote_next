@@ -69,9 +69,11 @@ export default function KeyExplanation({ data }: pageProps) {
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
   useEffect(() => {
-    setCurKeyword(data.keyword);
-    setCurPreviews(data.previews);
-  }, []);
+    if (data) {
+      setCurKeyword(data.keyword);
+      setCurPreviews(data.previews);
+    }
+  }, [data]);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   const getNewsContent = useCallback(async () => {
@@ -98,16 +100,15 @@ export default function KeyExplanation({ data }: pageProps) {
 
   useEffect(() => {
     //요청 중이라면 보내지 않기
+    const toAsync = async () => {
+      await getNewsContent();
+    };
     if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
-      getNewsContent();
+      toAsync();
     } else {
       return;
     }
   }, [isOnScreen]);
-
-  if (curKeyword === undefined) {
-    return <div></div>;
-  }
 
   return (
     <Wrapper>
@@ -117,10 +118,10 @@ export default function KeyExplanation({ data }: pageProps) {
       </SearchWrapper>
       <KeywordWrapper>
         <ExplanationComp
-          id={curKeyword._id!}
-          category={curKeyword.category ?? 'etc'}
-          keyword={curKeyword.keyword!}
-          explain={curKeyword.explain}
+          id={curKeyword?._id! ?? ''}
+          category={curKeyword?.category ?? 'etc'}
+          keyword={curKeyword?.keyword! ?? ''}
+          explain={curKeyword?.explain ?? ''}
         />
       </KeywordWrapper>
       <MainContents>

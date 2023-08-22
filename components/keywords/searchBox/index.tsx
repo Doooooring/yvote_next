@@ -67,14 +67,12 @@ export default function SearchBox() {
     }
   }
   async function handleArrowKey(e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) {
+    e.preventDefault();
     if (e.key === 'Enter') {
       if (!keylist.includes(searchWord)) {
         alert('알맞은 키워드를 입력해주세요!');
       } else {
-        console.log('___________');
-        console.log(searchWord);
-        navigate.push(`keywords/${searchWord}`);
-        console.log('_____________________');
+        navigate.push(`/keywords/${searchWord}`);
       }
     } else if (
       e.key === 'ArrowUp' ||
