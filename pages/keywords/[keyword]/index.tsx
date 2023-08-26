@@ -171,7 +171,8 @@ const Wrapper = styled.div`
   align-items: center;
   text-align: center;
   height: 1200px;
-  margin-top: 100px;
+  padding-top: 20px;
+  background-color: rgb(242, 242, 242);
 `;
 
 const SearchWrapper = styled.div`

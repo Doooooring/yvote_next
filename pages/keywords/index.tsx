@@ -105,7 +105,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100px;
+  padding-top: 20px;
+  background-color: rgb(242, 242, 242);
 `;
 
 const SearchWrapper = styled.div`
