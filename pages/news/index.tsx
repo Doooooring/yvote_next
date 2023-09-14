@@ -52,7 +52,7 @@ export default function NewsPage(props: pageProps) {
   const [voteHistory, setVoteHistory] = useState<'left' | 'right' | 'none' | null>(null);
 
   //무한 스크롤에 필요한 훅들
-  const curPage = useRef<number>(10);
+  const curPage = useRef<number>(20);
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -69,7 +69,7 @@ export default function NewsPage(props: pageProps) {
         curPage.current = -1;
         return;
       }
-      curPage.current += 10;
+      curPage.current += 20;
       const newPreviews = curPreviews.concat(Previews);
       setCurPreviews(newPreviews);
       return;
