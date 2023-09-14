@@ -46,6 +46,28 @@ export default function NewsContent({
     setCurComment(null);
   }, []);
 
+  const commentToShow = newsContent?.comments.sort((a, b) => {
+    const getOrder = (comment: commentType) => {
+      switch (comment) {
+        case commentType.와이보트:
+          return 5;
+        case commentType.국민의힘:
+          return 4;
+        case commentType.민주당:
+          return 3;
+        case commentType.청와대:
+          return 2;
+        case commentType.기타:
+          return 1;
+        default:
+          return 0;
+      }
+    };
+    const aOrder = getOrder(a);
+    const bOrder = getOrder(b);
+    return bOrder - aOrder;
+  });
+
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
   } else {
@@ -117,7 +139,7 @@ export default function NewsContent({
           </BodyLeft>
           <BodyRight>
             <div className="comment_body">
-              {newsContent.comments.map((comment) => {
+              {commentToShow!.map((comment) => {
                 return (
                   <div
                     className="comment"

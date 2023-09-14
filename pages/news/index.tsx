@@ -233,7 +233,7 @@ interface NewsContentsWrapperProps {
 
 const LastLine = styled.div`
   width: 10px;
-  height: 10px;
+  height: 100px;
 `;
 
 const NewsContentsWrapper = styled.div`
