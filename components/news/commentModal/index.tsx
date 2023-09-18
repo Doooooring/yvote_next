@@ -276,6 +276,7 @@ const Wrapper = styled.div`
         div.content-body {
           p {
             margin-bottom: 0.5rem;
+            min-height: 10px;
           }
           div.content-wrapper {
           }
