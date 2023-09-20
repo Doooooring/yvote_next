@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
 export function useTypeEffect(
   text: string,
   duration: number,
-  state: boolean
+  state: boolean,
 ): [number, string, boolean] {
   const textLength = useMemo(() => {
     return text.length;
   }, []);
 
   const [curInd, setCurInd] = useState<number>(0);
-  const [curText, setCurText] = useState<string>("");
+  const [curText, setCurText] = useState<string>('');
   const [isEnd, setIsEnd] = useState<boolean>(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useTypeEffect(
     }
 
     setTimeout(() => {
-      if (curInd < textLength) {
+      if (curInd <= textLength) {
         setCurText(text.slice(0, curInd));
         setCurInd(curInd + 1);
       }
