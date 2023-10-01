@@ -89,21 +89,21 @@ export default function NewsContent({
       <Wrapper>
         <Body>
           <BodyLeft>
-            <NewsBoxClose>
+            <NewsContentsClose>
               <input
                 type="button"
                 style={{ display: 'none' }}
-                id="close-button"
+                id="contents-close-button"
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log('is clicked');
-                  // setCurClicked(undefined);
+                  // console.log('is clicked');
+                  setCurClicked(undefined);
                 }}
               ></input>
-              <CloseButton htmlFor="close-button">
+              <CloseButton htmlFor="contents-close-button">
                 <Image src={icoClose} alt="hmm" />
               </CloseButton>
-            </NewsBoxClose>
+            </NewsContentsClose>
             <ContentBody>
               <div className="content-body-left">
                 <ImageFallback
@@ -210,7 +210,7 @@ const Wrapper = styled.div`
     }
   }
 `;
-const NewsBoxClose = styled.div`
+const NewsContentsClose = styled.div`
   padding-right: 10px;
   text-align: right;
   position: absolute;
