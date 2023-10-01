@@ -1,13 +1,14 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import ImageFallback from '@components/common/imageFallback';
 import icoNew from '@images/ico_new.png';
+import KeywordRepository from '@repositories/keywords';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
+import { useRouter } from 'next/router';
 
 type newsContent = undefined | News;
 type setNewsContent = (newsContent: NewsDetail) => void;
@@ -35,6 +36,7 @@ export default function PreviewBox({
   setNewsContent,
   setVoteHistory,
 }: PreviewBoxProps) {
+  const navigate = useRouter();
   const { _id, order, title, summary, keywords, state } = Preview;
 
   const [loadError, setLoadError] = useState<boolean>(false);
@@ -54,6 +56,16 @@ export default function PreviewBox({
     setNewsContent(news);
     setCurClicked(order);
     setVoteHistory(response);
+  };
+
+  const routeToKeyword = async (key: string) => {
+    const keyword = await KeywordRepository.getKeywordByKey(key);
+    if (!keyword) {
+      alert('다시 검색해주세요!');
+      return;
+    }
+    const { _id } = keyword!;
+    navigate.push(`/keywords/${_id}`);
   };
 
   return (
@@ -84,9 +96,12 @@ export default function PreviewBox({
         <KeywordsWrapper>
           {keywords?.map((keyword) => {
             return (
-              <Keyword key={keyword} href={`/keywords/${keyword}`}>
+              // <Keyword key={keyword} href={`/keywords/${keyword}`}>
+              //   {`#${keyword}`}
+              // </Keyword>
+              <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
                 {`#${keyword}`}
-              </Keyword>
+              </p>
             );
           })}
         </KeywordsWrapper>
@@ -165,11 +180,20 @@ const Summary = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-const KeywordsWrapper = styled.div``;
-const Keyword = styled(Link)`
-  display: inline;
-  text-decoration: none;
-  font-size: 12px;
-  margin-right: 6px;
-  color: #3a84e5;
+const KeywordsWrapper = styled.div`
+  .keyword {
+    display: inline;
+    text-decoration: none;
+    font-size: 12px;
+    margin: 0;
+    margin-right: 6px;
+    color: #3a84e5;
+  }
 `;
+// const Keyword = styled(Link)`
+//   display: inline;
+//   text-decoration: none;
+//   font-size: 12px;
+//   margin-right: 6px;
+//   color: #3a84e5;
+// `;

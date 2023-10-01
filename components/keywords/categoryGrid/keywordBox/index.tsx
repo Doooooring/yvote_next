@@ -11,7 +11,7 @@ import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 
 interface KeywordBoxProps {
-  id: Keyword['keyword'] | undefined;
+  id: Keyword['_id'] | undefined;
   keyword: Keyword['keyword'] | undefined;
   tail: boolean;
 }
@@ -21,7 +21,7 @@ export default function KeywordBox({ id, keyword, tail }: KeywordBoxProps) {
 
   return (
     <LinkWrapper
-      href={`/keywords/${keyword}`}
+      href={`/keywords/${id}`}
       state={tail}
       onClick={(e) => {
         if (tail) {

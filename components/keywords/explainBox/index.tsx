@@ -34,6 +34,7 @@ export default function ExplanationComp({
           style={{ display: 'none' }}
           id="close-button"
           onClick={() => {
+            console.log('here');
             navigation.back();
           }}
         ></input>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { HOST_URL } from '@url';
-import { category, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
+import { category, Keyword, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
 import { Preview } from '@utils/interface/news';
 
 interface Response<T> {
@@ -64,6 +64,32 @@ class KeywordsRepository {
     }
   }
 
+  async getKeywordIdList() {
+    try {
+      const response: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
+        await axios.get(`${HOST_URL}/keywords/keyword`);
+      const keylist = response.data.result?.keywords ?? [];
+      const result = keylist.map((key) => {
+        return key._id;
+      });
+      return result;
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+  }
+
+  async getKeywordByKey(key: string) {
+    try {
+      const response: Response<{ keyword: Keyword }> = await axios.get(
+        `${HOST_URL}/keywords/key?keyname=${key}`,
+      );
+      return response.data.result.keyword;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async getKeywordsByCategory(category: category, page: number) {
     try {
       const response: Response<getKeywordsByCategoryResponse> = await axios.get(
@@ -77,10 +103,10 @@ class KeywordsRepository {
     }
   }
 
-  async getKeywordDetail(keyword: string, curNum: number) {
+  async getKeywordDetail(id: string, curNum: number) {
     try {
       const response: Response<getKeywordDetailResponse> = await axios.get(
-        `${HOST_URL}/keywords/detail?keyword=${keyword}&page=${curNum}`,
+        `${HOST_URL}/keywords/detail?id=${id}&page=${curNum}`,
       );
       const keywordDetail = response.data.result;
       return (

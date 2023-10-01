@@ -10,9 +10,11 @@ import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new.png';
 import { HOST_URL } from '@public/assets/url';
+import KeywordRepository from '@repositories/keywords';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { News, commentType } from '@utils/interface/news';
+import { useRouter } from 'next/router';
 import CommentModal from '../commentModal';
 
 type newsContent = undefined | NewsDetail;
@@ -32,6 +34,7 @@ export default function NewsContent({
   newsContent,
   voteHistory,
 }: NewsContentProps) {
+  const navigate = useRouter();
   const [loadError, setLoadError] = useState<boolean>(false);
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
@@ -68,6 +71,17 @@ export default function NewsContent({
     return bOrder - aOrder;
   });
 
+  const routeToKeyword = async (key: string) => {
+    const keyword = await KeywordRepository.getKeywordByKey(key);
+    if (!keyword) {
+      alert('다시 검색해주세요!');
+      return;
+    }
+    const { _id } = keyword!;
+    console.log(_id);
+    navigate.push(`/keywords/${_id}`);
+  };
+
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
   } else {
@@ -80,8 +94,10 @@ export default function NewsContent({
                 type="button"
                 style={{ display: 'none' }}
                 id="close-button"
-                onClick={() => {
-                  setCurClicked(undefined);
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log('is clicked');
+                  // setCurClicked(undefined);
                 }}
               ></input>
               <CloseButton htmlFor="close-button">
@@ -109,9 +125,9 @@ export default function NewsContent({
                 <KeywordsWrapper>
                   {newsContent.keywords?.map((keyword) => {
                     return (
-                      <Keyword key={keyword} href={`/keywords/${keyword}`}>
+                      <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
                         {`#${keyword}`}
-                      </Keyword>
+                      </p>
                     );
                   })}
                 </KeywordsWrapper>
@@ -319,6 +335,15 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
 
 const KeywordsWrapper = styled.div`
   line-height: 1;
+  .keyword {
+    display: inline;
+    text-decoration: none;
+    font-size: 12px;
+    margin: 0;
+    margin-right: 6px;
+    color: #3a84e5;
+    cursor: pointer;
+  }
 `;
 const Keyword = styled(Link)`
   display: inline;

@@ -23,14 +23,14 @@ type AnswerState = 'left' | 'right' | 'none' | null;
 
 interface pageProps {
   data: {
-    keyName: string;
+    id: string;
     keyword: KeywordOnDetail;
     previews: Array<Preview>;
   };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const keywords: string[] = await keywordRepository.getKeywordList();
+  const keywords: string[] = await keywordRepository.getKeywordIdList();
   const paths = keywords.map((keyword: string) => {
     return {
       params: { keyword },
@@ -40,15 +40,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const keyName = context.params!.keyword as string;
+  const id = context.params!.keyword as string;
   const { keyword, previews }: getKeywordDetailResponse = await keywordRepository.getKeywordDetail(
-    keyName,
+    id,
     0,
   );
   return {
     props: {
       data: {
-        keyName,
+        id,
         keyword,
         previews,
       },
