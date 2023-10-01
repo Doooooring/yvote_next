@@ -82,6 +82,9 @@ export default function NewsPage(props: pageProps) {
 
   useEffect(() => {
     //요청 중이라면 보내지 않기
+    console.log(curPage.current);
+    console.log(isOnScreen);
+
     if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
       getNewsContent();
     } else {
