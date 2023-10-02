@@ -7,13 +7,19 @@ export function useOnScreen(ref: RefObject<HTMLElement>) {
   const [isOnScreen, setIsOnScreen] = useState(false);
 
   useEffect(() => {
+    console.log('use on screen rendering observer');
+    console.log(ref);
     observerRef.current = new IntersectionObserver(([entry]) =>
       // 화면 노출 상태를 state로 저장
       setIsOnScreen(entry.isIntersecting),
     );
-  }, []);
+  }, [ref]);
 
   useEffect(() => {
+    console.log('handling disconnect and observer');
+    console.log(ref);
+    console.log(observerRef);
+    console.log('_____________');
     if (observerRef.current === null || ref.current === null) {
       return;
     }
