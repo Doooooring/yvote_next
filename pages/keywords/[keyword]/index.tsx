@@ -18,7 +18,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 
 type curPreviewsList = Preview[];
 type newsContent = undefined | News;
-type curClicked = undefined | News['order'];
+type curClicked = undefined | News['_id'];
 type AnswerState = 'left' | 'right' | 'none' | null;
 
 interface pageProps {
@@ -27,6 +27,11 @@ interface pageProps {
     keyword: KeywordOnDetail;
     previews: Array<Preview>;
   };
+}
+
+interface getNewsContentResponse {
+  response: AnswerState;
+  news: NewsDetail | null;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -59,9 +64,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function KeyExplanation({ data }: pageProps) {
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
-  const [curNewsContent, setCurNewsContent] = useState<NewsDetail | undefined>(undefined);
+  const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
+
+  const newsWrapper = useRef<HTMLDivElement>(null);
+  const [scrollMem, setScrollMem] = useState<number | null>(null);
 
   const curPage = useRef<number>(10);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -98,6 +106,38 @@ export default function KeyExplanation({ data }: pageProps) {
     }
   }, [curPreviews]);
 
+  const showNewsContent = async (id: string) => {
+    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
+    const { response, news } = newsInfo;
+    if (news === null) {
+      Error('news content error');
+      return;
+    }
+    newsWrapper.current!.scrollTo(0, 0);
+    setNewsContent(news);
+    setCurClicked(id);
+    setVoteHistory(response);
+  };
+
+  const hideNewsContent = useCallback(() => {
+    newsWrapper.current!.scrollTo(0, scrollMem!);
+    setScrollMem(null);
+    setCurClicked(undefined);
+    setVoteHistory(null);
+  }, [scrollMem]);
+
+  const toggleNewsContentView = useCallback(
+    (id: string) => {
+      if (curClicked === id) {
+        setCurClicked(undefined);
+        setVoteHistory(null);
+      } else {
+        showNewsContent(id);
+      }
+    },
+    [curClicked],
+  );
+
   useEffect(() => {
     //요청 중이라면 보내지 않기
     const toAsync = async () => {
@@ -111,7 +151,7 @@ export default function KeyExplanation({ data }: pageProps) {
   }, [isOnScreen]);
 
   return (
-    <Wrapper>
+    <Wrapper ref={newsWrapper}>
       <SearchWrapper>
         <SearchBox />
         <SpeechBubble />
@@ -136,9 +176,9 @@ export default function KeyExplanation({ data }: pageProps) {
             <NewsContentsWrapper>
               <NewsContent
                 curClicked={curClicked}
-                setCurClicked={setCurClicked}
-                newsContent={curNewsContent}
+                newsContent={newsContent}
                 voteHistory={voteHistory}
+                hide={hideNewsContent}
               />
             </NewsContentsWrapper>
           </MainContentsBody>
@@ -150,9 +190,10 @@ export default function KeyExplanation({ data }: pageProps) {
                   <PreviewBox
                     Preview={preview}
                     curClicked={curClicked}
-                    setCurClicked={setCurClicked}
-                    setNewsContent={setCurNewsContent}
-                    setVoteHistory={setVoteHistory}
+                    click={toggleNewsContentView}
+                    // setCurClicked={setCurClicked}
+                    // setNewsContent={setNewsContent}
+                    // setVoteHistory={setVoteHistory}
                   />
                 </PreviewBoxWrapper>
               ))}

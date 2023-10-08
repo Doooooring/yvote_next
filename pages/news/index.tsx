@@ -5,28 +5,32 @@ import { GetServerSideProps } from 'next';
 
 import { SpeechBubble } from '@components/common/figure';
 import NewsContents from '@components/news/newsContents';
-import PreviewBox from '@components/news/previewBox';
+import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import icoNews from '@images/ico_news.png';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import indexStore from '@store/indexStore';
-import { useOnScreen } from '@utils/hook/useOnScreen';
 import { News, Preview } from '@utils/interface/news';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 type curPreviewsList = Preview[];
 type newsContent = undefined | NewsDetail;
-type curClicked = undefined | News['order'];
+type curClicked = undefined | News['_id'];
+type AnswerState = 'left' | 'right' | 'none' | null;
 type setCurClicked = (curClicked: curClicked) => void;
 
 interface pageProps {
   data: Array<Preview>;
 }
 
+interface getNewsContentResponse {
+  response: AnswerState;
+  news: NewsDetail | null;
+}
+
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
   const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
-  console.log(data);
   return {
     props: { data },
   };
@@ -51,46 +55,53 @@ export default function NewsPage(props: pageProps) {
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>(props.data);
   const [voteHistory, setVoteHistory] = useState<'left' | 'right' | 'none' | null>(null);
 
-  //무한 스크롤에 필요한 훅들
   const curPage = useRef<number>(20);
-  const elementRef = useRef<HTMLDivElement>(null);
-  const isOnScreen = useOnScreen(elementRef);
-  const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
-  //뷰에 들어옴이 감지될 때 요청 보내기
-  const getNewsContent = useCallback(async () => {
-    setIsRequesting(true);
-    try {
-      const Previews: Array<Preview> = await NewsRepository.getPreviews(
-        curPage.current,
-        submitWord,
-      );
-      if (Previews.length === 0) {
-        curPage.current = -1;
-        return;
+  const newsWrapper = useRef<HTMLDivElement>(null);
+  const [scrollMem, setScrollMem] = useState<number | null>(null);
+
+  const fetchNewsContent = useCallback(async () => {
+    const Previews: Array<Preview> = await NewsRepository.getPreviews(curPage.current, submitWord);
+    if (Previews.length === 0) {
+      curPage.current = -1;
+      return;
+    }
+    curPage.current += 20;
+    const newPreviews = curPreviews.concat(Previews);
+    setCurPreviews(newPreviews);
+  }, [curPage, curPreviews]);
+
+  const showNewsContent = async (id: string) => {
+    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
+    const { response, news } = newsInfo;
+    if (news === null) {
+      Error('news content error');
+      return;
+    }
+    setScrollMem(newsWrapper.current!.scrollTop);
+    newsWrapper.current!.scrollTo(0, 0);
+    setNewsContent(news);
+    setCurClicked(id);
+    setVoteHistory(response);
+  };
+
+  const hideNewsContent = useCallback(() => {
+    newsWrapper.current!.scrollTo(0, scrollMem!);
+    setScrollMem(null);
+    setCurClicked(undefined);
+    setVoteHistory(null);
+  }, [scrollMem]);
+
+  const toggleNewsContentView = useCallback(
+    (id: string) => {
+      if (curClicked === id) {
+        hideNewsContent();
+      } else {
+        showNewsContent(id);
       }
-      curPage.current += 20;
-      const newPreviews = curPreviews.concat(Previews);
-      setCurPreviews(newPreviews);
-      return;
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRequesting(false);
-    }
-  }, [curPreviews]);
-
-  useEffect(() => {
-    //요청 중이라면 보내지 않기
-    console.log(curPage.current);
-    console.log(isOnScreen);
-
-    if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
-      getNewsContent();
-    } else {
-      return;
-    }
-  }, [isOnScreen]);
+    },
+    [curClicked],
+  );
 
   useEffect(() => {
     router.beforePopState(({ url, as, options }) => {
@@ -106,7 +117,7 @@ export default function NewsPage(props: pageProps) {
   }, [curClicked]);
 
   return (
-    <Wrapper>
+    <Wrapper ref={newsWrapper}>
       <SearchWrapper>
         <SearchBox
           curPage={curPage}
@@ -126,35 +137,26 @@ export default function NewsPage(props: pageProps) {
             </MainHeader>
           </MainHeaderWrapper>
         )}
-        {curClicked ? (
-          <MainContentsBody>
+        <MainContentsBody>
+          {curClicked ? (
             <NewsContentsWrapper>
               <NewsContents
                 curClicked={curClicked}
-                setCurClicked={setCurClicked}
                 newsContent={newsContent}
                 voteHistory={voteHistory}
+                hide={hideNewsContent}
               />
             </NewsContentsWrapper>
-          </MainContentsBody>
-        ) : (
-          <MainContentsBody>
-            <NewsList>
-              {curPreviews.map((preview, idx) => (
-                <PreviewBoxWrapper key={idx}>
-                  <PreviewBox
-                    Preview={preview}
-                    curClicked={curClicked}
-                    setCurClicked={setCurClicked}
-                    setNewsContent={setNewsContent}
-                    setVoteHistory={setVoteHistory}
-                  />
-                </PreviewBoxWrapper>
-              ))}
-              <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
-            </NewsList>
-          </MainContentsBody>
-        )}
+          ) : (
+            <NewsList
+              page={curPage.current ?? 0}
+              previews={curPreviews}
+              curClicked={curClicked}
+              fetchNewsContent={fetchNewsContent}
+              toggleNewsContentView={toggleNewsContentView}
+            />
+          )}
+        </MainContentsBody>
       </MainContents>
     </Wrapper>
   );
@@ -208,39 +210,48 @@ const MainContentsBody = styled.div`
   position: relative;
 `;
 
-const NewsList = styled.div`
-  width: 1000px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 500px);
-  grid-template-rows: repeat(auto-fill, 140px);
-  grid-column-gap: 0px;
-  justify-items: center;
-  border-style: solid;
-  border-radius: 10px;
-  border-width: 0px;
-  opacity: 1;
-  height: 1300px;
-  position: relative;
-  animation: box-sliding 0.5s linear 1;
-  overflow-x: visible;
-`;
-
-const PreviewBoxWrapper = styled.div`
-  display: inline-block;
-  width: 490px;
-`;
+// const NewsList = styled.div`
+//   width: 1000px;
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, 500px);
+//   grid-template-rows: repeat(auto-fill, 140px);
+//   grid-column-gap: 0px;
+//   justify-items: center;
+//   border-style: solid;
+//   border-radius: 10px;
+//   border-width: 0px;
+//   opacity: 1;
+//   height: 1300px;
+//   position: relative;
+//   animation: box-sliding 0.5s linear 1;
+//   overflow-x: visible;
+// `;
 
 interface NewsContentsWrapperProps {
   curClicked: curClicked;
 }
-
-const LastLine = styled.div`
-  width: 10px;
-  height: 100px;
-`;
 
 const NewsContentsWrapper = styled.div`
   width: 1000px;
   height: 800px;
   font-size: 13px;
 `;
+
+// <NewsList>
+//   {curPreviews.map((preview, idx) => (
+//     <PreviewBoxWrapper key={idx}>
+//       <PreviewBox
+//         Preview={preview}
+//         curClicked={curClicked}
+//         click={toggleNewsContentView}
+//         // setCurClicked={setCurClicked}
+//         // setNewsContent={setNewsContent}
+//         // setVoteHistory={setVoteHistory}
+//       />
+//     </PreviewBoxWrapper>
+//   ))}
+//   {!curClicked && <LastLine ref={elementRef}></LastLine>}
+// </NewsList>
+/* <NewsList 
+
+            /> */

@@ -18,21 +18,21 @@ import { useRouter } from 'next/router';
 import CommentModal from '../commentModal';
 
 type newsContent = undefined | NewsDetail;
-type curClicked = undefined | News['order'];
+type curClicked = undefined | News['_id'];
 type setCurClicked = (curClicked: curClicked) => void;
 
 interface NewsContentProps {
   curClicked: curClicked;
-  setCurClicked: setCurClicked;
   newsContent: newsContent;
   voteHistory: 'left' | 'right' | 'none' | null;
+  hide: () => void;
 }
 
 export default function NewsContent({
   curClicked,
-  setCurClicked,
   newsContent,
   voteHistory,
+  hide,
 }: NewsContentProps) {
   const navigate = useRouter();
   const [loadError, setLoadError] = useState<boolean>(false);
@@ -78,7 +78,6 @@ export default function NewsContent({
       return;
     }
     const { _id } = keyword!;
-    console.log(_id);
     navigate.push(`/keywords/${_id}`);
   };
 
@@ -97,7 +96,7 @@ export default function NewsContent({
                 onClick={(e) => {
                   e.preventDefault();
                   // console.log('is clicked');
-                  setCurClicked(undefined);
+                  hide();
                 }}
               ></input>
               <CloseButton htmlFor="contents-close-button">

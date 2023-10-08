@@ -12,16 +12,17 @@ import { useRouter } from 'next/router';
 
 type newsContent = undefined | News;
 type setNewsContent = (newsContent: NewsDetail) => void;
-type curClicked = undefined | News['order'];
+type curClicked = undefined | News['_id'];
 type setCurClicked = (curClicked: curClicked) => void;
 type AnswerState = 'left' | 'right' | 'none' | null;
 
 interface PreviewBoxProps {
   Preview: Preview;
   curClicked: curClicked;
-  setCurClicked: setCurClicked;
-  setNewsContent: setNewsContent;
-  setVoteHistory: (voteHistory: AnswerState) => void;
+  click: (id: string) => void;
+  // setCurClicked: setCurClicked;
+  // setNewsContent: setNewsContent;
+  // setVoteHistory: (voteHistory: AnswerState) => void;
 }
 
 interface getNewsContentResponse {
@@ -32,10 +33,11 @@ interface getNewsContentResponse {
 export default function PreviewBox({
   Preview,
   curClicked,
-  setCurClicked,
-  setNewsContent,
-  setVoteHistory,
-}: PreviewBoxProps) {
+  click,
+}: // setCurClicked,
+// setNewsContent,
+// setVoteHistory,
+PreviewBoxProps) {
   const navigate = useRouter();
   const { _id, order, title, summary, keywords, state } = Preview;
 
@@ -53,9 +55,9 @@ export default function PreviewBox({
       Error('news content error');
       return;
     }
-    setNewsContent(news);
-    setCurClicked(order);
-    setVoteHistory(response);
+    // setNewsContent(news);
+    // setCurClicked(order);
+    // setVoteHistory(response);
   };
 
   const routeToKeyword = async (key: string) => {
@@ -71,14 +73,15 @@ export default function PreviewBox({
   return (
     <Wrapper
       ref={myRef}
-      state={curClicked === order}
+      state={curClicked === _id}
       onClick={() => {
-        if (curClicked === order) {
-          setCurClicked(undefined);
-          setVoteHistory(null);
-          return;
-        }
-        showNewsContent();
+        click(_id);
+        // if (curClicked === order) {
+      //   setCurClicked(undefined);
+        //   setVoteHistory(null);
+        //   return;
+        // }
+        // showNewsContent();
         // scrollToElement();
       }}
     >

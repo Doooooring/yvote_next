@@ -26,8 +26,6 @@ export default function ImageFallback({
         alt="image"
         // style={imageStyle}
         onError={() => {
-          console.log(src);
-          console.log('is image error');
           setLoadError(true);
         }}
       />
@@ -41,8 +39,6 @@ export default function ImageFallback({
         alt="image"
         style={imageStyle}
         onError={() => {
-          console.log(src);
-          console.log('is image error');
           setLoadError(true);
         }}
       />

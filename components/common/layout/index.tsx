@@ -20,6 +20,6 @@ const Body = styled.div`
   width: 100vw;
   height: 100vh;
   padding-bottom: 50px;
-  overflow: scroll;
+
   background-color: rgb(242, 242, 242);
 `;
