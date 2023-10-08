@@ -77,7 +77,7 @@ PreviewBoxProps) {
       onClick={() => {
         click(_id);
         // if (curClicked === order) {
-      //   setCurClicked(undefined);
+        //   setCurClicked(undefined);
         //   setVoteHistory(null);
         //   return;
         // }
@@ -107,6 +107,7 @@ PreviewBoxProps) {
               </p>
             );
           })}
+          <p className="keyword"></p>
         </KeywordsWrapper>
       </BodyWrapper>
     </Wrapper>
@@ -176,6 +177,7 @@ const Summary = styled.p`
   margin: 0;
   padding-top: 5px;
   font-size: 13px;
+  min-height: 45px;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -187,6 +189,7 @@ const KeywordsWrapper = styled.div`
   .keyword {
     display: inline;
     text-decoration: none;
+    height: 14px;
     font-size: 12px;
     margin: 0;
     margin-right: 6px;

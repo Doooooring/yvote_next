@@ -102,6 +102,8 @@ export default function KeywordsPage({ data }: pageProps) {
 }
 
 const Wrapper = styled.div`
+  height: 100%;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
