@@ -6,14 +6,13 @@ import { SpeechBubble } from '@components/common/figure';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
-import PreviewBox from '@components/news/previewBox';
 import icoNews from '@images/ico_news.png';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 
-import { useOnScreen } from '@utils/hook/useOnScreen';
+import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 type curPreviewsList = Preview[];
@@ -73,8 +72,6 @@ export default function KeyExplanation({ data }: pageProps) {
 
   const curPage = useRef<number>(10);
   const elementRef = useRef<HTMLDivElement>(null);
-  const isOnScreen = useOnScreen(elementRef);
-  const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
   useEffect(() => {
     if (data) {
@@ -83,28 +80,19 @@ export default function KeyExplanation({ data }: pageProps) {
     }
   }, [data]);
 
-  //뷰에 들어옴이 감지될 때 요청 보내기
-  const getNewsContent = useCallback(async () => {
-    setIsRequesting(true);
-    try {
-      const Previews: Array<Preview> = await NewsRepository.getPreviews(
-        curPage.current,
-        curKeyword?.keyword,
-      );
-      if (Previews.length === 0) {
-        curPage.current = -1;
-        return;
-      }
-      curPage.current += 10;
-      const newPreviews = curPreviews.concat(Previews);
-      setCurPreviews(newPreviews);
+  const fetchNewsContent = useCallback(async () => {
+    const Previews: Array<Preview> = await NewsRepository.getPreviews(
+      curPage.current,
+      curKeyword?.keyword,
+    );
+    if (Previews.length === 0) {
+      curPage.current = -1;
       return;
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRequesting(false);
     }
-  }, [curPreviews]);
+    curPage.current += 20;
+    const newPreviews = curPreviews.concat(Previews);
+    setCurPreviews(newPreviews);
+  }, [curPage, curPreviews]);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
@@ -113,6 +101,7 @@ export default function KeyExplanation({ data }: pageProps) {
       Error('news content error');
       return;
     }
+    setScrollMem(newsWrapper.current!.scrollTop);
     newsWrapper.current!.scrollTo(0, 0);
     setNewsContent(news);
     setCurClicked(id);
@@ -138,18 +127,6 @@ export default function KeyExplanation({ data }: pageProps) {
     [curClicked],
   );
 
-  useEffect(() => {
-    //요청 중이라면 보내지 않기
-    const toAsync = async () => {
-      await getNewsContent();
-    };
-    if (curPage.current != -1 && isOnScreen === true && isRequesting === false) {
-      toAsync();
-    } else {
-      return;
-    }
-  }, [isOnScreen]);
-
   return (
     <Wrapper ref={newsWrapper}>
       <SearchWrapper>
@@ -171,8 +148,8 @@ export default function KeyExplanation({ data }: pageProps) {
             <CategoryName>{'최신 뉴스'}</CategoryName>
           </MainHeader>
         </MainHeaderWrapper>
-        {curClicked ? (
-          <MainContentsBody>
+        <MainContentsBody>
+          {curClicked ? (
             <NewsContentsWrapper>
               <NewsContent
                 curClicked={curClicked}
@@ -181,26 +158,16 @@ export default function KeyExplanation({ data }: pageProps) {
                 hide={hideNewsContent}
               />
             </NewsContentsWrapper>
-          </MainContentsBody>
-        ) : (
-          <MainContentsBody>
-            <NewsList>
-              {curPreviews.map((preview) => (
-                <PreviewBoxWrapper key={preview.order}>
-                  <PreviewBox
-                    Preview={preview}
-                    curClicked={curClicked}
-                    click={toggleNewsContentView}
-                    // setCurClicked={setCurClicked}
-                    // setNewsContent={setNewsContent}
-                    // setVoteHistory={setVoteHistory}
-                  />
-                </PreviewBoxWrapper>
-              ))}
-              <LastLine ref={curPage.current === -1 ? null : elementRef}></LastLine>
-            </NewsList>
-          </MainContentsBody>
-        )}
+          ) : (
+            <NewsList
+              page={curPage.current ?? 0}
+              previews={curPreviews}
+              curClicked={curClicked}
+              fetchNewsContent={fetchNewsContent}
+              toggleNewsContentView={toggleNewsContentView}
+            />
+          )}
+        </MainContentsBody>
       </MainContents>
     </Wrapper>
   );
@@ -266,23 +233,6 @@ const NewsContentsWrapper = styled.div`
 const KeywordWrapper = styled.div`
   width: 1000px;
   margin-bottom: 30px;
-`;
-
-const NewsList = styled.div`
-  width: 1000px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 500px);
-  grid-template-rows: repeat(auto-fill, 140px);
-  grid-column-gap: 0px;
-  justify-items: center;
-  border-style: solid;
-  border-radius: 10px;
-  border-width: 0px;
-  opacity: 1;
-  height: 1300px;
-  position: relative;
-  animation: box-sliding 0.5s linear 1;
-  overflow-x: visible;
 `;
 
 const PreviewBoxWrapper = styled.div`

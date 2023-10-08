@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
 
 import { SpeechBubble } from '@components/common/figure';
-import NewsContents from '@components/news/newsContents';
+import NewsContent from '@components/news/newsContents';
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import icoNews from '@images/ico_news.png';
@@ -140,7 +140,7 @@ export default function NewsPage(props: pageProps) {
         <MainContentsBody>
           {curClicked ? (
             <NewsContentsWrapper>
-              <NewsContents
+              <NewsContent
                 curClicked={curClicked}
                 newsContent={newsContent}
                 voteHistory={voteHistory}
