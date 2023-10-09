@@ -180,7 +180,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  height: 1200px;
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
 `;
