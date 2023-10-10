@@ -2510,10 +2510,10 @@ ul.actions li {
 }
 
 ul.actions.special {
-  -moz-justify-content: left;
-  -webkit-justify-content: left;
-  -ms-justify-content: left;
-  justify-content: left;
+  -moz-justify-content: center;
+  -webkit-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
   width: 100%;
   margin-left: 0;
 }

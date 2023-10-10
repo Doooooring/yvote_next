@@ -122,7 +122,7 @@ export default function Home() {
           </header>
           <p>새로운 뉴스 구독 방식을 지금 바로 확인하세요</p>
           <div className="row gtr-150">
-            <div className="col-4 col-12-medium">
+            <div className="col-4 col-12-medium column-center">
               <span className="image fit">
                 <Image
                   src={NewsPage}
@@ -146,7 +146,7 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="col-4 col-12-medium">
+            <div className="col-4 col-12-medium column-center">
               <span className="image fit">
                 <Image
                   src={KeywordPage}
@@ -170,9 +170,9 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="col-4 col-12-medium">
+            <div className="col-4 col-12-medium column-center">
               <span className="image fit">
-                <ImageFallback src={'/assets/img/eder.jpg'} width={307} height={216} />
+                <ImageFallback src={'/assets/img/eder.png'} width={324} height={241} />
               </span>
               <h3>정치성향 테스트</h3>
               <p>
@@ -369,6 +369,12 @@ const Wrapper = styled.div`
 
   #demo-category {
     width: 100%;
+  }
+
+  .column-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 

@@ -70,7 +70,7 @@ export default function KeyExplanation({ data }: pageProps) {
   const newsWrapper = useRef<HTMLDivElement>(null);
   const [scrollMem, setScrollMem] = useState<number | null>(null);
 
-  const curPage = useRef<number>(10);
+  const curPage = useRef<number>(20);
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function KeyExplanation({ data }: pageProps) {
     curPage.current += 20;
     const newPreviews = curPreviews.concat(Previews);
     setCurPreviews(newPreviews);
-  }, [curPage, curPreviews]);
+  }, [curPage, curKeyword, curPreviews]);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);

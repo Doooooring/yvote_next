@@ -153,7 +153,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
           backgroundColor={'#6872c9'}
           submitState={submitState}
         /> */}
-        {/* <CheckBoxWrapper>
+        <CheckBoxWrapper>
           <CheckBox
             type="radio"
             name="checkbox"
@@ -165,7 +165,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
             disabled={haveThinked === false || submitState === 'resolve'}
           />
           <LRComment>{'잘 모르겠다'}</LRComment>
-        </CheckBoxWrapper> */}
+        </CheckBoxWrapper>
         {/* <VoteGraph
           vote={votes.none}
           totalVote={voteTotal}
