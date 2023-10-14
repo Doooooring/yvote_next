@@ -20,7 +20,6 @@ export default function NewsList({
   fetchNewsContent,
   toggleNewsContentView,
 }: NewsListProps) {
-  //무한 스크롤에 필요한 훅들
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -51,7 +50,7 @@ export default function NewsList({
     <Wrapper>
       {previews.map((preview, idx) => (
         <div className="preview-wrapper" key={idx}>
-          <PreviewBox Preview={preview} curClicked={curClicked} click={toggleNewsContentView} />
+          <PreviewBox preview={preview} curClicked={curClicked} click={toggleNewsContentView} />
         </div>
       ))}
       <div className="last-line" ref={elementRef}></div>
@@ -63,14 +62,12 @@ const Wrapper = styled.div`
   width: 1000px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 500px);
-  grid-template-rows: repeat(auto-fill, 140px);
   grid-column-gap: 0px;
   justify-items: center;
   border-style: solid;
   border-radius: 10px;
   border-width: 0px;
   opacity: 1;
-  height: 1300px;
   position: relative;
   animation: box-sliding 0.5s linear 1;
   overflow-x: visible;
@@ -83,5 +80,9 @@ const Wrapper = styled.div`
   div.last-line {
     width: 10px;
     height: 100px;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 500px;
   }
 `;

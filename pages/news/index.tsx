@@ -117,35 +117,35 @@ export default function NewsPage(props: pageProps) {
 
   return (
     <Wrapper ref={newsWrapper}>
-      <SearchWrapper>
+      <div className="search-wrapper">
         <SearchBox
           curPage={curPage}
           setSubmitWord={setSubmitWord}
           setCurPreviews={setCurPreviews}
         />
         <SpeechBubble />
-      </SearchWrapper>
-      <MainContents>
+      </div>
+      <div className="main-contents">
         {curClicked ? (
           <></>
         ) : (
-          <MainHeaderWrapper>
-            <MainHeader>
+          <div className="main-header-wrapper">
+            <div className="main-header">
               <Image src={icoNews} alt="hmm" height="18" />
-              <CategoryName>{'최신 뉴스'}</CategoryName>
-            </MainHeader>
-          </MainHeaderWrapper>
+              <div className="category-name">{'최신 뉴스'}</div>
+            </div>
+          </div>
         )}
-        <MainContentsBody>
+        <div className="main-contents-body">
           {curClicked ? (
-            <NewsContentsWrapper>
+            <div className="news-contents-wrapper">
               <NewsContent
                 curClicked={curClicked}
                 newsContent={newsContent}
                 voteHistory={voteHistory}
                 hide={hideNewsContent}
               />
-            </NewsContentsWrapper>
+            </div>
           ) : (
             <NewsList
               page={curPage.current ?? 0}
@@ -155,8 +155,8 @@ export default function NewsPage(props: pageProps) {
               toggleNewsContentView={toggleNewsContentView}
             />
           )}
-        </MainContentsBody>
-      </MainContents>
+        </div>
+      </div>
     </Wrapper>
   );
 }
@@ -170,87 +170,38 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
+  .search-wrapper {
+    width: 1000px;
+    height: 50px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px -20px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .main-header-wrapper {
+    height: 30px;
+    .main-header {
+      width: 1000px;
+      text-align: left;
+      padding-left: 10px;
+      .category-name {
+        display: inline;
+        width: 1000px;
+        margin-left: 10px;
+        font-weight: 700;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .main-contents-body {
+    position: relative;
+    .news-contents-wrapper {
+      width: 1000px;
+      height: 800px;
+      font-size: 13px;
+    }
+  }
 `;
-
-const SearchWrapper = styled.div`
-  width: 1000px;
-  height: 50px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0px 0px 30px -20px;
-  margin-bottom: 40px;
-  position: relative;
-`;
-
-const MainContents = styled.div``;
-
-const MainHeaderWrapper = styled.div`
-  height: 30px;
-`;
-
-const MainHeader = styled.div`
-  width: 1000px;
-  text-align: left;
-  padding-left: 10px;
-`;
-
-const CategoryName = styled.p`
-  display: inline;
-  width: 1000px;
-  margin-left: 10px;
-  font-weight: 700;
-  font-size: 18px;
-`;
-
-const MainContentsBody = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 495px);
-  grid-column-gap: 10px;
-  position: relative;
-`;
-
-// const NewsList = styled.div`
-//   width: 1000px;
-//   display: grid;
-//   grid-template-columns: repeat(auto-fill, 500px);
-//   grid-template-rows: repeat(auto-fill, 140px);
-//   grid-column-gap: 0px;
-//   justify-items: center;
-//   border-style: solid;
-//   border-radius: 10px;
-//   border-width: 0px;
-//   opacity: 1;
-//   height: 1300px;
-//   position: relative;
-//   animation: box-sliding 0.5s linear 1;
-//   overflow-x: visible;
-// `;
-
-interface NewsContentsWrapperProps {
-  curClicked: curClicked;
-}
-
-const NewsContentsWrapper = styled.div`
-  width: 1000px;
-  height: 800px;
-  font-size: 13px;
-`;
-
-// <NewsList>
-//   {curPreviews.map((preview, idx) => (
-//     <PreviewBoxWrapper key={idx}>
-//       <PreviewBox
-//         Preview={preview}
-//         curClicked={curClicked}
-//         click={toggleNewsContentView}
-//         // setCurClicked={setCurClicked}
-//         // setNewsContent={setNewsContent}
-//         // setVoteHistory={setVoteHistory}
-//       />
-//     </PreviewBoxWrapper>
-//   ))}
-//   {!curClicked && <LastLine ref={elementRef}></LastLine>}
-// </NewsList>
-/* <NewsList 
-
-            /> */

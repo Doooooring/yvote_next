@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useCallback, useState } from 'react';
 
 import ImageFallback from '@components/common/imageFallback';
@@ -35,7 +34,6 @@ export default function NewsContent({
   hide,
 }: NewsContentProps) {
   const navigate = useRouter();
-  const [loadError, setLoadError] = useState<boolean>(false);
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
 
@@ -87,8 +85,8 @@ export default function NewsContent({
     return (
       <Wrapper>
         <Body>
-          <BodyLeft>
-            <NewsContentsClose>
+          <div className="body-left">
+            <div className="close-wrapper">
               <input
                 type="button"
                 style={{ display: 'none' }}
@@ -99,29 +97,29 @@ export default function NewsContent({
                   hide();
                 }}
               ></input>
-              <CloseButton htmlFor="contents-close-button">
+              <label className="close-button" htmlFor="contents-close-button">
                 <Image src={icoClose} alt="hmm" />
-              </CloseButton>
-            </NewsContentsClose>
-            <ContentBody>
-              <div className="content-body-left">
+              </label>
+            </div>
+            <div className="contents-body">
+              <div className="left">
                 <ImageFallback
                   src={`${HOST_URL}/images/news/${newsContent._id}`}
                   width={100}
                   height={100}
                 />
               </div>
-              <div className="content-body-right">
-                <ContentHead>
+              <div className="right">
+                <div className="head">
                   <span>{newsContent.title}</span>
                   {newsContent.state ? <Image src={icoNew} alt="hmm" height="16" /> : <div></div>}
-                </ContentHead>
-                <Summary>
+                </div>
+                <div className="summary">
                   {newsContent.summary.split('$').map((sentence) => {
                     return <p>{sentence}</p>;
                   })}
-                </Summary>
-                <KeywordsWrapper>
+                </div>
+                <div className="keyword-wrapper">
                   {newsContent.keywords?.map((keyword) => {
                     return (
                       <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
@@ -129,13 +127,13 @@ export default function NewsContent({
                       </p>
                     );
                   })}
-                </KeywordsWrapper>
+                </div>
               </div>
-            </ContentBody>
-            <TimelineBody>
+            </div>
+            <div className="timeline-wrapper">
               {newsContent.timeline.map((timeline, idx) => {
                 return (
-                  <Timeline>
+                  <div className="timeline">
                     <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
                       <Image src={blueCheck} alt="" />
                     </ImgWrapper>
@@ -147,11 +145,11 @@ export default function NewsContent({
                         })}
                       </div>
                     </div>
-                  </Timeline>
+                  </div>
                 );
               })}
-            </TimelineBody>
-          </BodyLeft>
+            </div>
+          </div>
           <BodyRight>
             <div className="comment_body">
               {commentToShow!.map((comment) => {
@@ -209,21 +207,7 @@ const Wrapper = styled.div`
     }
   }
 `;
-const NewsContentsClose = styled.div`
-  padding-right: 10px;
-  text-align: right;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-`;
-const CloseButton = styled.label`
-  padding-top: 10px;
 
-  text-align: right;
-  &:hover {
-    cursor: pointer;
-  }
-`;
 const Body = styled.div`
   display: flex;
   flex-direction: row;
@@ -232,14 +216,107 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
+  .body-left {
+    width: 52%;
+    min-height: 1000px;
+    background-color: white;
+    box-shadow: 0 0 35px -30px;
+    position: relative;
+    padding-bottom: 80px;
+
+    .close-wrapper {
+      padding-right: 10px;
+      text-align: right;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      .close-button {
+        padding-top: 10px;
+
+        text-align: right;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    .contents-body {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: start;
+      gap: 20px;
+      padding: 1rem;
+      padding-right: 2em;
+      .right {
+        .head {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+          font-size: 15px;
+          font-weight: 600;
+        }
+
+        .summary {
+          display: inline-block;
+          font-size: 13px;
+          line-height: 1.5;
+          color: #a1a1a1;
+          font-weight: 450;
+          font-family: 'summary-font';
+          word-break: break-all;
+          & {
+            p {
+              margin: 0 0 0.5em 0;
+              min-height: 10px;
+            }
+          }
+        }
+
+        .keyword-wrapper {
+          line-height: 1;
+          .keyword {
+            display: inline;
+            text-decoration: none;
+            font-size: 12px;
+            margin: 0;
+            margin-right: 6px;
+            color: #3a84e5;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .timeline-wrapper {
+      display: flex;
+      flex-direction: column;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      color: #a1a1a1;
+
+      .timeline {
+        display: flex;
+        flex-direction: row;
+        font-size: 14px;
+        font-weight: 500;
+
+        div.timeline-sentence {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+        }
+      }
+    }
+  }
 `;
-const BodyLeft = styled.div`
-  width: 52%;
-  min-height: 1000px;
-  background-color: white;
-  box-shadow: 0 0 35px -30px;
-  position: relative;
-  padding-bottom: 80px;
+
+interface ImageWrapperProps {
+  opacity: number;
+}
+
+const ImgWrapper = styled.div<ImageWrapperProps>`
+  margin-right: 16px;
+  opacity: ${({ opacity }) => opacity};
 `;
 
 const BodyRight = styled.div`
@@ -262,92 +339,4 @@ const BodyRight = styled.div`
       overflow: hidden;
     }
   }
-`;
-
-const ContentHead = styled.h1`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-`;
-const ContentBody = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: start;
-  gap: 20px;
-  padding: 1rem;
-  padding-right: 2em;
-`;
-const Summary = styled.div`
-  display: inline-block;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #a1a1a1;
-  font-weight: 450;
-  font-family: 'summary-font';
-  word-break: break-all;
-  & {
-    p {
-      margin: 0 0 0.5em 0;
-      min-height: 10px;
-    }
-  }
-`;
-
-const TimelineBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  color: #a1a1a1;
-`;
-
-interface TimelineProps {
-  index: number;
-}
-
-const Timeline = styled.p`
-  display: flex;
-  flex-direction: row;
-  font-size: 14px;
-  font-weight: 500;
-  & {
-    div.timeline-sentence {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-    }
-  }
-`;
-
-interface ImageWrapperProps {
-  opacity: number;
-}
-
-const ImgWrapper = styled.div<ImageWrapperProps>`
-  margin-right: 16px;
-  opacity: ${({ opacity }) => opacity};
-`;
-
-const KeywordsWrapper = styled.div`
-  line-height: 1;
-  .keyword {
-    display: inline;
-    text-decoration: none;
-    font-size: 12px;
-    margin: 0;
-    margin-right: 6px;
-    color: #3a84e5;
-    cursor: pointer;
-  }
-`;
-const Keyword = styled(Link)`
-  display: inline;
-  text-decoration: none;
-  font-size: 10px;
-  margin-right: 6px;
-  color: #3a84e5;
 `;

@@ -130,8 +130,9 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
 
   return (
     <Wrapper>
-      <InputWrapper>
-        <InputBox
+      <div className="input-wrapper">
+        <input
+          className="input-box"
           type="text"
           placeholder="궁금한 뉴스의 키워드, 인물을 검색하시오"
           value={searchWord}
@@ -142,7 +143,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
             handleArrowKey(e, searchWord);
           }}
         />
-        <RelatedBox>
+        <div className="related-box">
           {relatedWords.map((word) => (
             <RelatedWord
               className={'word'}
@@ -153,8 +154,8 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
               {`# ${word}`}
             </RelatedWord>
           ))}
-        </RelatedBox>
-      </InputWrapper>
+        </div>
+      </div>
     </Wrapper>
   );
 }
@@ -168,55 +169,54 @@ const Wrapper = styled.form`
   margin-bottom: 10px;
   margin-top: 10px;
   text-align: center;
-`;
-
-const InputWrapper = styled.div`
-  position: absolute;
-  top: 0px;
-  width: 100%;
-  height: 90%;
-  overflow: hidden;
-  &:focus-within {
-    overflow: visible;
+  .input-wrapper {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 90%;
+    overflow: hidden;
+    &:focus-within {
+      overflow: visible;
+    }
   }
-`;
-const InputBox = styled.input`
-  display: inline-block;
-  border: 0;
-  border-radius: 5px;
-  width: 100%;
-  height: 100%;
-  font-size: 13px;
-  color: rgb(170, 170, 170);
-  font-weight: 600;
-  padding-left: 40px;
-  padding-top: 4px;
-  padding-bottom: 3px;
-  background-image: url('@assets/img/ico_search.png');
-  background-repeat: no-repeat;
-  background-position: 6px 6px;
-  &::placeholder {
-    color: rgb(170, 170, 170);
+  .input-box {
+    display: inline-block;
+    border: 0;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
     font-size: 13px;
-    font-weight: 800;
+    color: rgb(170, 170, 170);
+    font-weight: 600;
+    padding-left: 40px;
+    padding-top: 4px;
+    padding-bottom: 3px;
+    background-image: url('@assets/img/ico_search.png');
+    background-repeat: no-repeat;
+    background-position: 6px 6px;
+    &::placeholder {
+      color: rgb(170, 170, 170);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    &:focus {
+      outline: 2px solid rgb(104, 156, 209);
+    }
   }
-  &:focus {
-    outline: 2px solid rgb(104, 156, 209);
+  .related-box {
+    min-height: 100px;
+    background-color: rgb(104, 156, 209);
+    width: 100%;
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgb(104, 156, 209);
+    border-radius: 0px 0px 10px 10px;
+    position: absolute;
+    top: 100%;
+    text-align: left;
+    z-index: 3;
+    padding-top: 5px;
   }
-`;
-const RelatedBox = styled.div`
-  min-height: 100px;
-  background-color: rgb(104, 156, 209);
-  width: 100%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: rgb(104, 156, 209);
-  border-radius: 0px 0px 10px 10px;
-  position: absolute;
-  top: 100%;
-  text-align: left;
-  z-index: 3;
-  padding-top: 5px;
 `;
 
 interface RelatedWordProps {
@@ -233,14 +233,4 @@ const RelatedWord = styled.p<RelatedWordProps>`
   border-style: solid;
   z-index: 1;
   background-color: ${({ isFocused }) => (isFocused ? 'rgb(120, 120, 120)' : 'rgba(0,0,0,0)')};
-`;
-
-const SubmitButton = styled.button`
-  display: none;
-  position: absolute;
-  height: 80%;
-  width: 12%;
-  top: 0;
-  right: 0px;
-  color: black;
 `;

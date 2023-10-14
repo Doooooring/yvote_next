@@ -33,7 +33,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
     const token = localStorage.getItem('yVote');
     const response = await NewsRepository.vote(_id, voteAnswer, token);
     localStorage.setItem('yVote', response.token);
-    return 0;
+    return;
   };
 
   const handlePendingState = async () => {
