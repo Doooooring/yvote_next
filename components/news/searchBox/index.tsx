@@ -18,12 +18,20 @@ interface SearchBoxProps {
 }
 
 export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: SearchBoxProps) {
+  // 현재 검색어
   const [searchWord, setSearchWord] = useState<string>('');
+  // 현재 검색어 기반 연관 검색어 목록
   const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다.']);
+  // 전체 키워드 리스트
   const [keylist, setKeyList] = useState<KeyName[]>([]);
+  // 방향키에 맞춰서 포커스된 단어 업데이트
   const [curFocusOnWord, setCurFocusOnWord] = useState<number>(-1);
+  // 위,아래 방향키 입력시 최상단 및 최하단 (더 이상 방향키 액션이 발생하지 못하는 때) 감지
   const [arrowKeyActive, setArrowKeyActive] = useState<boolean>(false);
 
+  /**
+   * 검색 가능한 키워드들을 보여주기 위한 전체 키워드 리스트 fetch
+   */
   const getKeys = useCallback(async () => {
     try {
       const response: KeyName[] = await KeywordsRepository.getKeywordList();
@@ -33,12 +41,16 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
     }
   }, []);
 
+  /**
+   * 현재 검색어 기반 뉴스 블록들 조회
+   */
   const submit = useCallback(
     async (e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) => {
       e.preventDefault();
       if (curFocusOnWord !== -1) {
         setSearchWord(relatedWords[curFocusOnWord]);
       }
+      // 새로운 검색어로 조회하기에 기존 페이지 초기화
       curPage.current = 0;
       const newsList = await NewsRepository.getPreviews(curPage.current, searchWord);
       if (newsList.length !== 0) {
@@ -55,6 +67,13 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
     getKeys();
   }, []);
 
+  /**
+   * 인풋 내용 변화에 따른 변수 바인딩
+   * 현재 검색어 업데이트 & 연관 검색어 리스트 업데이트
+   * 
+   */
+  // @FIXME "키워드를 검색해 봅시다"와 같이 특별한 상황에 값을 보이기 위해 relatedWords가
+  // 순수한 형태가 아닌채로 남아있음. 리팩토링이 필요 
   function handleSearchBoxChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (arrowKeyActive) {
@@ -90,6 +109,9 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
       }
     }
   }
+  /**
+   * 입력이 아닌 화살표 및 엔터에 대한 이벤트 관리 함수
+   */
   async function handleArrowKey(e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) {
     if (e.key === 'Enter') {
       submit(e, searchWord);

@@ -9,7 +9,7 @@ interface NewsListProps {
   page: number;
   previews: Preview[];
   curClicked: string | undefined;
-  fetchNewsContent: () => Promise<void>;
+  fetchNewsPreviews: () => Promise<void>;
   toggleNewsContentView: (id: string) => void;
 }
 
@@ -17,7 +17,7 @@ export default function NewsList({
   page,
   previews,
   curClicked,
-  fetchNewsContent,
+  fetchNewsPreviews,
   toggleNewsContentView,
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
@@ -27,7 +27,7 @@ export default function NewsList({
   const getNewsContent = async () => {
     setIsRequesting(true);
     try {
-      await fetchNewsContent();
+      await fetchNewsPreviews();
       return;
     } catch (e) {
       console.error(e);

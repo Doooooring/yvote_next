@@ -80,7 +80,7 @@ export default function KeyExplanation({ data }: pageProps) {
     }
   }, [data]);
 
-  const fetchNewsContent = useCallback(async () => {
+  const fetchNewsPreviews = useCallback(async () => {
     const Previews: Array<Preview> = await NewsRepository.getPreviews(
       curPage.current,
       curKeyword?.keyword,
@@ -163,7 +163,7 @@ export default function KeyExplanation({ data }: pageProps) {
               page={curPage.current ?? 0}
               previews={curPreviews}
               curClicked={curClicked}
-              fetchNewsContent={fetchNewsContent}
+              fetchNewsPreviews={fetchNewsPreviews}
               toggleNewsContentView={toggleNewsContentView}
             />
           )}

@@ -24,19 +24,23 @@ export default function CommentModal({
   commentClose: () => void;
 }) {
   const { currentStore } = indexStore;
+  // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+  // 현재 보여지고 있는 평론들 ()
   const [curComments, setCurComments] = useState<
     Array<{
       title: string;
       comment: string;
     }>
   >([]);
+
+  //@FIXME 전역 상태 변화에 따라 종종 화면이 변경되지 않는 이슈가 있어서 강제로 바꿈
   const [, setTick] = useState(0);
   const forceUpdate = useCallback(() => {
     setTick((tick) => tick + 1);
   }, []);
+
   const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const typeExplain = useMemo(() => {
     return {

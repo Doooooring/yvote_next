@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
@@ -18,7 +18,6 @@ import CommentModal from '../commentModal';
 
 type newsContent = undefined | NewsDetail;
 type curClicked = undefined | News['_id'];
-type setCurClicked = (curClicked: curClicked) => void;
 
 interface NewsContentProps {
   curClicked: curClicked;
@@ -37,38 +36,26 @@ export default function NewsContent({
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
 
+  /**
+   * 평론 모달 열기
+   */
   const commentOpen = useCallback((comment: commentType) => {
     setIsCommentModalUp(true);
     setCurComment(comment);
   }, []);
 
+  /**
+   * 평론 모달 닫기
+   */
   const commentClose = useCallback(() => {
     setIsCommentModalUp(false);
     setCurComment(null);
   }, []);
 
-  const commentToShow = newsContent?.comments.sort((a, b) => {
-    const getOrder = (comment: commentType) => {
-      switch (comment) {
-        case commentType.와이보트:
-          return 5;
-        case commentType.국민의힘:
-          return 4;
-        case commentType.민주당:
-          return 3;
-        case commentType.청와대:
-          return 2;
-        case commentType.기타:
-          return 1;
-        default:
-          return 0;
-      }
-    };
-    const aOrder = getOrder(a);
-    const bOrder = getOrder(b);
-    return bOrder - aOrder;
-  });
-
+  /**
+   * 키워드를 통해 키워드 아이디 조회 후 페이지 이동
+   * @param key 키워드
+   */
   const routeToKeyword = async (key: string) => {
     const keyword = await KeywordRepository.getKeywordByKey(key);
     if (!keyword) {
@@ -78,6 +65,33 @@ export default function NewsContent({
     const { _id } = keyword!;
     navigate.push(`/keywords/${_id}`);
   };
+
+  // 코멘트 순서 정렬 (와이보트 > 국민의 힘 > 민주당 > 청와대 > 기타 > 그 외)
+  const commentToShow = useMemo(
+    () =>
+      newsContent?.comments.sort((a, b) => {
+        const getOrder = (comment: commentType) => {
+          switch (comment) {
+            case commentType.와이보트:
+              return 5;
+            case commentType.국민의힘:
+              return 4;
+            case commentType.민주당:
+              return 3;
+            case commentType.청와대:
+              return 2;
+            case commentType.기타:
+              return 1;
+            default:
+              return 0;
+          }
+        };
+        const aOrder = getOrder(a);
+        const bOrder = getOrder(b);
+        return bOrder - aOrder;
+      }),
+    [newsContent],
+  );
 
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
