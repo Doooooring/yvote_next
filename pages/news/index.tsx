@@ -75,7 +75,6 @@ export default function NewsPage(props: pageProps) {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
     const { response, news } = newsInfo;
     if (news === null) {
-      Error('news content error');
       return;
     }
     setScrollMem(newsWrapper.current!.scrollTop);
