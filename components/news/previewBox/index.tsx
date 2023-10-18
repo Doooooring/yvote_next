@@ -41,14 +41,14 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
         <ImageFallback src={`${HOST_URL}/images/news/${_id}`} width={100} height={100} />
       </div>
       <div className="body-wrapper">
-        <div>
+        <div className="head-wrapper">
           <h1>{title}</h1>
           <New state={state}>
             <Image src={icoNew} alt="hmm" height="16" />
           </New>
         </div>
         <div className="summary">{summary.replace(/\$/g, '')}</div>
-        <div className="keywrod-wrapper">
+        <div className="keyword-wrapper">
           {keywords?.map((keyword) => {
             return (
               <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
@@ -84,11 +84,25 @@ const Wrapper = styled.div<WrapperProps>`
     cursor: pointer;
   }
 
+  .head-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
   h1 {
-    display: inline;
+    /* display: inline; */
     font-size: 15px;
     font-weight: 700;
     margin-right: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    margin: 0;
   }
 
   .img-wrapper {

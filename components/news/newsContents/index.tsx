@@ -124,10 +124,10 @@ export default function NewsContent({
                 />
               </div>
               <div className="right">
-                <div className="head">
+                <h2 className="head">
                   <span>{newsContent.title}</span>
                   {newsContent.state ? <Image src={icoNew} alt="hmm" height="16" /> : <div></div>}
-                </div>
+                </h2>
                 <div className="summary">
                   {newsContent.summary.split('$').map((sentence) => {
                     return <p>{sentence}</p>;
