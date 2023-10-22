@@ -186,35 +186,53 @@ const Wrapper = styled.div`
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
   .search-wrapper {
-    width: 1000px;
+    width: 70%;
+    min-width: 800px;
     height: 50px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 30px -20px;
     margin-bottom: 40px;
     position: relative;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+      min-width: 0px;
+    }
   }
 
   .main-header-wrapper {
     height: 30px;
     .main-header {
-      width: 1000px;
+      width: 70%;
+      min-width: 800px;
       text-align: left;
       padding-left: 10px;
       .category-name {
         display: inline;
-        width: 1000px;
+        width: 70%;
         margin-left: 10px;
         font-weight: 700;
         font-size: 18px;
+        @media screen and (max-width: 768px) {
+          width: 90%;
+          min-width: 0px;
+        }
       }
+    }
+  }
+
+  .main-contents {
+    width: 70%;
+    min-width: 800px;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+      min-width: 0px;
     }
   }
 
   .main-contents-body {
     position: relative;
     .news-contents-wrapper {
-      width: 1000px;
       height: 800px;
       font-size: 13px;
     }

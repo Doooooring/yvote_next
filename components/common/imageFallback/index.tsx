@@ -7,17 +7,31 @@ export default function ImageFallback({
   src,
   width,
   height,
+  fill,
 }: {
   src: string;
   width?: number | string;
   height?: number | string;
+  fill?: boolean;
 }) {
   const [loadError, setLoadError] = useState<boolean>(false);
   const imageStyle = useMemo(() => {
     const style = { width: width ?? 'auto', height: height ?? 'auto' };
     return style;
   }, []);
-  if (typeof width === 'number' && typeof height === 'number') {
+  if (fill) {
+    return (
+      <Image
+        src={loadError ? defaultImg : src}
+        fill
+        alt="image"
+        // style={imageStyle}
+        onError={() => {
+          setLoadError(true);
+        }}
+      />
+    );
+  } else if (typeof width === 'number' && typeof height === 'number') {
     return (
       <Image
         src={loadError ? defaultImg : src}

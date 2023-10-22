@@ -43,6 +43,9 @@ const Bubble = styled.div`
   border-radius: 5px;
   font-size: 13px;
   padding: 0 1em;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
   &::before {
     content: '';
     display: block;

@@ -32,6 +32,7 @@ const Bubble = styled.div<BubbleProps>`
   font-weight: 600;
   border-radius: 5px;
   font-size: 13px;
+
   &::before {
     content: '';
     display: block;

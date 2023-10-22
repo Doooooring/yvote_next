@@ -59,9 +59,9 @@ export default function NewsList({
 }
 
 const Wrapper = styled.div`
-  width: 1000px;
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 500px);
+  grid-template-columns: repeat(auto-fill, 50%);
   grid-column-gap: 0px;
   justify-items: center;
   border-style: solid;
@@ -71,10 +71,15 @@ const Wrapper = styled.div`
   position: relative;
   animation: box-sliding 0.5s linear 1;
   overflow-x: visible;
+  @media screen and (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, 100%);
+  }
 
   div.preview-wrapper {
     display: inline-block;
-    width: 490px;
+    width: 100%;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
   }
 
   div.last-line {
@@ -83,6 +88,5 @@ const Wrapper = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    width: 500px;
   }
 `;

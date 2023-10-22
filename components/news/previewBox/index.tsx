@@ -38,14 +38,24 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
       }}
     >
       <div className="img-wrapper">
-        <ImageFallback src={`${HOST_URL}/images/news/${_id}`} width={100} height={100} />
+        <ImageFallback
+          src={`${HOST_URL}/images/news/${_id}`}
+          width={100}
+          height={100}
+          fill={true}
+        />
       </div>
       <div className="body-wrapper">
         <div className="head-wrapper">
           <h1>{title}</h1>
-          <New state={state}>
-            <Image src={icoNew} alt="hmm" height="16" />
-          </New>
+          <Image
+            src={icoNew}
+            alt="hmm"
+            height="16"
+            style={{
+              display: state ? 'auto' : 'none',
+            }}
+          />
         </div>
         <div className="summary">{summary.replace(/\$/g, '')}</div>
         <div className="keyword-wrapper">
@@ -71,7 +81,7 @@ const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 490px;
+  width: 100%;
 
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
@@ -112,13 +122,17 @@ const Wrapper = styled.div<WrapperProps>`
     width: 100px;
     height: 100px;
     overflow: hidden;
+    position: relative;
+    @media screen and (max-width: 768px) {
+      width: 75px;
+      height: 75px;
+    }
   }
 
   .body-wrapper {
     display: inline-block;
     padding-left: 20px;
     width: 80%;
-    height: 90%;
 
     .summary {
       color: rgb(120, 120, 120);
