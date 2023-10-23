@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
@@ -35,6 +38,15 @@ export default function NewsContent({
   const navigate = useRouter();
   const { isCommentModalUp, setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
+
+  const [showLeft, setShowLeft] = useState<boolean>(true);
+
+  /**
+   * 반응형 페이지 상태
+   */
+  const toggleShowLeft = useCallback(() => {
+    setShowLeft(!showLeft);
+  }, [showLeft]);
 
   /**
    * 평론 모달 열기
@@ -98,8 +110,27 @@ export default function NewsContent({
   } else {
     return (
       <Wrapper>
+        <FaWrapper state={!showLeft} style={{ textAlign: 'left' }}>
+          <span onClick={toggleShowLeft}>
+            <FontAwesomeIcon icon={faArrowLeft} /> 뉴스 상세 열기
+          </span>
+        </FaWrapper>
+        <FaWrapper state={showLeft} className="fa-flex">
+          <span
+            onClick={(e) => {
+              e.preventDefault();
+              // console.log('is clicked');
+              hide();
+            }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} /> 목록 보기
+          </span>
+          <span onClick={toggleShowLeft}>
+            평론 열기 <FontAwesomeIcon icon={faArrowRight} />
+          </span>
+        </FaWrapper>
         <Body>
-          <div className="body-left">
+          <BodyLeft state={showLeft}>
             <div className="close-wrapper">
               <input
                 type="button"
@@ -163,8 +194,8 @@ export default function NewsContent({
                 );
               })}
             </div>
-          </div>
-          <BodyRight>
+          </BodyLeft>
+          <BodyRight state={!showLeft}>
             <div className="comment_body">
               {commentToShow!.map((comment) => {
                 return (
@@ -220,6 +251,34 @@ const Wrapper = styled.div`
       padding: 0;
     }
   }
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    min-width: 0px;
+  }
+`;
+
+interface FaWrapperProps {
+  state: boolean;
+}
+
+const FaWrapper = styled.div<FaWrapperProps>`
+  display: none;
+  color: black;
+  font-weight: 500;
+  margin-bottom: 12px;
+  &.fa-flex {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    @media screen and (max-width: 768px) {
+      display: ${({ state }) => (state ? 'flex' : 'none')};
+    }
+  }
+  @media screen and (max-width: 768px) {
+    display: ${({ state }) => (state ? 'block' : 'none')};
+    width: 100%;
+    min-width: 0px;
+  }
 `;
 
 const Body = styled.div`
@@ -230,95 +289,108 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
-  .body-left {
-    width: 52%;
-    min-height: 1000px;
-    background-color: white;
-    box-shadow: 0 0 35px -30px;
-    position: relative;
-    padding-bottom: 80px;
+`;
 
-    .close-wrapper {
-      padding-right: 10px;
+interface BodyProps {
+  state: boolean;
+}
+
+const BodyLeft = styled.div<BodyProps>`
+  width: 52%;
+  min-height: 1000px;
+  background-color: white;
+  box-shadow: 0 0 35px -30px;
+  position: relative;
+  padding-bottom: 80px;
+  @media screen and (max-width: 768px) {
+    display: ${({ state }) => (state ? 'block' : 'none')};
+    width: 100%;
+    min-width: 0px;
+  }
+
+  .close-wrapper {
+    padding-right: 10px;
+    text-align: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    .close-button {
+      padding-top: 10px;
+
       text-align: right;
-      position: absolute;
-      top: 0px;
-      right: 0px;
-      .close-button {
-        padding-top: 10px;
+      &:hover {
+        cursor: pointer;
+      }
+      @media screen and (max-width: 768px) {
+        display: none;
+      }
+    }
+  }
+  .contents-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    gap: 20px;
+    padding: 1rem;
+    padding-right: 2em;
+    .right {
+      .head {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 600;
+      }
 
-        text-align: right;
-        &:hover {
+      .summary {
+        display: inline-block;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #a1a1a1;
+        font-weight: 450;
+        font-family: 'summary-font';
+        word-break: break-all;
+        & {
+          p {
+            margin: 0 0 0.5em 0;
+            min-height: 10px;
+          }
+        }
+      }
+
+      .keyword-wrapper {
+        line-height: 1;
+        .keyword {
+          display: inline;
+          text-decoration: none;
+          font-size: 12px;
+          margin: 0;
+          margin-right: 6px;
+          color: #3a84e5;
           cursor: pointer;
         }
       }
     }
-    .contents-body {
+  }
+  .timeline-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    color: #a1a1a1;
+
+    .timeline {
       display: flex;
       flex-direction: row;
-      justify-content: center;
-      align-items: start;
-      gap: 20px;
-      padding: 1rem;
-      padding-right: 2em;
-      .right {
-        .head {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-          font-size: 15px;
-          font-weight: 600;
-        }
+      font-size: 14px;
+      font-weight: 500;
 
-        .summary {
-          display: inline-block;
-          font-size: 13px;
-          line-height: 1.5;
-          color: #a1a1a1;
-          font-weight: 450;
-          font-family: 'summary-font';
-          word-break: break-all;
-          & {
-            p {
-              margin: 0 0 0.5em 0;
-              min-height: 10px;
-            }
-          }
-        }
-
-        .keyword-wrapper {
-          line-height: 1;
-          .keyword {
-            display: inline;
-            text-decoration: none;
-            font-size: 12px;
-            margin: 0;
-            margin-right: 6px;
-            color: #3a84e5;
-            cursor: pointer;
-          }
-        }
-      }
-    }
-    .timeline-wrapper {
-      display: flex;
-      flex-direction: column;
-      padding-left: 2rem;
-      padding-right: 2rem;
-      color: #a1a1a1;
-
-      .timeline {
+      div.timeline-sentence {
         display: flex;
         flex-direction: row;
-        font-size: 14px;
-        font-weight: 500;
-
-        div.timeline-sentence {
-          display: flex;
-          flex-direction: row;
-          gap: 8px;
-        }
+        gap: 8px;
       }
     }
   }
@@ -333,9 +405,15 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
   opacity: ${({ opacity }) => opacity};
 `;
 
-const BodyRight = styled.div`
+const BodyRight = styled.div<BodyProps>`
   width: 48%;
   padding: 0 1.5rem;
+  @media screen and (max-width: 768px) {
+    display: ${({ state }) => (state ? 'block' : 'none')};
+    width: 100%;
+    min-width: 0px;
+    padding: 0;
+  }
 
   div.comment_body {
     display: grid;

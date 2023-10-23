@@ -197,6 +197,7 @@ const Wrapper = styled.div`
     @media screen and (max-width: 768px) {
       width: 90%;
       min-width: 0px;
+      margin-bottom: 20px;
     }
   }
 
@@ -233,6 +234,7 @@ const Wrapper = styled.div`
   .main-contents-body {
     position: relative;
     .news-contents-wrapper {
+      width: 100%;
       height: 800px;
       font-size: 13px;
     }

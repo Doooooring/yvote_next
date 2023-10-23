@@ -166,7 +166,7 @@ class NewsRepository {
    * @param id 뉴스 아이디
    * @param answer 투표 응답
    * @param token 기존 투표 정보
-   * @returns 
+   * @returns
    */
   async vote(id: News['_id'], answer: AnswerState, token: string | null): Promise<VoteResponse> {
     const response = await axios.post(
