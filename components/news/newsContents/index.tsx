@@ -235,17 +235,18 @@ export default function NewsContent({
 }
 
 const Wrapper = styled.div`
-  width: 1000px;
+  width: 100%;
   border-width: 0px;
   border-color: #000000;
   border-radius: 10px;
   border-style: solid;
-  padding-top: 20px;
+  padding-top: 30px;
   padding-bottom: 80px;
   text-align: left;
   position: absolute;
   overflow: scroll;
   & {
+    padding-top: 0px;
     p {
       margin: 0;
       padding: 0;
