@@ -147,19 +147,21 @@ export default function NewsContent({
               </label>
             </div>
             <div className="contents-body">
-              <div className="left">
-                <ImageFallback
-                  src={`${HOST_URL}/images/news/${newsContent._id}`}
-                  width={100}
-                  height={100}
-                />
-              </div>
+              <div className="left"></div>
+
               <div className="right">
-                <h2 className="head">
-                  <span>{newsContent.title}</span>
-                  {newsContent.state ? <Image src={icoNew} alt="hmm" height="16" /> : <div></div>}
-                </h2>
                 <div className="summary">
+                  <div className="main-image-wrapper">
+                    <ImageFallback
+                      src={`${HOST_URL}/images/news/${newsContent._id}`}
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                  <h2 className="head">
+                    <span>{newsContent.title}</span>
+                    {newsContent.state ? <Image src={icoNew} alt="hmm" height="16" /> : <div></div>}
+                  </h2>
                   {newsContent.summary.split('$').map((sentence) => {
                     return <p>{sentence}</p>;
                   })}
@@ -290,6 +292,10 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
+  padding-top: 1.5rem;
+  @media screen and (max-width: 768px) {
+    padding-top: 0;
+  }
 `;
 
 interface BodyProps {
@@ -328,13 +334,22 @@ const BodyLeft = styled.div<BodyProps>`
     }
   }
   .contents-body {
-    display: flex;
+    /* display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: start;
-    gap: 20px;
+    gap: 20px; */
     padding: 1rem;
     padding-right: 2em;
+    .main-image-wrapper {
+      width: 100px;
+      height: 100px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      float: left;
+    }
+    .left {
+    }
     .right {
       .head {
         display: flex;
@@ -347,9 +362,9 @@ const BodyLeft = styled.div<BodyProps>`
 
       .summary {
         display: inline-block;
-        font-size: 13px;
+        font-size: 14px;
         line-height: 1.5;
-        color: #a1a1a1;
+        color: #747272;
         font-weight: 450;
         font-family: 'summary-font';
         word-break: break-all;

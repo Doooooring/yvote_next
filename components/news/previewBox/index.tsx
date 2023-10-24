@@ -135,7 +135,7 @@ const Wrapper = styled.div<WrapperProps>`
     width: 80%;
 
     .summary {
-      color: rgb(120, 120, 120);
+      color: #626060;
       margin: 0;
       padding-top: 5px;
       font-size: 13px;
