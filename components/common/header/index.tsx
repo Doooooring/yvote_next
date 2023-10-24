@@ -132,7 +132,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   height: 100%;
   text-decoration: none;
   @media screen and (max-width: 768px) {
-    font-size: 12px;
+    font-size: 10px;
   }
   .image-l {
     @media screen and (max-width: 768px) {
