@@ -31,6 +31,13 @@ export default function SearchBox() {
     getKeys();
   }, []);
 
+  /**
+   * 인풋 내용 변화에 따른 변수 바인딩
+   * 현재 검색어 업데이트 & 연관 검색어 리스트 업데이트
+   *
+   */
+  // @FIXME "키워드를 검색해 봅시다"와 같이 특별한 상황에 값을 보이기 위해 relatedWords가
+  // 순수한 형태가 아닌채로 남아있음. 리팩토링이 필요
   function handleSearchBoxChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (arrowKeyActive) {
@@ -38,6 +45,7 @@ export default function SearchBox() {
       return;
     }
     const preValue = e.currentTarget.value;
+    console.log(preValue);
     setSearchWord(preValue);
     if (preValue === '') {
       setCurFocusOnWord(-1);
@@ -66,9 +74,12 @@ export default function SearchBox() {
       }
     }
   }
+  /**
+   * 입력이 아닌 화살표 및 엔터에 대한 이벤트 관리 함수
+   */
   async function handleArrowKey(e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) {
-    e.preventDefault();
     if (e.key === 'Enter') {
+      e.preventDefault();
       if (!keylist.includes(searchWord)) {
         alert('알맞은 키워드를 입력해주세요!');
       } else {

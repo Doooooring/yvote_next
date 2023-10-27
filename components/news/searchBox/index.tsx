@@ -70,10 +70,10 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
   /**
    * 인풋 내용 변화에 따른 변수 바인딩
    * 현재 검색어 업데이트 & 연관 검색어 리스트 업데이트
-   * 
+   *
    */
   // @FIXME "키워드를 검색해 봅시다"와 같이 특별한 상황에 값을 보이기 위해 relatedWords가
-  // 순수한 형태가 아닌채로 남아있음. 리팩토링이 필요 
+  // 순수한 형태가 아닌채로 남아있음. 리팩토링이 필요
   function handleSearchBoxChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (arrowKeyActive) {

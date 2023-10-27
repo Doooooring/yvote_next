@@ -55,21 +55,20 @@ export default function ExplanationComp({
       </ExplanationHeader>
       <ExplanationBody>
         <ExplanationList>
+          <KeywordImg>
+            <Image
+              src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${id}`}
+              alt="hmm"
+              fill
+              onError={() => {
+                setKeywordImgLoadError(true);
+              }}
+            />
+          </KeywordImg>
           {explain.split('$').map((s, idx) => {
             return <Explanation key={idx}>{s}</Explanation>;
           })}
         </ExplanationList>
-        <KeywordImg>
-          <Image
-            src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${id}`}
-            alt="hmm"
-            width="170"
-            height="170"
-            onError={() => {
-              setKeywordImgLoadError(true);
-            }}
-          />
-        </KeywordImg>
       </ExplanationBody>
     </ExplanationWrapper>
   );
@@ -79,15 +78,11 @@ const ExplanationWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 1000px;
+  width: 100%;
   background-color: white;
   padding: 2rem 3rem;
   box-shadow: 0 8px 35px -25px;
   position: relative;
-  p {
-    margin: 0;
-    padding: 0;
-  }
 `;
 
 const NewsBoxClose = styled.div`
@@ -114,6 +109,11 @@ const ExplanationHeader = styled.div`
   gap: 8px;
   font-size: 18px;
   font-weight: 600;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
   & {
     img {
       flex: 0 0 auto;
@@ -122,21 +122,26 @@ const ExplanationHeader = styled.div`
   }
 `;
 
-const ExplanationBody = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
+const ExplanationBody = styled.div``;
 
 const ExplanationList = styled.div`
-  display: flex;
-  flex-direction: column;
   padding-left: 0.25rem;
-  width: 700px;
-  gap: 10px;
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
-const KeywordImg = styled.div``;
+const KeywordImg = styled.div`
+  float: right;
+  margin-left: 16px;
+  width: 140px;
+  height: 140px;
+  position: relative;
+  @media screen and (max-width: 768px) {
+    width: 90px;
+    height: 90px;
+  }
+`;
 
 const Explanation = styled.p`
   font-family: var(--font-pretendard);
@@ -145,4 +150,5 @@ const Explanation = styled.p`
   color: #a1a1a1;
   line-height: 1.5;
   text-align: left;
+  margin-bottom: 20px;
 `;

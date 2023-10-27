@@ -141,23 +141,27 @@ export default function KeyExplanation({ data }: pageProps) {
           explain={curKeyword?.explain ?? ''}
         />
       </KeywordWrapper>
-      <MainContents>
-        <MainHeaderWrapper>
-          <MainHeader>
-            <Image src={icoNews} alt="hmm" height="18" />
-            <CategoryName>{'최신 뉴스'}</CategoryName>
-          </MainHeader>
-        </MainHeaderWrapper>
-        <MainContentsBody>
+      <div className="main-contents">
+        {curClicked ? (
+          <></>
+        ) : (
+          <div className="main-header-wrapper">
+            <div className="main-header">
+              <Image src={icoNews} alt="hmm" height="18" />
+              <div className="category-name">{'최신 뉴스'}</div>
+            </div>
+          </div>
+        )}
+        <div className="main-contents-body">
           {curClicked ? (
-            <NewsContentsWrapper>
+            <div className="news-contents-wrapper">
               <NewsContent
                 curClicked={curClicked}
                 newsContent={newsContent}
                 voteHistory={voteHistory}
                 hide={hideNewsContent}
               />
-            </NewsContentsWrapper>
+            </div>
           ) : (
             <NewsList
               page={curPage.current ?? 0}
@@ -167,8 +171,8 @@ export default function KeyExplanation({ data }: pageProps) {
               toggleNewsContentView={toggleNewsContentView}
             />
           )}
-        </MainContentsBody>
-      </MainContents>
+        </div>
+      </div>
     </Wrapper>
   );
 }
@@ -182,11 +186,50 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
+  .main-header-wrapper {
+    height: 30px;
+    .main-header {
+      width: 70%;
+      min-width: 800px;
+      text-align: left;
+      padding-left: 10px;
+      .category-name {
+        display: inline;
+        width: 70%;
+        margin-left: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        @media screen and (max-width: 768px) {
+          width: 90%;
+          min-width: 0px;
+        }
+      }
+    }
+  }
+
+  .main-contents {
+    width: 70%;
+    min-width: 800px;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+      min-width: 0px;
+    }
+  }
+
+  .main-contents-body {
+    position: relative;
+    .news-contents-wrapper {
+      width: 100%;
+      height: 800px;
+      font-size: 13px;
+    }
+  }
 `;
 
 const SearchWrapper = styled.div`
   position: relative;
-  width: 1000px;
+  width: 70%;
+  min-width: 800px;
   height: 50px;
   background-color: white;
   border-radius: 10px;
@@ -194,46 +237,14 @@ const SearchWrapper = styled.div`
   margin-bottom: 60px;
 `;
 
-const MainContents = styled.div`
-  width: 1000px;
-`;
-
-const MainHeaderWrapper = styled.div`
-  height: 30px;
-`;
-const CategoryName = styled.p`
-  display: inline;
-  width: 1000px;
-  margin-left: 10px;
-  font-weight: 700;
-  font-size: 18px;
-`;
-
-const MainContentsBody = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 495px);
-  grid-column-gap: 10px;
-  position: relative;
-`;
-
-const MainHeader = styled.div`
-  width: 1000px;
-  text-align: left;
-  padding-left: 10px;
-`;
-
-interface MainContentsLeftProps {
-  curClicked: curClicked;
-}
-
-const NewsContentsWrapper = styled.div`
-  width: 1000px;
-  height: 800px;
-`;
-
 const KeywordWrapper = styled.div`
-  width: 1000px;
+  width: 70%;
+  min-width: 800px;
   margin-bottom: 30px;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
+  }
 `;
 
 const PreviewBoxWrapper = styled.div`
