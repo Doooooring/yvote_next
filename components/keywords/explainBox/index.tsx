@@ -126,6 +126,7 @@ const ExplanationBody = styled.div``;
 
 const ExplanationList = styled.div`
   padding-left: 0.25rem;
+
   @media screen and (max-width: 768px) {
     font-size: 14px;
   }
