@@ -139,6 +139,7 @@ export default function NewsPage(props: pageProps) {
         <SpeechBubble />
       </div>
       <div className="main-contents">
+        {curClicked ? <></> : <div className="main-header-wrapper"></div>}
         <div className="main-contents-body">
           {curClicked ? (
             <div className="news-contents-wrapper">

@@ -47,7 +47,7 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
       </div>
       <div className="body-wrapper">
         <div className="head-wrapper">
-          <h1>{title}</h1>
+          <p>{title}</p>
           <Image
             src={icoNew}
             alt="hmm"
@@ -99,20 +99,19 @@ const Wrapper = styled.div<WrapperProps>`
     flex-direction: row;
     align-items: center;
     gap: 4px;
-  }
 
-  h1 {
-    /* display: inline; */
-    font-size: 15px;
-    font-weight: 700;
-    margin-right: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1;
-    margin: 0;
+    p {
+      /* display: inline; */
+      font-size: 15px;
+      font-weight: 700;
+      margin-right: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
   }
 
   .img-wrapper {
@@ -160,6 +159,7 @@ const Wrapper = styled.div<WrapperProps>`
         text-decoration: none;
         height: 14px;
         font-size: 12px;
+        font-weight: 300;
         margin: 0;
         margin-right: 6px;
         color: #3a84e5;
