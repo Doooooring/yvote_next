@@ -138,7 +138,6 @@ export default function NewsContent({
                 id="contents-close-button"
                 onClick={(e) => {
                   e.preventDefault();
-                  // console.log('is clicked');
                   hide();
                 }}
               ></input>

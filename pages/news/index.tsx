@@ -7,10 +7,8 @@ import { SpeechBubble } from '@components/common/figure';
 import NewsContent from '@components/news/newsContents';
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
-import icoNews from '@images/ico_news.png';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { News, Preview } from '@utils/interface/news';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 type curPreviewsList = Preview[];
@@ -141,16 +139,6 @@ export default function NewsPage(props: pageProps) {
         <SpeechBubble />
       </div>
       <div className="main-contents">
-        {curClicked ? (
-          <></>
-        ) : (
-          <div className="main-header-wrapper">
-            <div className="main-header">
-              <Image src={icoNews} alt="hmm" height="18" />
-              <div className="category-name">{'최신 뉴스'}</div>
-            </div>
-          </div>
-        )}
         <div className="main-contents-body">
           {curClicked ? (
             <div className="news-contents-wrapper">

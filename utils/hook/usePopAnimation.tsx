@@ -10,7 +10,6 @@ export function usePopAnimation(num: number, duration: number) {
     const newArray: Array<boolean> = stateArray.map((cur, idx): boolean => {
       return curNum < idx ? false : true;
     });
-    console.log(newArray);
     setStateArray(newArray);
   }, [curNum]);
 
