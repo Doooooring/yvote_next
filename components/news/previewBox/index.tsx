@@ -149,6 +149,12 @@ const Wrapper = styled.div<WrapperProps>`
     }
 
     .keyword-wrapper {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #3a84e5;
       .keyword {
         display: inline;
         text-decoration: none;
