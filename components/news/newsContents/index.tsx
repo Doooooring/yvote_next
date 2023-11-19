@@ -119,7 +119,6 @@ export default function NewsContent({
           <span
             onClick={(e) => {
               e.preventDefault();
-              // console.log('is clicked');
               hide();
             }}
           >

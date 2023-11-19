@@ -45,7 +45,6 @@ export default function SearchBox() {
       return;
     }
     const preValue = e.currentTarget.value;
-    console.log(preValue);
     setSearchWord(preValue);
     if (preValue === '') {
       setCurFocusOnWord(-1);

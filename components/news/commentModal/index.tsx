@@ -67,7 +67,6 @@ export default function CommentModal({
    * 가장 바람직하나 일단은 아래와 같은 필터링으로 처리
    */
   const typeShow = (type: string) => {
-    console.log(type);
     if (type in typeExplain) {
       if (type === '민주당') return '더불어 민주당';
       if (type === '청와대') return '정부';
