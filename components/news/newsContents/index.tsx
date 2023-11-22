@@ -422,6 +422,7 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
 const BodyRight = styled.div<BodyProps>`
   width: 48%;
   padding: 0 1.5rem;
+
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
     width: 100%;
@@ -438,11 +439,14 @@ const BodyRight = styled.div<BodyProps>`
 
     div.comment {
       width: 100%;
-      padding: 1.75rem;
+      padding: 2.5rem;
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
       overflow: hidden;
+      @media screen and (max-width: 1440px) {
+        padding: 1.75rem;
+      }
     }
   }
 `;

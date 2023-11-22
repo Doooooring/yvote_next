@@ -130,7 +130,7 @@ export default function SearchBox() {
       <InputWrapper>
         <InputBox
           type="text"
-          placeholder="궁금한 뉴스의 키워드, 인물을 검색하시오"
+          placeholder="궁금한 뉴스의 키워드를 검색하시오"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
