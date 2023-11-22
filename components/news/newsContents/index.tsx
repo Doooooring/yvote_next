@@ -112,7 +112,7 @@ export default function NewsContent({
       <Wrapper>
         <FaWrapper state={!showLeft} style={{ textAlign: 'left' }}>
           <span onClick={toggleShowLeft}>
-            <FontAwesomeIcon icon={faArrowLeft} /> 뉴스 상세 열기
+            <FontAwesomeIcon icon={faArrowLeft} width={12} /> 뉴스 상세 열기
           </span>
         </FaWrapper>
         <FaWrapper state={showLeft} className="fa-flex">
@@ -122,10 +122,10 @@ export default function NewsContent({
               hide();
             }}
           >
-            <FontAwesomeIcon icon={faArrowLeft} /> 목록 보기
+            <FontAwesomeIcon icon={faArrowLeft} width={12} /> 목록 보기
           </span>
           <span onClick={toggleShowLeft}>
-            평론 열기 <FontAwesomeIcon icon={faArrowRight} />
+            평론 열기 <FontAwesomeIcon icon={faArrowRight} width={12} />
           </span>
         </FaWrapper>
         <Body>
