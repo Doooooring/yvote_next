@@ -7,12 +7,18 @@ export default function HeadMeta() {
       <meta
         name="description"
         content={
-          '와이보트는 효율성과 실용성을 추구하는 현대인들을 위해 최소한의 뉴스를 최대한 깔끔하게 제공하는 서비스입니다,'
+          '와이보트는 효율성과 실용성을 추구하는 현대인들을 위해 최소한의 뉴스를 최대한 깔끔하게 제공하는 서비스입니다.'
         }
       />
       <meta property="og:title" content={'와이보트'} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={'https://yvoting.com'} />
+      <meta
+        property="og:description"
+        content={
+          '와이보트는 효율성과 실용성을 추구하는 현대인들을 위해 최소한의 뉴스를 최대한 깔끔하게 제공하는 서비스입니다.'
+        }
+      />
       <meta
         property="og:image"
         content={
