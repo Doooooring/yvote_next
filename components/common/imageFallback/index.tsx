@@ -48,8 +48,8 @@ export default function ImageFallback({
     return (
       <Image
         src={loadError ? defaultImg : src}
-        height={0}
-        width={0}
+        height={Number((height as string).split('%')[0])}
+        width={Number((width as string).split('%')[0])}
         alt="image"
         style={imageStyle}
         onError={() => {

@@ -121,10 +121,18 @@ const SearchWrapper = styled.div`
   box-shadow: 0 0 30px -20px;
   margin-bottom: 40px;
   text-align: center;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    overflow-y: scroll;
+  }
 `;
 
 const GridContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    padding: 0 1rem;
+  }
 `;

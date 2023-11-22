@@ -68,8 +68,8 @@ export default function CommentModal({
    */
   const typeShow = (type: string) => {
     if (type in typeExplain) {
-      if (type === '민주당') return '더불어 민주당';
-      if (type === '청와대') return '정부';
+      if (type === '민주당') return '더불어민주당';
+      if (type === '청와대') return '대통령실';
       else return type;
     }
   };

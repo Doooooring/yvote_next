@@ -1,8 +1,6 @@
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import styled from 'styled-components';
 
-
-
 interface LeftButtonProps {
   curView: number;
   viewToLeft: () => void;
@@ -56,6 +54,9 @@ const ButtonWrapper = styled.div`
   z-index: 99;
   &:hover {
     cursor: pointer;
+  }
+  @media screen and (max-width: 768px) {
+    display: none !important;
   }
 `;
 

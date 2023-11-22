@@ -32,7 +32,7 @@ export default function KeywordBox({ id, keyword, tail }: KeywordBoxProps) {
     >
       <Wrapper state={tail}>
         <ImageWrapper state={tail}>
-          <ImageFallback src={`${HOST_URL}/images/keyword/${id}`} width={85} height={85} />
+          <ImageFallback src={`${HOST_URL}/images/keyword/${id}`} width={'100%'} height={'100%'} />
         </ImageWrapper>
         <KeywordWrapper>
           <KeywordTitle>{keyword}</KeywordTitle>
@@ -59,6 +59,10 @@ const LinkWrapper = styled(Link)<LinkWrapperProps>`
     cursor: ${({ state }) => (state ? 'default' : 'pointer')};
   }
   text-decoration: none;
+  @media screen and (max-width: 768px) {
+    width: 150px;
+    height: 60px;
+  }
 `;
 
 interface WrapperProps {
@@ -76,6 +80,11 @@ const Wrapper = styled.div<WrapperProps>`
   background-color: white;
   box-shadow: 0px 0px 30px -25px;
   overflow: hidden;
+  @media screen and (max-width: 768px) {
+    width: 150px;
+    height: 60px;
+    padding: 0 0.25rem;
+  }
 `;
 
 interface ImageWrapperProps {
@@ -89,11 +98,19 @@ const ImageWrapper = styled.div<ImageWrapperProps>`
   justify-content: center;
   padding: 10px;
   padding-left: 5px;
+  width: 85px;
+  height: 85px;
+
   &:hover {
     cursor: ${({ state }) => (state ? 'pointer' : 'default')};
   }
   & > img {
     border-radius: '5px';
+  }
+  @media screen and (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 auto;
   }
 `;
 
@@ -103,6 +120,9 @@ const KeywordWrapper = styled.div`
   align-items: center;
   width: 140px;
   height: 95px;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const KeywordTitle = styled.p`
@@ -110,6 +130,9 @@ const KeywordTitle = styled.p`
   font-weight: 600;
   color: rgb(50, 50, 50);
   margin: 0;
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 interface KeywordBoxTailProps {

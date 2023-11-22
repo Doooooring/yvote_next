@@ -76,6 +76,10 @@ const Wrapper = styled.div<WrapperProps>`
   background-color: white;
   box-shadow: 0px 0px 30px -25px;
   overflow: hidden;
+  @media screen and (max-width: 768px) {
+    width: 120px;
+    padding: 0 1rem;
+  }
 `;
 
 interface ImageWrapperProps {
@@ -103,6 +107,10 @@ const KeywordWrapper = styled.div`
   align-items: center;
   width: 140px;
   height: 95px;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    padding: 0 1rem;
+  }
 `;
 
 const KeywordTitle = styled.p`

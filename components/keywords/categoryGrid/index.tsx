@@ -1,13 +1,12 @@
 import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
+import ImageFallback from '@components/common/imageFallback';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
-import icoNews from '@images/ico_news.png';
 import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
-import Image from 'next/image';
 import { useRef } from 'react';
 
 interface CategoryGridProps {
@@ -37,7 +36,9 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
   return (
     <Wrapper>
       <HeaderWrapper>
-        <Image src={icoNews} alt="hmm" width="18" height="18" />
+        <ImageWrapper>
+          <ImageFallback src={`/assets/img/ico_news.png`} width="100%" height="100%" />
+        </ImageWrapper>
         <CategoryHead>{category}</CategoryHead>
       </HeaderWrapper>
       <BodyWrapper>
@@ -74,6 +75,10 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
 const Wrapper = styled.div`
   width: 1000px;
   margin-top: 20px;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    overflow-y: scroll;
+  }
 `;
 
 const HeaderWrapper = styled.div`
@@ -86,6 +91,20 @@ const CategoryHead = styled.div`
   margin-left: 10px;
   font-weight: 700;
   font-size: 18px;
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+    margin-left: 8px;
+  }
+`;
+
+const ImageWrapper = styled.div`
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  @media screen and (max-width: 768px) {
+    width: 12px;
+    height: 12px;
+  }
 `;
 
 const BodyWrapper = styled.div`
@@ -103,12 +122,16 @@ interface GridContainerProps {
 
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
-  height: 220px;
   grid-template-rows: repeat(2, 95px);
-  grid-template-columns: repeat(auto-fill, 235px);
   grid-auto-flow: column;
   grid-row-gap: 10px;
   grid-column-gap: 20px;
   transform: ${({ curView }) => `translateX(-${curView * 1020}px)`};
   transition-duration: 0.5s;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    overflow-y: scroll;
+    grid-template-rows: repeat(2, 60px);
+    grid-column-gap: 10px;
+  }
 `;

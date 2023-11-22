@@ -83,6 +83,10 @@ const ExplanationWrapper = styled.div`
   padding: 2rem 3rem;
   box-shadow: 0 8px 35px -25px;
   position: relative;
+  @media screen and (max-width: 768px) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 `;
 
 const NewsBoxClose = styled.div`
