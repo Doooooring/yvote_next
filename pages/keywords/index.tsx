@@ -122,8 +122,9 @@ const SearchWrapper = styled.div`
   margin-bottom: 40px;
   text-align: center;
   @media screen and (max-width: 768px) {
-    width: 100%;
-    overflow-y: scroll;
+    width: 90%;
+    min-width: 0px;
+    margin-bottom: 20px;
   }
 `;
 
