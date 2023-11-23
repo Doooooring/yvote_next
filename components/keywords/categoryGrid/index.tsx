@@ -10,7 +10,7 @@ import { KeywordToView } from '@utils/interface/keywords';
 import { useRef } from 'react';
 
 interface CategoryGridProps {
-  category: KeywordToView['category'];
+  category: KeywordToView['category'] | 'recent';
   keywords: Array<KeywordToView>;
   setKeywords: Dispatch<SetStateAction<KeywordToView[]>>;
 }
@@ -21,6 +21,9 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
 
   //onClick event에 keyword 추가 콜백 wip
   const getKeywords = async () => {
+    if (category === 'recent') {
+      return;
+    }
     try {
       const response = await keywordRepository.getKeywordsByCategory(category, page.current);
       if (response.length === 0) {
@@ -35,15 +38,15 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
 
   return (
     <Wrapper>
-      <HeaderWrapper>
-        <ImageWrapper>
+      <div className="header-wrapper">
+        <div className="image-wrapper">
           <ImageFallback src={`/assets/img/ico_news.png`} width="100%" height="100%" />
-        </ImageWrapper>
-        <CategoryHead>{category}</CategoryHead>
-      </HeaderWrapper>
-      <BodyWrapper>
+        </div>
+        <div className="category-head">{category}</div>
+      </div>
+      <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
-        <GridWrapper>
+        <div className="grid-wrapper">
           <GridContainer curView={curView}>
             {keywords.map((keyword) => {
               return (
@@ -51,12 +54,11 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
                   key={keyword._id}
                   id={keyword._id}
                   keyword={keyword.keyword}
-                  tail={false}
                 />
               );
             })}
           </GridContainer>
-        </GridWrapper>
+        </div>
         <RightButton
           curView={curView}
           viewToRight={async () => {
@@ -67,7 +69,7 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
           }}
           lastPage={Math.floor(keywords.length / 8)}
         />
-      </BodyWrapper>
+      </div>
     </Wrapper>
   );
 }
@@ -79,41 +81,36 @@ const Wrapper = styled.div`
     width: 100%;
     overflow-y: scroll;
   }
-`;
-
-const HeaderWrapper = styled.div`
-  height: 30px;
-`;
-
-const CategoryHead = styled.div`
-  display: inline;
-  width: 1000px;
-  margin-left: 10px;
-  font-weight: 700;
-  font-size: 18px;
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
-    margin-left: 8px;
+  .header-wrapper {
+    height: 30px;
+    .image-wrapper {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      @media screen and (max-width: 768px) {
+        width: 12px;
+        height: 12px;
+      }
+    }
+    .category-head {
+      display: inline;
+      width: 1000px;
+      margin-left: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+        margin-left: 8px;
+      }
+    }
   }
-`;
-
-const ImageWrapper = styled.div`
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  @media screen and (max-width: 768px) {
-    width: 12px;
-    height: 12px;
+  .body-wrapper {
+    position: relative;
+    .grid-wrapper {
+      border: 0px solid black;
+      overflow: hidden;
+    }
   }
-`;
-
-const BodyWrapper = styled.div`
-  position: relative;
-`;
-
-const GridWrapper = styled.div`
-  border: 0px solid black;
-  overflow: hidden;
 `;
 
 interface GridContainerProps {

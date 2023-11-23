@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
 import CategoryGrid from '@components/keywords/categoryGrid';
-import RecentCategoryGrid from '@components/keywords/recentCategoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import KeywordRepository, { getKeywordsResponse, otherObject } from '@repositories/keywords';
 import { KeywordToView } from '@utils/interface/keywords';
@@ -64,7 +63,11 @@ export default function KeywordsPage({ data }: pageProps) {
         <SpeechBubble />
       </SearchWrapper>
       <GridContainer>
-        <RecentCategoryGrid keywords={recentKeywords} setKeywords={setRecentKeywords} />
+        <CategoryGrid
+          category={'recent'}
+          keywords={recentKeywords}
+          setKeywords={setRecentKeywords}
+        />
         <CategoryGrid
           category={'economics'}
           keywords={keywordInEconomy}

@@ -28,7 +28,7 @@ export default function ExplanationComp({
   }
   return (
     <ExplanationWrapper>
-      <NewsBoxClose>
+      <div className="news-box-close">
         <input
           type="button"
           style={{ display: 'none' }}
@@ -37,11 +37,11 @@ export default function ExplanationComp({
             navigation.back();
           }}
         ></input>
-        <CloseButton htmlFor="close-button">
+        <label className="close-button" htmlFor="close-button">
           <Image src={icoClose} alt="hmm" />
-        </CloseButton>
-      </NewsBoxClose>
-      <ExplanationHeader>
+        </label>
+      </div>
+      <div className="explanation-header">
         <p>{keyword}</p>
         <Image
           src={keywordTagLoadError ? defaultImg : `${HOST_URL}/images/${category}`}
@@ -52,10 +52,10 @@ export default function ExplanationComp({
             setKeywordTagLoadError(true);
           }}
         />
-      </ExplanationHeader>
-      <ExplanationBody>
-        <ExplanationList>
-          <KeywordImg>
+      </div>
+      <div className="body-wrapper">
+        <div className="explanation-list">
+          <div className="keyword-img">
             <Image
               src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${id}`}
               alt="hmm"
@@ -64,12 +64,16 @@ export default function ExplanationComp({
                 setKeywordImgLoadError(true);
               }}
             />
-          </KeywordImg>
+          </div>
           {explain.split('$').map((s, idx) => {
-            return <Explanation key={idx}>{s}</Explanation>;
+            return (
+              <p className="explanation" key={idx}>
+                {s}
+              </p>
+            );
           })}
-        </ExplanationList>
-      </ExplanationBody>
+        </div>
+      </div>
     </ExplanationWrapper>
   );
 }
@@ -87,73 +91,67 @@ const ExplanationWrapper = styled.div`
     padding-left: 1rem;
     padding-right: 1rem;
   }
-`;
+  .news-box-close {
+    padding-right: 10px;
+    text-align: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    label.close-button {
+      padding-top: 10px;
 
-const NewsBoxClose = styled.div`
-  padding-right: 10px;
-  text-align: right;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-`;
-
-const CloseButton = styled.label`
-  padding-top: 10px;
-
-  text-align: right;
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const ExplanationHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-
-  p {
-    margin: 0;
-    padding: 0;
-  }
-  & {
-    img {
-      flex: 0 0 auto;
-      object-fit: contain;
+      text-align: right;
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
-`;
+  .explanation-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
 
-const ExplanationBody = styled.div``;
-
-const ExplanationList = styled.div`
-  padding-left: 0.25rem;
-
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    & {
+      img {
+        flex: 0 0 auto;
+        object-fit: contain;
+      }
+    }
   }
-`;
+  .body-wrapper {
+    .explanation-list {
+      padding-left: 0.25rem;
 
-const KeywordImg = styled.div`
-  float: right;
-  margin-left: 16px;
-  width: 140px;
-  height: 140px;
-  position: relative;
-  @media screen and (max-width: 768px) {
-    width: 90px;
-    height: 90px;
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+      }
+      .keyword-img {
+        float: right;
+        margin-left: 16px;
+        width: 140px;
+        height: 140px;
+        position: relative;
+        @media screen and (max-width: 768px) {
+          width: 90px;
+          height: 90px;
+        }
+      }
+    }
+    .explanation {
+      font-family: var(--font-pretendard);
+      font-size: 16px;
+      font-weight: 600;
+      color: #a1a1a1;
+      line-height: 1.5;
+      text-align: left;
+      margin-bottom: 20px;
+    }
   }
-`;
-
-const Explanation = styled.p`
-  font-family: var(--font-pretendard);
-  font-size: 16px;
-  font-weight: 600;
-  color: #a1a1a1;
-  line-height: 1.5;
-  text-align: left;
-  margin-bottom: 20px;
 `;

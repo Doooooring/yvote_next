@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 
 import { SpeechBubble } from '@components/common/figure';
 import NewsContent from '@components/news/newsContents';
@@ -25,10 +25,11 @@ interface getNewsContentResponse {
   news: NewsDetail | null;
 }
 
-export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
+export const getStaticProps: GetStaticProps<pageProps> = async () => {
   const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
   return {
     props: { data },
+    revalidate: 10,
   };
 };
 
