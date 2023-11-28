@@ -38,6 +38,7 @@ export default function NewsPage(props: pageProps) {
 
   // 현재 선택된 뉴스
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
+
   // 검색어 바인딩
   const [submitWord, setSubmitWord] = useState<string>('');
   // 뉴스 블록 선택시 보여질 뉴스 상세 내용
