@@ -61,6 +61,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
+  // 현재 클릭된 뉴스
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
   const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
