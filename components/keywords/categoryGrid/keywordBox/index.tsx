@@ -35,7 +35,7 @@ export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
 
 const LinkWrapper = styled(Link)`
   display: block;
-  width: '235px';
+  width: 235px;
   text-decoration: none;
   @media screen and (max-width: 768px) {
     width: 150px;
