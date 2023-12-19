@@ -51,8 +51,8 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         setSearchWord(relatedWords[curFocusOnWord]);
       }
       // 새로운 검색어로 조회하기에 기존 페이지 초기화
-      curPage.current = 0;
-      const newsList = await NewsRepository.getPreviews(curPage.current, searchWord);
+      const newsList = await NewsRepository.getPreviews(0, searchWord);
+      curPage.current = 20;
       if (newsList.length !== 0) {
         setSubmitWord(searchWord);
         setCurPreviews(newsList);

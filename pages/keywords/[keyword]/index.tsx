@@ -40,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyword },
     };
   });
-  return { paths, fallback: false, revalidate: 10 };
+  return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -57,6 +57,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         previews,
       },
     },
+    revalidate: 10,
   };
 };
 
