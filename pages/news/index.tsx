@@ -72,18 +72,19 @@ export default function NewsPage(props: pageProps) {
    * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
    */
   const showNewsContent = async (id: string) => {
-    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
-    const { response, news } = newsInfo;
-    if (news === null) {
-      return;
-    }
-    // 이전 스크롤 위치 기억
-    setScrollMem(newsWrapper.current!.scrollTop);
-    // 상세 화면이 보여질 때 스크롤 위치를 최상단으로
-    newsWrapper.current!.scrollTo(0, 0);
-    setNewsContent(news);
-    setCurClicked(id);
-    setVoteHistory(response);
+    router.push(`/news/${id}`);
+    // const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
+    // const { response, news } = newsInfo;
+    // if (news === null) {
+    //   return;
+    // }
+    // // 이전 스크롤 위치 기억
+    // setScrollMem(newsWrapper.current!.scrollTop);
+    // // 상세 화면이 보여질 때 스크롤 위치를 최상단으로
+    // newsWrapper.current!.scrollTo(0, 0);
+    // setNewsContent(news);
+    // setCurClicked(id);
+    // setVoteHistory(response);
   };
 
   /**

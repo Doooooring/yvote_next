@@ -97,7 +97,7 @@ export default function KeyExplanation({ data }: pageProps) {
   }, [curPage, curKeyword, curPreviews]);
 
   const showNewsContent = async (id: string) => {
-    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
+    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
     const { response, news } = newsInfo;
     if (news === null) {
       Error('news content error');

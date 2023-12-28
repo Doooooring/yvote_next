@@ -225,6 +225,7 @@ const Wrapper = styled.div`
       position: absolute;
       top: 10px;
       right: 14px;
+      cursor: pointer;
     }
     div.modal-head {
       display: flex;
@@ -300,8 +301,8 @@ const Wrapper = styled.div`
           border-radius: 16px;
           display: flex;
           flex-direction: row;
-
           align-items: center;
+          cursor: pointer;
 
           @media screen and (max-width: 768px) {
             padding: 0rem;
@@ -334,6 +335,7 @@ const Wrapper = styled.div`
           padding: 0.5rem;
           border-radius: 30px;
           box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+          cursor: pointer;
         }
       }
 

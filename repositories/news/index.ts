@@ -48,6 +48,20 @@ interface VoteResponse {
 
 class NewsRepository {
   /**
+   * 뉴스 아이디 전체 목록 조회
+   */
+  async getNewsIds(): Promise<Array<{ _id: string }>> {
+    try {
+      const response = await axios.get(`${HOST_URL}/news/id`);
+      const data = response.data.result.data as Array<{ _id: string }>;
+      return data;
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+  }
+
+  /**
    * 뉴스 블록들 조회 API
    * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
    * @param keyword 검색 키워드 (전체 검색시 null)
@@ -68,10 +82,9 @@ class NewsRepository {
    * 뉴스 세부 컨텐츠 조회 API
    * @param id 뉴스 아이디
    */
-  async getNewsContent(id: Preview['_id']): Promise<getNewsContentResponse> {
+  async getNewsContent(id: Preview['_id'], token: string | null): Promise<getNewsContentResponse> {
     try {
       // 투표 정보 토큰
-      const token = localStorage.getItem('yVote');
       const response: Response<getNewsContentResponse> = await axios.get(
         `${HOST_URL}/news/detail?id=${id}`,
         {
@@ -85,6 +98,7 @@ class NewsRepository {
 
       return data.result;
     } catch (e) {
+      console.log(e);
       // 더미 데이터
       return {
         response: null,

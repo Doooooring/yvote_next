@@ -443,6 +443,7 @@ const BodyRight = styled.div<BodyProps>`
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
+      cursor: pointer;
       overflow: hidden;
       @media screen and (max-width: 1440px) {
         padding: 1.75rem;
