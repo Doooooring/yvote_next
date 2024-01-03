@@ -73,18 +73,6 @@ export default function NewsPage(props: pageProps) {
    */
   const showNewsContent = async (id: string) => {
     router.push(`/news/${id}`);
-    // const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id);
-    // const { response, news } = newsInfo;
-    // if (news === null) {
-    //   return;
-    // }
-    // // 이전 스크롤 위치 기억
-    // setScrollMem(newsWrapper.current!.scrollTop);
-    // // 상세 화면이 보여질 때 스크롤 위치를 최상단으로
-    // newsWrapper.current!.scrollTo(0, 0);
-    // setNewsContent(news);
-    // setCurClicked(id);
-    // setVoteHistory(response);
   };
 
   /**
