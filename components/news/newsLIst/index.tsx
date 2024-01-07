@@ -10,7 +10,7 @@ interface NewsListProps {
   previews: Preview[];
   curClicked: string | undefined;
   fetchNewsPreviews: () => Promise<void>;
-  toggleNewsContentView: (id: string) => void;
+  showNewsContent: (id: string) => void;
 }
 
 export default function NewsList({
@@ -18,7 +18,7 @@ export default function NewsList({
   previews,
   curClicked,
   fetchNewsPreviews,
-  toggleNewsContentView,
+  showNewsContent,
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
@@ -50,7 +50,7 @@ export default function NewsList({
     <Wrapper>
       {previews.map((preview, idx) => (
         <div className="preview-wrapper" key={idx}>
-          <PreviewBox preview={preview} curClicked={curClicked} click={toggleNewsContentView} />
+          <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
         </div>
       ))}
       <div className="last-line" ref={elementRef}></div>
