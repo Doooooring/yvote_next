@@ -34,9 +34,6 @@ export default function NewsPage(props: pageProps) {
   // 현재 보여지고 있는 뉴스 컨텐츠에 대한 투표 기록 (블록 클릭 시 API 조회를 통해 받아옴)
   const curPage = useRef<number>(20);
 
-  // 뉴스 상세 화면을 보던 상태에서 뒤로가기시 스크롤을 기억하기 위한 ref 및 state
-  const newsWrapper = useRef<HTMLDivElement>(null);
-
   /**
    * 뉴스 블록들 조회 및 현재 페이지 업데이트
    */
@@ -59,7 +56,7 @@ export default function NewsPage(props: pageProps) {
   };
 
   return (
-    <Wrapper ref={newsWrapper}>
+    <Wrapper>
       <div className="search-wrapper">
         <SearchBox
           curPage={curPage}

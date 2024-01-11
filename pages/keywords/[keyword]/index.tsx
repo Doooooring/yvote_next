@@ -70,10 +70,8 @@ export default function KeyExplanation({ data }: pageProps) {
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
   const newsWrapper = useRef<HTMLDivElement>(null);
-  const [scrollMem, setScrollMem] = useState<number | null>(null);
 
   const curPage = useRef<number>(20);
-  const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (data) {
@@ -103,19 +101,15 @@ export default function KeyExplanation({ data }: pageProps) {
       Error('news content error');
       return;
     }
-    setScrollMem(newsWrapper.current!.scrollTop);
-    newsWrapper.current!.scrollTo(0, 0);
     setNewsContent(news);
     setCurClicked(id);
     setVoteHistory(response);
   };
 
   const hideNewsContent = useCallback(() => {
-    newsWrapper.current!.scrollTo(0, scrollMem!);
-    setScrollMem(null);
     setCurClicked(undefined);
     setVoteHistory(null);
-  }, [scrollMem]);
+  }, []);
 
   const toggleNewsContentView = useCallback(
     (id: string) => {
@@ -170,7 +164,7 @@ export default function KeyExplanation({ data }: pageProps) {
               previews={curPreviews}
               curClicked={curClicked}
               fetchNewsPreviews={fetchNewsPreviews}
-              toggleNewsContentView={toggleNewsContentView}
+              showNewsContent={toggleNewsContentView}
             />
           )}
         </div>
