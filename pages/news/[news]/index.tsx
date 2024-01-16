@@ -9,14 +9,12 @@ import styled from 'styled-components';
 type AnswerState = 'left' | 'right' | 'none' | null;
 
 interface getNewsContentResponse {
-  response: AnswerState;
   news: NewsDetail | null;
 }
 
 interface pageProps {
   data: {
     id: string;
-    response: AnswerState;
     news: NewsDetail | null;
   };
 }
@@ -36,14 +34,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news as string;
-  const { response: voteResponse, news }: getNewsContentResponse =
-    await NewsRepository.getNewsContent(id, null);
+  const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
+  console.log(news);
 
   return {
     props: {
       data: {
         id,
-        response: voteResponse,
         news,
       },
     },
@@ -53,7 +50,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const router = useRouter();
-  const { id, response, news } = data;
+  const { id, news } = data;
 
   const hideNewsContent = useCallback(() => {
     router.push('/news');
@@ -67,7 +64,7 @@ export default function NewsDetailPage({ data }: pageProps) {
             <NewsContent
               curClicked={id}
               newsContent={news!}
-              voteHistory={response}
+              voteHistory={null}
               hide={hideNewsContent}
             />
           </div>

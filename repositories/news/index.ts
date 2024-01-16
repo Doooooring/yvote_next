@@ -30,7 +30,6 @@ export interface NewsDetail
 }
 
 interface getNewsContentResponse {
-  response: AnswerState | null;
   news: NewsDetail;
 }
 
@@ -85,15 +84,13 @@ class NewsRepository {
   async getNewsContent(id: Preview['_id'], token: string | null): Promise<getNewsContentResponse> {
     try {
       // 투표 정보 토큰
-      const response: Response<getNewsContentResponse> = await axios.get(
-        `${HOST_URL}/news/detail?id=${id}`,
-        {
-          headers: {
-            authorization: token,
-          },
+      const response: Response<getNewsContentResponse> = await axios.get(`${HOST_URL}/news/${id}`, {
+        headers: {
+          authorization: token,
         },
-      );
+      });
       const data = response.data;
+
       if (!data.success) Error('api error');
 
       return data.result;
@@ -101,7 +98,6 @@ class NewsRepository {
       console.log(e);
       // 더미 데이터
       return {
-        response: null,
         news: {
           _id: '1',
           order: 1,
@@ -157,7 +153,7 @@ class NewsRepository {
   ): Promise<NewsCommentResponse> {
     try {
       const response: Response<NewsCommentResponse> = await axios.get(
-        `${HOST_URL}/news/comment?id=${id}&type=${type}&page=${page}`,
+        `${HOST_URL}/news/${id}/comment?type=${type}&page=${page}`,
       );
       if (response.data.success) {
         return response.data.result;

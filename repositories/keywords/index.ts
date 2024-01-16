@@ -82,7 +82,7 @@ class KeywordsRepository {
   async getKeywordByKey(key: string) {
     try {
       const response: Response<{ keyword: Keyword }> = await axios.get(
-        `${HOST_URL}/keywords/key?keyname=${key}`,
+        `${HOST_URL}/keywords/${key}`,
       );
       return response.data.result.keyword;
     } catch (e) {
@@ -93,7 +93,7 @@ class KeywordsRepository {
   async getKeywordsByCategory(category: category, page: number) {
     try {
       const response: Response<getKeywordsByCategoryResponse> = await axios.get(
-        `${HOST_URL}/keywords/${category}?page=${page}`,
+        `${HOST_URL}/keywords/category/${category}?page=${page}`,
       );
 
       return response.data?.result?.keywords ?? [];

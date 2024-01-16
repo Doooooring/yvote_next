@@ -16,7 +16,6 @@ import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 type curPreviewsList = Preview[];
-type newsContent = undefined | News;
 type curClicked = undefined | News['_id'];
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -29,7 +28,6 @@ interface pageProps {
 }
 
 interface getNewsContentResponse {
-  response: AnswerState;
   news: NewsDetail | null;
 }
 
@@ -96,14 +94,14 @@ export default function KeyExplanation({ data }: pageProps) {
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
-    const { response, news } = newsInfo;
+    const { news } = newsInfo;
     if (news === null) {
       Error('news content error');
       return;
     }
     setNewsContent(news);
     setCurClicked(id);
-    setVoteHistory(response);
+    setVoteHistory(null);
   };
 
   const hideNewsContent = useCallback(() => {
