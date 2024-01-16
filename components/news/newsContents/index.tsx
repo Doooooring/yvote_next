@@ -79,9 +79,9 @@ export default function NewsContent({
   };
 
   // 코멘트 순서 정렬 (와이보트 > 국민의 힘 > 민주당 > 청와대 > 기타 > 그 외)
-  const commentToShow = useMemo(
-    () =>
-      newsContent?.comments.sort((a, b) => {
+  const commentToShow = useMemo(() => {
+    try {
+      return newsContent?.comments.sort((a, b) => {
         const getOrder = (comment: commentType) => {
           switch (comment) {
             case commentType.와이보트:
@@ -101,9 +101,13 @@ export default function NewsContent({
         const aOrder = getOrder(a);
         const bOrder = getOrder(b);
         return bOrder - aOrder;
-      }),
-    [newsContent],
-  );
+      });
+    } catch (e) {
+      console.log('comment error');
+      console.log(e);
+      return [];
+    }
+  }, [newsContent]);
 
   if (curClicked === undefined || newsContent === undefined) {
     return <div></div>;
