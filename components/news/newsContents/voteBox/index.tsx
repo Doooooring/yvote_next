@@ -16,10 +16,10 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
   const [checkLeftRight, setCheckLeftRight] = useState<'left' | 'right' | 'none' | null>(null);
   const [submitState, setSubmitState] = useState<SubmitState>('pending');
 
-  const voteTotal = useMemo(() => {
-    const { left, right, none } = votes;
-    return left + right + none;
-  }, [votes]);
+  // const voteTotal = useMemo(() => {
+  //   const { left, right, none } = votes ?? { left: 1, right: 1, none: 1 };
+  //   return left + right + none;
+  // }, [votes]);
 
   const submitButtonText = useMemo(() => {
     return {
