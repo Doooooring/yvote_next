@@ -176,7 +176,7 @@ export default function Home() {
                 운영에 대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
               </p>
             </div>
-            <div className="col-6 col-12-medium">
+            <div className="col-6 col-12-medium notimp-medium">
               <h3>3. 투표로 바꿀 수 없는 사법부</h3>
               <p>
                 모든 것을 다수결로 결정하는 단순한 민주주의와 공화국의 가장 큰 차이점은, 사법부의

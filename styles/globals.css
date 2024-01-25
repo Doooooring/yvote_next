@@ -367,10 +367,10 @@ pre code {
   width: 100%;
 }
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1030px) {
   .container {
-    max-width: 100%;
-    width: 100%;
+    text-align: center;
+    width: 60%;
   }
 }
 
@@ -1109,9 +1109,9 @@ pre code {
   }
 }
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1030px) {
   .row {
-    display: flex;
+    display: block;
     flex-wrap: wrap;
     box-sizing: border-box;
     align-items: stretch;
@@ -1151,6 +1151,10 @@ pre code {
 
   .row > .imp-medium {
     order: -1;
+  }
+
+  .row > .notimp-medium {
+    order: 1;
   }
 
   .row > .col-1-medium {
@@ -3392,7 +3396,7 @@ body.is-preload #header:after {
 
 /* Medium */
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1030px) {
   /* List */
 
   ul.major-icons li {
