@@ -36,8 +36,8 @@ export default function Header() {
       setCurTab('keywords');
     } else if (navigation.pathname.includes('analyze')) {
       setCurTab('analyze');
-    } else if (navigation.pathname.includes('contatct')) {
-      setCurTab('contact');
+    } else if (navigation.pathname.includes('about')) {
+      setCurTab('about');
     } else {
       setCurTab('home');
     }
@@ -59,7 +59,7 @@ export default function Header() {
 
           <NavBox link={'/analyze'} comment="정치 성향 테스트" state={curTab === 'analyze'} />
 
-          <NavBox link={'/contact'} comment="CONTACT" state={curTab === 'contact'} />
+          <NavBox link={'/about'} comment="ABOUT" state={curTab === 'about'} />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>
