@@ -339,7 +339,7 @@ pre code {
 
 .container {
   margin: 0 auto;
-  max-width: calc(100% - 4em);
+  max-width: calc(100% - 2em);
   width: 60em;
 }
 
@@ -370,13 +370,13 @@ pre code {
 @media screen and (max-width: 1030px) {
   .container {
     text-align: center;
-    width: 60%;
+    width: 70%;
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 860px) {
   .container {
-    max-width: calc(100% - 3em);
+    width: 518px;
   }
 }
 
@@ -1111,7 +1111,7 @@ pre code {
 
 @media screen and (max-width: 1030px) {
   .row {
-    display: block;
+    display: flex;
     flex-wrap: wrap;
     box-sizing: border-box;
     align-items: stretch;
@@ -3446,7 +3446,7 @@ body.is-preload #header:after {
 
 /* Small */
 
-@media screen and (max-width: 736px) {
+@media screen and (max-width: 680px) {
   /* Basic */
 
   body,
@@ -3605,6 +3605,10 @@ body.is-preload #header:after {
   #footer {
     padding: 2em 1em 2em 1em;
   }
+}
+
+#five {
+  padding: 2em;
 }
 
 #five > div > section svg.svg-inline--fa {
