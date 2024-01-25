@@ -2870,7 +2870,7 @@ button:disabled,
 /* Main */
 
 .main {
-  padding: 6em 0 4em 0;
+  padding: 4em 0 3em 0;
 }
 
 .main.style1 {
@@ -2970,6 +2970,10 @@ button:disabled,
 
 .main.style2 .icon.major {
   color: #ffffff;
+}
+
+#five > div > section > p:nth-child(2) {
+  margin: 0 0 4em 0;
 }
 
 /* Header */
@@ -3597,4 +3601,8 @@ body.is-preload #header:after {
   #footer {
     padding: 2em 1em 2em 1em;
   }
+}
+
+#five > div > section svg.svg-inline--fa {
+  width: 20px;
 }

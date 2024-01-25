@@ -43,80 +43,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="one" className="main style1">
-        <div className="container">
-          <header className="major">
-            <h2>
-              와이보트의 뉴스 선정 기준
-              <br />
-            </h2>
-          </header>
-          <div className="row gtr-150">
-            <div className="col-6 col-12-medium">
-              <h3>1. 법률을 정하는 입법부 소식</h3>
-              <p>
-                삼권분립 중 입법부의 역할을 수행하는 국회는 우리나라의 법률이 만들어지는 곳입니다.
-                법률은 정부 정책의 범위나 법원의 판결에 사용될 수 있는 근거를 결정하기 때문에,
-                국회는 우리 삶의 원칙을 만드는 가장 근원적인 기관입니다. 국회에는 총 300명의
-                국회의원이 있으며, 4년에 한 번씩 '총선'이라고 불리는 국회의원 선거를 통해
-                선출됩니다.
-                <br />
-                <br />
-                투표를 위한 최소한의 효율적인 뉴스를 제공하고자 하는 와이보트에서는, 국회에서 한
-                달에 수백 개씩 다루어지는 법률안들을 전부 다루지 않습니다. 대신, 국민의 투표로 인해
-                결과가 달라졌거나 바꿀 수 있다고 판단되는 법률안에 대한 소식만을 선별하여
-                전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium imp-medium">
-              <span className="image fit">
-                <Image src={Pic01} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-            <div className="col-6 col-12-medium">
-              <span className="image fit">
-                <Image src={Pic02} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-            <div className="col-6 col-12-medium">
-              <h3>2. 정책을 집행하는 행정부 소식</h3>
-              <p>
-                행정부는 국가의 정책을 실질적으로 집행하는 집단으로, 대통령실부터 동네의
-                주민센터까지 모두 행정부에 소속됩니다. 행정부의 업무는 대통령의 지시를 근거로
-                정해지지만, 모든 분야에 대통령이 세부적으로 관여하는 것은 불가능합니다. 이러한
-                세부적인 업무는 장관들을 필두로 각 부처에서 결정되기도 합니다.
-                <br />
-                <br />
-                와이보트는 행정부의 모든 소식을 전달하지 않습니다. 행정부의 규모는 거대하지만,
-                국민이 결정하는 것은 5년에 한 번 뽑는 대통령 뿐이기 때문입니다. 따라서 국정 기조가
-                드러나는 대통령 주재 회의, 연설문 또는 외교 일정 등을 중심으로 뉴스를 선별하며, 국정
-                운영에 대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium">
-              <h3>3. 투표로 바꿀 수 없는 사법부</h3>
-              <p>
-                모든 것을 다수결로 결정하는 단순한 민주주의와 공화국의 가장 큰 차이점은, 사법부의
-                존재입니다. 사법부는 국민의 투표로 선출되지 않습니다. 사법부의 역할은, 국회에서
-                정해진 법률을 근거로 판결을 내리는 것입니다.
-                <br />
-                <br />
-                사법부의 재판 결과를 알더라도 국민이 투표로 변화를 주도할 수 있는 부분은 없기
-                때문에, 와이보트는 사법부에서 뉴스를 선별하지 않습니다. 다만, 사법부의 최상위
-                기관으로 여겨지는 헌법재판소에서 입법부나 행정부의 정치적 결정을 평가하는 경우는,
-                법률이나 정책에 대한 기존의 결정을 돌아보는 의미에서 뉴스로 선별합니다. 또한
-                헌법재판소의 재판관들의 임명 과정에 입법부와 대통령이 개입하기 때문에, 사회/문화
-                전반에 영향을 주는 헌법재판소의 결정들을 전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium">
-              <span className="image fit">
-                <Image src={Pic03} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
       <section id="two" className="main style2 special">
         <div className="container">
           <header className="major">
@@ -200,7 +126,82 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="three" className="main style1">
+      <section id="one" className="main style1">
+        <div className="container">
+          <header className="major">
+            <h2>
+              와이보트의 뉴스 선정 기준
+              <br />
+            </h2>
+          </header>
+          <div className="row gtr-150">
+            <div className="col-6 col-12-medium">
+              <h3>1. 법률을 정하는 입법부 소식</h3>
+              <p>
+                삼권분립 중 입법부의 역할을 수행하는 국회는 우리나라의 법률이 만들어지는 곳입니다.
+                법률은 정부 정책의 범위나 법원의 판결에 사용될 수 있는 근거를 결정하기 때문에,
+                국회는 우리 삶의 원칙을 만드는 가장 근원적인 기관입니다. 국회에는 총 300명의
+                국회의원이 있으며, 4년에 한 번씩 '총선'이라고 불리는 국회의원 선거를 통해
+                선출됩니다.
+                <br />
+                <br />
+                투표를 위한 최소한의 효율적인 뉴스를 제공하고자 하는 와이보트에서는, 국회에서 한
+                달에 수백 개씩 다루어지는 법률안들을 전부 다루지 않습니다. 대신, 국민의 투표로 인해
+                결과가 달라졌거나 바꿀 수 있다고 판단되는 법률안에 대한 소식만을 선별하여
+                전달합니다.
+              </p>
+            </div>
+            <div className="col-6 col-12-medium imp-medium">
+              <span className="image fit">
+                <Image src={Pic01} alt="" style={{ height: 'auto' }} />
+              </span>
+            </div>
+            <div className="col-6 col-12-medium">
+              <span className="image fit">
+                <Image src={Pic02} alt="" style={{ height: 'auto' }} />
+              </span>
+            </div>
+            <div className="col-6 col-12-medium">
+              <h3>2. 정책을 집행하는 행정부 소식</h3>
+              <p>
+                행정부는 국가의 정책을 실질적으로 집행하는 집단으로, 대통령실부터 동네의
+                주민센터까지 모두 행정부에 소속됩니다. 행정부의 업무는 대통령의 지시를 근거로
+                정해지지만, 모든 분야에 대통령이 세부적으로 관여하는 것은 불가능합니다. 이러한
+                세부적인 업무는 장관들을 필두로 각 부처에서 결정되기도 합니다.
+                <br />
+                <br />
+                와이보트는 행정부의 모든 소식을 전달하지 않습니다. 행정부의 규모는 거대하지만,
+                국민이 결정하는 것은 5년에 한 번 뽑는 대통령 뿐이기 때문입니다. 따라서 국정 기조가
+                드러나는 대통령 주재 회의, 연설문 또는 외교 일정 등을 중심으로 뉴스를 선별하며, 국정
+                운영에 대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
+              </p>
+            </div>
+            <div className="col-6 col-12-medium">
+              <h3>3. 투표로 바꿀 수 없는 사법부</h3>
+              <p>
+                모든 것을 다수결로 결정하는 단순한 민주주의와 공화국의 가장 큰 차이점은, 사법부의
+                존재입니다. 사법부는 국민의 투표로 선출되지 않습니다. 사법부의 역할은, 국회에서
+                정해진 법률을 근거로 판결을 내리는 것입니다.
+                <br />
+                <br />
+                사법부의 재판 결과를 알더라도 국민이 투표로 변화를 주도할 수 있는 부분은 없기
+                때문에, 와이보트는 사법부에서 뉴스를 선별하지 않습니다. 다만, 사법부의 최상위
+                기관으로 여겨지는 헌법재판소에서 입법부나 행정부의 정치적 결정을 평가하는 경우는,
+                법률이나 정책에 대한 기존의 결정을 돌아보는 의미에서 뉴스로 선별합니다. 또한
+                헌법재판소의 재판관들의 임명 과정에 입법부와 대통령이 개입하기 때문에, 사회/문화
+                전반에 영향을 주는 헌법재판소의 결정들을 전달합니다.
+              </p>
+            </div>
+            <div className="col-6 col-12-medium">
+              <span className="image fit">
+                <Image src={Pic03} alt="" style={{ height: 'auto' }} />
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* <section id="three" className="main style1">
         <div className="container">
           <div className="row gtr-150">
             <div className="col-6 col-12-medium">
@@ -337,24 +338,23 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section id="five" className="main style1">
+      <section id="five" className="main style2">
         <div className="container">
           <header>
             <h2>Contact</h2>
           </header>
           <section>
-            <h4>모집</h4>
-            <p>우리가 구하는 사람들의 종류들을 여기다가 쓰면 좋을까</p>
+            <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
             {/* <h4>연락처</h4> */}
             <p>
               <FontAwesomeIcon icon={faEnvelope} />
               <span className="icon solid alt fa-envelope label"></span> 8gundogan@yonsei.ac.kr{' '}
               <br />
-              <FontAwesomeIcon icon={faInstagram} />
+              {/* <FontAwesomeIcon icon={faInstagram} />
               <span className="icon brands alt fa-instagram label"></span> @liberalminds_kr
-              <br />
+              <br /> */}
             </p>
           </section>
         </div>
@@ -366,7 +366,6 @@ export default function Home() {
 const Wrapper = styled.div`
   height: 100vh;
   overflow: scroll;
-  padding-bottom: 100px;
 
   .age-select-wrapper {
     padding-right: 2.75em;
@@ -387,7 +386,7 @@ const Wrapper = styled.div`
 `;
 
 const FaWrapper = styled.div`
-  transform: rotate(-45deg);
+  // transform: rotate(-45deg);
   font-size: 4em;
   @media screen and (max-width: 736px) {
     font-size: 42px;
