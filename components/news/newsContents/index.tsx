@@ -371,7 +371,7 @@ const BodyLeft = styled.div<BodyProps>`
         font-size: 15px;
         font-weight: 600;
         margin: 0.2em 0 1.7em 0;
-        line-height: 1.5em;
+        line-height: 1.6em;
         span {
           min-height: 20.25px;
           max-height: 48px;
