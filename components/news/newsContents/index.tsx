@@ -78,7 +78,7 @@ export default function NewsContent({
     navigate.push(`/keywords/${_id}`);
   };
 
-  // 코멘트 순서 정렬 (와이보트 > 국민의 힘 > 민주당 > 청와대 > 기타 > 그 외)
+  // 코멘트 순서 정렬 (와이보트 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
     try {
       return newsContent?.comments.sort((a, b) => {
@@ -86,11 +86,11 @@ export default function NewsContent({
           switch (comment) {
             case commentType.와이보트:
               return 5;
-            case commentType.국민의힘:
-              return 4;
-            case commentType.민주당:
-              return 3;
             case commentType.청와대:
+              return 4;
+            case commentType.국민의힘:
+              return 3;
+            case commentType.민주당:
               return 2;
             case commentType.기타:
               return 1;
