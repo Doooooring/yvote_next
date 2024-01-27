@@ -82,9 +82,11 @@ const Wrapper = styled.header`
   z-index: 9999;
   border-width: 0px;
   border-bottom-width: 4px;
+  @media screen and (max-width: 1180px) {
+    padding-left: 5%;
+  }
   @media screen and (max-width: 768px) {
     min-width: 100%;
-    padding-left: 5%;
     padding-right: 5%;
   }
 `;

@@ -78,7 +78,7 @@ export default function NewsContent({
     navigate.push(`/keywords/${_id}`);
   };
 
-  // 코멘트 순서 정렬 (와이보트 > 국민의 힘 > 민주당 > 청와대 > 기타 > 그 외)
+  // 코멘트 순서 정렬 (와이보트 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
     try {
       return newsContent?.comments.sort((a, b) => {
@@ -86,11 +86,11 @@ export default function NewsContent({
           switch (comment) {
             case commentType.와이보트:
               return 5;
-            case commentType.국민의힘:
-              return 4;
-            case commentType.민주당:
-              return 3;
             case commentType.청와대:
+              return 4;
+            case commentType.국민의힘:
+              return 3;
+            case commentType.민주당:
               return 2;
             case commentType.기타:
               return 1;
@@ -161,8 +161,14 @@ export default function NewsContent({
                     />
                   </div>
                   <h2 className="head">
-                    <span>{newsContent.title}</span>
-                    {newsContent.state ? <Image src={icoNew} alt="hmm" height="16" /> : <div></div>}
+                    <span>
+                      {newsContent.title}{' '}
+                      {newsContent.state ? (
+                        <Image src={icoNew} alt="hmm" height="16" />
+                      ) : (
+                        <div></div>
+                      )}
+                    </span>
                   </h2>
                   {newsContent.summary.split('$').map((sentence) => {
                     return <p>{sentence}</p>;
@@ -318,15 +324,18 @@ const BodyLeft = styled.div<BodyProps>`
   }
 
   .close-wrapper {
-    padding-right: 10px;
+    padding-right: 5px;
     text-align: right;
     position: absolute;
     top: 0px;
     right: 0px;
     .close-button {
-      padding-top: 10px;
-
+      padding-top: 5px;
       text-align: right;
+      img {
+        width: 25px;
+        height: 25px;
+      }
       &:hover {
         cursor: pointer;
       }
@@ -341,13 +350,14 @@ const BodyLeft = styled.div<BodyProps>`
     justify-content: center;
     align-items: start;
     gap: 20px; */
-    padding: 1rem;
-    padding-right: 2em;
+    padding: 1.3rem;
+    padding-right: 2.5em;
     .main-image-wrapper {
       width: 100px;
       height: 100px;
-      margin-right: 10px;
-      margin-bottom: 10px;
+      margin-top: 1px;
+      margin-right: 12px;
+      margin-bottom: 0px;
       float: left;
     }
     .left {
@@ -360,19 +370,28 @@ const BodyLeft = styled.div<BodyProps>`
         gap: 8px;
         font-size: 15px;
         font-weight: 600;
+        margin: 0.2em 0 1.7em 0;
+        line-height: 1.6em;
+        span {
+          min-height: 20.25px;
+          max-height: 48px;
+          img {
+            margin: 0.1em 0 -0.1em 0;
+          }
+        }
       }
 
       .summary {
         display: inline-block;
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 2;
         color: #747272;
         font-weight: 450;
         font-family: 'summary-font';
         word-break: break-all;
         & {
           p {
-            margin: 0 0 0.5em 0;
+            margin: 0 0 1em 0.2em;
             min-height: 10px;
           }
         }
