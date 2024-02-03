@@ -108,15 +108,15 @@ class NewsRepository {
           state: true,
           timeline: [
             {
-              date: '2017.08.12',
+              date: '2024.08.12',
               title: '더미데이터 입니다.',
             },
             {
-              date: '2017.08.12',
+              date: '2024.08.13',
               title: '더미데이터 입니다.',
             },
             {
-              date: '2017.08.12',
+              date: '2024.08.14',
               title: '더미데이터 입니다.',
             },
           ],
@@ -125,10 +125,10 @@ class NewsRepository {
             right: '오른쪽 의견입니다.',
           },
           comments: [
-            commentType.감시자,
-            commentType.개혁가,
-            commentType.관찰자,
+            commentType.국민의힘,
             commentType.민주당,
+            commentType.기타,
+            commentType.청와대,
           ],
           votes: {
             left: 1,

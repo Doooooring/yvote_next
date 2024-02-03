@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={customTheme}>
       <HeadMeta />
       <Layout>
-        <Component {...pageProps} />;
+        <Component {...pageProps} />
       </Layout>
     </ThemeProvider>
   );
