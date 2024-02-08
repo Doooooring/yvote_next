@@ -21,13 +21,12 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
   const { _id, order, title, summary, keywords, state } = preview;
 
   const routeToKeyword = async (key: string) => {
-    const keyword = await KeywordRepository.getKeywordByKey(key);
-    if (!keyword) {
+    const id = await KeywordRepository.getIdByKeyword(key);
+    if (!id) {
       alert('다시 검색해주세요!');
       return;
     }
-    const { _id } = keyword!;
-    navigate.push(`/keywords/${_id}`);
+    navigate.push(`/keywords/${id}`);
   };
 
   return (
@@ -50,7 +49,7 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
           <p>{title}</p>
           <Image
             src={icoNew}
-            alt="hmm"
+            alt="2weeks"
             height="16"
             style={{
               display: state ? 'auto' : 'none',

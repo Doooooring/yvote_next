@@ -69,13 +69,12 @@ export default function NewsContent({
    * @param key 키워드
    */
   const routeToKeyword = async (key: string) => {
-    const keyword = await KeywordRepository.getKeywordByKey(key);
-    if (!keyword) {
+    const id = await KeywordRepository.getIdByKeyword(key);
+    if (!id) {
       alert('다시 검색해주세요!');
       return;
     }
-    const { _id } = keyword!;
-    navigate.push(`/keywords/${_id}`);
+    navigate.push(`/keywords/${id}`);
   };
 
   // 코멘트 순서 정렬 (와이보트 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
