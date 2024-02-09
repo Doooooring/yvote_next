@@ -49,13 +49,7 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
         <div className="grid-wrapper">
           <GridContainer curView={curView}>
             {keywords.map((keyword) => {
-              return (
-                <KeywordBox
-                  key={keyword._id}
-                  id={keyword._id}
-                  keyword={keyword.keyword}
-                />
-              );
+              return <KeywordBox key={keyword._id} id={keyword._id} keyword={keyword.keyword} />;
             })}
           </GridContainer>
         </div>

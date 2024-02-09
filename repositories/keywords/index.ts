@@ -90,6 +90,31 @@ class KeywordsRepository {
     }
   }
 
+  // async getIdByKeyword(key: string) {
+  //   try {
+  //     const getlist: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
+  //       await axios.get(`${HOST_URL}/keywords/keyword`);
+  //     const keylist: Array<{ _id: string; keyword: string }> = getlist.data.result?.keywords ?? [];
+  //     const keyword = keylist.find((uhm) => uhm.keyword === key);
+  //     const _id = keyword?._id;
+  //     return _id;
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+  async getIdByKeyword(key: string) {
+    try {
+      const response: Response<{ keyword: Keyword }> = await axios.get(
+        `${HOST_URL}/keywords/${key}`,
+      );
+
+      return response.data.result.keyword._id;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async getKeywordsByCategory(category: category, page: number) {
     try {
       const response: Response<getKeywordsByCategoryResponse> = await axios.get(

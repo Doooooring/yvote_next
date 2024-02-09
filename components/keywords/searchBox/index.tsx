@@ -82,13 +82,12 @@ export default function SearchBox() {
       if (!keylist.includes(searchWord)) {
         alert('알맞은 키워드를 입력해주세요!');
       } else {
-        const keyword = await KeywordRepository.getKeywordByKey(searchWord);
-        if (!keyword) {
+        const id = await KeywordRepository.getIdByKeyword(searchWord);
+        if (!id) {
           alert('다시 검색해주세요!');
           return;
         }
-        const { _id } = keyword!;
-        navigate.push(`/keywords/${_id}`);
+        navigate.push(`/keywords/${id}`);
       }
     } else if (
       e.key === 'ArrowUp' ||
