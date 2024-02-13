@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Criteria } from '@components/about/criteria';
 import { Values } from '@components/about/values';
+import { Goals } from '@components/about/goals';
 import { ContactBox } from '@components/about/contactBox';
 
 export default function About() {

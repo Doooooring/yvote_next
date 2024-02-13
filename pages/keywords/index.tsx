@@ -69,19 +69,9 @@ export default function KeywordsPage({ data }: pageProps) {
           setKeywords={setRecentKeywords}
         />
         <CategoryGrid
-          category={'economics'}
-          keywords={keywordInEconomy}
-          setKeywords={setKeywordInEconomy}
-        />
-        <CategoryGrid
           category={'organization'}
           keywords={keywordInOrganization}
           setKeywords={setkeywordInOrganization}
-        />
-        <CategoryGrid
-          category={'policy'}
-          keywords={keywordInPolicy}
-          setKeywords={setKeywordInPolicy}
         />
         <CategoryGrid
           category={'politics'}
@@ -89,16 +79,26 @@ export default function KeywordsPage({ data }: pageProps) {
           setKeywords={setKeywordInPolitics}
         />
         <CategoryGrid
+          category={'economics'}
+          keywords={keywordInEconomy}
+          setKeywords={setKeywordInEconomy}
+        />
+        <CategoryGrid
           category={'social'}
           keywords={keywordInSocial}
           setKeywords={setKeywordInSocial}
         />
-        <CategoryGrid
+        {/* <CategoryGrid
+          category={'policy'}
+          keywords={keywordInPolicy}
+          setKeywords={setKeywordInPolicy}
+        /> */}
+        {/* <CategoryGrid
           category={'human'}
           keywords={keywordInHuman}
           setKeywords={setKeywordInHuman}
-        />
-        <CategoryGrid category={'etc'} keywords={keywordInEtc} setKeywords={setKeywordInEtc} />
+        /> */}
+        {/* <CategoryGrid category={'etc'} keywords={keywordInEtc} setKeywords={setKeywordInEtc} /> */}
       </GridContainer>
     </Wrapper>
   );
@@ -111,6 +111,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding-top: 20px;
+  padding-bottom: 80px;
   background-color: rgb(242, 242, 242);
 `;
 
