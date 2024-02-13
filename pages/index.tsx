@@ -43,7 +43,7 @@ export default function Home() {
               <p>
                 정치 참여에 필요한 최소한의 뉴스를
                 <br />
-                가장 정돈된 형식으로 만나보세요.
+                가장 효율적인 형식으로 만나보세요
               </p>
               <ul className="actions special">
                 <li>
@@ -65,9 +65,9 @@ export default function Home() {
               </span>
               <h3>키워드 모아보기</h3>
               <p>
-                자주 쓰이는 용어들을 이해하고
+                뉴스 이해에 도움이 되는
                 <br />
-                손쉽게 뉴스를 정복하세요.
+                주요 용어들을 정복하세요
               </p>
               <ul className="actions special">
                 <li>
@@ -87,16 +87,16 @@ export default function Home() {
                   }}
                 />
               </span>
-              <h3>정치성향 테스트</h3>
+              <h3>가치관 테스트</h3>
               <p>
-                자신의 정치성향을 확인하고
+                나의 정치적 가치관을 파악하고
                 <br />
-                타인의 관점을 이해해보세요.
+                타인의 관점까지 이해해보세요
               </p>
               <ul className="actions special">
                 <li>
-                  <a href="#" className="button">
-                    내 정치성향 알아보기
+                  <a href="analyze" className="button">
+                    테스트 하러 가기
                   </a>
                 </li>
               </ul>
@@ -287,5 +287,14 @@ const Wrapper = styled.div`
 
   #two {
     padding: 30px 0 50px 0;
+  }
+  #two p {
+    margin-bottom: 20px;
+  }
+  #two h3 {
+    margin-bottom: 15px;
+  }
+  #two ul {
+    padding-bottom: 50px;
   }
 `;
