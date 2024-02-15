@@ -77,13 +77,15 @@ export default function NewsContent({
     navigate.push(`/keywords/${id}`);
   };
 
-  // 코멘트 순서 정렬 (와이보트 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
+  // 코멘트 순서 정렬 (와이보트 > 행정부 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
     try {
       return newsContent?.comments.sort((a, b) => {
         const getOrder = (comment: commentType) => {
           switch (comment) {
             case commentType.와이보트:
+              return 6;
+            case commentType.행정부:
               return 5;
             case commentType.청와대:
               return 4;

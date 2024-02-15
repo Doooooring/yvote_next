@@ -129,6 +129,7 @@ class NewsRepository {
             commentType.민주당,
             commentType.기타,
             commentType.청와대,
+            commentType.행정부,
           ],
           votes: {
             left: 1,
