@@ -469,6 +469,7 @@ const BodyRight = styled.div<BodyProps>`
       border-radius: 200px;
       cursor: pointer;
       overflow: hidden;
+      aspect-ratio: 1 / 1;
       @media screen and (max-width: 1440px) {
         padding: 1.75rem;
       }
