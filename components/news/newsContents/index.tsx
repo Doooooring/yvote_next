@@ -463,7 +463,7 @@ const BodyRight = styled.div<BodyProps>`
 
     div.comment {
       width: 100%;
-      padding: 2.5rem;
+      padding: 2.2rem;
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
@@ -471,7 +471,7 @@ const BodyRight = styled.div<BodyProps>`
       overflow: hidden;
       aspect-ratio: 1 / 1;
       @media screen and (max-width: 1440px) {
-        padding: 1.75rem;
+        padding: 1.5rem;
       }
     }
   }
