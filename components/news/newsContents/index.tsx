@@ -191,7 +191,7 @@ export default function NewsContent({
                 return (
                   <div className="timeline">
                     <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
-                      <Image src={blueCheck} alt="" />
+                      <ImageFallback src={blueCheck} height={'100%'} width={'100%'} />
                     </ImgWrapper>
                     <div className="timeline-sentence">
                       <p>{timeline.date}</p>
@@ -421,11 +421,14 @@ const BodyLeft = styled.div<BodyProps>`
 
     .timeline {
       display: flex;
+      padding-bottom: 0.5rem;
       flex-direction: row;
       font-size: 14px;
       font-weight: 500;
+      align-items: start;
 
       div.timeline-sentence {
+        margin-left: 10px;
         display: flex;
         flex-direction: row;
         gap: 8px;
@@ -439,7 +442,8 @@ interface ImageWrapperProps {
 }
 
 const ImgWrapper = styled.div<ImageWrapperProps>`
-  margin-right: 16px;
+  height: 20px;
+  aspect-ratio: 1 / 1;
   opacity: ${({ opacity }) => opacity};
 `;
 
