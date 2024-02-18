@@ -14,7 +14,9 @@ export function ContactBox() {
       <Body>
         <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
         <p>
-          <FontAwesomeIcon icon={faEnvelope} />
+          <IconWrapper>
+            <FontAwesomeIcon icon={faEnvelope} />
+          </IconWrapper>
           <span> 8gundogan@yonsei.ac.kr </span>
         </p>
       </Body>
@@ -41,9 +43,14 @@ const Header = styled.div`
 `;
 
 const Body = styled.div`
-  display: block;
   padding: 30px 40px;
   p {
     margin: 5px 0;
   }
+`;
+
+const IconWrapper = styled.div`
+  display: inline-flex;
+  width: 15px;
+  height: auto;
 `;
