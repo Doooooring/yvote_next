@@ -23,32 +23,11 @@ import Pic03 from '@images/pic03.jpeg';
 export default function Home() {
   return (
     <Wrapper className="is-preload">
-      <section id="header">
-        <div className="container">
-          <div className="inner">
-            <h1>뉴스의 새로운 기준, 와이보트</h1>
-            <p>
-              와이보트는 효율성과 실용성을 추구하는 현대인들을 위해
-              <br />
-              최소한의 뉴스를 최대한 깔끔하게 제공하는 서비스입니다.
-            </p>
-            <ul className="actions special">
-              <li>
-                <a href="#one" className="button scrolly">
-                  더 알아보기
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
       <section id="two" className="main style2 special">
         <div className="container">
           <header className="major">
-            <h2>와이보트의 기능을 만나보세요</h2>
+            <h2>뉴스의 새로운 기준, 와이보트</h2>
           </header>
-          <p>새로운 뉴스 구독 방식을 지금 바로 확인하세요</p>
           <div className="row gtr-150">
             <div className="col-4 col-12-medium column-center">
               <span className="image fit">
@@ -64,7 +43,7 @@ export default function Home() {
               <p>
                 정치 참여에 필요한 최소한의 뉴스를
                 <br />
-                가장 정돈된 형식으로 만나보세요.
+                가장 효율적인 형식으로 만나보세요
               </p>
               <ul className="actions special">
                 <li>
@@ -86,9 +65,9 @@ export default function Home() {
               </span>
               <h3>키워드 모아보기</h3>
               <p>
-                자주 쓰이는 용어들을 이해하고
+                뉴스 이해에 도움이 되는
                 <br />
-                손쉽게 뉴스를 정복하세요.
+                주요 용어들을 정복하세요
               </p>
               <ul className="actions special">
                 <li>
@@ -108,16 +87,16 @@ export default function Home() {
                   }}
                 />
               </span>
-              <h3>정치성향 테스트</h3>
+              <h3>가치관 테스트</h3>
               <p>
-                자신의 정치성향을 확인하고
+                나의 정치적 가치관을 파악하고
                 <br />
-                타인의 관점을 이해해보세요.
+                타인의 관점까지 이해해보세요
               </p>
               <ul className="actions special">
                 <li>
-                  <a href="#" className="button">
-                    내 정치성향 알아보기
+                  <a href="analyze" className="button">
+                    테스트 하러 가기
                   </a>
                 </li>
               </ul>
@@ -126,7 +105,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="one" className="main style1">
+      {/* <section id="one" className="main style1">
         <div className="container">
           <header className="major">
             <h2>
@@ -199,72 +178,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* <section id="three" className="main style1">
-        <div className="container">
-          <div className="row gtr-150">
-            <div className="col-6 col-12-medium">
-              <header className="major">
-                <h2>
-                  더 많은 뉴스를 원하신다면?
-                  <br />
-                </h2>
-              </header>
-              <p>
-                더 상세한 정보와 다양한 분석이 담긴
-                <br />
-                와이보트의 뉴스레터를 구독하세요
-              </p>
-            </div>
-            <div className="col-6 col-12-medium imp-medium">
-              <h4>무료 뉴스레터 신청하기</h4>
-              <form method="post" action="#">
-                <div className="row gtr-uniform gtr-50">
-                  <div className="col-6 col-12-xsmall">
-                    <input
-                      type="text"
-                      name="demo-name"
-                      id="demo-name"
-                      value=""
-                      placeholder="이름"
-                    />
-                  </div>
-                  <div className="col-6 col-12-xsmall">
-                    <input
-                      type="email"
-                      name="demo-email"
-                      id="demo-email"
-                      value=""
-                      placeholder="이메일"
-                    />
-                  </div>
-                  <div className="col-12 w-100 age-select-wrapper">
-                    <select name="demo-category" id="demo-category">
-                      <option value="">- 연령 -</option>
-                      <option value="1">청소년</option>
-                      <option value="1">대학생</option>
-                      <option value="1">20대</option>
-                      <option value="1">30대</option>
-                      <option value="1">40대</option>
-                      <option value="1">그 이상</option>
-                    </select>
-                  </div>
-                </div>
-              </form>
-              <ul className="actions special apply-button-wrapper">
-                <li>
-                  <a href="#" className="button wide primary">
-                    신청하기
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="four" className="main style2">
+      {/* <section id="four" className="main style2">
         <div className="container">
           <div className="row gtr-150">
             <div className="col-6 col-12-medium">
@@ -338,27 +254,23 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section> */}
+    </section> */}
 
-      <section id="five" className="main style2">
+      {/* <section id="five" className="main style2">
         <div className="container">
           <header>
             <h2>Contact</h2>
           </header>
           <section>
             <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
-            {/* <h4>연락처</h4> */}
             <p>
               <FontAwesomeIcon icon={faEnvelope} />
               <span className="icon solid alt fa-envelope label"></span> 8gundogan@yonsei.ac.kr{' '}
               <br />
-              {/* <FontAwesomeIcon icon={faInstagram} />
-              <span className="icon brands alt fa-instagram label"></span> @liberalminds_kr
-              <br /> */}
             </p>
           </section>
         </div>
-      </section>
+      </section> */}
     </Wrapper>
   );
 }
@@ -367,53 +279,22 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: scroll;
 
-  .age-select-wrapper {
-    padding-right: 2.75em;
-  }
-
-  .apply-button-wrapper {
-  }
-
-  #demo-category {
-    width: 100%;
-  }
-
   .column-center {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-`;
 
-const FaWrapper = styled.div`
-  // transform: rotate(-45deg);
-  font-size: 4em;
-  @media screen and (max-width: 736px) {
-    font-size: 42px;
+  #two {
+    padding: 30px 0 50px 0;
   }
-  & > svg {
-    display: inline-block;
-    line-height: inherit;
+  #two p {
+    margin-bottom: 20px;
   }
-
-  & {
-    svg.icon1 {
-      color: #75d6e4;
-    }
-    svg.icon2 {
-      color: #6acaed;
-    }
-    svg.icon3 {
-      color: #4883ec;
-    }
-    svg.icon4 {
-      color: #7078e3;
-    }
-    svg.icon5 {
-      color: #9971e2;
-    }
-    svg.icon6 {
-      color: #b76ff7;
-    }
+  #two h3 {
+    margin-bottom: 15px;
+  }
+  #two ul {
+    padding-bottom: 50px;
   }
 `;

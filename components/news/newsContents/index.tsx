@@ -77,13 +77,15 @@ export default function NewsContent({
     navigate.push(`/keywords/${id}`);
   };
 
-  // 코멘트 순서 정렬 (와이보트 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
+  // 코멘트 순서 정렬 (와이보트 > 행정부 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
     try {
       return newsContent?.comments.sort((a, b) => {
         const getOrder = (comment: commentType) => {
           switch (comment) {
             case commentType.와이보트:
+              return 6;
+            case commentType.행정부:
               return 5;
             case commentType.청와대:
               return 4;
@@ -189,7 +191,7 @@ export default function NewsContent({
                 return (
                   <div className="timeline">
                     <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
-                      <Image src={blueCheck} alt="" />
+                      <ImageFallback src={blueCheck} height={'100%'} width={'100%'} />
                     </ImgWrapper>
                     <div className="timeline-sentence">
                       <p>{timeline.date}</p>
@@ -419,11 +421,14 @@ const BodyLeft = styled.div<BodyProps>`
 
     .timeline {
       display: flex;
+      padding-bottom: 0.5rem;
       flex-direction: row;
       font-size: 14px;
       font-weight: 500;
+      align-items: start;
 
       div.timeline-sentence {
+        margin-left: 10px;
         display: flex;
         flex-direction: row;
         gap: 8px;
@@ -437,7 +442,8 @@ interface ImageWrapperProps {
 }
 
 const ImgWrapper = styled.div<ImageWrapperProps>`
-  margin-right: 16px;
+  height: 20px;
+  aspect-ratio: 1 / 1;
   opacity: ${({ opacity }) => opacity};
 `;
 
@@ -461,14 +467,15 @@ const BodyRight = styled.div<BodyProps>`
 
     div.comment {
       width: 100%;
-      padding: 2.5rem;
+      padding: 2.2rem;
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
       cursor: pointer;
       overflow: hidden;
+      aspect-ratio: 1 / 1;
       @media screen and (max-width: 1440px) {
-        padding: 1.75rem;
+        padding: 1.5rem;
       }
     }
   }
