@@ -78,6 +78,23 @@ class NewsRepository {
   }
 
   /**
+   * (@FIXME) 뉴스 블록들 조회 API (ADMIN)
+   * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
+   * @param keyword 검색 키워드 (전체 검색시 null)
+   */
+  async getPreviewsAdmin(curNum: number, keyword: string | null = null): Promise<Array<Preview>> {
+    try {
+      const response: Response<{ news: Array<Preview> }> = await axios.get(
+        `${HOST_URL}/news/preview?page=${curNum}&keyword=${keyword}&isAdmin=${true}`,
+      );
+      const data = response.data;
+      return data.result.news;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
    * 뉴스 세부 컨텐츠 조회 API
    * @param id 뉴스 아이디
    */
