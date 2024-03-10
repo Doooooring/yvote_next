@@ -30,13 +30,14 @@ const Wrapper = styled.div`
 
   .spinner {
     animation: spin 2.5s linear infinite;
-  }
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   }
 
