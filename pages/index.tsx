@@ -1,13 +1,4 @@
-import { faInstagram } from '@fortawesome/free-brands-svg-icons';
-import {
-  faCheckToSlot,
-  faComments,
-  faEnvelope,
-  faEquals,
-  faFaceFrownOpen,
-  faInfinity,
-  faScroll,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import styled from 'styled-components';

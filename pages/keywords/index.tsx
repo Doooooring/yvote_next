@@ -11,6 +11,7 @@ import { GetServerSideProps } from 'next';
 interface pageProps {
   data: {
     recent: KeywordToView[];
+
     other: otherObject[];
   };
 }
