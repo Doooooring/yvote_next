@@ -1,5 +1,7 @@
-# 와이보트
-[서비스 바로 가기](https://yvoting.com)
+
+
+# <a href="https://yvoting.com">와이보트</a>
+<img src="https://github.com/Doooooring/yvote_next/assets/106396244/78643b4a-6cc1-4cda-b835-bd52804c1146" width="800px"/>
 
 ## 프로젝트 설명
 
