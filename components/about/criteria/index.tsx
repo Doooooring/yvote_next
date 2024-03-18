@@ -108,6 +108,8 @@ const EachOne = styled.div`
 const ImageWrapper = styled.div`
   width: 40%;
   margin: 15px 20px;
+  display: flex;
+  align-items: center;
   img {
     width: 100%;
     height: auto;
