@@ -1,300 +1,244 @@
-import { faInstagram } from '@fortawesome/free-brands-svg-icons';
-import {
-  faCheckToSlot,
-  faComments,
-  faEnvelope,
-  faEquals,
-  faFaceFrownOpen,
-  faInfinity,
-  faScroll,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { StaticImageData } from 'next/image';
+import backgroundImage from '@images/voting.png';
+import logoImage from '@images/logo_image.png';
+import newsImage from '@images/news.png';
+import keywordImage from '@images/keyword.png';
+import valuesImage from '@images/eder.png';
+import Modal from '@components/home/homemodal';
 
-import Test from '@images/eder.png';
-import KeywordPage from '@images/keyword.png';
-import NewsPage from '@images/news.png';
-
-import Pic01 from '@images/pic01.jpeg';
-import Pic02 from '@images/pic02.jpeg';
-import Pic03 from '@images/pic03.jpeg';
+interface Item {
+  name: string;
+  title: string;
+  description: string;
+  imageUrl: StaticImageData;
+  linkUrl: string;
+  linkText: string;
+}
 
 export default function Home() {
+  const [loaded, setLoaded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState<Item | null>(null);
+
+  const items: Item[] = [
+    {
+      name: '뉴스',
+      title: '뉴스 모아보기',
+      description:
+        '와이보트는 정치 참여, 즉 투표에 고려될 가치가 있다고 판단되는 뉴스만을 선정하여 주제별로 제공합니다. 다시 말해, 국민이 선출한 피선거권자들이 세상을 바꾸는 방향에 관련된 뉴스를 제공합니다.\n국회의원들의 의견이 불일치하는 법률안, 대통령이 직접 추진하는 행정부의 기조, 입법부와 행정부의 결과가 간접적으로 반영되는 헌법재판소의 결정들이 이에 해당합니다. 정치인들의 사생활이나 비리, 말실수 등에 관한 뉴스가 제공되지 않는 것은 이러한 기준의 장점이자 단점입니다.\n정치 참여에 필요한 최소한의 뉴스를 만나보세요.',
+      imageUrl: newsImage,
+      linkUrl: '/news',
+      linkText: '뉴스 모아보기 >',
+    },
+    {
+      name: '키워드',
+      title: '키워드 모아보기',
+      description:
+        "정치와 경제에 대한 이해를 보편적으로 배우지 않은 결과, 우리는 뉴스를 이해하는데에 필요한 배경 지식이 결여되어 있습니다. 하지만 뉴스를 읽을 때마다 단편적인 개념들을 공부하며 읽는 것은 너무나도 소모적입니다.\n와이보트는 뉴스를 이해하기 위해 필요한 개념들을 4가지 항목으로 나누어 제공합니다. 분류 기준에는 뉴스에 자주 등장하는 '단체', 정치 이념과 우리나라의 정치 제도에 관한 '정치', 경제학의 기초적인 내용을 소개한 '경제', 가치관의 차이로 인해 끊임없이 주제가 되는 '사회'가 있습니다.\n뉴스의 이해를 돕는 주요 용어들을 정복하세요.",
+      imageUrl: keywordImage,
+      linkUrl: '/keyword',
+      linkText: '키워드 모아보기 >',
+    },
+    {
+      name: '가치관',
+      title: '가치관 테스트',
+      description:
+        '우리는 중립적인 뉴스에 대해 환상을 갖지만, 완벽한 중립이라는 것은 존재하지 않습니다. 정보의 가공만으로도 특정 집단에게 유리하게 글을 서술하는 것은 충분히 가능하며, 이 때문에 단순히 정보를 제공하거나 제공하지 않는 것만으로도 편향성 논란이 제기되기도 합니다.\n와이보트는 편향성에 의한 불신을 최대한 해결하기 위해 뉴스 가공을 최소화합니다. 하지만 뉴스에 대한 불신을 해소하기 위해서는 독자의 노력도 필요합니다. 정치적 대화에 대한 막연한 두려움은 자신의 관점이나 의견이 확실하지 않아, 언제든 휘둘릴 수 있다고 느끼기 때문입니다.\n나의 가치관을 파악하고 타인의 관점까지 이해해보세요.',
+      imageUrl: valuesImage,
+      linkUrl: 'link2',
+      linkText: '가치관 알아보기 >',
+    },
+    {
+      name: 'Contact',
+      title: 'Contact',
+      description: '',
+      imageUrl: valuesImage,
+      linkUrl: '',
+      linkText: '',
+    },
+  ];
+
+  const handleItemClick = (item: Item) => {
+    setModalContent(item);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    // Simulate image loading delay
+    const timer = setTimeout(() => {
+      setLoaded(true);
+    }, 100); // Adjust the delay as needed
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <Wrapper className="is-preload">
-      <section id="two" className="main style2 special">
-        <div className="container">
-          <header className="major">
-            <h2>뉴스의 새로운 기준, 와이보트</h2>
-          </header>
-          <div className="row gtr-150">
-            <div className="col-4 col-12-medium column-center">
-              <span className="image fit">
-                <Image
-                  src={NewsPage}
-                  alt=""
-                  style={{
-                    height: 'auto',
-                  }}
-                />
-              </span>
-              <h3>뉴스 모아보기</h3>
-              <p>
-                정치 참여에 필요한 최소한의 뉴스를
-                <br />
-                가장 효율적인 형식으로 만나보세요
-              </p>
-              <ul className="actions special">
-                <li>
-                  <a href="news" className="button">
-                    뉴스 모아보기
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="col-4 col-12-medium column-center">
-              <span className="image fit">
-                <Image
-                  src={KeywordPage}
-                  alt=""
-                  style={{
-                    height: 'auto',
-                  }}
-                />
-              </span>
-              <h3>키워드 모아보기</h3>
-              <p>
-                뉴스 이해에 도움이 되는
-                <br />
-                주요 용어들을 정복하세요
-              </p>
-              <ul className="actions special">
-                <li>
-                  <a href="keywords" className="button">
-                    키워드 모아보기
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="col-4 col-12-medium column-center">
-              <span className="image fit">
-                <Image
-                  src={Test}
-                  alt=""
-                  style={{
-                    height: 'auto',
-                  }}
-                />
-              </span>
-              <h3>가치관 테스트</h3>
-              <p>
-                나의 정치적 가치관을 파악하고
-                <br />
-                타인의 관점까지 이해해보세요
-              </p>
-              <ul className="actions special">
-                <li>
-                  <a href="analyze" className="button">
-                    테스트 하러 가기
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* <section id="one" className="main style1">
-        <div className="container">
-          <header className="major">
-            <h2>
-              와이보트의 뉴스 선정 기준
-              <br />
-            </h2>
-          </header>
-          <div className="row gtr-150">
-            <div className="col-6 col-12-medium">
-              <h3>1. 법률을 정하는 입법부 소식</h3>
-              <p>
-                삼권분립 중 입법부의 역할을 수행하는 국회는 우리나라의 법률이 만들어지는 곳입니다.
-                법률은 정부 정책의 범위나 법원의 판결에 사용될 수 있는 근거를 결정하기 때문에,
-                국회는 우리 삶의 원칙을 만드는 가장 근원적인 기관입니다. 국회에는 총 300명의
-                국회의원이 있으며, 4년에 한 번씩 '총선'이라고 불리는 국회의원 선거를 통해
-                선출됩니다.
-                <br />
-                <br />
-                투표를 위한 최소한의 효율적인 뉴스를 제공하고자 하는 와이보트에서는, 국회에서 한
-                달에 수백 개씩 다루어지는 법률안들을 전부 다루지 않습니다. 대신, 국민의 투표로 인해
-                결과가 달라졌거나 바꿀 수 있다고 판단되는 법률안에 대한 소식만을 선별하여
-                전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium imp-medium">
-              <span className="image fit">
-                <Image src={Pic01} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-            <div className="col-6 col-12-medium">
-              <span className="image fit">
-                <Image src={Pic02} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-            <div className="col-6 col-12-medium">
-              <h3>2. 정책을 집행하는 행정부 소식</h3>
-              <p>
-                행정부는 국가의 정책을 실질적으로 집행하는 집단으로, 대통령실부터 동네의
-                주민센터까지 모두 행정부에 소속됩니다. 행정부의 업무는 대통령의 지시를 근거로
-                정해지지만, 모든 분야에 대통령이 세부적으로 관여하는 것은 불가능합니다. 이러한
-                세부적인 업무는 장관들을 필두로 각 부처에서 결정되기도 합니다.
-                <br />
-                <br />
-                와이보트는 행정부의 모든 소식을 전달하지 않습니다. 행정부의 규모는 거대하지만,
-                국민이 결정하는 것은 5년에 한 번 뽑는 대통령 뿐이기 때문입니다. 따라서 국정 기조가
-                드러나는 대통령 주재 회의, 연설문 또는 외교 일정 등을 중심으로 뉴스를 선별하며, 국정
-                운영에 대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium notimp-medium">
-              <h3>3. 투표로 바꿀 수 없는 사법부</h3>
-              <p>
-                모든 것을 다수결로 결정하는 단순한 민주주의와 공화국의 가장 큰 차이점은, 사법부의
-                존재입니다. 사법부는 국민의 투표로 선출되지 않습니다. 사법부의 역할은, 국회에서
-                정해진 법률을 근거로 판결을 내리는 것입니다.
-                <br />
-                <br />
-                사법부의 재판 결과를 알더라도 국민이 투표로 변화를 주도할 수 있는 부분은 없기
-                때문에, 와이보트는 사법부에서 뉴스를 선별하지 않습니다. 다만, 사법부의 최상위
-                기관으로 여겨지는 헌법재판소에서 입법부나 행정부의 정치적 결정을 평가하는 경우는,
-                법률이나 정책에 대한 기존의 결정을 돌아보는 의미에서 뉴스로 선별합니다. 또한
-                헌법재판소의 재판관들의 임명 과정에 입법부와 대통령이 개입하기 때문에, 사회/문화
-                전반에 영향을 주는 헌법재판소의 결정들을 전달합니다.
-              </p>
-            </div>
-            <div className="col-6 col-12-medium">
-              <span className="image fit">
-                <Image src={Pic03} alt="" style={{ height: 'auto' }} />
-              </span>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section id="four" className="main style2">
-        <div className="container">
-          <div className="row gtr-150">
-            <div className="col-6 col-12-medium">
-              <ul className="major-icons">
-                <li>
-                  <span className="icon solid style1 major fa-water">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faScroll} className="icon1" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <li>
-                  <span className="icon solid style2 major fa-bolt">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faEquals} className="icon2" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <li>
-                  <span className="icon solid style3 major fa-camera-retro">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faFaceFrownOpen} className="icon3" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <li>
-                  <span className="icon solid style4 major fa-cog">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faInfinity} className="icon4" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <li>
-                  <span className="icon solid style5 major fa-desktop">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faComments} className="icon5" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <li>
-                  <span className="icon solid style6 major fa-calendar">
-                    <FaWrapper>
-                      <FontAwesomeIcon icon={faCheckToSlot} className="icon6" />
-                    </FaWrapper>
-                  </span>
-                </li>
-                <p>
-                  <br />- 출처 : 2022 로이터 뉴스 리포트 -
-                </p>
-              </ul>
-            </div>
-            <div className="col-6 col-12-medium">
-              <header className="major">
-                <h2>뉴스 기피 현상이 발생하는 이유</h2>
-              </header>
-              <h3>뉴스의 중복성</h3>
-              <p>
-                뉴스의 양이 많더라도 모두 제각기 중요하고 다른 내용이라면 어쩔 수 없겠지만, 실상을
-                들여다보면 정치 뉴스는 서로 중복되는 경우가 허다합니다. 어떤 사안에 대한 진전이
-                조금이라도 생기면 아예 새로운 뉴스 기사가 생성되며, 심지어는 아무런 변화가 발생하지
-                않더라도 특정 정치인의 발언만으로도 뉴스가 생산되기도 합니다. 이는 독자가 특정
-                주제에 반복적으로 노출되어 질리게 만드는 대표적인 원인입니다.
-              </p>
-              <p>
-                뉴스의 중복성과 양을 줄이기 위한 가장 기본적인 방법으로, 와이보트는 기사가 아닌
-                사안별로 뉴스를 정리합니다. 이는 동일한 주제에 대한 사소한 업데이트를 새로운 기사가
-                아닌, 기존 뉴스의 수정을 통해 전달할 수 있도록 함으로써 기존에 비해 효율적이고
-                편안한 뉴스 구독 경험을 제공한다는 장점이 있습니다. 또한 뉴스의 진행 상황을
-                일목요연하게 파악할 수 있다는 점에서도 가치가 있습니다.
-              </p>
-            </div>
-          </div>
-        </div>
-    </section> */}
-
-      {/* <section id="five" className="main style2">
-        <div className="container">
-          <header>
-            <h2>Contact</h2>
-          </header>
-          <section>
-            <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
-            <p>
-              <FontAwesomeIcon icon={faEnvelope} />
-              <span className="icon solid alt fa-envelope label"></span> 8gundogan@yonsei.ac.kr{' '}
-              <br />
-            </p>
-          </section>
-        </div>
-      </section> */}
+    <Wrapper>
+      <Content show={showModal}>
+        <Rectangle loaded={loaded}>
+          <Image loaded={loaded} src={logoImage.src} alt="logo" />
+          <TextBox loaded={loaded}>
+            <TextHeading>Why Vote?</TextHeading>
+            <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
+          </TextBox>
+        </Rectangle>
+        <ConnectingLine loaded={loaded} />
+        <ListContainer>
+          <List>
+            {items.map((item) => (
+              <ListItem onClick={() => handleItemClick(item)}>
+                <a>{item.name}</a>
+              </ListItem>
+            ))}
+          </List>
+        </ListContainer>
+      </Content>
+      <Modal show={showModal} onClose={closeModal} content={modalContent} />
+      <BackgroundImage loaded={loaded} src={backgroundImage.src} />
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
+  font-family: 'Source Sans Pro', sans-serif;
+  position: relative;
   height: 100vh;
-  overflow: scroll;
+  overflow: hidden;
+  background-color: black; /* Set initial background color to black */
+  padding: 3rem 2rem;
+`;
 
-  .column-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+const Content = styled.div<{ show: boolean }>`
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1; /* Ensure the content is above the background image */
+  opacity: ${({ show }) => (show ? '0' : '1')}; // Use showModal state to control opacity
+  transition: opacity 0.5s; // Transition opacity over 0.5 seconds
+`;
+
+const Rectangle = styled.div<{ loaded: boolean }>`
+  display: inline-flex; /* Adjust display property */
+  align-items: center; /* Center content vertically */
+  background-color: transparent;
+  border-top: 1.5px solid white;
+  border-bottom: 1.5px solid white;
+  margin: 0 auto 50px; /* Center horizontally and add bottom margin */
+  position: relative;
+`;
+
+const Image = styled.img<{ loaded: boolean }>`
+  width: 5.5rem;
+  height: auto;
+  max-height: 40rem;
+  margin-left: 16px;
+  margin-right: 16px;
+  opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+  transition: height 1s ease, opacity 1s ease;
+`;
+
+const TextBox = styled.div<{ loaded: boolean }>`
+  flex-grow: 1;
+  height: auto;
+  max-height: 40rem;
+  padding: ${({ loaded }) => (loaded ? '42px 16px' : '0 16px 0 0')};
+  opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+  transition: padding 1s ease, opacity 1s ease;
+`;
+
+const TextHeading = styled.h1`
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  font-size: 2.25rem;
+  line-height: 1.3;
+  letter-spacing: 0.5rem;
+`;
+
+const TextParagraph = styled.p`
+  color: white;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.8rem;
+  line-height: 2;
+`;
+
+const ConnectingLine = styled.div<{ loaded: boolean }>`
+  position: absolute;
+  width: 0.5px;
+  height: 51px; /* Adjust based on your design */
+  background-color: white;
+  top: ${({ loaded }) =>
+    loaded
+      ? `calc(2.25rem * 1.3 + 1rem + 1.6rem + 85.5px)`
+      : 'calc(2.25rem * 1.3 + 1rem + 1.6rem + 1.5px)'};
+  left: calc(50% - 0.5px); /* Center horizontally */
+  z-index: 2;
+  transition: top 1s ease; /* Transition top position change */
+`;
+
+const ListContainer = styled.div`
+  border: 1px solid white;
+  border-radius: 4px; /* Rounded border */
+  overflow: hidden; /* Ensure the border radius is applied properly */
+`;
+
+const List = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+`;
+
+const ListItem = styled.li`
+  flex: 1;
+  text-align: center;
+  position: relative;
+  color: white;
+  display: flex;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0.5px;
+    height: 100%;
+    background-color: white;
   }
 
-  #two {
-    padding: 30px 0 50px 0;
+  > a {
+    display: block;
+    min-width: 5rem;
+    height: 2.75rem;
+    line-height: 2.75rem;
+    padding: 0 1.25rem 0 1.45rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    font-size: 0.8rem;
+    border-bottom: 0;
   }
-  #two p {
-    margin-bottom: 20px;
-  }
-  #two h3 {
-    margin-bottom: 15px;
-  }
-  #two ul {
-    padding-bottom: 50px;
-  }
+`;
+
+const BackgroundImage = styled.div<{ loaded: boolean; src: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: ${({ src }) => `url('${src}')`};
+  background-size: cover;
+  background-position: center;
+  opacity: ${({ loaded }) => (loaded ? '0.7' : '0')}; /* Initially transparent, then fades in */
+  transition: opacity 1s ease-in-out; /* Slow transition duration */
+  z-index: 0; /* Ensure the background image is below the content */
 `;
