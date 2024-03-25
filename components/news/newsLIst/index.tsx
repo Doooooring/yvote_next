@@ -101,7 +101,4 @@ const Wrapper = styled.div`
     width: 10px;
     height: 100px;
   }
-
-  @media screen and (max-width: 768px) {
-  }
 `;

@@ -39,8 +39,8 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
       <div className="img-wrapper">
         <ImageFallback
           src={`${HOST_URL}/images/news/${_id}`}
-          width={100}
-          height={100}
+          width="100%"
+          height="100%"
           fill={true}
         />
       </div>
@@ -81,7 +81,6 @@ const Wrapper = styled.div<WrapperProps>`
   color: #666;
   margin: 0;
   font: inherit;
-  box-sizing: inherit;
   display: flex;
   flex-direction: row;
   -webkit-box-align: center;
@@ -111,11 +110,7 @@ const Wrapper = styled.div<WrapperProps>`
     margin: 0;
     padding: 0;
     font: inherit;
-    box-sizing: inherit;
-    @media screen and (max-width: 768px) {
-      width: 75px;
-      height: 75px;
-    }
+    flex-shrink: 0;
   }
 
   .head-wrapper {
@@ -132,6 +127,10 @@ const Wrapper = styled.div<WrapperProps>`
     -webkit-box-align: center;
     align-items: center;
     gap: 4px;
+
+    > Img {
+      padding-right: 8px;
+    }
 
     p {
       -webkit-text-size-adjust: none;
@@ -154,7 +153,8 @@ const Wrapper = styled.div<WrapperProps>`
 
   .body-wrapper {
     display: inline-block;
-    width: 80%;
+    width: auto;
+    flex-grow: 1;
     -webkit-text-size-adjust: none;
     color: #666;
     text-align: left;
@@ -164,7 +164,6 @@ const Wrapper = styled.div<WrapperProps>`
     font: inherit;
     box-sizing: inherit;
     padding-left: 20px;
-
     .summary {
       -webkit-text-size-adjust: none;
       text-align: left;

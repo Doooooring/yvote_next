@@ -1,4 +1,4 @@
-import defaultImg from '@images/img_thumb@2x.png';
+import defaultImg from '@images/default_image.png';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
@@ -24,7 +24,8 @@ export default function ImageFallback({
       <Image
         src={loadError ? defaultImg : src}
         fill
-        alt="image"
+        alt="default"
+        sizes="100vw"
         // style={imageStyle}
         onError={() => {
           setLoadError(true);
@@ -38,6 +39,7 @@ export default function ImageFallback({
         height={height as number}
         width={width as number}
         alt="image"
+        sizes="100vw"
         // style={imageStyle}
         onError={() => {
           setLoadError(true);
@@ -52,6 +54,7 @@ export default function ImageFallback({
         width={Number((width as string).split('%')[0])}
         alt="image"
         style={imageStyle}
+        sizes="100vw"
         onError={() => {
           setLoadError(true);
         }}

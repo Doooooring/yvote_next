@@ -75,6 +75,7 @@ export default function NewsDetailPage({ data }: pageProps) {
 }
 
 const Wrapper = styled.div`
+  font-family: Helvetica, sans-serif;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;

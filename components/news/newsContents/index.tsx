@@ -359,6 +359,9 @@ const BodyLeft = styled.div<BodyProps>`
       margin-top: 1px;
       margin-right: 12px;
       margin-bottom: 0px;
+      border: 1px solid rgb(230, 230, 230);
+      border-radius: 10px;
+      overflow: hidden;
       float: left;
     }
     .left {
@@ -388,12 +391,12 @@ const BodyLeft = styled.div<BodyProps>`
         line-height: 2;
         color: #747272;
         font-weight: 450;
-        font-family: 'summary-font';
         word-break: break-all;
         & {
           p {
             margin: 0 0 1em 0.2em;
             min-height: 10px;
+            font-family: Helvetica, sans-serif;
           }
         }
       }
