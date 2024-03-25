@@ -81,11 +81,16 @@ export default function Home() {
     <Wrapper>
       <Content show={showModal}>
         <Rectangle loaded={loaded}>
-          <Image loaded={loaded} src={logoImage.src} alt="logo" />
-          <TextBox loaded={loaded}>
-            <TextHeading>Why Vote?</TextHeading>
-            <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
-          </TextBox>
+          <FlexContainer>
+            <Image loaded={loaded} src={logoImage.src} alt="logo" />
+            <TextBox loaded={loaded}>
+              <TextHeading>Why Vote?</TextHeading>
+              <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
+            </TextBox>
+          </FlexContainer>
+          <MobileTextParagraph loaded={loaded}>
+            실용적인 뉴스 서비스를 지향합니다
+          </MobileTextParagraph>
         </Rectangle>
         <ConnectingLine loaded={loaded} />
         <ListContainer>
@@ -120,7 +125,6 @@ const Content = styled.div<{ show: boolean }>`
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 1; /* Ensure the content is above the background image */
-  opacity: ${({ show }) => (show ? '0' : '1')}; // Use showModal state to control opacity
   transition: opacity 0.5s; // Transition opacity over 0.5 seconds
 `;
 
@@ -132,6 +136,15 @@ const Rectangle = styled.div<{ loaded: boolean }>`
   border-bottom: 1.5px solid white;
   margin: 0 auto 50px; /* Center horizontally and add bottom margin */
   position: relative;
+  @media (max-width: 480px) {
+    flex-direction: column; // stack elements in a column on small screens
+    align-items: flex-start; // align items at start of column
+  }
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Image = styled.img<{ loaded: boolean }>`
@@ -151,6 +164,10 @@ const TextBox = styled.div<{ loaded: boolean }>`
   padding: ${({ loaded }) => (loaded ? '42px 16px' : '0 16px 0 0')};
   opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   transition: padding 1s ease, opacity 1s ease;
+  @media (max-width: 480px) {
+    padding: ${({ loaded }) => (loaded ? '16px 16px 0' : '8px 16px 0 0')};
+    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+  }
 `;
 
 const TextHeading = styled.h1`
@@ -170,6 +187,27 @@ const TextParagraph = styled.p`
   letter-spacing: 0.2rem;
   font-size: 0.8rem;
   line-height: 2;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+`;
+
+const MobileTextParagraph = styled.p<{ loaded: boolean }>`
+  display: none;
+
+  @media (max-width: 480px) {
+    display: block;
+    width: 100%;
+    font: inherit;
+    color: white;
+    height: 28px;
+    letter-spacing: 0.2rem;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+    transition: padding 1s ease, opacity 1s ease;
+  }
 `;
 
 const ConnectingLine = styled.div<{ loaded: boolean }>`
@@ -184,6 +222,13 @@ const ConnectingLine = styled.div<{ loaded: boolean }>`
   left: calc(50% - 0.5px); /* Center horizontally */
   z-index: 2;
   transition: top 1s ease; /* Transition top position change */
+
+  @media (max-width: 480px) {
+    top: ${({ loaded }) =>
+      loaded
+        ? `calc(2.25rem * 1.3 + 1rem + 1.6rem + 66.5px)`
+        : 'calc(2.25rem * 1.3 + 1rem + 1.6rem + 58.5px)'};
+  }
 `;
 
 const ListContainer = styled.div`
@@ -197,6 +242,10 @@ const List = styled.ul`
   padding: 0;
   margin: 0;
   display: flex;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
 `;
 
 const ListItem = styled.li`
@@ -227,7 +276,27 @@ const ListItem = styled.li`
     font-size: 0.8rem;
     border-bottom: 0;
   }
-`;
+
+  @media (max-width: 480px) {
+    width : 100%;
+    text-align: center;
+    border-bottom: 1px solid white;  // Change the color as per your requirement
+    border-left: none;
+
+    &:not(:last-child)::after {
+      display: none;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    > a { 
+      width : 80%;
+      margin : auto;
+    }
+
+  `;
 
 const BackgroundImage = styled.div<{ loaded: boolean; src: string }>`
   position: absolute;

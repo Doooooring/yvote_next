@@ -84,7 +84,7 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font-family: Source Sans Pro, Helvetica, sans-serif;
+  font-family: 'Source Sans Pro', Helvetica, sans-serif;
   vertical-align: baseline;
 }
 
@@ -170,12 +170,6 @@ html {
 }
 
 @media screen and (max-width: 736px) {
-  html {
-    font-size: 11pt;
-  }
-}
-
-@media screen and (max-width: 360px) {
   html {
     font-size: 10pt;
   }
