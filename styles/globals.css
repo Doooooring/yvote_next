@@ -84,7 +84,7 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
+  font-family: Source Sans Pro, Helvetica, sans-serif;
   vertical-align: baseline;
 }
 
@@ -103,7 +103,8 @@ section {
 }
 
 body {
-  line-height: 1;
+  line-height: 1.65em;
+  font-weight: 300;
   position: fixed;
   width: 100vw;
   height: 100vh;

@@ -77,40 +77,25 @@ interface WrapperProps {
 }
 
 const Wrapper = styled.div<WrapperProps>`
+  -webkit-text-size-adjust: none;
+  color: #666;
+  margin: 0;
+  font: inherit;
+  box-sizing: inherit;
   display: flex;
   flex-direction: row;
+  -webkit-box-align: center;
   align-items: center;
-  width: 100%;
-
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
-  background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
   box-shadow: 0px 0px 35px -30px;
   margin-bottom: 10px;
   text-align: left;
   padding: 10px;
+
+  background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
   &:hover {
     cursor: pointer;
-  }
-
-  .head-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-
-    p {
-      /* display: inline; */
-      font-size: 15px;
-      font-weight: 700;
-      margin-right: 10px;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin: 0;
-    }
   }
 
   .img-wrapper {
@@ -121,32 +106,100 @@ const Wrapper = styled.div<WrapperProps>`
     height: 100px;
     overflow: hidden;
     position: relative;
+    color: #666;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    box-sizing: inherit;
     @media screen and (max-width: 768px) {
       width: 75px;
       height: 75px;
     }
   }
 
+  .head-wrapper {
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    display: flex;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+    gap: 4px;
+
+    p {
+      -webkit-text-size-adjust: none;
+      color: #666;
+      text-align: left;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      vertical-align: baseline;
+      font-size: 15px;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+  }
+
   .body-wrapper {
     display: inline-block;
-    padding-left: 20px;
     width: 80%;
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
+    padding-left: 20px;
 
     .summary {
+      -webkit-text-size-adjust: none;
+      text-align: left;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      font-weight: 300;
+      vertical-align: baseline;
       color: #626060;
       margin: 0;
       padding-top: 5px;
       font-size: 13px;
       min-height: 45px;
-      line-height: 1.5;
+      line-height: 1.65;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
+      ::after {
+        content: '';
+        display: block;
+        height: 10px;
+        background-color: white;
+      }
     }
 
     .keyword-wrapper {
+      -webkit-text-size-adjust: none;
+      text-align: left;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      vertical-align: baseline;
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
@@ -154,6 +207,12 @@ const Wrapper = styled.div<WrapperProps>`
       text-overflow: ellipsis;
       color: #3a84e5;
       .keyword {
+        -webkit-text-size-adjust: none;
+        text-align: left;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
         display: inline;
         text-decoration: none;
         height: 14px;
