@@ -199,9 +199,9 @@ const Wrapper = styled.div`
     input[type='radio'] {
       border: 1px solid black;
       -webkit-text-size-adjust: none;
-      appearance: none;
-      width: 0.9rem;
-      height: 0.9rem;
+      appearance: auto;
+      width: 0.8rem;
+      height: 0.8rem;
       border-radius: 100%;
       margin: 0;
       margin-right: 10px;
@@ -240,21 +240,12 @@ const VotingBlock = styled.div`
   font-size: 14px;
   font-weight: 600;
   color: #2b2c2d;
+  display: flex;
+  align-items: center;
 `;
 
 const ThinkBox = styled.input`
   margin-right: 10px;
-  &:checked + label::after {
-    content: '✔';
-    color: red;
-    height: 10px;
-    width: 20px;
-    padding: 0;
-    text-align: center;
-    position: absolute;
-    top: -2px;
-    left: 0px;
-  }
 `;
 
 const LeftRightBox = styled.div`
@@ -271,20 +262,12 @@ const LeftRightHead = styled.div`
 
 const CheckBoxWrapper = styled.div`
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 `;
 
 const CheckBox = styled.input`
   margin-right: 10px;
-  &:checked + label::after {
-    content: '✔';
-    color: grey;
-    font-size: 5px;
-    padding: 0;
-    text-align: center;
-    position: absolute;
-    top: -6px;
-    left: 2px;
-  }
 `;
 
 const LRComment = styled.span`
