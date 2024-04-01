@@ -98,6 +98,11 @@ const Wrapper = styled.div`
   padding-top: 20px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   .search-wrapper {
     width: 70%;
     min-width: 800px;

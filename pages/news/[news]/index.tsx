@@ -85,7 +85,11 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
-
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   .main-contents {
     width: 70%;
     min-width: 800px;

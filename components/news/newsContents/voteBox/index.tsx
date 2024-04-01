@@ -196,18 +196,19 @@ const Wrapper = styled.div`
   background-color: rgba(121, 192, 215, 0.2);
   position: relative;
   & {
-    /* input[type='radio'],
-    input[type='radio']:checked {
+    input[type='radio'] {
+      border: 1px solid black;
+      -webkit-text-size-adjust: none;
       appearance: none;
       width: 0.9rem;
       height: 0.9rem;
       border-radius: 100%;
-      margin-right: 0.1rem;
-    } */
-
+      margin: 0;
+      margin-right: 10px;
+      background-color: white;
+    }
     input[type='radio']:checked {
       accent-color: rgb(43, 159, 194);
-      background-color: white;
     }
   }
 `;
