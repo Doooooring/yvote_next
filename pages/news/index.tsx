@@ -104,9 +104,9 @@ const Wrapper = styled.div`
   -ms-overflow-style: none;
   scrollbar-width: none;
   .search-wrapper {
+    display: flex;
     width: 70%;
     min-width: 800px;
-    height: 50px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 30px -20px;
@@ -119,10 +119,11 @@ const Wrapper = styled.div`
     border: 0;
     font: inherit;
     box-sizing: inherit;
+    justify-content: center;
+    align-items: center;
     @media screen and (max-width: 768px) {
       width: 90%;
       min-width: 0px;
-      margin-bottom: 20px;
     }
   }
 

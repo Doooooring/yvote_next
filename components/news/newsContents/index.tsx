@@ -305,7 +305,7 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   @media screen and (max-width: 768px) {
     padding-top: 0;
   }
@@ -355,7 +355,7 @@ const BodyLeft = styled.div<BodyProps>`
     justify-content: center;
     align-items: start;
     gap: 20px; */
-    padding: 1.3rem;
+    padding: 1rem;
     padding-right: 2.5em;
     .main-image-wrapper {
       width: 100px;
@@ -411,6 +411,7 @@ const BodyLeft = styled.div<BodyProps>`
           text-decoration: none;
           font-size: 12px;
           margin: 0;
+          margin-left: 3px;
           margin-right: 6px;
           color: #3a84e5;
           cursor: pointer;
@@ -421,13 +422,13 @@ const BodyLeft = styled.div<BodyProps>`
   .timeline-wrapper {
     display: flex;
     flex-direction: column;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     color: #a1a1a1;
 
     .timeline {
       display: flex;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
       flex-direction: row;
       font-size: 14px;
       font-weight: 500;
@@ -455,7 +456,7 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
 
 const BodyRight = styled.div<BodyProps>`
   width: 45%;
-  padding: 0 1.5rem;
+  padding: 0 1.2rem;
 
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};

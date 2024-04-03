@@ -183,41 +183,25 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
 }
 
 const Wrapper = styled.form`
-  position: relative;
-  display: inline-block;
+position: relative;
+  display: inline-flex;
   width: 300px;
-  height: 40px;
+  height: 45px;
   font-weight: bold;
   text-align: center;
-  -webkit-text-size-adjust: none;
-  color: #666;
-  padding: 0;
-  border: 0;
-  font: inherit;
-  box-sizing: inherit;
-  margin: 0 0 2em;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  align-items: center;
   .input-wrapper {
     position: absolute;
-    top: 0px;
     width: 100%;
     height: 90%;
+    display: flex;
+    align-items: center;
     overflow: hidden;
-    text-align: center;
-    -webkit-text-size-adjust: none;
-    color: #666;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    vertical-align: baseline;
     &:focus-within {
       overflow: visible;
     }
-  }
   .input-box {
-    display: inline-block;
+    display: inline-flex;
     border: 0;
     border-radius: 5px;
     width: 100%;
@@ -225,18 +209,14 @@ const Wrapper = styled.form`
     font-size: 13px;
     color: rgb(170, 170, 170);
     font-weight: 600;
-    padding-left: 4px;
-    padding-top: 4px;
-    padding-bottom: 3px;
+    padding: 0;
+    margin: 0;
     background-image: url('@assets/img/ico_search.png');
     background-repeat: no-repeat;
     background-position: 6px 6px;
-    -webkit-text-size-adjust: none;
-    margin: 0;
     font: inherit;
-    box-sizing: inherit;
     text-align: center;
-
+  
     &::placeholder {
       color: rgb(170, 170, 170);
       font-size: 13px;
@@ -259,12 +239,6 @@ const Wrapper = styled.form`
     text-align: left;
     z-index: 3;
     padding-top: 5px;
-    -webkit-text-size-adjust: none;
-    color: #666;
-    margin: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
   }
 `;
 

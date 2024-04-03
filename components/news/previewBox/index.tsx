@@ -90,7 +90,10 @@ const Wrapper = styled.div<WrapperProps>`
   box-shadow: 0px 0px 35px -30px;
   margin-bottom: 10px;
   text-align: left;
-  padding: 10px;
+  padding: 5px 10px;
+  @media screen and (max-width: 768px) {
+    padding: 10px 10px;
+  }
 
   background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
   &:hover {
@@ -109,7 +112,6 @@ const Wrapper = styled.div<WrapperProps>`
     text-align: left;
     margin: 0;
     padding: 0;
-    font: inherit;
     flex-shrink: 0;
   }
 
@@ -155,7 +157,6 @@ const Wrapper = styled.div<WrapperProps>`
     display: inline-block;
     width: auto;
     flex-grow: 1;
-    -webkit-text-size-adjust: none;
     color: #666;
     text-align: left;
     margin: 0;
@@ -174,7 +175,6 @@ const Wrapper = styled.div<WrapperProps>`
       vertical-align: baseline;
       color: #626060;
       margin: 0;
-      padding-top: 5px;
       font-size: 13px;
       min-height: 45px;
       line-height: 1.65;

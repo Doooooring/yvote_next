@@ -163,13 +163,7 @@ html {
   font-size: 16pt;
 }
 
-@media screen and (max-width: 1680px) {
-  html {
-    font-size: 12pt;
-  }
-}
-
-@media screen and (max-width: 736px) {
+@media screen and (max-width: 768px) {
   html {
     font-size: 10pt;
   }

@@ -56,12 +56,12 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
         <RightButton
           curView={curView}
           viewToRight={async () => {
-            if (curView === Math.floor(keywords.length / 8)) {
+            if (curView === Math.floor(keywords.length / 10.1)) {
               await getKeywords();
             }
             onSlideRight();
           }}
-          lastPage={Math.floor(keywords.length / 8)}
+          lastPage={Math.floor(keywords.length / 10.1)}
         />
       </div>
     </Wrapper>
@@ -69,18 +69,21 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
 }
 
 const Wrapper = styled.div`
-  width: 1000px;
+  width: 100%;
   margin-top: 20px;
-  @media screen and (max-width: 768px) {
-    width: 100%;
-    overflow-y: scroll;
-  }
+  margin-bottom: 10px;
   .header-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     height: 30px;
+    text-align: left;
     .image-wrapper {
-      display: inline-block;
+      display: inline-flex;
       width: 18px;
       height: 18px;
+      align-items: center;
       @media screen and (max-width: 768px) {
         width: 12px;
         height: 12px;
@@ -88,7 +91,6 @@ const Wrapper = styled.div`
     }
     .category-head {
       display: inline;
-      width: 1000px;
       margin-left: 10px;
       font-weight: 700;
       font-size: 18px;
@@ -99,8 +101,13 @@ const Wrapper = styled.div`
     }
   }
   .body-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* This centers the children vertically */
+    align-items: center; /* This centers the children horizontally */
     position: relative;
     .grid-wrapper {
+      width: 100%;
       border: 0px solid black;
       overflow: hidden;
     }
@@ -113,16 +120,18 @@ interface GridContainerProps {
 
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
-  grid-template-rows: repeat(2, 95px);
+  grid-template-rows: repeat(2, 3.5rem);
   grid-auto-flow: column;
   grid-row-gap: 10px;
-  grid-column-gap: 20px;
+  grid-column-gap: 15px;
   transform: ${({ curView }) => `translateX(-${curView * 1020}px)`};
   transition-duration: 0.5s;
   @media screen and (max-width: 768px) {
-    width: 100%;
-    overflow-y: scroll;
-    grid-template-rows: repeat(2, 60px);
-    grid-column-gap: 10px;
+    overflow-x: scroll;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 `;

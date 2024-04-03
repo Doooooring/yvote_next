@@ -207,19 +207,18 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 60%;
-  min-width: 700px;
-  max-height: 80vh; /* optional: to make sure modal does not exceed screen height */
-  overflow-y: auto; /* add scroll if content overflows */
+  min-width: 680px;
+  max-height: 80vh; /* make sure modal does not exceed screen height */
+  overflow: auto;
   margin-left: auto;
   margin-right: auto;
   padding: 3rem 3rem;
-  overflow: scroll;
   flex: 0 0 auto;
   background-color: white;
   position: fixed;
-  top: 5%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
   ::-webkit-scrollbar {
     display: none;
   }
@@ -254,11 +253,12 @@ const Wrapper = styled.div`
       }
       div.image-wrapper {
         display: flex;
+        position: relative;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        width: 166px;
-        height: 166px;
+        width: 140px;
+        height: 140px;
         flex: 0 0 auto;
         padding: 1.75rem;
         background-color: white;
@@ -267,20 +267,17 @@ const Wrapper = styled.div`
         overflow: hidden;
         box-sizing: border-box;
         @media screen and (max-width: 768px) {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
           min-width: 0px;
           float: left;
+          margin-left: 10px;
           margin-right: 20px;
         }
         .image-box {
-          width: 80px;
-          height: 80px;
+          width: 50%;
+          height: 50%;
           position: absolute;
-          @media screen and (max-width: 768px) {
-            height: 50px;
-            width: 50px;
-          }
         }
       }
       div.head-body {
