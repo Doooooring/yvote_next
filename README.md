@@ -1,5 +1,7 @@
-# 와이보트
-[서비스 바로 가기](https://yvoting.com)
+
+
+# <a href="https://yvoting.com">와이보트</a>
+<img src="https://github.com/Doooooring/yvote_next/assets/106396244/78643b4a-6cc1-4cda-b835-bd52804c1146" width="800px"/>
 
 ## 프로젝트 설명
 
@@ -18,6 +20,36 @@
   - 자주 쓰이는 용어들을 이해하고 손쉽게 뉴스를 모아봅니다.
 3. 정치성향 테스트
   - 자신의 정치성향을 확인하고 타인의 관점을 이해할 있는 관점을 제공합니다.
+
+## 파일 구조
+```
+```pages
+├── about // about 페이지
+├── news // 뉴스 목록 페이지
+│   ├── [news] // 뉴스 상세 페이지
+├── keywords // 키워드 목록 페이지
+│   ├── [keyword] // 키워드 상세 페이지
+├── analyze // 정치 성향 테스트 ( 추가 예정 )
+└── index.tsx // 메인 페이지
+
+``` components // common 에서 공통 컴포넌트 관리 이외 각 페이지 별 컴포넌트 관리
+├── common // 공통 컴포넌트
+├── about
+├── news 
+└── keywords
+
+``` repositories // 서버 API
+├── news // 뉴스 API 
+└── keywords // 키워드 API
+
+``` utils
+├── hook // 커스텀 훅
+├── interface // 뉴스, 키워드를 포함한 인터페이스 및 enum 정의
+└── tools // 컴포넌트에서 사용할 모듈
+
+
+```
+
 
 ## 사용 기술
 - FrontEnd

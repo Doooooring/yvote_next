@@ -1,4 +1,8 @@
+
 import { useEffect, useState } from 'react';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { StaticImageData } from 'next/image';
 import backgroundImage from '@images/voting.png';
