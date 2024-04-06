@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 import logo_s from '@images/logo_image.png';
 import logo from '@images/김민재 로고.png';
 
@@ -11,12 +10,33 @@ interface NavBoxProps {
   link: string;
   comment: string;
   state: boolean;
+  responsiveComment: string;
 }
 
-function NavBox({ link, comment, state }: NavBoxProps) {
+function NavBox({ link, comment, responsiveComment, state }: NavBoxProps) {
+  const [displayComment, setDisplayComment] = useState(comment);
+
+  useEffect(() => {
+    const updateCommentBasedOnWidth = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 768) {
+        setDisplayComment(responsiveComment);
+      } else {
+        setDisplayComment(comment);
+      }
+    };
+
+    // Update comment on mount and when resizing the window
+    updateCommentBasedOnWidth();
+    window.addEventListener('resize', updateCommentBasedOnWidth);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener('resize', updateCommentBasedOnWidth);
+  }, [comment, responsiveComment]);
+
   return (
     <HomeLink href={`${link}`} state={state}>
-      {comment}
+      {displayComment}
     </HomeLink>
   );
 }
@@ -53,13 +73,33 @@ export default function Header() {
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
-          <NavBox link={'/news'} comment="뉴스 모아보기" state={curTab === 'news'} />
+          <NavBox
+            link={'/news'}
+            comment="뉴스 모아보기"
+            state={curTab === 'news'}
+            responsiveComment="뉴스"
+          />
 
-          <NavBox link={'/keywords'} comment="키워드 모아보기" state={curTab === 'keywords'} />
+          <NavBox
+            link={'/keywords'}
+            comment="키워드 모아보기"
+            state={curTab === 'keywords'}
+            responsiveComment="키워드"
+          />
 
-          <NavBox link={'/analyze'} comment="정치 성향 테스트" state={curTab === 'analyze'} />
+          <NavBox
+            link={'/analyze'}
+            comment="정치 성향 테스트"
+            state={curTab === 'analyze'}
+            responsiveComment="가치관"
+          />
 
-          <NavBox link={'/about'} comment="ABOUT" state={curTab === 'about'} />
+          <NavBox
+            link={'/about'}
+            comment="ABOUT"
+            state={curTab === 'about'}
+            responsiveComment="ABOUT"
+          />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>
@@ -68,55 +108,52 @@ export default function Header() {
 
 const Wrapper = styled.header`
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  min-width: 800px;
   height: 80px;
-  font-size: 15px;
-  text-align: left;
-  color: black;
   box-shadow: 0px 0px 30px -25px;
   position: sticky;
   top: 0;
   z-index: 9999;
-  border-width: 0px;
-  border-bottom-width: 4px;
-  @media screen and (max-width: 1180px) {
-    padding-left: 5%;
-  }
-  @media screen and (max-width: 768px) {
-    min-width: 100%;
-    padding-right: 5%;
+  background-color: white;
+  border-bottom: 2px solid white;
+  @media screen and (max-width: 300px) {
+    justify-content: center;
   }
 `;
 
 const HeaderBody = styled.div`
-  min-width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  min-width: 800px;
   height: 100%;
-  position: relative;
-  margin-right: auto;
-  margin-left: auto;
+  border: 0;
   @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
+  }
+  @media screen and (max-width: 300px) {
+    justify-content: center;
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    min-width: 0;
-    margin-right: 0;
-    margin-left: 0;
   }
 `;
 
 const LogoImgBox = styled.div`
-  position: absolute;
-  left: 0;
-  width: 30%;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-left: 2%;
   height: 100%;
+  border: 0;
   @media screen and (max-width: 768px) {
-    position: relative;
-    width: auto;
-    flex: 0 1 auto;
+    margin: 0;
+  }
+  @media screen and (max-width: 300px) {
+    display: none;
+    flex: 0;
   }
 `;
 
@@ -125,17 +162,17 @@ interface homeLinkProps {
 }
 
 const HomeLink = styled(Link)<homeLinkProps>`
-  border-bottom: none;
-  color: ${({ state }) => (state ? 'rgb(61, 152, 247)' : 'grey')};
-  border-bottom: ${({ state }) => (state ? '3px solid rgb(61, 152, 247)' : '3px solid white')};
   display: inline-flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  height: 100%;
+  padding: 0 10px;
+  white-space: nowrap;
+  color: ${({ state }) => (state ? 'rgb(61, 152, 247)' : 'grey')};
   text-decoration: none;
-  @media screen and (max-width: 768px) {
-    font-size: 10px;
-  }
+  font: inherit;
+  font-size: 0.8rem;
+  border-bottom: ${({ state }) => (state ? '3px solid rgb(61, 152, 247)' : '3px solid white')};
+  height: 100%;
   .image-l {
     @media screen and (max-width: 768px) {
       display: none;
@@ -147,20 +184,33 @@ const HomeLink = styled(Link)<homeLinkProps>`
       display: block;
     }
   }
-`;
-const Logo = styled.img``;
-const NavigationBox = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
   @media screen and (max-width: 768px) {
-    gap: 10px;
+    padding: 0 5px;
+    font-size: 12px;
+  }
+  @media screen and (max-width: 300px) {
+    justify-content: center;
   }
 `;
 
-const Blank = styled.div`
-  width: 30px;
+const NavigationBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3%;
+  flex: 4; // Make the navigation box also flexible
+  margin: 0 10%;
+  height: 100%;
+  border: 0;
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
+    margin-right: 5%;
+    gap: 0;
+    justify-content: flex-end;
+  }
+  @media screen and (max-width: 300px) {
+    justify-content: center;
+    margin: 0;
+    flex: 0;
+  }
 `;
