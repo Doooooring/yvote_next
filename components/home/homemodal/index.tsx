@@ -94,7 +94,7 @@ const ModalWrapper = styled.div`
   z-index: 9999;
   width: 100%;
   height: 100%; // Now includes padding
-  padding: 2.5rem 0 7.5rem; // Move ModalBox's vertical padding here
+  padding: 1rem 0 7rem; // Move ModalBox's vertical padding here
   box-sizing: border-box; // Includes padding in height
   top: 80px;
   left: 0;
@@ -119,9 +119,9 @@ const ModalBox = styled.div`
   font: inherit;
   vertical-align: baseline;
   transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
-  padding: 2.5rem 2.5rem 1.5rem 2.5rem; // Removed vertical padding (moved to ModalWrapper)
+  padding: 2rem 2rem 1rem 2rem; // Removed vertical padding (moved to ModalWrapper)
   position: relative;
-  width: 40rem;
+  width: 35rem;
   max-width: 100%;
   background-color: rgba(27, 31, 34, 0.85);
   border-radius: 4px;
@@ -132,7 +132,7 @@ const ModalBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  line-height: 1.65rem;
+  line-height: 1.5rem;
 `;
 
 const CloseButton = styled.button`
@@ -149,13 +149,13 @@ const CloseButton = styled.button`
   position: absolute;
   top: 0;
   right: 0;
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   cursor: pointer;
   text-indent: 0;
   overflow: hidden;
   white-space: nowrap;
-  font-size: 2.5rem;
+  font-size: 2rem;
 `;
 
 const ModalTitle = styled.h2`
@@ -168,13 +168,13 @@ const ModalTitle = styled.h2`
   color: #ffffff;
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 1.5rem;
-  line-height: 1.4;
+  font-size: 1.2rem;
+  line-height: 1.4rem;
   letter-spacing: 0.5rem;
   border-bottom: solid 1px #ffffff;
   width: max-content;
-  padding-bottom: 0.5rem;
-  margin: 0 0 2rem 0;
+  padding-bottom: 0.4rem;
+  margin: 0 0 1.2rem 0;
   align-self: flex-start; // added this line
 `;
 
@@ -185,10 +185,11 @@ const ModalParagraph = styled.p`
   padding: 0;
   border: 0;
   font: inherit;
+  font-size: 0.8rem;
   vertical-align: baseline;
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   width: 100%;
-  font-weight: 250;
+  font-weight: 200;
 `;
 
 const ModalLink = styled.a`
@@ -204,7 +205,10 @@ const ModalLink = styled.a`
   border-bottom: dotted 1px rgba(255, 255, 255, 0.5);
   text-decoration: none;
   color: inherit;
-  align-self: flex-start; // added this line
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.7rem;
+  opacity: 0.7;
 `;
 
 const ImageContainer = styled.div`
@@ -239,18 +243,18 @@ const Label = styled.label`
   vertical-align: baseline;
   color: #ffffff;
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   font-weight: 300;
   letter-spacing: 0.2rem;
   line-height: 1.5;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
   text-transform: uppercase;
 `;
 
 const InputsRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 `;
 
 const FieldContainer = styled.div`
@@ -260,13 +264,14 @@ const FieldContainer = styled.div`
   margin-right: 2rem; // Space between the field containers
 
   &:last-child {
-    margin-right: 0; // No margin for the last field container
+    margin-right: 0;
   }
 `;
 
 const Input = styled.input`
   padding: 0.5rem;
   font: inherit;
+  font-size: 0.8rem;
   background: transparent;
   color: #ffffff;
   border: 1px solid #ffffff; // Border and border-radius applied here
@@ -276,13 +281,20 @@ const Input = styled.input`
 
 const TextArea = styled.textarea`
   width: 100%;
+  font: inherit;
+  font-size: 0.8rem;
   padding: 0.5rem;
   margin-bottom: 1rem;
   border: 1px solid #ffffff;
   background: transparent;
   color: #ffffff;
   border-radius: 4px; // round borders
-  resize: none; // Add this line to disable resizing
+  resize: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const SubmitButton = styled.button`
@@ -297,11 +309,11 @@ const SubmitButton = styled.button`
   box-shadow: inset 0 0 0 1px #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-size: 0.8rem;
-  height: 2.75rem;
-  letter-spacing: 0.2rem;
+  font-size: 0.7rem;
+  height: 2.4rem;
+  letter-spacing: 0.15rem;
   outline: 0;
-  padding: 0 1.25rem 0 1.35rem;
+  padding: 0 1rem 0 1rem;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
@@ -310,7 +322,7 @@ const SubmitButton = styled.button`
   background-color: #ffffff;
   color: #1b1f22
   font-weight: 600;
-  margin: auto; // this will center the button
-  width: 50%;   // this will restrict the width to 50% of the parent container
+  margin: auto; 
+  width: 30%;   
 
 `;

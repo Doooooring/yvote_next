@@ -1,5 +1,6 @@
 import { useOnScreen } from '@utils/hook/useOnScreen';
 
+import LoadingCommon from '@components/common/loading';
 import { Preview } from '@utils/interface/news';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -28,7 +29,6 @@ export default function NewsList({
     setIsRequesting(true);
     try {
       await fetchNewsPreviews();
-      return;
     } catch (e) {
       console.error(e);
     } finally {
@@ -47,14 +47,17 @@ export default function NewsList({
   }, [isOnScreen]);
 
   return (
-    <Wrapper>
-      {previews.map((preview, idx) => (
-        <div className="preview-wrapper" key={idx}>
-          <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
-        </div>
-      ))}
-      <div className="last-line" ref={elementRef}></div>
-    </Wrapper>
+    <>
+      <Wrapper>
+        {previews.map((preview, idx) => (
+          <div className="preview-wrapper" key={idx}>
+            <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
+          </div>
+        ))}
+      </Wrapper>
+      {isRequesting ? <LoadingCommon comment={'새소식을 받아오고 있어요!'} /> : <></>}
+      <LastLine ref={elementRef}></LastLine>
+    </>
   );
 }
 
@@ -96,9 +99,9 @@ const Wrapper = styled.div`
     padding-right: 0.25rem;
     padding-left: 0.25rem;
   }
+`;
 
-  div.last-line {
-    width: 10px;
-    height: 100px;
-  }
+const LastLine = styled.div`
+  width: 10px;
+  height: 180px;
 `;

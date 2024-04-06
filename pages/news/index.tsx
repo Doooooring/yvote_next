@@ -90,7 +90,7 @@ const Wrapper = styled.div`
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
-  overflow: hidden scroll;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,24 +1,35 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
-import KeywordRepository, { getKeywordsResponse, otherObject } from '@repositories/keywords';
+import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
 import { KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 
 interface pageProps {
   data: {
     recent: KeywordToView[];
-    other: otherObject[];
+    human: KeywordToView[];
+    economics: KeywordToView[];
+    organization: KeywordToView[];
+    policy: KeywordToView[];
+    politics: KeywordToView[];
+    social: KeywordToView[];
+    etc: KeywordToView[];
   };
 }
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
   const response: getKeywordsResponse = await KeywordRepository.getKeywords();
   const { recent, other } = response.keywords;
-  const data = { recent, other };
+  const data = { recent } as any;
+  other.forEach((o) => {
+    const { _id, keywords } = o;
+    data[_id] = keywords;
+  });
+
   return {
     props: {
       data,
@@ -28,33 +39,15 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 
 export default function KeywordsPage({ data }: pageProps) {
   const [recentKeywords, setRecentKeywords] = useState<Array<KeywordToView>>(data.recent);
-  const [keywordInHuman, setKeywordInHuman] = useState<Array<KeywordToView>>([]);
-  const [keywordInEconomy, setKeywordInEconomy] = useState<Array<KeywordToView>>([]);
-  const [keywordInOrganization, setkeywordInOrganization] = useState<Array<KeywordToView>>([]);
-  const [keywordInPolicy, setKeywordInPolicy] = useState<Array<KeywordToView>>([]);
-  const [keywordInPolitics, setKeywordInPolitics] = useState<Array<KeywordToView>>([]);
-  const [keywordInSocial, setKeywordInSocial] = useState<Array<KeywordToView>>([]);
-  const [keywordInEtc, setKeywordInEtc] = useState<Array<KeywordToView>>([]);
-
-  const setStateMap = useMemo(() => {
-    return {
-      human: setKeywordInHuman,
-      economics: setKeywordInEconomy,
-      organization: setkeywordInOrganization,
-      policy: setKeywordInPolicy,
-      politics: setKeywordInPolitics,
-      social: setKeywordInSocial,
-      etc: setKeywordInEtc,
-    };
-  }, []);
-
-  useEffect(() => {
-    data.other.forEach((comp) => {
-      const { _id, keywords } = comp;
-      const setState: Dispatch<SetStateAction<KeywordToView[]>> = setStateMap[_id];
-      setState(keywords);
-    });
-  }, []);
+  const [keywordInHuman, setKeywordInHuman] = useState<Array<KeywordToView>>(data.human);
+  const [keywordInEconomy, setKeywordInEconomy] = useState<Array<KeywordToView>>(data.economics);
+  const [keywordInOrganization, setkeywordInOrganization] = useState<Array<KeywordToView>>(
+    data.organization,
+  );
+  const [keywordInPolicy, setKeywordInPolicy] = useState<Array<KeywordToView>>(data.policy);
+  const [keywordInPolitics, setKeywordInPolitics] = useState<Array<KeywordToView>>(data.politics);
+  const [keywordInSocial, setKeywordInSocial] = useState<Array<KeywordToView>>(data.social);
+  const [keywordInEtc, setKeywordInEtc] = useState<Array<KeywordToView>>(data.etc);
 
   return (
     <Wrapper>

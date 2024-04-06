@@ -13,7 +13,12 @@ type KeyName = Keyword['keyword'];
 export default function SearchBox() {
   const navigate = useRouter();
   const [searchWord, setSearchWord] = useState<string>('');
-  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다.']);
+  const [relatedWords, setRelatedWords] = useState<string[]>([
+    '국무회의',
+    '법률',
+    '행정부',
+    '헌법재판소',
+  ]);
   const [keylist, setKeyList] = useState<KeyName[]>([]);
   const [curFocusOnWord, setCurFocusOnWord] = useState<number>(-1);
   const [arrowKeyActive, setArrowKeyActive] = useState<boolean>(false);
@@ -48,7 +53,7 @@ export default function SearchBox() {
     setSearchWord(preValue);
     if (preValue === '') {
       setCurFocusOnWord(-1);
-      setRelatedWords(['키워드를 검색해 봅시다']);
+      setRelatedWords(['']);
     } else {
       if (curFocusOnWord !== -1) {
         setCurFocusOnWord(-1);
@@ -67,7 +72,7 @@ export default function SearchBox() {
         }
       }
       if (findRelatedWords.length === 0) {
-        setRelatedWords(['그런건 없어용 :)']);
+        setRelatedWords(['']);
       } else {
         setRelatedWords(findRelatedWords);
       }
@@ -80,11 +85,11 @@ export default function SearchBox() {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (!keylist.includes(searchWord)) {
-        alert('알맞은 키워드를 입력해주세요!');
+        alert('키워드가 존재하지 않습니다');
       } else {
         const id = await KeywordRepository.getIdByKeyword(searchWord);
         if (!id) {
-          alert('다시 검색해주세요!');
+          alert('키워드가 존재하지 않습니다');
           return;
         }
         navigate.push(`/keywords/${id}`);
@@ -129,7 +134,7 @@ export default function SearchBox() {
       <InputWrapper>
         <InputBox
           type="text"
-          placeholder="궁금한 뉴스의 키워드를 검색하시오"
+          placeholder="키워드 검색"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
@@ -182,8 +187,9 @@ const InputBox = styled.input`
   border-radius: 5px;
   width: 100%;
   height: auto;
-  font-size: 13px;
   color: rgb(170, 170, 170);
+  font: inherit;
+  font-size: 13px;
   font-weight: 600;
   padding: 0;
   margin: 0;
@@ -198,23 +204,24 @@ const InputBox = styled.input`
     font-weight: 800;
   }
   &:focus {
-    outline: 2px solid rgb(104, 156, 209);
+    outline: 2px solid rgb(133, 200, 224);
+    font-size: 13px;
   }
 `;
 
 const RelatedBox = styled.div`
   min-height: 100px;
-  background-color: rgb(104, 156, 209);
+  background-color: rgb(133, 200, 224);
   width: 100%;
   border-style: solid;
   border-width: 2px;
-  border-color: rgb(104, 156, 209);
-  border-radius: 0px 0px 10px 10px;
+  border-color: rgb(133, 200, 224);
+  border-radius: 5px;
   position: absolute;
   top: 100%;
   text-align: left;
   z-index: 3;
-  padding-top: 5px;
+  opacity: 0.7;
 `;
 
 interface RelatedWordProps {
@@ -226,18 +233,18 @@ const RelatedWord = styled.p<RelatedWordProps>`
   text-align: left;
   margin: 0;
   padding: 0;
-  border: 0;
   font: inherit;
   box-sizing: inherit;
   color: white;
   font-weight: 700;
   padding-left: 5px;
   margin-bottom: 5px;
-  border-width: 3px;
-  font-size: 15px;
+  border-radius: 5px;
+  border-width: 1px;
+  font-size: 13px;
   border-style: solid;
   z-index: 1;
-  background-color: ${({ isFocused }) => (isFocused ? 'rgb(120, 120, 120)' : 'rgba(0,0,0,0)')};
+  background-color: ${({ isFocused }) => (isFocused ? 'rgb(101, 177, 205)' : 'rgba(0,0,0,0)')};
 `;
 
 const SubmitButton = styled.button`
