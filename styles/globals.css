@@ -58,34 +58,24 @@ input::-moz-focus-inner {
   padding: 0;
 }
 
-input,
-select,
-textarea {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  -ms-appearance: none;
-  appearance: none;
+
+h3 {
+  font-size: 1.35em;
+  line-height: 1.5em;
 }
 
-/* Basic */
-
-@-ms-viewport {
-  width: device-width;
+h4 {
+  font-size: 1.25em;
+  line-height: 1.5em;
 }
 
-@media screen and (max-width: 480px) {
-  html,
-  body {
-    min-width: 320px;
-  }
+h5 {
+  font-size: 0.9em;
+  line-height: 1.5em;
 }
 
-html {
-  font-size: 16pt;
+h6 {
+  font-size: 0.7em;
+  line-height: 1.5em;
 }
 
-@media screen and (max-width: 768px) {
-  html {
-    font-size: 10pt;
-  }
-}

@@ -57,6 +57,36 @@
 
 ````
 
+## 파일 구조
+
+````
+```pages
+├── about // about 페이지
+├── news // 뉴스 목록 페이지
+│   ├── [news] // 뉴스 상세 페이지
+├── keywords // 키워드 목록 페이지
+│   ├── [keyword] // 키워드 상세 페이지
+├── analyze // 정치 성향 테스트 ( 추가 예정 )
+└── index.tsx // 메인 페이지
+
+``` components // common 에서 공통 컴포넌트 관리 이외 각 페이지 별 컴포넌트 관리
+├── common // 공통 컴포넌트
+├── about
+├── news
+└── keywords
+
+``` repositories // 서버 API
+├── news // 뉴스 API
+└── keywords // 키워드 API
+
+``` utils
+├── hook // 커스텀 훅
+├── interface // 뉴스, 키워드를 포함한 인터페이스 및 enum 정의
+└── tools // 컴포넌트에서 사용할 모듈
+
+
+````
+
 ## 사용 기술
 
 - FrontEnd
