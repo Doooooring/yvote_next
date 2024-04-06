@@ -207,19 +207,27 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 60%;
-  min-width: 800px;
-  max-height: 800px;
+  min-width: 680px;
+  max-height: 80vh; /* make sure modal does not exceed screen height */
+  overflow: auto;
   margin-left: auto;
   margin-right: auto;
-  padding: 4rem 3rem;
-  overflow: scroll;
+  padding: 3rem 3rem;
   flex: 0 0 auto;
   background-color: white;
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   @media screen and (max-width: 768px) {
     width: 90%;
     min-width: 0px;
-    padding: 3rem 2rem;
+    padding: 3rem 1rem;
   }
   & {
     div.close-button {
@@ -229,39 +237,47 @@ const Wrapper = styled.div`
       cursor: pointer;
     }
     div.modal-head {
+      -webkit-text-size-adjust: none;
+      color: #666;
+      text-align: left;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      box-sizing: inherit;
       display: flex;
       flex-direction: row;
+
       @media screen and (max-width: 768px) {
         display: block;
       }
       div.image-wrapper {
         display: flex;
+        position: relative;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        width: 166px;
-        height: 166px;
+        width: 140px;
+        height: 140px;
         flex: 0 0 auto;
         padding: 1.75rem;
         background-color: white;
         box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
         border-radius: 200px;
         overflow: hidden;
+        box-sizing: border-box;
         @media screen and (max-width: 768px) {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
           min-width: 0px;
           float: left;
+          margin-left: 10px;
           margin-right: 20px;
         }
         .image-box {
-          width: 80px;
-          height: 80px;
+          width: 50%;
+          height: 50%;
           position: absolute;
-          @media screen and (max-width: 768px) {
-            height: 50px;
-            width: 50px;
-          }
         }
       }
       div.head-body {
@@ -282,6 +298,7 @@ const Wrapper = styled.div`
           font-size: 15px;
           line-height: 1.7;
           @media screen and (max-width: 768px) {
+            padding-left: 4%;
             font-size: 14px;
           }
         }
@@ -296,19 +313,18 @@ const Wrapper = styled.div`
         div.body-block {
           height: 60px;
           padding-left: 2rem;
-          padding-top: 1rem;
-          padding-bottom: 1rem;
+
           box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
           border-radius: 16px;
           display: flex;
           flex-direction: row;
           align-items: center;
           cursor: pointer;
-
+          box-sizing: border-box;
           @media screen and (max-width: 768px) {
             padding: 0rem;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
           }
           span {
             display: -webkit-box;
@@ -341,12 +357,12 @@ const Wrapper = styled.div`
       }
 
       div.content-wrapper {
-        padding: 1.25rem;
+        padding: 1.25rem 4%;
         box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-
+        color: rgb(102, 102, 102);
         p.content-title {
           color: #7e7e7e;
-          font-weight: 500;
+          font-weight: 600;
           padding-top: 0.5rem;
           padding-bottom: 0.5rem;
         }

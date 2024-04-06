@@ -123,10 +123,9 @@ export default function KeyExplanation({ data }: pageProps) {
 
   return (
     <Wrapper ref={newsWrapper}>
-      <SearchWrapper>
+      <div className="search-wrapper">
         <SearchBox />
-        <SpeechBubble />
-      </SearchWrapper>
+      </div>
       <KeywordWrapper>
         <ExplanationComp
           id={curKeyword?._id! ?? ''}
@@ -142,7 +141,7 @@ export default function KeyExplanation({ data }: pageProps) {
           <div className="main-header-wrapper">
             <div className="main-header">
               <Image src={icoNews} alt="hmm" height="18" />
-              <div className="category-name">{'최신 뉴스'}</div>
+              <div className="category-name">{'관련 뉴스'}</div>
             </div>
           </div>
         )}
@@ -172,43 +171,79 @@ export default function KeyExplanation({ data }: pageProps) {
 }
 
 const Wrapper = styled.div`
-  height: 100%;
-  overflow: scroll;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Helvetica, sans-serif;
+  box-sizing: inherit;
+  height: 80%;
+  overflow: hidden scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding-top: 20px;
+  margin-bottom: 50px;
   background-color: rgb(242, 242, 242);
-  .main-header-wrapper {
-    height: 30px;
-    .main-header {
-      width: 70%;
-      min-width: 800px;
-      text-align: left;
-      padding-left: 10px;
-      .category-name {
-        display: inline;
-        width: 70%;
-        margin-left: 10px;
-        font-weight: 700;
-        font-size: 18px;
-        @media screen and (max-width: 768px) {
-          width: 90%;
-          min-width: 0px;
-        }
-      }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  .search-wrapper {
+    display: flex;
+    width: 70%;
+    min-width: 800px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px -20px;
+    position: relative;
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: center;
+    margin: 0 0 20px 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
+    justify-content: center;
+    align-items: center;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+      min-width: 0px;
     }
   }
 
   .main-contents {
     width: 70%;
     min-width: 800px;
+    text-align: left;
     @media screen and (max-width: 768px) {
       width: 90%;
       min-width: 0px;
     }
   }
+
+  .main-header {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: flex-start; 
+    text-align: left;
+  }
+
+  .category-name{
+    display: inline-flex;
+    margin-left: 10px;
+    font-weight: 700;
+    font-size: 18px;
+    line-height : 3em;
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+      margin-left: 8px;
+   }
 
   .main-contents-body {
     position: relative;
@@ -217,22 +252,6 @@ const Wrapper = styled.div`
       height: 800px;
       font-size: 13px;
     }
-  }
-`;
-
-const SearchWrapper = styled.div`
-  position: relative;
-  width: 70%;
-  min-width: 800px;
-  height: 50px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 30px -20px;
-  margin-bottom: 60px;
-  @media screen and (max-width: 768px) {
-    width: 90%;
-    min-width: 0px;
-    margin-bottom: 20px;
   }
 `;
 

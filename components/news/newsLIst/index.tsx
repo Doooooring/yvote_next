@@ -62,30 +62,42 @@ export default function NewsList({
 }
 
 const Wrapper = styled.div`
+  -webkit-text-size-adjust: none;
+  color: #666;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  box-sizing: inherit;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, 50%);
-  grid-column-gap: 0px;
+  column-gap: 0px;
   justify-items: center;
   border-style: solid;
   border-radius: 10px;
   border-width: 0px;
   opacity: 1;
   position: relative;
-  animation: box-sliding 0.5s linear 1;
+  animation: 0.5s linear 0s 1 normal none running box-sliding;
   overflow-x: visible;
   @media screen and (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, 100%);
   }
 
   div.preview-wrapper {
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
     display: inline-block;
-    width: 100%;
     padding-right: 0.25rem;
     padding-left: 0.25rem;
-  }
-
-  @media screen and (max-width: 768px) {
   }
 `;
 

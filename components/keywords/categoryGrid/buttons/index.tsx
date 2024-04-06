@@ -47,7 +47,6 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 80px;
   border-radius: 50px;
   box-shadow: 0 0 30px -15px;
   background-color: white;

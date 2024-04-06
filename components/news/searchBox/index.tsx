@@ -156,7 +156,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         <input
           className="input-box"
           type="text"
-          placeholder="궁금한 뉴스의 키워드를 검색하시오"
+          placeholder="궁금한 뉴스의 키워드를 검색하라"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
@@ -183,39 +183,40 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
 }
 
 const Wrapper = styled.form`
-  position: relative;
-  display: inline-block;
+position: relative;
+  display: inline-flex;
   width: 300px;
-  height: 40px;
+  height: 45px;
   font-weight: bold;
-  margin-bottom: 10px;
-  margin-top: 10px;
   text-align: center;
+  align-items: center;
   .input-wrapper {
     position: absolute;
-    top: 0px;
     width: 100%;
     height: 90%;
+    display: flex;
+    align-items: center;
     overflow: hidden;
     &:focus-within {
       overflow: visible;
     }
-  }
   .input-box {
-    display: inline-block;
+    display: inline-flex;
     border: 0;
     border-radius: 5px;
     width: 100%;
-    height: 100%;
+    height: auto;
     font-size: 13px;
     color: rgb(170, 170, 170);
     font-weight: 600;
-    padding-left: 40px;
-    padding-top: 4px;
-    padding-bottom: 3px;
+    padding: 0;
+    margin: 0;
     background-image: url('@assets/img/ico_search.png');
     background-repeat: no-repeat;
     background-position: 6px 6px;
+    font: inherit;
+    text-align: center;
+  
     &::placeholder {
       color: rgb(170, 170, 170);
       font-size: 13px;
@@ -246,6 +247,13 @@ interface RelatedWordProps {
 }
 
 const RelatedWord = styled.p<RelatedWordProps>`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  box-sizing: inherit;
   color: white;
   font-weight: 700;
   padding-left: 5px;

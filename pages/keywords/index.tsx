@@ -51,10 +51,9 @@ export default function KeywordsPage({ data }: pageProps) {
 
   return (
     <Wrapper>
-      <SearchWrapper>
+      <div className="search-wrapper">
         <SearchBox />
-        <SpeechBubble />
-      </SearchWrapper>
+      </div>
       <GridContainer>
         <CategoryGrid
           category={'recent'}
@@ -98,30 +97,49 @@ export default function KeywordsPage({ data }: pageProps) {
 }
 
 const Wrapper = styled.div`
-  height: 100%;
-  overflow: scroll;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Helvetica, sans-serif;
+  box-sizing: inherit;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 20px;
-  padding-bottom: 80px;
-  background-color: rgb(242, 242, 242);
-`;
-
-const SearchWrapper = styled.div`
-  position: relative;
-  z-index: 999;
-  width: 1000px;
-  height: 50px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 30px -20px;
-  margin-bottom: 40px;
   text-align: center;
-  @media screen and (max-width: 768px) {
-    width: 90%;
-    min-width: 0px;
-    margin-bottom: 20px;
+  padding-top: 20px;
+  margin-bottom: 50px;
+  background-color: rgb(242, 242, 242);
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  .search-wrapper {
+    display: flex;
+    width: 70%;
+    min-width: 800px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px -20px;
+    position: relative;
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: center;
+    margin: 0 0 20px 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
+    justify-content: center;
+    align-items: center;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+      min-width: 0px;
+    }
   }
 `;
 
@@ -129,8 +147,10 @@ const GridContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 70%;
+  min-width: 800px;
   @media screen and (max-width: 768px) {
-    width: 100%;
-    padding: 0 1rem;
+    width: 90%;
+    min-width: 0;
   }
 `;

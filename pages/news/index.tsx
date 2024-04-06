@@ -63,7 +63,7 @@ export default function NewsPage(props: pageProps) {
           setSubmitWord={setSubmitWord}
           setCurPreviews={setCurPreviews}
         />
-        <SpeechBubble />
+        {/* <SpeechBubble /> */}
       </div>
       <div className="main-contents">
         <div className="main-header-wrapper"></div>
@@ -82,32 +82,60 @@ export default function NewsPage(props: pageProps) {
 }
 
 const Wrapper = styled.div`
+  -webkit-text-size-adjust: none;
+  color: #666;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Helvetica, sans-serif;
+  box-sizing: inherit;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding-top: 20px;
+  padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   .search-wrapper {
+    display: flex;
     width: 70%;
     min-width: 800px;
-    height: 50px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 30px -20px;
-    margin-bottom: 40px;
     position: relative;
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: center;
+    margin: 0 0 20px 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
+    justify-content: center;
+    align-items: center;
     @media screen and (max-width: 768px) {
       width: 90%;
       min-width: 0px;
-      margin-bottom: 20px;
     }
   }
 
   .main-header-wrapper {
+    -webkit-text-size-adjust: none;
+    color: #666;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
     height: 30px;
     .main-header {
       width: 70%;
@@ -129,8 +157,17 @@ const Wrapper = styled.div`
   }
 
   .main-contents {
+    -webkit-text-size-adjust: none;
     width: 70%;
     min-width: 800px;
+    color: #666;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    box-sizing: inherit;
+
     @media screen and (max-width: 768px) {
       width: 90%;
       min-width: 0px;
@@ -138,6 +175,13 @@ const Wrapper = styled.div`
   }
 
   .main-contents-body {
+    color: #666;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
     position: relative;
     .news-contents-wrapper {
       width: 100%;

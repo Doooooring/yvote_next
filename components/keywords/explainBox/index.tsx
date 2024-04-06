@@ -38,7 +38,7 @@ export default function ExplanationComp({
           }}
         ></input>
         <label className="close-button" htmlFor="close-button">
-          <Image src={icoClose} alt="hmm" />
+          <Image src={icoClose} alt="close" />
         </label>
       </div>
       <div className="explanation-header">
@@ -84,23 +84,26 @@ const ExplanationWrapper = styled.div`
   gap: 10px;
   width: 100%;
   background-color: white;
-  padding: 2rem 3rem;
+  padding: 1rem 2rem;
   box-shadow: 0 8px 35px -25px;
   position: relative;
+  box-sizing: border-box;
   @media screen and (max-width: 768px) {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 2rem;
   }
   .news-box-close {
-    padding-right: 10px;
+    padding-top: 5px;
+    padding-right: 5px;
     text-align: right;
     position: absolute;
     top: 0px;
     right: 0px;
     label.close-button {
-      padding-top: 10px;
-
       text-align: right;
+      img {
+        width: 25px;
+        height: 25px;
+      }
       &:hover {
         cursor: pointer;
       }

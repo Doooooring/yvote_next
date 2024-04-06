@@ -150,8 +150,6 @@ export default function NewsContent({
               </label>
             </div>
             <div className="contents-body">
-              <div className="left"></div>
-
               <div className="right">
                 <div className="summary">
                   <div className="main-image-wrapper">
@@ -165,7 +163,7 @@ export default function NewsContent({
                     <span>
                       {newsContent.title}{' '}
                       {newsContent.state ? (
-                        <Image src={icoNew} alt="hmm" height="16" />
+                        <Image src={icoNew} alt="new" height="16" />
                       ) : (
                         <div></div>
                       )}
@@ -218,8 +216,8 @@ export default function NewsContent({
                   >
                     <ImageFallback
                       src={`/assets/img/${comment}.png`}
-                      width={'100%'}
-                      height={'100%'}
+                      width={'50%'}
+                      height={'50%'}
                     ></ImageFallback>
                   </div>
                 );
@@ -252,10 +250,16 @@ const Wrapper = styled.div`
   border-radius: 10px;
   border-style: solid;
   padding-top: 30px;
-  padding-bottom: 80px;
+  padding-bottom: 160px;
   text-align: left;
   position: absolute;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   & {
     padding-top: 0px;
     p {
@@ -301,7 +305,7 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   @media screen and (max-width: 768px) {
     padding-top: 0;
   }
@@ -312,7 +316,7 @@ interface BodyProps {
 }
 
 const BodyLeft = styled.div<BodyProps>`
-  width: 52%;
+  width: 55%;
   min-height: 1000px;
   background-color: white;
   box-shadow: 0 0 35px -30px;
@@ -325,13 +329,13 @@ const BodyLeft = styled.div<BodyProps>`
   }
 
   .close-wrapper {
+    padding-top: 5px;
     padding-right: 5px;
     text-align: right;
     position: absolute;
     top: 0px;
     right: 0px;
     .close-button {
-      padding-top: 5px;
       text-align: right;
       img {
         width: 25px;
@@ -351,7 +355,7 @@ const BodyLeft = styled.div<BodyProps>`
     justify-content: center;
     align-items: start;
     gap: 20px; */
-    padding: 1.3rem;
+    padding: 1rem;
     padding-right: 2.5em;
     .main-image-wrapper {
       width: 100px;
@@ -359,9 +363,10 @@ const BodyLeft = styled.div<BodyProps>`
       margin-top: 1px;
       margin-right: 12px;
       margin-bottom: 0px;
+      border: 1px solid rgb(230, 230, 230);
+      border-radius: 10px;
+      overflow: hidden;
       float: left;
-    }
-    .left {
     }
     .right {
       .head {
@@ -374,6 +379,7 @@ const BodyLeft = styled.div<BodyProps>`
         margin: 0.2em 0 1.7em 0;
         line-height: 1.6em;
         span {
+          color: rgb(85, 85, 85);
           min-height: 20.25px;
           max-height: 48px;
           img {
@@ -388,12 +394,12 @@ const BodyLeft = styled.div<BodyProps>`
         line-height: 2;
         color: #747272;
         font-weight: 450;
-        font-family: 'summary-font';
         word-break: break-all;
         & {
           p {
             margin: 0 0 1em 0.2em;
             min-height: 10px;
+            font-family: Helvetica, sans-serif;
           }
         }
       }
@@ -405,6 +411,7 @@ const BodyLeft = styled.div<BodyProps>`
           text-decoration: none;
           font-size: 12px;
           margin: 0;
+          margin-left: 3px;
           margin-right: 6px;
           color: #3a84e5;
           cursor: pointer;
@@ -415,13 +422,13 @@ const BodyLeft = styled.div<BodyProps>`
   .timeline-wrapper {
     display: flex;
     flex-direction: column;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     color: #a1a1a1;
 
     .timeline {
       display: flex;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
       flex-direction: row;
       font-size: 14px;
       font-weight: 500;
@@ -448,35 +455,32 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
 `;
 
 const BodyRight = styled.div<BodyProps>`
-  width: 48%;
-  padding: 0 1.5rem;
+  width: 45%;
+  padding: 0 1.2rem;
 
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
-    width: 100%;
     min-width: 0px;
     padding: 0;
+    width: 100%;
   }
 
   div.comment_body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    row-gap: 10px;
-    column-gap: 10px;
+    gap: 10px;
     margin-bottom: 20px;
-
+    padding-right: 4px;
     div.comment {
-      width: 100%;
-      padding: 2.2rem;
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
       cursor: pointer;
       overflow: hidden;
       aspect-ratio: 1 / 1;
-      @media screen and (max-width: 1440px) {
-        padding: 1.5rem;
-      }
+      display: flex;
+      justify-content: center; /* Center horizontally */
+      align-items: center; /* Center vertically */
     }
   }
 `;

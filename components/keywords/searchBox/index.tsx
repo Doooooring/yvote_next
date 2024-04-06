@@ -157,21 +157,21 @@ export default function SearchBox() {
 
 const Wrapper = styled.form`
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   width: 300px;
-  height: 40px;
+  height: 45px;
   font-weight: bold;
-  margin-bottom: 10px;
-  margin-top: 10px;
   text-align: center;
+  align-items: center;
 `;
 
 const InputWrapper = styled.div`
   position: absolute;
-  top: 0px;
   width: 100%;
   height: 90%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
   &:focus-within {
     overflow: visible;
   }
@@ -181,16 +181,17 @@ const InputBox = styled.input`
   border: 0;
   border-radius: 5px;
   width: 100%;
-  height: 100%;
+  height: auto;
   font-size: 13px;
   color: rgb(170, 170, 170);
   font-weight: 600;
-  padding-left: 40px;
-  padding-top: 4px;
-  padding-bottom: 3px;
+  padding: 0;
+  margin: 0;
   background-image: url('@assets/img/ico_search.png');
   background-repeat: no-repeat;
   background-position: 6px 6px;
+  text-align: center;
+
   &::placeholder {
     color: rgb(170, 170, 170);
     font-size: 13px;
@@ -200,6 +201,7 @@ const InputBox = styled.input`
     outline: 2px solid rgb(104, 156, 209);
   }
 `;
+
 const RelatedBox = styled.div`
   min-height: 100px;
   background-color: rgb(104, 156, 209);
@@ -220,6 +222,13 @@ interface RelatedWordProps {
 }
 
 const RelatedWord = styled.p<RelatedWordProps>`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  box-sizing: inherit;
   color: white;
   font-weight: 700;
   padding-left: 5px;
@@ -227,7 +236,7 @@ const RelatedWord = styled.p<RelatedWordProps>`
   border-width: 3px;
   font-size: 15px;
   border-style: solid;
-  z-index: 5;
+  z-index: 1;
   background-color: ${({ isFocused }) => (isFocused ? 'rgb(120, 120, 120)' : 'rgba(0,0,0,0)')};
 `;
 
