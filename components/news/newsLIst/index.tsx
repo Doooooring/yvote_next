@@ -103,5 +103,5 @@ const Wrapper = styled.div`
 
 const LastLine = styled.div`
   width: 10px;
-  height: 180px;
+  height: 120px;
 `;

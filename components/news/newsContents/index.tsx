@@ -271,6 +271,9 @@ const Wrapper = styled.div`
     width: 100%;
     min-width: 0px;
   }
+  @media screen and (max-width: 300px) {
+    overflow-x: scroll;
+  }
 `;
 
 interface FaWrapperProps {
@@ -327,7 +330,6 @@ const BodyLeft = styled.div<BodyProps>`
     width: 100%;
     min-width: 0px;
   }
-
   .close-wrapper {
     padding-top: 5px;
     padding-right: 5px;
@@ -344,17 +346,12 @@ const BodyLeft = styled.div<BodyProps>`
       &:hover {
         cursor: pointer;
       }
-      @media screen and (max-width: 768px) {
-        display: none;
-      }
+    }
+    @media screen and (max-width: 768px) {
+      display: none;
     }
   }
   .contents-body {
-    /* display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: start;
-    gap: 20px; */
     padding: 1rem;
     padding-right: 2.5em;
     .main-image-wrapper {
@@ -397,7 +394,7 @@ const BodyLeft = styled.div<BodyProps>`
         word-break: break-all;
         & {
           p {
-            margin: 0 0 1em 0.2em;
+            margin: 0 0 1em 0.5em;
             min-height: 10px;
             font-family: Helvetica, sans-serif;
           }
@@ -417,6 +414,9 @@ const BodyLeft = styled.div<BodyProps>`
           cursor: pointer;
         }
       }
+    }
+    @media screen and (max-width: 768px) {
+      padding-right: 1.5rem;
     }
   }
   .timeline-wrapper {
@@ -457,10 +457,11 @@ const ImgWrapper = styled.div<ImageWrapperProps>`
 const BodyRight = styled.div<BodyProps>`
   width: 45%;
   padding: 0 1.2rem;
-
+  max-width: 500px;
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
-    min-width: 0px;
+    min-width: 270px;
+    max-width: 768px;
     padding: 0;
     width: 100%;
   }

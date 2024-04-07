@@ -136,7 +136,7 @@ const Wrapper = styled.div`
     border: 0;
     font: inherit;
     box-sizing: inherit;
-    height: 30px;
+    height: 15px;
     .main-header {
       width: 70%;
       min-width: 800px;
