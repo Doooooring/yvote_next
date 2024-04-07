@@ -19,7 +19,7 @@ function NavBox({ link, comment, responsiveComment, state }: NavBoxProps) {
   useEffect(() => {
     const updateCommentBasedOnWidth = () => {
       const screenWidth = window.innerWidth;
-      if (screenWidth < 768) {
+      if (screenWidth < 480) {
         setDisplayComment(responsiveComment);
       } else {
         setDisplayComment(comment);
@@ -150,6 +150,7 @@ const LogoImgBox = styled.div`
   border: 0;
   @media screen and (max-width: 768px) {
     margin: 0;
+    justify-content: center;
   }
   @media screen and (max-width: 300px) {
     display: none;
@@ -170,7 +171,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   color: ${({ state }) => (state ? 'rgb(61, 152, 247)' : 'grey')};
   text-decoration: none;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 1rem;
   border-bottom: ${({ state }) => (state ? '3px solid rgb(61, 152, 247)' : '3px solid white')};
   height: 100%;
   .image-l {
@@ -186,7 +187,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   }
   @media screen and (max-width: 768px) {
     padding: 0 5px;
-    font-size: 12px;
+    font-size: 13px;
   }
   @media screen and (max-width: 300px) {
     justify-content: center;
@@ -203,14 +204,18 @@ const NavigationBox = styled.div`
   height: 100%;
   border: 0;
   @media screen and (max-width: 768px) {
-    margin-left: 0;
+    margin-left: 5%;
     margin-right: 5%;
     gap: 0;
-    justify-content: flex-end;
+    justify-content: space-between;
+  }
+  @media screen and (max-width: 480px) {
+    margin-left: 10%;
+    margin-right: 10%;
   }
   @media screen and (max-width: 300px) {
-    justify-content: center;
+    justify-content: space-between;
     margin: 0;
-    flex: 0;
+    max-width: 80%;
   }
 `;
