@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StaticImageData } from 'next/image';
@@ -111,16 +110,23 @@ export default function Home() {
 }
 
 const Wrapper = styled.div`
+  box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   position: relative;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: black; /* Set initial background color to black */
   padding: 3rem 2rem;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
 `;
 
 const Content = styled.div<{ show: boolean }>`
-  position: absolute;
+  position: relative;
+  width: 417px;
+  height: 254px;
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -225,7 +231,7 @@ const ConnectingLine = styled.div<{ loaded: boolean }>`
   @media (max-width: 480px) {
     top: ${({ loaded }) =>
       loaded
-        ? `calc(2rem * 1.1 + 1rem + 1.6rem + 67px)`
+        ? `calc(2rem * 1.1 + 1rem + 1.6rem + 71.5px)`
         : 'calc(2rem * 1.1 + 1rem + 1.6rem + 59px)'};
   }
 `;
@@ -302,7 +308,7 @@ const BackgroundImage = styled.div<{ loaded: boolean; src: string }>`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 6rem);
   background-image: ${({ src }) => `url('${src}')`};
   background-size: cover;
   background-position: center;

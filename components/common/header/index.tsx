@@ -168,11 +168,11 @@ const HomeLink = styled(Link)<homeLinkProps>`
   justify-content: center;
   padding: 0 10px;
   white-space: nowrap;
-  color: ${({ state }) => (state ? 'rgb(61, 152, 247)' : 'grey')};
+  color: ${({ state }) => (state ? 'rgb(114, 190, 218)' : 'grey')};
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
-  border-bottom: ${({ state }) => (state ? '3px solid rgb(61, 152, 247)' : '3px solid white')};
+  border-bottom: ${({ state }) => (state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
   height: 100%;
   .image-l {
     @media screen and (max-width: 768px) {
