@@ -149,7 +149,7 @@ const FlexContainer = styled.div`
 `;
 
 const Image = styled.img<{ loaded: boolean }>`
-  width: 5.5rem;
+  width: 4.5rem;
   height: auto;
   max-height: 40rem;
   margin-left: 16px;
@@ -176,7 +176,7 @@ const TextHeading = styled.h1`
   font-weight: 600;
   margin: 0 0 1rem 0;
   text-transform: uppercase;
-  font-size: 2.25rem;
+  font-size: 2rem;
   line-height: 1.3;
   letter-spacing: 0.5rem;
 `;
@@ -185,8 +185,8 @@ const TextParagraph = styled.p`
   color: white;
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.2rem;
-  font-size: 0.8rem;
+  letter-spacing: 0.15rem;
+  font-size: 0.7rem;
   line-height: 2;
 
   @media (max-width: 480px) {
@@ -203,8 +203,8 @@ const MobileTextParagraph = styled.p<{ loaded: boolean }>`
     font: inherit;
     color: white;
     height: 28px;
-    letter-spacing: 0.2rem;
-    font-size: 0.8rem;
+    letter-spacing: 0.15rem;
+    font-size: 0.7rem;
     margin-bottom: 4px;
     opacity: ${({ loaded }) => (loaded ? '1' : '0')};
     transition: padding 1s ease, opacity 1s ease;
@@ -217,9 +217,7 @@ const ConnectingLine = styled.div<{ loaded: boolean }>`
   height: 51px; /* Adjust based on your design */
   background-color: white;
   top: ${({ loaded }) =>
-    loaded
-      ? `calc(2.25rem * 1.3 + 1rem + 1.6rem + 85.5px)`
-      : 'calc(2.25rem * 1.3 + 1rem + 1.6rem + 1.5px)'};
+    loaded ? `calc(2rem * 1.2 + 1rem + 1.6rem + 85px)` : 'calc(2rem * 1.3 + 1rem + 1.6rem - 3px)'};
   left: calc(50% - 0.5px); /* Center horizontally */
   z-index: 2;
   transition: top 1s ease; /* Transition top position change */
@@ -227,8 +225,8 @@ const ConnectingLine = styled.div<{ loaded: boolean }>`
   @media (max-width: 480px) {
     top: ${({ loaded }) =>
       loaded
-        ? `calc(2.25rem * 1.3 + 1rem + 1.6rem + 66.5px)`
-        : 'calc(2.25rem * 1.3 + 1rem + 1.6rem + 58.5px)'};
+        ? `calc(2rem * 1.1 + 1rem + 1.6rem + 67px)`
+        : 'calc(2rem * 1.1 + 1rem + 1.6rem + 59px)'};
   }
 `;
 
@@ -268,20 +266,20 @@ const ListItem = styled.li`
 
   > a {
     display: block;
-    min-width: 5rem;
-    height: 2.75rem;
-    line-height: 2.75rem;
-    padding: 0 1.25rem 0 1.45rem;
+    min-width: 4.5rem;
+    height: 2.3rem;
+    line-height: 2.5rem;
+    padding: 0 1rem 0 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    font-size: 0.8rem;
+    letter-spacing: 0.15rem;
+    font-size: 0.6rem;
     border-bottom: 0;
   }
 
   @media (max-width: 480px) {
     width : 100%;
     text-align: center;
-    border-bottom: 1px solid white;  // Change the color as per your requirement
+    border-bottom: 1px solid white; 
     border-left: none;
 
     &:not(:last-child)::after {

@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   background-color: white;
-
+  font-size: 1rem;
   padding: 1rem 0;
 
   .spinner {

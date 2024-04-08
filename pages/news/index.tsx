@@ -90,7 +90,7 @@ const Wrapper = styled.div`
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
-  overflow: hidden scroll;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,7 +136,7 @@ const Wrapper = styled.div`
     border: 0;
     font: inherit;
     box-sizing: inherit;
-    height: 30px;
+    height: 15px;
     .main-header {
       width: 70%;
       min-width: 800px;

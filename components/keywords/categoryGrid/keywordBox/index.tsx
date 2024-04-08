@@ -35,13 +35,11 @@ export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
 
 const LinkWrapper = styled(Link)`
   display: block;
-  width: 9rem;
+  width: 10rem;
   text-decoration: none;
-
   .wrapper {
-    width: 9rem;
+    width: 10rem;
     display: flex;
-    justify-content: row;
     align-items: center;
     height: 100%;
     border-radius: 10px;

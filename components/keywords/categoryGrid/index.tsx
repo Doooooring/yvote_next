@@ -56,12 +56,12 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
         <RightButton
           curView={curView}
           viewToRight={async () => {
-            if (curView === Math.floor(keywords.length / 10.1)) {
+            if (curView === Math.floor(keywords.length / 10.01)) {
               await getKeywords();
             }
             onSlideRight();
           }}
-          lastPage={Math.floor(keywords.length / 10.1)}
+          lastPage={Math.floor(keywords.length / 10.01)}
         />
       </div>
     </Wrapper>
@@ -121,13 +121,15 @@ interface GridContainerProps {
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
   grid-template-rows: repeat(2, 3.5rem);
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
   grid-auto-flow: column;
   grid-row-gap: 10px;
   grid-column-gap: 15px;
-  transform: ${({ curView }) => `translateX(-${curView * 1020}px)`};
+  transform: ${({ curView }) => `translateX(calc(-${curView * 75}px - ${curView * 50}rem))`};
   transition-duration: 0.5s;
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
+    overflow-y: hidden;
     ::-webkit-scrollbar {
       display: none;
     }

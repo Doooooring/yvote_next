@@ -21,7 +21,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
   // 현재 검색어
   const [searchWord, setSearchWord] = useState<string>('');
   // 현재 검색어 기반 연관 검색어 목록
-  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다.']);
+  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다']);
   // 전체 키워드 리스트
   const [keylist, setKeyList] = useState<KeyName[]>([]);
   // 방향키에 맞춰서 포커스된 단어 업데이트
@@ -57,7 +57,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         setSubmitWord(searchWord);
         setCurPreviews(newsList);
       } else {
-        alert('Nothing');
+        alert('키워드가 존재하지 않습니다');
       }
     },
     [],
@@ -84,7 +84,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
     setSearchWord(preValue);
     if (preValue === '') {
       setCurFocusOnWord(-1);
-      setRelatedWords(['키워드를 검색해 봅시다']);
+      setRelatedWords(['정확한 키워드를 입력해주세요']);
     } else {
       if (curFocusOnWord !== -1) {
         setCurFocusOnWord(-1);
@@ -103,7 +103,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         }
       }
       if (findRelatedWords.length === 0) {
-        setRelatedWords(['그런건 없어용 :)']);
+        setRelatedWords(['']);
       } else {
         setRelatedWords(findRelatedWords);
       }
@@ -156,7 +156,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         <input
           className="input-box"
           type="text"
-          placeholder="궁금한 뉴스의 키워드를 검색하라"
+          placeholder="키워드로 뉴스 검색"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
@@ -206,7 +206,6 @@ position: relative;
     border-radius: 5px;
     width: 100%;
     height: auto;
-    font-size: 13px;
     color: rgb(170, 170, 170);
     font-weight: 600;
     padding: 0;
@@ -215,6 +214,7 @@ position: relative;
     background-repeat: no-repeat;
     background-position: 6px 6px;
     font: inherit;
+    font-size: 13px;
     text-align: center;
   
     &::placeholder {
@@ -223,22 +223,23 @@ position: relative;
       font-weight: 800;
     }
     &:focus {
-      outline: 2px solid rgb(104, 156, 209);
+      outline: 2px solid rgb(133, 200, 224);
+      font-size: 13px;
     }
   }
   .related-box {
     min-height: 100px;
-    background-color: rgb(104, 156, 209);
+    background-color: rgb(133, 200, 224);
     width: 100%;
     border-style: solid;
     border-width: 2px;
-    border-color: rgb(104, 156, 209);
-    border-radius: 0px 0px 10px 10px;
+    border-color: rgb(133, 200, 224);
+    border-radius: 5px;
     position: absolute;
     top: 100%;
     text-align: left;
     z-index: 3;
-    padding-top: 5px;
+    opacity : 0.7;
   }
 `;
 
@@ -251,16 +252,16 @@ const RelatedWord = styled.p<RelatedWordProps>`
   text-align: left;
   margin: 0;
   padding: 0;
-  border: 0;
+  border-radius: 5px;
   font: inherit;
   box-sizing: inherit;
   color: white;
   font-weight: 700;
   padding-left: 5px;
   margin-bottom: 5px;
-  border-width: 3px;
-  font-size: 15px;
+  border-width: 1px;
+  font-size: 13px;
   border-style: solid;
   z-index: 1;
-  background-color: ${({ isFocused }) => (isFocused ? 'rgb(120, 120, 120)' : 'rgba(0,0,0,0)')};
+  background-color: ${({ isFocused }) => (isFocused ? 'rgb(101, 177, 205)' : 'rgba(0,0,0,0)')};
 `;
