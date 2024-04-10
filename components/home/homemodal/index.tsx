@@ -79,7 +79,11 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, content }) => {
           <ModalParagraph key={index}>{paragraph}</ModalParagraph>
         ))}
         <ImageContainer>
-          <Image src={content.imageUrl} alt={content.title} width={500} height={300} />
+          <Image
+            src={content.imageUrl}
+            alt={content.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </ImageContainer>
         <ModalLink href={content.linkUrl}>{content.linkText}</ModalLink>
       </ModalBox>
@@ -119,10 +123,10 @@ const ModalBox = styled.div`
   font: inherit;
   vertical-align: baseline;
   transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
-  padding: 2rem 2rem 1rem 2rem; // Removed vertical padding (moved to ModalWrapper)
+  padding: 2rem 2rem 1rem 2rem;
   position: relative;
   width: 35rem;
-  max-width: 100%;
+  max-width: 90%;
   background-color: rgba(27, 31, 34, 0.85);
   border-radius: 4px;
   transform: translateY(0);
@@ -175,7 +179,7 @@ const ModalTitle = styled.h2`
   width: max-content;
   padding-bottom: 0.4rem;
   margin: 0 0 1.2rem 0;
-  align-self: flex-start; // added this line
+  align-self: flex-start;
 `;
 
 const ModalParagraph = styled.p`
@@ -222,7 +226,9 @@ const ImageContainer = styled.div`
   border: 0;
   position: relative;
   display: flex; // Change block to flex
-  justify-content: center; // Center the children horizontally
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
   margin: 0 0 1.5rem 0;
   width: 100%;
 `;

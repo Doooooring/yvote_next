@@ -127,12 +127,16 @@ const Content = styled.div<{ show: boolean }>`
   position: relative;
   width: 417px;
   height: 254px;
-  top: 35%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 1; /* Ensure the content is above the background image */
   transition: opacity 0.5s; // Transition opacity over 0.5 seconds
+  @media (max-width: 480px) {
+    width: 280px;
+    height: auto;
+  }
 `;
 
 const Rectangle = styled.div<{ loaded: boolean }>`
@@ -162,17 +166,21 @@ const Image = styled.img<{ loaded: boolean }>`
   margin-right: 16px;
   opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   transition: height 1s ease, opacity 1s ease;
+  @media (max-width: 480px) {
+    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+    transition: opacity 1.5s ease;
+  }
 `;
 
 const TextBox = styled.div<{ loaded: boolean }>`
   flex-grow: 1;
   height: auto;
   max-height: 40rem;
-  padding: ${({ loaded }) => (loaded ? '42px 16px' : '0 16px 0 0')};
+  padding: ${({ loaded }) => (loaded ? '40px 16px' : '0 16px 0 0')};
   opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   transition: padding 1s ease, opacity 1s ease;
   @media (max-width: 480px) {
-    padding: ${({ loaded }) => (loaded ? '16px 16px 0' : '8px 16px 0 0')};
+    padding: ${({ loaded }) => (loaded ? '16px 16px 0' : '0 0 0 0')};
     opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   }
 `;
@@ -185,6 +193,9 @@ const TextHeading = styled.h1`
   font-size: 2rem;
   line-height: 1.3;
   letter-spacing: 0.5rem;
+  @media (max-width: 480px) {
+    margin: 0 0 0.5rem 0;
+  }
 `;
 
 const TextParagraph = styled.p`
@@ -192,7 +203,7 @@ const TextParagraph = styled.p`
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   line-height: 2;
 
   @media (max-width: 480px) {
@@ -223,16 +234,14 @@ const ConnectingLine = styled.div<{ loaded: boolean }>`
   height: 51px; /* Adjust based on your design */
   background-color: white;
   top: ${({ loaded }) =>
-    loaded ? `calc(2rem * 1.2 + 1rem + 1.6rem + 85px)` : 'calc(2rem * 1.3 + 1rem + 1.6rem - 3px)'};
+    loaded ? `calc(2rem * 1.2 + 1rem + 1.6rem + 85px)` : 'calc(2rem * 1.3 + 1rem + 1.6rem + 1px)'};
   left: calc(50% - 0.5px); /* Center horizontally */
   z-index: 2;
   transition: top 1s ease; /* Transition top position change */
 
   @media (max-width: 480px) {
     top: ${({ loaded }) =>
-      loaded
-        ? `calc(2rem * 1.1 + 1rem + 1.6rem + 71.5px)`
-        : 'calc(2rem * 1.1 + 1rem + 1.6rem + 59px)'};
+      loaded ? `calc(2rem * 1.1 + 2.1rem + 71.5px)` : 'calc(2rem * 1.1 + 2.1rem + 56px)'};
   }
 `;
 
@@ -278,8 +287,12 @@ const ListItem = styled.li`
     padding: 0 1rem 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.15rem;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     border-bottom: 0;
+  }
+
+  &:last-child > a {
+    font-size: 0.6rem;
   }
 
   @media (max-width: 480px) {

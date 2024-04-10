@@ -13,9 +13,13 @@ export function Values() {
       </Header>
       <Body>
         <EachValue>
-          <h3>1. 뉴스 최소화</h3>
+          <h3 className="bullet-point">뉴스 최소화</h3>
           <ImageWrapper>
-            <Image src={Pic01} alt="" />
+            <Image
+              src={Pic01}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </ImageWrapper>
           <p>
             '정치 참여에 필요한 최소한의 뉴스'를 목표로 두는 와이보트는, 여러분의 인생에서 정치
@@ -34,7 +38,7 @@ export function Values() {
         </EachValue>
         <VerticalLine />
         <EachValue>
-          <h3>2. 중립성/신뢰도 회복</h3>
+          <h3 className="bullet-point">중립성/신뢰도 회복</h3>
           <ImageWrapper>
             <Image src={Pic02} alt="" />
           </ImageWrapper>
@@ -54,7 +58,7 @@ export function Values() {
         </EachValue>
         <VerticalLine />
         <EachValue>
-          <h3>3. 능동적 뉴스 소비</h3>
+          <h3 className="bullet-point">능동적 뉴스 소비</h3>
           <ImageWrapper>
             <Image src={Pic03} alt="" />
           </ImageWrapper>
@@ -79,15 +83,25 @@ export function Values() {
 const Wrapper = styled.div`
   background-color: white;
   margin-bottom: 60px;
+  border: 0;
+  border-radius: 10px;
+  @media (max-width: 1080px) {
+    margin-bottom: 30px;
+  }
 `;
 
 const Header = styled.div`
   display: block;
   align-items: center;
   font-size: 0.8em;
-  padding: 30px 40px 0 40px;
+  padding: 40px 40px 0 40px;
   h2 {
-    margin: 0 0 0 0;
+    font: inherit;
+    font-size: 1.6rem;
+    font-weight: 550;
+    border-bottom: 2px solid rgb(64, 64, 64);
+    padding-bottom: 5px;
+    display: inline-block;
   }
   hr {
     margin: 20px 0 0 0;
@@ -97,23 +111,38 @@ const Header = styled.div`
 const Body = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 40px 30px;
+  padding: 0 20px 3rem;
   justify-content: center;
+  @media (max-width: 1080px) {
+    display: block;
+    padding: 0 40px 1rem;
+  }
 `;
 
 const EachValue = styled.div`
   width: calc(100% / 3);
   padding: 0 20px;
   h3 {
-    font-size: 1.3em;
+    font: inherit;
+    font-size: 1.3rem;
     line-height: 1.5em;
-    margin: 0;
+    margin: 0.5rem 0 0 0;
+    font-weight: 400;
   }
   p {
-    margin: 1em 0 0 0;
+    margin: 1rem 0 0 0;
     font-family: summary-font;
-    font-size: 15px;
+    font-size: 0.9rem;
     line-height: 1.8em;
+  }
+  @media (max-width: 1080px) {
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 30px;
+    h3.bullet-point::before {
+      content: '• ';
+      font-size: 1.3rem;
+    }
   }
 `;
 
@@ -128,5 +157,4 @@ const ImageWrapper = styled.div`
 
 const VerticalLine = styled.div`
   border-right: solid 1px rgba(144, 144, 144, 0.5);
-  margin: 90px 0;
 `;
