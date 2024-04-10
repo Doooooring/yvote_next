@@ -13,12 +13,10 @@ export function ContactBox() {
       </Header>
       <Body>
         <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
-        <p>
-          <IconWrapper>
-            <FontAwesomeIcon icon={faEnvelope} />
-          </IconWrapper>
-          <span> 8gundogan@yonsei.ac.kr </span>
-        </p>
+        <IconWrapper>
+          <FontAwesomeIcon icon={faEnvelope} />
+        </IconWrapper>
+        <span> 8gundogan@yonsei.ac.kr </span>
       </Body>
     </Wrapper>
   );
