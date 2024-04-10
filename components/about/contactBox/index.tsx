@@ -26,7 +26,9 @@ export function ContactBox() {
 
 const Wrapper = styled.div`
   background-color: white;
-  margin-bottom: 60px;
+  margin-bottom: 100px;
+  border: 0;
+  border-radius: 10px;
 `;
 
 const Header = styled.div`
@@ -35,7 +37,12 @@ const Header = styled.div`
   font-size: 0.8em;
   padding: 30px 40px 0 40px;
   h2 {
-    margin: 0 0 0 0;
+    font: inherit;
+    font-size: 1.6rem;
+    font-weight: 550;
+    border-bottom: 2px solid rgb(64, 64, 64);
+    padding-bottom: 5px;
+    display: inline-block;
   }
   hr {
     margin: 20px 0 0 0;
@@ -43,7 +50,7 @@ const Header = styled.div`
 `;
 
 const Body = styled.div`
-  padding: 30px 40px;
+  padding: 0 40px 30px;
   p {
     margin: 5px 0;
   }

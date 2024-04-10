@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { Criteria } from '@components/about/criteria';
 import { Values } from '@components/about/values';
-import { Goals } from '@components/about/goals';
 import { ContactBox } from '@components/about/contactBox';
 
 export default function About() {
@@ -22,11 +21,16 @@ const Wrapper = styled.div`
   background-color: transparent;
   height: 100%;
   display: block;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const BlockElement = styled.div`
   background-color: transparent;
-  padding-top: 50px;
+  padding-top: 40px;
   width: 70%;
   min-width: 700px;
   @media screen and (max-width: 768px) {

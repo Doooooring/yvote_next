@@ -14,7 +14,14 @@ export function Criteria() {
       <Body>
         <EachOne>
           <Text>
-            <h3>법률을 정하는 입법부 소식</h3>
+            <h3 className="bullet-point">법률을 정하는 입법부 소식</h3>
+            <MobileImageWrapper>
+              <Image
+                src={Pic01}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </MobileImageWrapper>
             <p>
               삼권분립 중 입법부의 역할을 수행하는 국회는 우리나라의 법률이 만들어지는 곳입니다.
               법률은 정부 정책의 범위나 법원의 판결에 사용될 수 있는 근거를 결정하기 때문에, 국회는
@@ -36,7 +43,14 @@ export function Criteria() {
             <Image src={Pic02} alt="" />
           </ImageWrapper>
           <Text>
-            <h3>정책을 집행하는 행정부 소식</h3>
+            <h3 className="bullet-point">정책을 집행하는 행정부 소식</h3>
+            <MobileImageWrapper>
+              <Image
+                src={Pic02}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </MobileImageWrapper>
             <p>
               행정부는 국가의 정책을 실질적으로 집행하는 집단으로, 대통령실부터 동네의 주민센터까지
               모두 행정부에 소속됩니다. 행정부의 업무는 대통령의 지시를 근거로 정해지지만, 모든
@@ -53,7 +67,14 @@ export function Criteria() {
         </EachOne>
         <EachOne>
           <Text>
-            <h3>투표로 바꿀 수 없는 사법부</h3>
+            <h3 className="bullet-point">투표로 바꿀 수 없는 사법부</h3>
+            <MobileImageWrapper>
+              <Image
+                src={Pic03}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </MobileImageWrapper>
             <p>
               모든 것을 다수결로 결정하는 단순한 민주주의와 공화국의 가장 큰 차이점은, 사법부의
               존재입니다. 사법부는 국민의 투표로 선출되지 않습니다. 사법부의 역할은, 국회에서 정해진
@@ -80,29 +101,42 @@ export function Criteria() {
 const Wrapper = styled.div`
   background-color: white;
   margin-bottom: 60px;
+  border: 0;
+  border-radius: 10px;
+  @media (max-width: 1080px) {
+    margin-bottom: 30px;
+  }
 `;
 
 const Header = styled.div`
   display: block;
   align-items: center;
   font-size: 0.8em;
-  padding: 30px 40px 0 40px;
+  padding: 40px 40px 0 40px;
   h2 {
-    margin: 0 0 0 0;
+    font: inherit;
+    font-size: 1.6rem;
+    font-weight: 550;
+    border-bottom: 2px solid rgb(64, 64, 64);
+    padding-bottom: 5px;
+    display: inline-block;
   }
   hr {
-    margin: 20px 0 30px 0;
+    margin: 20px 0 0 0;
   }
 `;
 
 const Body = styled.div`
   display: block;
-  padding: 0 40px 20px 40px;
+  padding: 0 30px 20px 30px;
 `;
 
 const EachOne = styled.div`
   margin-bottom: 30px;
   display: inline-flex;
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -114,20 +148,44 @@ const ImageWrapper = styled.div`
     width: 100%;
     height: auto;
   }
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const MobileImageWrapper = styled.div`
+  display: none;
+  @media (max-width: 1080px) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 `;
 
 const Text = styled.div`
   width: 60%;
   padding: 10px;
   h3 {
-    font-size: 1.3em;
+    font: inherit;
+    font-size: 1.3rem;
     line-height: 1.5em;
     margin: 0;
+    font-weight: 400;
+    @media (max-width: 1080px) {
+      margin-bottom: 0.5rem;
+    }
   }
   p {
-    margin: 1em 0 0 0;
+    margin: 1rem 0 0 0;
     font-family: summary-font;
-    font-size: 15px;
+    font-size: 0.9rem;
     line-height: 1.8em;
+  }
+  @media (max-width: 1080px) {
+    width: 100%;
+    h3.bullet-point::before {
+      content: '• ';
+      font-size: 1.3rem;
+    }
   }
 `;
