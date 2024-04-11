@@ -42,7 +42,7 @@ export default function ExplanationComp({
       </div>
       <div className="explanation-header">
         <p>{keyword}</p>
-        <Image
+        {/* <Image
           src={keywordTagLoadError ? defaultImg : `/assets/img/${category}.png`}
           alt="hmm"
           width="20"
@@ -50,7 +50,7 @@ export default function ExplanationComp({
           onError={() => {
             setKeywordTagLoadError(true);
           }}
-        />
+        /> */}
       </div>
       <div className="body-wrapper">
         <div className="explanation-list">
@@ -80,10 +80,10 @@ export default function ExplanationComp({
 const ExplanationWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   width: 100%;
   background-color: white;
-  padding: 1rem 2rem;
+  padding: 1.8rem 2rem 1rem;
   box-shadow: 0 8px 35px -25px;
   position: relative;
   box-sizing: border-box;

@@ -100,10 +100,7 @@ const Wrapper = styled.div`
       display: inline;
       margin-left: 7px;
       font-weight: 700;
-      font-size: 18px;
-      @media screen and (max-width: 768px) {
-        font-size: 14px;
-      }
+      font-size: 1.1rem;
     }
   }
   .body-wrapper {
