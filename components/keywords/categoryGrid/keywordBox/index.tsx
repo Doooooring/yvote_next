@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import styled from 'styled-components';
-
 import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
@@ -47,6 +46,7 @@ const LinkWrapper = styled(Link)`
     background-color: white;
     box-shadow: 0px 0px 30px -25px;
     overflow: hidden;
+    box-sizing: border-box;
   }
   .image-wrapper {
     display: flex;

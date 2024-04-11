@@ -1,5 +1,4 @@
 import { useOnScreen } from '@utils/hook/useOnScreen';
-
 import LoadingCommon from '@components/common/loading';
 import { Preview } from '@utils/interface/news';
 import { useEffect, useRef, useState } from 'react';

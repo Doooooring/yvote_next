@@ -1,16 +1,13 @@
 import styled from 'styled-components';
-
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
-
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
-import icoNew from '@images/ico_new.png';
+import icoNew from '@images/ico_new_2x.png';
 import { HOST_URL } from '@public/assets/url';
 import KeywordRepository from '@repositories/keywords';
 import { NewsDetail } from '@repositories/news';

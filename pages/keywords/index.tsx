@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-
-import { SpeechBubble } from '@components/common/figure';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
@@ -59,26 +57,36 @@ export default function KeywordsPage({ data }: pageProps) {
           category={'recent'}
           keywords={recentKeywords}
           setKeywords={setRecentKeywords}
+          koreanname={'최신'}
+          imageurl={'/assets/img/recent.png'}
         />
         <CategoryGrid
           category={'organization'}
           keywords={keywordInOrganization}
           setKeywords={setkeywordInOrganization}
+          koreanname={'기관/단체'}
+          imageurl={'/assets/img/organization.png'}
         />
         <CategoryGrid
           category={'politics'}
           keywords={keywordInPolitics}
           setKeywords={setKeywordInPolitics}
+          koreanname={'정치/이념'}
+          imageurl={'/assets/img/politics.png'}
         />
         <CategoryGrid
           category={'economics'}
           keywords={keywordInEconomy}
           setKeywords={setKeywordInEconomy}
+          koreanname={'경제'}
+          imageurl={'/assets/img/economics.png'}
         />
         <CategoryGrid
           category={'social'}
           keywords={keywordInSocial}
           setKeywords={setKeywordInSocial}
+          koreanname={'사회'}
+          imageurl={'/assets/img/social.png'}
         />
         {/* <CategoryGrid
           category={'policy'}
@@ -104,13 +112,12 @@ const Wrapper = styled.div`
   border: 0;
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding-top: 20px;
-  margin-bottom: 50px;
   background-color: rgb(242, 242, 242);
   overflow-y: scroll;
   ::-webkit-scrollbar {
@@ -148,6 +155,8 @@ const GridContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 70%;
+  height: auto;
+  margin-bottom: 150px;
   min-width: 800px;
   @media screen and (max-width: 768px) {
     width: 90%;

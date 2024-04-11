@@ -33,6 +33,15 @@ export function Criteria() {
               수백 개씩 다루어지는 법률안들을 전부 다루지 않습니다. 대신, 국민의 투표로 인해 결과가
               달라졌거나 바꿀 수 있다고 판단되는 법률안에 대한 소식만을 선별하여 전달합니다.
             </p>
+            <p className="lightweight">
+              - 주요 법률안 <span>#입법부 #법률</span>
+            </p>
+            <p className="lightweight">
+              - 기타 주요 결정 <span>#입법부 #탄핵 #국정조사</span>
+            </p>
+            <p className="lightweight">
+              - 기타 정당 간 의견 충돌 <span>#정당</span>
+            </p>
           </Text>
           <ImageWrapper>
             <Image src={Pic01} alt="" />
@@ -63,6 +72,18 @@ export function Criteria() {
               대통령 주재 회의, 연설문 또는 외교 일정 등을 중심으로 뉴스를 선별하며, 국정 운영에
               대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
             </p>
+            <p className="lightweight">
+              - 국무회의 <span>#국무회의</span>
+            </p>
+            <p className="lightweight">
+              - 주요 시행령안 <span>#시행령</span>
+            </p>
+            <p className="lightweight">
+              - 기타 대통령 참석 일정 <span>#행정부</span>
+            </p>
+            <p className="lightweight">
+              - 대통령급 정상외교 <span>#외교</span>
+            </p>
           </Text>
         </EachOne>
         <EachOne>
@@ -87,6 +108,9 @@ export function Criteria() {
               정책에 대한 기존의 결정을 돌아보는 의미에서 뉴스로 선별합니다. 또한 헌법재판소의
               재판관들의 임명 과정에 입법부와 대통령이 개입하기 때문에, 사회/문화 전반에 영향을 주는
               헌법재판소의 결정들을 전달합니다.
+            </p>
+            <p className="lightweight">
+              - 헌법재판소 주요 결정 <span>#헌법재판소</span>
             </p>
           </Text>
           <ImageWrapper>
@@ -129,11 +153,14 @@ const Header = styled.div`
 const Body = styled.div`
   display: block;
   padding: 0 30px 20px 30px;
+  justify-content: center;
 `;
 
 const EachOne = styled.div`
   margin-bottom: 30px;
   display: inline-flex;
+  justify-content: center;
+  width: 100%;
   @media (max-width: 1080px) {
     width: 100%;
   }
@@ -141,6 +168,7 @@ const EachOne = styled.div`
 
 const ImageWrapper = styled.div`
   width: 40%;
+  max-width: 420px;
   margin: 15px 20px;
   display: flex;
   align-items: center;
@@ -174,12 +202,24 @@ const Text = styled.div`
     @media (max-width: 1080px) {
       margin-bottom: 0.5rem;
     }
+    @media (max-width: 480px) {
+      font-size: 1.1rem;
+    }
   }
   p {
     margin: 1rem 0 0 0;
     font-family: summary-font;
     font-size: 0.9rem;
     line-height: 1.8em;
+  }
+  .lightweight {
+    margin: 0.5rem 0 0 0.2rem;
+    line-height: 1.6em;
+    > span {
+      margin-left: 0.4rem;
+      font-size: 0.8rem;
+      color: #3a84e5;
+    }
   }
   @media (max-width: 1080px) {
     width: 100%;

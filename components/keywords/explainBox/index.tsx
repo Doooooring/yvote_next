@@ -1,7 +1,6 @@
 import defaultImg from '@images/img_thumb@2x.png';
 import { HOST_URL } from '@public/assets/url';
 import { category } from '@utils/interface/keywords';
-
 import icoClose from '@images/ico_close.png';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -44,7 +43,7 @@ export default function ExplanationComp({
       <div className="explanation-header">
         <p>{keyword}</p>
         <Image
-          src={keywordTagLoadError ? defaultImg : `${HOST_URL}/images/${category}`}
+          src={keywordTagLoadError ? defaultImg : `/assets/img/${category}.png`}
           alt="hmm"
           width="20"
           height="20"

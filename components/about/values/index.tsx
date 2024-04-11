@@ -128,6 +128,9 @@ const EachValue = styled.div`
     line-height: 1.5em;
     margin: 0.5rem 0 0 0;
     font-weight: 400;
+    @media (max-width: 480px) {
+      font-size: 1.1rem;
+    }
   }
   p {
     margin: 1rem 0 0 0;

@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
-
 import { GetStaticProps } from 'next';
-
 import { SpeechBubble } from '@components/common/figure';
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
