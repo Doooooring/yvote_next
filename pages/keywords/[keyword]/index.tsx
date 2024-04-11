@@ -138,10 +138,10 @@ export default function KeyExplanation({ data }: pageProps) {
           <></>
         ) : (
           <div className="main-header-wrapper">
-            <div className="main-header">
+            {/* <div className="main-header">
               <Image src={icoNews} alt="hmm" height="18" />
               <div className="category-name">{'관련 뉴스'}</div>
-            </div>
+            </div> */}
           </div>
         )}
         <div className="main-contents-body">

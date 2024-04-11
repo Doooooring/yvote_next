@@ -57,21 +57,21 @@ export default function KeywordsPage({ data }: pageProps) {
           category={'recent'}
           keywords={recentKeywords}
           setKeywords={setRecentKeywords}
-          koreanname={'최신'}
+          koreanname={'최근 업데이트'}
           imageurl={'/assets/img/recent.png'}
         />
         <CategoryGrid
           category={'organization'}
           keywords={keywordInOrganization}
           setKeywords={setkeywordInOrganization}
-          koreanname={'기관/단체'}
+          koreanname={'기관 / 단체'}
           imageurl={'/assets/img/organization.png'}
         />
         <CategoryGrid
           category={'politics'}
           keywords={keywordInPolitics}
           setKeywords={setKeywordInPolitics}
-          koreanname={'정치/이념'}
+          koreanname={'정치 / 이념'}
           imageurl={'/assets/img/politics.png'}
         />
         <CategoryGrid
@@ -85,7 +85,7 @@ export default function KeywordsPage({ data }: pageProps) {
           category={'social'}
           keywords={keywordInSocial}
           setKeywords={setKeywordInSocial}
-          koreanname={'사회'}
+          koreanname={'사회 / 가치관'}
           imageurl={'/assets/img/social.png'}
         />
         {/* <CategoryGrid
