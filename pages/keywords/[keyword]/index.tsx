@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-
 import { SpeechBubble } from '@components/common/figure';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';

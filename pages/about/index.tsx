@@ -32,10 +32,11 @@ const BlockElement = styled.div`
   background-color: transparent;
   padding-top: 40px;
   width: 70%;
-  min-width: 700px;
-  @media screen and (max-width: 768px) {
-    width: 90%;
-    min-width: 0px;
+  min-width: 980px;
+  @media screen and (max-width: 1080px) {
+    width: 800px;
+    max-width: 90%;
+    min-width: 300px;
   }
   margin: auto;
   text-align: start;

@@ -1,8 +1,7 @@
 import Image from 'next/image';
 import styled from 'styled-components';
-
 import ImageFallback from '@components/common/imageFallback';
-import icoNew from '@images/ico_new.png';
+import icoNew from '@images/ico_new_2x.png';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
@@ -90,7 +89,7 @@ const Wrapper = styled.div<WrapperProps>`
   box-shadow: 0px 0px 35px -30px;
   margin-bottom: 10px;
   text-align: left;
-  padding: 5px 10px;
+  padding: 7px 10px;
   @media screen and (max-width: 768px) {
     padding: 10px 10px;
   }
@@ -129,16 +128,15 @@ const Wrapper = styled.div<WrapperProps>`
     -webkit-box-align: center;
     align-items: center;
     gap: 4px;
-
     > Img {
       padding-right: 8px;
     }
-
     p {
       -webkit-text-size-adjust: none;
       color: #666;
       text-align: left;
       padding: 0;
+      padding-right: 2px;
       border: 0;
       font: inherit;
       vertical-align: baseline;
@@ -204,7 +202,6 @@ const Wrapper = styled.div<WrapperProps>`
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #3a84e5;
       .keyword {
         -webkit-text-size-adjust: none;
         text-align: left;

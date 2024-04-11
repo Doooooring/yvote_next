@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-
 import ImageFallback from '@components/common/imageFallback';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
@@ -13,9 +12,17 @@ interface CategoryGridProps {
   category: KeywordToView['category'] | 'recent';
   keywords: Array<KeywordToView>;
   setKeywords: Dispatch<SetStateAction<KeywordToView[]>>;
+  koreanname: string;
+  imageurl: string;
 }
 
-export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
+export default function CategoryGrid({
+  category,
+  keywords,
+  setKeywords,
+  koreanname,
+  imageurl,
+}: CategoryGridProps) {
   const page = useRef(1);
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
@@ -40,9 +47,9 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
     <Wrapper>
       <div className="header-wrapper">
         <div className="image-wrapper">
-          <ImageFallback src={`/assets/img/ico_news.png`} width="100%" height="100%" />
+          <ImageFallback src={imageurl} width="100%" height="100%" />
         </div>
-        <div className="category-head">{category}</div>
+        <div className="category-head">{koreanname}</div>
       </div>
       <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
@@ -72,6 +79,10 @@ const Wrapper = styled.div`
   width: 100%;
   margin-top: 20px;
   margin-bottom: 10px;
+  min-width: 868px;
+  @media screen and (max-width: 768px) {
+    min-width: 0;
+  }
   .header-wrapper {
     display: flex;
     flex-direction: row;
@@ -81,22 +92,17 @@ const Wrapper = styled.div`
     text-align: left;
     .image-wrapper {
       display: inline-flex;
-      width: 18px;
-      height: 18px;
+      height: 60%;
+      padding-left: 5px;
       align-items: center;
-      @media screen and (max-width: 768px) {
-        width: 12px;
-        height: 12px;
-      }
     }
     .category-head {
       display: inline;
-      margin-left: 10px;
+      margin-left: 7px;
       font-weight: 700;
       font-size: 18px;
       @media screen and (max-width: 768px) {
         font-size: 14px;
-        margin-left: 8px;
       }
     }
   }
