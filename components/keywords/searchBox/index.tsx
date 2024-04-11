@@ -193,9 +193,6 @@ const InputBox = styled.input`
   font-weight: 600;
   padding: 0;
   margin: 0;
-  background-image: url('@assets/img/ico_search.png');
-  background-repeat: no-repeat;
-  background-position: 6px 6px;
   text-align: center;
 
   &::placeholder {

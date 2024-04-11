@@ -156,7 +156,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         <input
           className="input-box"
           type="text"
-          placeholder="키워드로 뉴스 검색"
+          placeholder="키워드로 뉴스 필터링"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
@@ -210,9 +210,6 @@ position: relative;
     font-weight: 600;
     padding: 0;
     margin: 0;
-    background-image: url('@assets/img/ico_search.png');
-    background-repeat: no-repeat;
-    background-position: 6px 6px;
     font: inherit;
     font-size: 13px;
     text-align: center;
