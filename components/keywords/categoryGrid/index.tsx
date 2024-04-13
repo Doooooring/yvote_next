@@ -90,6 +90,7 @@ const Wrapper = styled.div`
     justify-content: flex-start;
     height: 30px;
     text-align: left;
+    margin-bottom: 5px;
     .image-wrapper {
       display: inline-flex;
       height: 60%;
@@ -98,6 +99,7 @@ const Wrapper = styled.div`
     }
     .category-head {
       display: inline;
+      color: rgb(64, 64, 64);
       margin-left: 7px;
       font-weight: 700;
       font-size: 1.1rem;

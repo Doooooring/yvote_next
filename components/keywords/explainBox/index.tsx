@@ -42,7 +42,7 @@ export default function ExplanationComp({
       </div>
       <div className="explanation-header">
         <p>{keyword}</p>
-        {/* <Image
+        <Image
           src={keywordTagLoadError ? defaultImg : `/assets/img/${category}.png`}
           alt="hmm"
           width="20"
@@ -50,7 +50,7 @@ export default function ExplanationComp({
           onError={() => {
             setKeywordTagLoadError(true);
           }}
-        /> */}
+        />
       </div>
       <div className="body-wrapper">
         <div className="explanation-list">
@@ -147,13 +147,16 @@ const ExplanationWrapper = styled.div`
       }
     }
     .explanation {
-      font-family: var(--font-pretendard);
-      font-size: 16px;
-      font-weight: 600;
-      color: #a1a1a1;
-      line-height: 1.5;
       text-align: left;
       margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 2;
+      color: #747272;
+      font-weight: 500;
+      word-break: keep-all;
+      min-height: 10px;
+      font-family: Helvetica, sans-serif;
+      }
     }
   }
 `;

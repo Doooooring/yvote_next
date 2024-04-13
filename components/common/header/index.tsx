@@ -1,10 +1,11 @@
 import Image from 'next/image';
+import ImageFallback from '../imageFallback';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import logo_s from '@images/logo_image.png';
-import logo from '@images/김민재 로고.png';
+import logo from '/assets/img/김민재 로고.png';
 
 interface NavBoxProps {
   link: string;
@@ -68,8 +69,12 @@ export default function Header() {
       <HeaderBody>
         <LogoImgBox>
           <HomeLink href="/" state={curTab === 'home'}>
-            <Image src={logo} alt="hmm" height="27" className="image-l" />
-            <Image src={logo_s} alt="hmm" height="50" className="image-s" />
+            <ImageWrapper className="image-l">
+              <ImageFallback src="/assets/img/김민재 로고.png" width="120" height="27" />
+            </ImageWrapper>
+            <ImageWrapper className="image-s">
+              <ImageFallback src="/assets/img/logo_image.png" width="50" height="50" />
+            </ImageWrapper>
           </HomeLink>
         </LogoImgBox>
         <NavigationBox>
@@ -168,10 +173,11 @@ const HomeLink = styled(Link)<homeLinkProps>`
   justify-content: center;
   padding: 0 10px;
   white-space: nowrap;
-  color: ${({ state }) => (state ? 'rgb(114, 190, 218)' : 'grey')};
+  color: ${({ state }) => (state ? 'rgb(114, 190, 218)' : '#747272')};
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
+  font-weight: 500;
   border-bottom: ${({ state }) => (state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
   height: 100%;
   .image-l {
@@ -182,7 +188,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   .image-s {
     display: none;
     @media screen and (max-width: 768px) {
-      display: block;
+      display: flex;
     }
   }
   @media screen and (max-width: 768px) {
@@ -192,6 +198,15 @@ const HomeLink = styled(Link)<homeLinkProps>`
   @media screen and (max-width: 300px) {
     justify-content: center;
   }
+`;
+
+const ImageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 `;
 
 const NavigationBox = styled.div`

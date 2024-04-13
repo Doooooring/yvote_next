@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import { HOST_URL } from '@url';
 import { News, Preview, commentType } from '@utils/interface/news';
 

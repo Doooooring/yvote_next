@@ -34,6 +34,7 @@ const Header = styled.div`
   align-items: center;
   font-size: 0.8em;
   padding: 30px 40px 0 40px;
+  color: rgb(64, 64, 64);
   h2 {
     font: inherit;
     font-size: 1.6rem;
@@ -49,13 +50,14 @@ const Header = styled.div`
 
 const Body = styled.div`
   padding: 0 40px 30px;
-  p {
-    margin: 5px 0;
-  }
+  font-size: 0.9rem;
+  line-height: 1.8em;
+  font-weight: 400;
+  text-align: baseline;
 `;
 
 const IconWrapper = styled.div`
   display: inline-flex;
-  width: 15px;
+  width: 13px;
   height: auto;
 `;
