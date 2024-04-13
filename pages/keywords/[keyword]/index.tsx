@@ -134,16 +134,16 @@ export default function KeyExplanation({ data }: pageProps) {
         />
       </KeywordWrapper>
       <div className="main-contents">
-        {curClicked ? (
+        {/* {curClicked ? (
           <></>
         ) : (
           <div className="main-header-wrapper">
-            {/* <div className="main-header">
+            <div className="main-header">
               <Image src={icoNews} alt="hmm" height="18" />
               <div className="category-name">{'관련 뉴스'}</div>
-            </div> */}
+            </div>
           </div>
-        )}
+        )} */}
         <div className="main-contents-body">
           {curClicked ? (
             <div className="news-contents-wrapper">
@@ -227,28 +227,27 @@ const Wrapper = styled.div`
 
   .main-header {
     display: flex;
-    flex-direction: row; 
-    align-items: center; 
-    justify-content: flex-start; 
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     text-align: left;
   }
 
-  .category-name{
+  .category-name {
     display: inline-flex;
     margin-left: 10px;
     font-weight: 700;
     font-size: 18px;
-    line-height : 3em;
+    line-height: 3em;
     @media screen and (max-width: 768px) {
       font-size: 14px;
       margin-left: 8px;
-   }
-
+    }
+  }
   .main-contents-body {
     position: relative;
     .news-contents-wrapper {
       width: 100%;
-      height: 800px;
       font-size: 13px;
     }
   }
