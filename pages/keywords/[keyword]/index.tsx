@@ -177,14 +177,13 @@ const Wrapper = styled.div`
   border: 0;
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
-  height: 80%;
+  height: 100%;
   overflow: hidden scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding-top: 20px;
-  margin-bottom: 50px;
   background-color: rgb(242, 242, 242);
   ::-webkit-scrollbar {
     display: none;
