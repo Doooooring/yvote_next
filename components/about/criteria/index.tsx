@@ -33,6 +33,7 @@ export function Criteria() {
               수백 개씩 다루어지는 법률안들을 전부 다루지 않습니다. 대신, 국민의 투표로 인해 결과가
               달라졌거나 바꿀 수 있다고 판단되는 법률안에 대한 소식만을 선별하여 전달합니다.
             </p>
+            <hr />
             <p className="lightweight">
               - 주요 법률안 <span>#입법부 #법률</span>
             </p>
@@ -72,6 +73,7 @@ export function Criteria() {
               대통령 주재 회의, 연설문 또는 외교 일정 등을 중심으로 뉴스를 선별하며, 국정 운영에
               대하여 정당 간의 의견 충돌이 심화될 경우 별도의 소식으로 정리하여 전달합니다.
             </p>
+            <hr />
             <p className="lightweight">
               - 국무회의 <span>#국무회의</span>
             </p>
@@ -109,6 +111,7 @@ export function Criteria() {
               재판관들의 임명 과정에 입법부와 대통령이 개입하기 때문에, 사회/문화 전반에 영향을 주는
               헌법재판소의 결정들을 전달합니다.
             </p>
+            <hr />
             <p className="lightweight">
               - 헌법재판소 주요 결정 <span>#헌법재판소</span>
             </p>
@@ -137,6 +140,7 @@ const Header = styled.div`
   align-items: center;
   font-size: 0.8em;
   padding: 40px 40px 0 40px;
+  color: rgb(64, 64, 64);
   h2 {
     font: inherit;
     font-size: 1.6rem;
@@ -195,6 +199,7 @@ const Text = styled.div`
   padding: 10px;
   h3 {
     font: inherit;
+    color: rgb(64, 64, 64);
     font-size: 1.3rem;
     line-height: 1.5em;
     margin: 0;
@@ -211,15 +216,20 @@ const Text = styled.div`
     font-family: summary-font;
     font-size: 0.9rem;
     line-height: 1.8em;
+    font-weight: 400;
   }
   .lightweight {
     margin: 0.5rem 0 0 0.2rem;
-    line-height: 1.6em;
+    line-height: 1.3em;
     > span {
       margin-left: 0.4rem;
       font-size: 0.8rem;
+      font-weight: 300;
       color: #3a84e5;
     }
+  }
+  hr {
+    margin: 10px 0 0 0;
   }
   @media (max-width: 1080px) {
     width: 100%;

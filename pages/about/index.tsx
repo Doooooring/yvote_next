@@ -33,6 +33,7 @@ const BlockElement = styled.div`
   padding-top: 40px;
   width: 70%;
   min-width: 980px;
+  color: #747272;
   @media screen and (max-width: 1080px) {
     width: 800px;
     max-width: 90%;

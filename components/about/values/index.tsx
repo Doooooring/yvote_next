@@ -95,6 +95,7 @@ const Header = styled.div`
   align-items: center;
   font-size: 0.8em;
   padding: 40px 40px 0 40px;
+  color: rgb(64, 64, 64);
   h2 {
     font: inherit;
     font-size: 1.6rem;
@@ -127,6 +128,7 @@ const EachValue = styled.div`
     font-size: 1.3rem;
     line-height: 1.5em;
     margin: 0.5rem 0 0 0;
+    color: rgb(64, 64, 64);
     font-weight: 400;
     @media (max-width: 480px) {
       font-size: 1.1rem;
@@ -135,6 +137,7 @@ const EachValue = styled.div`
   p {
     margin: 1rem 0 0 0;
     font-family: summary-font;
+    font-weight: 400;
     font-size: 0.9rem;
     line-height: 1.8em;
   }

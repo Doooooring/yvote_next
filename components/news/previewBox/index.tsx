@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
-import icoNew from '@images/ico_new_2x.png';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
@@ -46,14 +45,7 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
       <div className="body-wrapper">
         <div className="head-wrapper">
           <p>{title}</p>
-          <Image
-            src={icoNew}
-            alt="2weeks"
-            height="16"
-            style={{
-              display: state ? 'auto' : 'none',
-            }}
-          />
+          {state && <ImageFallback src="/assets/img/ico_new_2x.png" height="16" width="32" />}
         </div>
         <div className="summary">{summary.replace(/\$/g, '')}</div>
         <div className="keyword-wrapper">
@@ -175,7 +167,7 @@ const Wrapper = styled.div<WrapperProps>`
       margin: 0;
       font-size: 13px;
       min-height: 45px;
-      line-height: 1.65;
+      line-height: 1.8;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
