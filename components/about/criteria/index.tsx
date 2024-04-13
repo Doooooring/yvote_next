@@ -189,8 +189,10 @@ const MobileImageWrapper = styled.div`
   display: none;
   @media (max-width: 1080px) {
     display: block;
-    width: 100%;
+    width: 95%;
     height: auto;
+    margin: 0 auto;
+    justify-self: center;
   }
 `;
 

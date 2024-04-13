@@ -153,7 +153,11 @@ const EachValue = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  img {
+@media (max-width: 1080px) {
+  width: 95%;
+  margin 0 auto;
+}  
+img {
     margin: 10px 0;
     display: block;
     width: 100%;
