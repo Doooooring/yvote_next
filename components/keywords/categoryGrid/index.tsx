@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react';
-import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
-import { useRef } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
+import styled from 'styled-components';
 
 interface CategoryGridProps {
   category: KeywordToView['category'] | 'recent';
@@ -79,8 +78,10 @@ const Wrapper = styled.div`
   width: 100%;
   margin-top: 20px;
   margin-bottom: 10px;
+  max-width: 868px;
   min-width: 868px;
   @media screen and (max-width: 768px) {
+    overflow-x: scroll;
     min-width: 0;
   }
   .header-wrapper {

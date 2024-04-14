@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { StaticImageData } from 'next/image';
-import backgroundImage from '@images/voting.png';
+import Modal from '@components/home/homemodal';
+import valuesImage from '@images/eder.png';
+import keywordImage from '@images/keyword.png';
 import logoImage from '@images/logo_image.png';
 import newsImage from '@images/news.png';
-import keywordImage from '@images/keyword.png';
-import valuesImage from '@images/eder.png';
-import Modal from '@components/home/homemodal';
+import backgroundImage from '@images/voting.png';
+import { StaticImageData } from 'next/image';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 interface Item {
   name: string;
@@ -260,6 +260,7 @@ const List = styled.ul`
   @media (max-width: 480px) {
     flex-direction: column;
     align-items: center;
+  }
 `;
 
 const ListItem = styled.li`
@@ -296,9 +297,9 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 480px) {
-    width : 100%;
+    width: 100%;
     text-align: center;
-    border-bottom: 1px solid white; 
+    border-bottom: 1px solid white;
     border-left: none;
 
     &:not(:last-child)::after {
@@ -309,12 +310,12 @@ const ListItem = styled.li`
       border-bottom: none;
     }
 
-    > a { 
-      width : 80%;
-      margin : auto;
+    > a {
+      width: 80%;
+      margin: auto;
     }
-
-  `;
+  }
+`;
 
 const BackgroundImage = styled.div<{ loaded: boolean; src: string }>`
   position: absolute;
