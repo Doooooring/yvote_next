@@ -1,10 +1,9 @@
-import Image from 'next/image';
-import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 type curClicked = undefined | News['_id'];
 
@@ -173,6 +172,11 @@ const Wrapper = styled.div<WrapperProps>`
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
+
+      * {
+        display: inline;
+      }
+
       ::after {
         content: '';
         display: block;

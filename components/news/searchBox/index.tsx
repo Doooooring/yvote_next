@@ -183,7 +183,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
 }
 
 const Wrapper = styled.form`
-position: relative;
+  position: relative;
   display: inline-flex;
   width: 300px;
   height: 45px;
@@ -200,43 +200,44 @@ position: relative;
     &:focus-within {
       overflow: visible;
     }
-  .input-box {
-    display: inline-flex;
-    border: 0;
-    border-radius: 5px;
-    width: 100%;
-    height: auto;
-    color: rgb(170, 170, 170);
-    font-weight: 600;
-    padding: 0;
-    margin: 0;
-    font: inherit;
-    font-size: 13px;
-    text-align: center;
-  
-    &::placeholder {
+    .input-box {
+      display: inline-flex;
+      border: 0;
+      border-radius: 5px;
+      width: 100%;
+      height: auto;
       color: rgb(170, 170, 170);
+      font-weight: 600;
+      padding: 0;
+      margin: 0;
+      font: inherit;
       font-size: 13px;
-      font-weight: 800;
+      text-align: center;
+
+      &::placeholder {
+        color: rgb(170, 170, 170);
+        font-size: 13px;
+        font-weight: 800;
+      }
+      &:focus {
+        outline: 2px solid rgb(133, 200, 224);
+        font-size: 13px;
+      }
     }
-    &:focus {
-      outline: 2px solid rgb(133, 200, 224);
-      font-size: 13px;
+    .related-box {
+      min-height: 100px;
+      background-color: rgb(133, 200, 224);
+      width: 100%;
+      border-style: solid;
+      border-width: 2px;
+      border-color: rgb(133, 200, 224);
+      border-radius: 5px;
+      position: absolute;
+      top: 100%;
+      text-align: left;
+      z-index: 3;
+      opacity: 0.7;
     }
-  }
-  .related-box {
-    min-height: 100px;
-    background-color: rgb(133, 200, 224);
-    width: 100%;
-    border-style: solid;
-    border-width: 2px;
-    border-color: rgb(133, 200, 224);
-    border-radius: 5px;
-    position: absolute;
-    top: 100%;
-    text-align: left;
-    z-index: 3;
-    opacity : 0.7;
   }
 `;
 

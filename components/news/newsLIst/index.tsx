@@ -1,5 +1,5 @@
-import { useOnScreen } from '@utils/hook/useOnScreen';
 import LoadingCommon from '@components/common/loading';
+import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -49,7 +49,7 @@ export default function NewsList({
     <>
       <Wrapper>
         {previews.map((preview, idx) => (
-          <div className="preview-wrapper" key={idx}>
+          <div className="preview-wrapper" key={preview._id}>
             <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
           </div>
         ))}
