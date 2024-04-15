@@ -6,22 +6,15 @@ import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import styled from 'styled-components';
+import { categoryImgUrl, categoryKoreanName } from './categoryGrid.tool';
 
 interface CategoryGridProps {
   category: KeywordToView['category'] | 'recent';
   keywords: Array<KeywordToView>;
   setKeywords: Dispatch<SetStateAction<KeywordToView[]>>;
-  koreanname: string;
-  imageurl: string;
 }
 
-export default function CategoryGrid({
-  category,
-  keywords,
-  setKeywords,
-  koreanname,
-  imageurl,
-}: CategoryGridProps) {
+export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
   const page = useRef(1);
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
@@ -46,9 +39,9 @@ export default function CategoryGrid({
     <Wrapper>
       <div className="header-wrapper">
         <div className="image-wrapper">
-          <ImageFallback src={imageurl} width="100%" height="100%" />
+          <ImageFallback src={categoryImgUrl(category)} width="100%" height="100%" />
         </div>
-        <div className="category-head">{koreanname}</div>
+        <div className="category-head">{categoryKoreanName(category)}</div>
       </div>
       <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
@@ -127,7 +120,7 @@ interface GridContainerProps {
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
   grid-template-rows: repeat(2, 3.5rem);
-  grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
+  grid-template-columns: repeat(auto-fill, 10rem);
   grid-auto-flow: column;
   grid-row-gap: 10px;
   grid-column-gap: 15px;

@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import styled from 'styled-components';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
 import { KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 interface pageProps {
   data: {
@@ -57,36 +57,26 @@ export default function KeywordsPage({ data }: pageProps) {
           category={'recent'}
           keywords={recentKeywords}
           setKeywords={setRecentKeywords}
-          koreanname={'최근 업데이트'}
-          imageurl={'/assets/img/recent.png'}
         />
         <CategoryGrid
           category={'organization'}
           keywords={keywordInOrganization}
           setKeywords={setkeywordInOrganization}
-          koreanname={'기관 / 단체'}
-          imageurl={'/assets/img/organization.png'}
         />
         <CategoryGrid
           category={'politics'}
           keywords={keywordInPolitics}
           setKeywords={setKeywordInPolitics}
-          koreanname={'정치 / 이념'}
-          imageurl={'/assets/img/politics.png'}
         />
         <CategoryGrid
           category={'economics'}
           keywords={keywordInEconomy}
           setKeywords={setKeywordInEconomy}
-          koreanname={'경제'}
-          imageurl={'/assets/img/economics.png'}
         />
         <CategoryGrid
           category={'social'}
           keywords={keywordInSocial}
           setKeywords={setKeywordInSocial}
-          koreanname={'사회 / 가치관'}
-          imageurl={'/assets/img/social.png'}
         />
         {/* <CategoryGrid
           category={'policy'}
