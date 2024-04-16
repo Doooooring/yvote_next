@@ -27,9 +27,12 @@ export default function Analyze() {
 
 const Wrapper = styled.div`
   display: flex;
+  height: 100%;
   justify-content: center;
+  overflow-y: scroll;
 `;
 
 const MainContents = styled.div`
   width: 70%;
+  padding-bottom: 100px;
 `;
