@@ -34,5 +34,10 @@ const Wrapper = styled.div`
 
 const MainContents = styled.div`
   width: 70%;
+  min-width: 800px;
   padding-bottom: 100px;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0;
+  }
 `;
