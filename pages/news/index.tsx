@@ -1,12 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { GetStaticProps } from 'next';
-import { SpeechBubble } from '@components/common/figure';
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
+import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useCallback, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 type curPreviewsList = Preview[];
 
@@ -49,9 +48,9 @@ export default function NewsPage(props: pageProps) {
   /**
    * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
    */
-  const showNewsContent = async (id: string) => {
+  const showNewsContent = useCallback(async (id: string) => {
     router.push(`/news/${id}`);
-  };
+  }, []);
 
   return (
     <Wrapper>
