@@ -166,16 +166,12 @@ const Wrapper = styled.div<WrapperProps>`
       margin: 0;
       font-size: 13px;
       min-height: 45px;
-      line-height: 1.8;
+      line-height: 2;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-
-      * {
-        display: inline;
-      }
 
       ::after {
         content: '';
