@@ -54,7 +54,13 @@ export default function NewsList({
           </div>
         ))}
       </Wrapper>
-      {isRequesting ? <LoadingCommon comment={'새소식을 받아오고 있어요!'} /> : <></>}
+      {isRequesting ? (
+        <LoadingWrapper>
+          <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+        </LoadingWrapper>
+      ) : (
+        <></>
+      )}
       <LastLine ref={elementRef}></LastLine>
     </>
   );
@@ -98,6 +104,10 @@ const Wrapper = styled.div`
     padding-right: 0.25rem;
     padding-left: 0.25rem;
   }
+`;
+
+const LoadingWrapper = styled.div`
+  background-color: white;
 `;
 
 const LastLine = styled.div`

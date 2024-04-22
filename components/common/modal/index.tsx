@@ -36,14 +36,3 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: center; */
 `;
-
-// const ContentsWrapper = styled.div`
-//   width: 100vw;
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: center;
-//   align-items: center;
-// `;

@@ -2,9 +2,8 @@ import styled from 'styled-components';
 
 import Header from '@components/common/header';
 
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode } from 'react';
 import LoadingIndicator from './loadingIndicator';
-import { useRouter } from 'next/router';
 import { useRouteState } from './layout.tool';
 
 const Layout = ({ children }: { children: ReactNode }) => {

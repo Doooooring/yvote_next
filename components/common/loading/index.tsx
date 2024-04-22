@@ -13,6 +13,7 @@ export default function LoadingCommon({
   comment,
   isRow = true,
   fontSize = '1rem',
+  fontColor = 'white',
   iconSize = 16,
 }: LoadingCommonProps) {
   const { curText } = useTypeEffect({
@@ -23,7 +24,7 @@ export default function LoadingCommon({
   });
 
   return (
-    <Wrapper $isRow={isRow} fontSize={fontSize}>
+    <Wrapper $isRow={isRow} fontSize={fontSize} fontColor={fontColor}>
       <FontAwesomeIcon className="spinner" icon={faSpinner as IconProp} width={iconSize} />
       <p className="comment">{curText}</p>
     </Wrapper>
@@ -33,6 +34,7 @@ export default function LoadingCommon({
 interface WrapperProps {
   $isRow: boolean;
   fontSize: string;
+  fontColor: string;
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -44,9 +46,10 @@ const Wrapper = styled.div<WrapperProps>`
   width: 100%;
   height: 100%;
   font-size: ${({ fontSize }) => fontSize};
+  line-height: 1;
   font-weight: 500;
   padding: 1rem 0;
-  color: white;
+  color: ${({ fontColor }) => fontColor};
 
   p {
     min-width: ${({ fontSize }) => fontSize};
