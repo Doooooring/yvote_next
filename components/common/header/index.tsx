@@ -1,74 +1,20 @@
 import Image from 'next/image';
 import ImageFallback from '../imageFallback';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useCurRoute } from './header.tool';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import logo_s from '@images/logo_image.png';
-import logo from '/assets/img/김민재 로고.png';
-
-interface NavBoxProps {
-  link: string;
-  comment: string;
-  state: boolean;
-  responsiveComment: string;
-}
-
-function NavBox({ link, comment, responsiveComment, state }: NavBoxProps) {
-  const [displayComment, setDisplayComment] = useState(comment);
-
-  useEffect(() => {
-    const updateCommentBasedOnWidth = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth < 480) {
-        setDisplayComment(responsiveComment);
-      } else {
-        setDisplayComment(comment);
-      }
-    };
-
-    // Update comment on mount and when resizing the window
-    updateCommentBasedOnWidth();
-    window.addEventListener('resize', updateCommentBasedOnWidth);
-
-    // Cleanup event listener on component unmount
-    return () => window.removeEventListener('resize', updateCommentBasedOnWidth);
-  }, [comment, responsiveComment]);
-
-  return (
-    <HomeLink href={`${link}`} state={state}>
-      {displayComment}
-    </HomeLink>
-  );
-}
+import { Device, useDevice } from '@utils/hook/useDevice';
 
 export default function Header() {
-  const navigation = useRouter();
-  const [curTab, setCurTab] = useState<string>('home');
-
-  useEffect(() => {
-    if (navigation.pathname === '/error') {
-      console.log("it's error");
-      return;
-    }
-    if (navigation.pathname.includes('news')) {
-      setCurTab('news');
-    } else if (navigation.pathname.includes('keywords')) {
-      setCurTab('keywords');
-    } else if (navigation.pathname.includes('analyze')) {
-      setCurTab('analyze');
-    } else if (navigation.pathname.includes('about')) {
-      setCurTab('about');
-    } else {
-      setCurTab('home');
-    }
-  }, [navigation]);
+  const curRoute = useCurRoute();
+  const device = useDevice();
 
   return (
     <Wrapper>
       <HeaderBody>
         <LogoImgBox>
-          <HomeLink href="/" state={curTab === 'home'}>
+          <HomeLink href="/" $state={curRoute === 'home'}>
             <ImageWrapper className="image-l">
               <ImageFallback src="/assets/img/김민재 로고.png" width="120" height="27" />
             </ImageWrapper>
@@ -80,34 +26,40 @@ export default function Header() {
         <NavigationBox>
           <NavBox
             link={'/news'}
-            comment="뉴스 모아보기"
-            state={curTab === 'news'}
-            responsiveComment="뉴스"
+            comment={device === Device.pc ? '뉴스 모아보기' : '뉴스'}
+            state={curRoute === 'news'}
           />
 
           <NavBox
             link={'/keywords'}
-            comment="키워드 모아보기"
-            state={curTab === 'keywords'}
-            responsiveComment="키워드"
+            comment={device === Device.pc ? '키워드 모아보기' : '키워드'}
+            state={curRoute === 'keywords'}
           />
 
           <NavBox
             link={'/analyze'}
-            comment="정치 성향 테스트"
-            state={curTab === 'analyze'}
-            responsiveComment="가치관"
+            comment={device === Device.pc ? '정치 성향 테스트' : '가치관'}
+            state={curRoute === 'analyze'}
           />
 
-          <NavBox
-            link={'/about'}
-            comment="ABOUT"
-            state={curTab === 'about'}
-            responsiveComment="ABOUT"
-          />
+          <NavBox link={'/about'} comment={'ABOUT'} state={curRoute === 'about'} />
         </NavigationBox>
       </HeaderBody>
     </Wrapper>
+  );
+}
+
+interface NavBoxProps {
+  link: string;
+  comment: string;
+  state: boolean;
+}
+
+function NavBox({ link, comment, state }: NavBoxProps) {
+  return (
+    <HomeLink href={`${link}`} $state={state}>
+      {comment}
+    </HomeLink>
   );
 }
 
@@ -164,7 +116,7 @@ const LogoImgBox = styled.div`
 `;
 
 interface homeLinkProps {
-  state: boolean;
+  $state: boolean;
 }
 
 const HomeLink = styled(Link)<homeLinkProps>`
@@ -173,12 +125,12 @@ const HomeLink = styled(Link)<homeLinkProps>`
   justify-content: center;
   padding: 0 10px;
   white-space: nowrap;
-  color: ${({ state }) => (state ? 'rgb(114, 190, 218)' : '#747272')};
+  color: ${({ $state }) => ($state ? 'rgb(114, 190, 218)' : '#747272')};
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
   font-weight: 500;
-  border-bottom: ${({ state }) => (state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
+  border-bottom: ${({ $state }) => ($state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
   height: 100%;
   .image-l {
     @media screen and (max-width: 768px) {

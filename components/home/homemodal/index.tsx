@@ -326,9 +326,8 @@ const SubmitButton = styled.button`
   white-space: nowrap;
   line-height: calc(2.75rem - 2px);
   background-color: #ffffff;
-  color: #1b1f22
+  color: #1b1f22;
   font-weight: 600;
   margin: auto; 
   width: 30%;   
-
 `;

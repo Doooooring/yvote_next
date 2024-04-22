@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface ContactBoxProps {}
 
@@ -14,7 +15,7 @@ export function ContactBox() {
       <Body>
         <p>함께 새로운 언론을 만들어나갈 팀원을 모집합니다</p>
         <IconWrapper>
-          <FontAwesomeIcon icon={faEnvelope} />
+          <FontAwesomeIcon icon={faEnvelope as IconProp} />
         </IconWrapper>
         <span> 8gundogan@yonsei.ac.kr </span>
       </Body>
