@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { PieChart } from 'react-minimal-pie-chart';
+import typedquestions from './questions.json';
 
 export type ResultAnswers = number[];
 
@@ -8,19 +9,32 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
   const colors = ['#4CAF50', '#FFC107', '#2196F3', '#143225'];
   const titles = ['정부의존성', '이념성', '보수성', '정부불신'];
   const [detailsVisible, setDetailsVisible] = useState(false);
+  const fetchDetailId = (scoreIndex: number, detailIndex: number) => {
+    const adjustedIndex = ((scoreIndex) * 30) + (detailIndex * 3);
+    const id = typedquestions[adjustedIndex]?.detail;
+    return id ? id : '??';
+  };
 
   const calculateScores = () => {
     let scores = [];
-    for (let i = 0; i < answers.length; i += 6) {
-      const group = answers.slice(i, i + 6);
+    const detailScoreCount = 10;
+    const answersPerDetailScore = 3;
+  
+    for (let i = 0; i < answers.length; i += 30) {
+      const group = answers.slice(i, i + 30);
       const totalScore = group.reduce((acc, current) => acc + current, 0);
-      const detailScore1 = group.slice(0, 3).reduce((acc, current) => acc + current, 0);
-      const detailScore2 = group.slice(3, 6).reduce((acc, current) => acc + current, 0);
+  
+      let detailScores = [];
+      for (let j = 0; j < detailScoreCount; j++) {
+        const detailStart = j * answersPerDetailScore;
+        const detailScore = group.slice(detailStart, detailStart + answersPerDetailScore).reduce((acc, current) => acc + current, 0);
+        detailScores.push(detailScore);
+      }
+  
       scores.push({
         totalScore,
-        detailScore1,
-        detailScore2,
-        color: colors[(i / 6) % colors.length],
+        detailScores,
+        color: colors[i / 30 % colors.length],
       });
     }
     return scores;
@@ -64,26 +78,24 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
           </ChartWrapper>
         ))}
       </ChartContainer>
+      <ToggleButton onClick={toggleAllDetails}>
+        {detailsVisible ? '숨기기' : '자세히 보기'}
+      </ToggleButton>
       {detailsVisible && (
         <DetailsContainer>
           {scores.map((score, index) => (
             <Detail key={index}>
-              <DetailTitle>{titles[index]} Analysis:</DetailTitle>
-              <BarLabel>
-                <ScoreLabel>Detail 1</ScoreLabel>
-                <Bar color={score.color} width={score.detailScore1} max={15} />
-              </BarLabel>
-              <BarLabel>
-                <ScoreLabel>Detail 2</ScoreLabel>
-                <Bar color={score.color} width={score.detailScore2} max={15} />
-              </BarLabel>
+              <DetailTitle>{titles[index]}</DetailTitle>
+              {score.detailScores.map((detailScore, detailIndex) => (
+                <BarLabel key={detailIndex}>
+                  <ScoreLabel>{fetchDetailId(index, detailIndex)}</ScoreLabel>
+                  <Bar color={score.color} width={detailScore} max={15} />
+                </BarLabel>
+              ))}
             </Detail>
           ))}
         </DetailsContainer>
       )}
-      <ToggleButton onClick={toggleAllDetails}>
-        {detailsVisible ? '숨기기' : '자세히 보기'}
-      </ToggleButton>
     </Wrapper>
   );
 };
@@ -92,6 +104,7 @@ export default Result;
 
 const Wrapper = styled.div`
   width: 100%;
+  padding : 0 0 150px 0;
 `;
 
 const ChartContainer = styled.div`
@@ -118,9 +131,11 @@ const ChartTitle = styled.h2`
 `;
 
 const DetailsContainer = styled.div`
-  margin-top: 20px;
-  padding: 20px 40px 20px 20px;
-  background-color: #f9f9f9;
+  margin: 20px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-around;
   border-radius: 8px;
 `;
 
@@ -141,32 +156,36 @@ const Bar = styled.div<BarProps>`
   background-color: ${({ color }) => color};
   width: ${({ width, max }) => `${(width / max) * 100}%`};
   height: 20px;
-  border-radius: 2px;
+  border-radius: 3px;
   transition: width 0.3s ease;
 `;
 
 const ScoreLabel = styled.div`
   width: 60px;
-  margin-right: 10px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #666;
   flex-shrink: 0;
   white-space: nowrap;
 `;
 
 const Detail = styled.div`
-  margin-bottom: 15px;
+  display: flex;
+  padding : 15px 20px;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+  border-radius : 10px;
+  background-color: #f9f9f9;
 `;
 
 const DetailTitle = styled.h3`
   color: #333;
   font-size: 1.2rem;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `;
 
 const ToggleButton = styled.button`
   padding: 5px 10px;
-  margin: 20px 0;
   background-color: white;
   color: #747272;
   border: none;
