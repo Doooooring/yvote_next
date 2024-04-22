@@ -4,7 +4,7 @@ import styled from 'styled-components';
 interface ModalProps {
   children: ReactNode;
   state: boolean;
-  outClickAction: () => any;
+  outClickAction?: () => any;
 }
 
 export default function Modal({ children, state, outClickAction }: ModalProps) {
@@ -13,7 +13,7 @@ export default function Modal({ children, state, outClickAction }: ModalProps) {
   return (
     <Wrapper
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
+        if (e.target === e.currentTarget && outClickAction) {
           outClickAction();
         }
       }}
@@ -35,8 +35,6 @@ const Wrapper = styled.div`
   /* display: flex;
   flex-direction: row;
   justify-content: center; */
-  padding-top: 150px;
-  padding-bottom: 150px;
 `;
 
 // const ContentsWrapper = styled.div`
