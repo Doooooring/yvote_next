@@ -158,7 +158,6 @@ export default function KeyExplanation({ data }: pageProps) {
             <NewsList
               page={curPage.current ?? 0}
               previews={curPreviews}
-              curClicked={curClicked}
               fetchNewsPreviews={fetchNewsPreviews}
               showNewsContent={toggleNewsContentView}
             />

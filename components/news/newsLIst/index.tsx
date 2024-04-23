@@ -9,7 +9,6 @@ import { useUpdateNewsPreviews } from './newsList.tools';
 interface NewsListProps {
   page: number;
   previews: Preview[];
-  curClicked: string | undefined;
   fetchNewsPreviews: () => Promise<void>;
   showNewsContent: (id: string) => void;
 }
@@ -17,7 +16,6 @@ interface NewsListProps {
 export default function NewsList({
   page,
   previews,
-  curClicked,
   fetchNewsPreviews,
   showNewsContent,
 }: NewsListProps) {

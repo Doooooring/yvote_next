@@ -68,7 +68,6 @@ export default function NewsPage(props: pageProps) {
           <NewsList
             page={curPage.current ?? 0}
             previews={curPreviews}
-            curClicked={undefined}
             fetchNewsPreviews={fetchNewsPreviews}
             showNewsContent={showNewsContent}
           />
