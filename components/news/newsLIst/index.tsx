@@ -1,9 +1,10 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
+import { useUpdateNewsPreviews } from './newsList.tools';
 
 interface NewsListProps {
   page: number;
@@ -22,24 +23,14 @@ export default function NewsList({
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
-  const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
-  const getNewsContent = async () => {
-    setIsRequesting(true);
-    try {
-      await fetchNewsPreviews();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRequesting(false);
-    }
-  };
+  const [isRequesting, updateNewsPreviews] = useUpdateNewsPreviews(fetchNewsPreviews);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
     //요청 중이라면 보내지 않기
     if (page != -1 && isOnScreen === true && isRequesting === false) {
-      getNewsContent();
+      updateNewsPreviews();
     } else {
       return;
     }
@@ -50,7 +41,7 @@ export default function NewsList({
       <Wrapper>
         {previews.map((preview, idx) => (
           <div className="preview-wrapper" key={preview._id}>
-            <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
+            <PreviewBox preview={preview} click={showNewsContent} />
           </div>
         ))}
       </Wrapper>

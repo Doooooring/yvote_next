@@ -5,15 +5,12 @@ import { News, Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-type curClicked = undefined | News['_id'];
-
 interface PreviewBoxProps {
   preview: Preview;
-  curClicked: curClicked;
   click: (id: string) => void;
 }
 
-export default function PreviewBox({ preview, curClicked, click }: PreviewBoxProps) {
+export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { _id, order, title, summary, keywords, state } = preview;
 
@@ -28,7 +25,6 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
 
   return (
     <Wrapper
-      state={curClicked === _id}
       onClick={() => {
         click(_id);
       }}
@@ -62,11 +58,7 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
   );
 }
 
-interface WrapperProps {
-  state: boolean;
-}
-
-const Wrapper = styled.div<WrapperProps>`
+const Wrapper = styled.div`
   -webkit-text-size-adjust: none;
   color: #666;
   margin: 0;
@@ -85,7 +77,7 @@ const Wrapper = styled.div<WrapperProps>`
     padding: 10px 10px;
   }
 
-  background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
+  background-color: white;
   &:hover {
     cursor: pointer;
   }
