@@ -1,16 +1,19 @@
 import styled from 'styled-components';
 
 import Header from '@components/common/header';
-import { ReactNode, useState } from 'react';
+
+import { ReactNode } from 'react';
+import LoadingIndicator from './loadingIndicator';
+import { useRouteState } from './layout.tool';
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const routeState = useRouteState();
 
   return (
     <Wrapper>
       <Header />
       <Body>{children}</Body>
-      <Foreground state={isLoading}></Foreground>
+      <LoadingIndicator state={routeState} />
     </Wrapper>
   );
 };

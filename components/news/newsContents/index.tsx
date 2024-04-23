@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
@@ -114,7 +116,7 @@ export default function NewsContent({
       <Wrapper>
         <FaWrapper state={!showLeft} style={{ textAlign: 'left' }}>
           <span onClick={toggleShowLeft}>
-            <FontAwesomeIcon icon={faArrowLeft} width={12} /> 뉴스 상세 열기
+            <FontAwesomeIcon icon={faArrowLeft as IconProp} width={12} /> 뉴스 상세 열기
           </span>
         </FaWrapper>
         <FaWrapper state={showLeft} className="fa-flex">
@@ -124,10 +126,10 @@ export default function NewsContent({
               hide();
             }}
           >
-            <FontAwesomeIcon icon={faArrowLeft} width={12} /> 목록 보기
+            <FontAwesomeIcon icon={faArrowLeft as IconProp} width={12} /> 목록 보기
           </span>
           <span onClick={toggleShowLeft}>
-            평론 열기 <FontAwesomeIcon icon={faArrowRight} width={12} />
+            평론 열기 <FontAwesomeIcon icon={faArrowRight as IconProp} width={12} />
           </span>
         </FaWrapper>
         <Body>
