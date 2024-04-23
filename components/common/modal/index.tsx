@@ -5,9 +5,10 @@ interface ModalProps {
   children: ReactNode;
   state: boolean;
   outClickAction?: () => any;
+  backgroundColor?: string;
 }
 
-export default function Modal({ children, state, outClickAction }: ModalProps) {
+export default function Modal({ children, state, outClickAction, backgroundColor="rgba(0,0,0,0.5)" }: ModalProps) {
   if (!state) return <></>;
 
   return (
@@ -17,6 +18,11 @@ export default function Modal({ children, state, outClickAction }: ModalProps) {
           outClickAction();
         }
       }}
+      style={
+        {
+         'backgroundColor'  : backgroundColor
+        }
+      }
     >
       {children}
     </Wrapper>
@@ -31,7 +37,6 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: hidden;
   z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.5);
   /* display: flex;
   flex-direction: row;
   justify-content: center; */
