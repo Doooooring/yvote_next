@@ -29,7 +29,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   const batchSize = 3;
   const [currentBatchStartIndex, setCurrentBatchStartIndex] = useState(0);
   const [answers, setAnswers] = useState<ResultAnswers>([...Array(120
-  )].map(() => 0));
+  )].map(() => 4));
 
   const handleAnswer = (index: number, answer: number) => {
     const newAnswers = [...answers];
@@ -37,15 +37,18 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
     setAnswers(newAnswers);
   };
 
-  const isLastBatch = currentBatchStartIndex + batchSize >= questions.length;
+  const areAllAnswered = () => {
+    const end = Math.min(currentBatchStartIndex + batchSize, questions.length);
+    return answers.slice(currentBatchStartIndex, end).every(answer => answer !== -1);
+  };
 
   const handleNext = () => {
     const nextBatchStartIndex = currentBatchStartIndex + batchSize;
-    if (nextBatchStartIndex < questions.length) {
-      setCurrentBatchStartIndex(nextBatchStartIndex);
-    } else {
-      onComplete([...answers]);
-    }
+      if (nextBatchStartIndex < questions.length) {
+        setCurrentBatchStartIndex(nextBatchStartIndex);
+      } else {
+        onComplete(answers);
+      }
   };
 
   const handlePrev = () => {
@@ -90,15 +93,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
           <h4>{question.content}</h4>
           <div className="select">
             <span>부정적</span>
-            {Array.from({ length: 5 }, (_, i) => (
+            {Array.from({ length: 6 }, (_, i) => (
               <button
-                key={i + 1}
+                key={i}
                 className={
-                  answers[currentBatchStartIndex + index] === i + 1 ? 'button-selected' : ''
+                  answers[currentBatchStartIndex + index] === i ? 'button-selected' : ''
                 }
-                onClick={() => handleAnswer(currentBatchStartIndex + index, i + 1)}
+                onClick={() => handleAnswer(currentBatchStartIndex + index, i)}
               >
-                {i + 1}
+                {i}
               </button>
             ))}
             <span>긍정적</span>
@@ -108,11 +111,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
       <button onClick={handlePrev} disabled={currentBatchStartIndex === 0}>
         Previous
       </button>
-      {isLastBatch ? (
-        <button onClick={() => onComplete([...answers])}>Finish</button>
-      ) : (
-        <button onClick={handleNext}>Next</button>
-      )}
+      <button onClick={handleNext} disabled={!areAllAnswered()}>
+        {currentBatchStartIndex + batchSize >= questions.length ? 'Finish' : 'Next'}
+      </button>
     </Wrapper>
   );
 };
@@ -161,7 +162,7 @@ const Wrapper = styled.div`
 
   .button-selected {
     background-color: lightblue;
-    color: white; /* White text */
+    color: white;
   }
 
   button {

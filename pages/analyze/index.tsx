@@ -30,6 +30,11 @@ const Wrapper = styled.div`
   height: 100%;
   justify-content: center;
   overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const MainContents = styled.div`

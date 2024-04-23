@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { PieChart } from 'react-minimal-pie-chart';
 import typedquestions from './questions.json';
+import Types from './types.tsx';
 
 export type ResultAnswers = number[];
 
@@ -10,7 +11,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
   const titles = ['정부의존성', '이념성', '보수성', '정부불신'];
   const [detailsVisible, setDetailsVisible] = useState(false);
   const fetchDetailId = (scoreIndex: number, detailIndex: number) => {
-    const adjustedIndex = ((scoreIndex) * 30) + (detailIndex * 3);
+    const adjustedIndex = scoreIndex * 30 + detailIndex * 3;
     const id = typedquestions[adjustedIndex]?.detail;
     return id ? id : '??';
   };
@@ -19,22 +20,24 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
     let scores = [];
     const detailScoreCount = 10;
     const answersPerDetailScore = 3;
-  
+
     for (let i = 0; i < answers.length; i += 30) {
       const group = answers.slice(i, i + 30);
       const totalScore = group.reduce((acc, current) => acc + current, 0);
-  
+
       let detailScores = [];
       for (let j = 0; j < detailScoreCount; j++) {
         const detailStart = j * answersPerDetailScore;
-        const detailScore = group.slice(detailStart, detailStart + answersPerDetailScore).reduce((acc, current) => acc + current, 0);
+        const detailScore = group
+          .slice(detailStart, detailStart + answersPerDetailScore)
+          .reduce((acc, current) => acc + current, 0);
         detailScores.push(detailScore);
       }
-  
+
       scores.push({
         totalScore,
         detailScores,
-        color: colors[i / 30 % colors.length],
+        color: colors[(i / 30) % colors.length],
       });
     }
     return scores;
@@ -59,7 +62,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
                   value: score.totalScore,
                   color: colors[index % colors.length],
                 },
-                { title: 'Remainder', value: 100 - score.totalScore, color: 'lightgrey' },
+                { title: 'Remainder', value: 150 - score.totalScore, color: 'lightgrey' },
               ]}
               lineWidth={40}
               startAngle={270}
@@ -89,13 +92,16 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
               {score.detailScores.map((detailScore, detailIndex) => (
                 <BarLabel key={detailIndex}>
                   <ScoreLabel>{fetchDetailId(index, detailIndex)}</ScoreLabel>
-                  <Bar color={score.color} width={detailScore} max={15} />
+                  <Barbox>
+                    <Bar color={score.color} width={detailScore} max={15} />
+                  </Barbox>
                 </BarLabel>
               ))}
             </Detail>
           ))}
         </DetailsContainer>
       )}
+      <Types></Types>
     </Wrapper>
   );
 };
@@ -104,7 +110,7 @@ export default Result;
 
 const Wrapper = styled.div`
   width: 100%;
-  padding : 0 0 150px 0;
+  padding: 0 0 150px 0;
 `;
 
 const ChartContainer = styled.div`
@@ -152,15 +158,26 @@ const BarLabel = styled.div`
   align-items: center;
 `;
 
+const Barbox = styled.div`
+  display: flex;
+  background-color: transparent;
+  align-items: center;
+  height: 20px;
+  width: 100%;
+  transition: width 0.3s ease;
+`;
+
 const Bar = styled.div<BarProps>`
   background-color: ${({ color }) => color};
   width: ${({ width, max }) => `${(width / max) * 100}%`};
-  height: 20px;
+  height: 60%;
   border-radius: 3px;
   transition: width 0.3s ease;
 `;
 
 const ScoreLabel = styled.div`
+  display: flex;
+  align-items: center;
   width: 60px;
   font-size: 0.8rem;
   color: #666;
@@ -170,11 +187,11 @@ const ScoreLabel = styled.div`
 
 const Detail = styled.div`
   display: flex;
-  padding : 15px 20px;
+  padding: 15px 20px;
   flex-direction: column;
   align-items: center;
   min-width: 200px;
-  border-radius : 10px;
+  border-radius: 10px;
   background-color: #f9f9f9;
 `;
 
