@@ -7,7 +7,7 @@ import Types from './types.tsx';
 export type ResultAnswers = number[];
 
 const Result = ({ answers }: { answers: ResultAnswers }) => {
-  const colors = ['#4CAF50', '#FFC107', '#2196F3', '#143225'];
+  const colors = ['#4CAF50', '#FFC107', '#2196F3', '#666666'];
   const titles = ['정부의존성', '이념성', '보수성', '정부불신'];
   const [detailsVisible, setDetailsVisible] = useState(false);
   const fetchDetailId = (scoreIndex: number, detailIndex: number) => {
@@ -59,10 +59,14 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
               data={[
                 {
                   title: `Score ${index + 1}`,
-                  value: score.totalScore,
+                  value: (score.totalScore * 100) / 150,
                   color: colors[index % colors.length],
                 },
-                { title: 'Remainder', value: 150 - score.totalScore, color: 'lightgrey' },
+                {
+                  title: 'Remainder',
+                  value: ((150 - score.totalScore) * 100) / 150,
+                  color: 'lightgrey',
+                },
               ]}
               lineWidth={40}
               startAngle={270}

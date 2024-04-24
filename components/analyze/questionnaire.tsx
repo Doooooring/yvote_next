@@ -28,8 +28,7 @@ const questions: Question[] = typedquestions as Question[];
 const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   const batchSize = 3;
   const [currentBatchStartIndex, setCurrentBatchStartIndex] = useState(0);
-  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120
-  )].map(() => 4));
+  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120)].map(() => 2));
 
   const handleAnswer = (index: number, answer: number) => {
     const newAnswers = [...answers];
@@ -39,16 +38,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
 
   const areAllAnswered = () => {
     const end = Math.min(currentBatchStartIndex + batchSize, questions.length);
-    return answers.slice(currentBatchStartIndex, end).every(answer => answer !== -1);
+    return answers.slice(currentBatchStartIndex, end).every((answer) => answer !== -1);
   };
 
   const handleNext = () => {
     const nextBatchStartIndex = currentBatchStartIndex + batchSize;
-      if (nextBatchStartIndex < questions.length) {
-        setCurrentBatchStartIndex(nextBatchStartIndex);
-      } else {
-        onComplete(answers);
-      }
+    if (nextBatchStartIndex < questions.length) {
+      setCurrentBatchStartIndex(nextBatchStartIndex);
+    } else {
+      onComplete(answers);
+    }
   };
 
   const handlePrev = () => {
@@ -67,7 +66,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
     정부의존성: '#4CAF50',
     이념성: '#FFC107',
     보수성: '#2196F3',
-    정부불신: '#143225',
+    정부불신: '#666666',
   };
 
   const getColorByCategory = (category: Category): string => {
@@ -96,10 +95,28 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
             {Array.from({ length: 6 }, (_, i) => (
               <button
                 key={i}
-                className={
-                  answers[currentBatchStartIndex + index] === i ? 'button-selected' : ''
-                }
+                className={answers[currentBatchStartIndex + index] === i ? 'button-selected' : ''}
                 onClick={() => handleAnswer(currentBatchStartIndex + index, i)}
+                style={{
+                  backgroundColor:
+                    answers[currentBatchStartIndex + index] === i
+                      ? getColorByCategory(question.category)
+                      : 'white',
+                  color: answers[currentBatchStartIndex + index] === i ? 'white' : '#666',
+                  borderColor: getColorByCategory(question.category),
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.backgroundColor = getColorByCategory(question.category);
+                  event.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.backgroundColor =
+                    answers[currentBatchStartIndex + index] === i
+                      ? getColorByCategory(question.category)
+                      : 'white';
+                  event.currentTarget.style.color =
+                    answers[currentBatchStartIndex + index] === i ? 'white' : '#666';
+                }}
               >
                 {i}
               </button>
@@ -123,7 +140,7 @@ export default Questionnaire;
 const Wrapper = styled.div`
   .category-label {
     display: inline-block;
-    padding: 0 8px;
+    padding: 0.1rem 0.6rem;
     line-height : 1.8rem;
     text-align: center;
     border-radius: 4px;
@@ -160,22 +177,17 @@ const Wrapper = styled.div`
     }
   }
 
-  .button-selected {
-    background-color: lightblue;
-    color: white;
-  }
-
   button {
-    color: #666;
+    color: #777;
     padding: 8px 16px;
     margin: 5px;
     border: none;
-    border-radius: 8px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s;
     background-color: white;
     &:hover {
-      background-color: lightblue;
+      color : black;
     }
     &:disabled {
       background-color: #ccc;
