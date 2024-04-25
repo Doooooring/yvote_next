@@ -14,31 +14,37 @@ interface Type {
   subSections: Section[];
 }
 
-export default function Types() {
+interface TypesProps {
+  id: number;
+}
+
+const Types: React.FC<TypesProps> = ({ id }) => {
+  const type = typesData.find((type: Type) => type.id === id);
+
   return (
     <Wrapper>
-      <div>
-        {typesData.map((type: Type) => (
-          <div key={type.id}>
-            <h1>{type.title}</h1>
-            {type.content.map((content, index) => (
-              <p key={index}>{content}</p>
-            ))}
-            {type.subSections.map((section, secIndex) => (
-              <div key={secIndex}>
-                {section.heading && <h2>{section.heading}</h2>}
-                {section.paragraph &&
-                  section.paragraph.map((paragraph, paraIndex) => (
-                    <p key={paraIndex}>{paragraph}</p>
-                  ))}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+      {type ? (
+        <div>
+          <h1>{type.title}</h1>
+          {type.content.map((content, index) => (
+            <p key={index}>{content}</p>
+          ))}
+          {type.subSections.map((section, secIndex) => (
+            <div key={secIndex}>
+              {section.heading && <h2>{section.heading}</h2>}
+              {section.paragraph &&
+                section.paragraph.map((paragraph, paraIndex) => <p key={paraIndex}>{paragraph}</p>)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>Type with ID {id} not found.</p>
+      )}
     </Wrapper>
   );
-}
+};
+
+export default Types;
 
 const Wrapper = styled.div`
   background-color: white;
@@ -49,14 +55,14 @@ const Wrapper = styled.div`
   height: auto;
   h1 {
     font: inherit;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 550;
     margin: 10px 0;
     display: inline-block;
   }
   h2 {
     font: inherit;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     line-height: 1.5rem;
     margin: 2.5rem 0 0 0;
     color: rgb(64, 64, 64);
@@ -66,7 +72,7 @@ const Wrapper = styled.div`
     margin: 0.8rem 0 0 0;
     font-family: summary-font;
     font-weight: 400;
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.6rem;
   }
 `;

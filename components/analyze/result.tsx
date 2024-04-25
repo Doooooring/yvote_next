@@ -49,6 +49,65 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
 
   const scores = calculateScores();
 
+  const key = scores.map((score) => (score.totalScore > 75 ? 'G' : 'L')).join('');
+
+  let resultid;
+  switch (key) {
+    case 'LLLL':
+      resultid = 0;
+      break;
+    case 'LLLG':
+      resultid = 10;
+      break;
+    case 'LLGL':
+      resultid = 8;
+      break;
+    case 'LLGG':
+      resultid = 7;
+      break;
+    case 'LGLL':
+      resultid = 3;
+      break;
+    case 'LGLG':
+      resultid = 9;
+      break;
+    case 'LGGL':
+      resultid = 6;
+      break;
+    case 'LGGG':
+      resultid = 6;
+      break;
+    case 'GLLL':
+      resultid = -1;
+      alert('정신병');
+      break;
+    case 'GLLG':
+      resultid = -1;
+      alert('정신병');
+      break;
+    case 'GLGL':
+      resultid = 5;
+      break;
+    case 'GLGG':
+      resultid = 4;
+      break;
+    case 'GGLL':
+      resultid = 1;
+      break;
+    case 'GGLG':
+      resultid = 1;
+      break;
+    case 'GGGL':
+      resultid = 2;
+      break;
+    case 'GGGG':
+      resultid = 2;
+      break;
+    default:
+      resultid = -1; // Default case if none match
+      break;
+  }
+
   return (
     <Wrapper>
       <ChartContainer>
@@ -105,7 +164,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
           ))}
         </DetailsContainer>
       )}
-      <Types></Types>
+      <Types id={resultid}></Types>
     </Wrapper>
   );
 };
