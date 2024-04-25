@@ -6,6 +6,12 @@ import Types from './types.tsx';
 
 export type ResultAnswers = number[];
 
+interface BarProps {
+  color: string;
+  width: number;
+  max: number;
+}
+
 const Result = ({ answers }: { answers: ResultAnswers }) => {
   const colors = ['#4CAF50', '#FFC107', '#2196F3', '#666666'];
   const titles = ['정부의존성', '이념성', '보수성', '정부불신'];
@@ -78,12 +84,11 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
       resultid = 6;
       break;
     case 'GLLL':
-      resultid = -1;
-      alert('정신병');
+      resultid = 12;
       break;
     case 'GLLG':
-      resultid = -1;
-      alert('정신병');
+      resultid = 5;
+      alert('엄...');
       break;
     case 'GLGL':
       resultid = 5;
@@ -208,11 +213,21 @@ const DetailsContainer = styled.div`
   border-radius: 8px;
 `;
 
-interface BarProps {
-  color: string;
-  width: number;
-  max: number;
-}
+const Detail = styled.div`
+  display: flex;
+  padding: 15px 20px;
+  flex-direction: column;
+  align-items: center;
+  width: 18%;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+`;
+
+const DetailTitle = styled.h3`
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+`;
 
 const BarLabel = styled.div`
   display: flex;
@@ -246,22 +261,6 @@ const ScoreLabel = styled.div`
   color: #666;
   flex-shrink: 0;
   white-space: nowrap;
-`;
-
-const Detail = styled.div`
-  display: flex;
-  padding: 15px 20px;
-  flex-direction: column;
-  align-items: center;
-  min-width: 200px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-`;
-
-const DetailTitle = styled.h3`
-  color: #333;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
 `;
 
 const ToggleButton = styled.button`
