@@ -1,11 +1,8 @@
-import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { SpeechBubble } from '@components/common/figure';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
-import icoNews from '@images/ico_news.png';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
@@ -37,7 +34,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyword },
     };
   });
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -61,7 +58,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function KeyExplanation({ data }: pageProps) {
   // 현재 클릭된 뉴스
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
   const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
   const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
@@ -72,7 +68,6 @@ export default function KeyExplanation({ data }: pageProps) {
 
   useEffect(() => {
     if (data) {
-      setCurKeyword(data.keyword);
       setCurPreviews(data.previews);
     }
   }, [data]);
@@ -80,7 +75,7 @@ export default function KeyExplanation({ data }: pageProps) {
   const fetchNewsPreviews = useCallback(async () => {
     const Previews: Array<Preview> = await NewsRepository.getPreviews(
       curPage.current,
-      curKeyword?.keyword,
+      data.keyword?.keyword,
     );
     if (Previews.length === 0) {
       curPage.current = -1;
@@ -89,7 +84,7 @@ export default function KeyExplanation({ data }: pageProps) {
     curPage.current += 20;
     const newPreviews = curPreviews.concat(Previews);
     setCurPreviews(newPreviews);
-  }, [curPage, curKeyword, curPreviews]);
+  }, [curPage, curPreviews]);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
@@ -127,10 +122,10 @@ export default function KeyExplanation({ data }: pageProps) {
       </div>
       <KeywordWrapper>
         <ExplanationComp
-          id={curKeyword?._id! ?? ''}
-          category={curKeyword?.category ?? 'etc'}
-          keyword={curKeyword?.keyword! ?? ''}
-          explain={curKeyword?.explain ?? ''}
+          id={data.keyword?._id! ?? ''}
+          category={data.keyword?.category ?? 'etc'}
+          keyword={data.keyword?.keyword! ?? ''}
+          explain={data.keyword?.explain ?? ''}
         />
       </KeywordWrapper>
       <div className="main-contents">

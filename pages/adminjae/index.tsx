@@ -44,9 +44,9 @@ export default function NewsPage(props: pageProps) {
   /**
    * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
    */
-  const showNewsContent = async (id: string) => {
+  const showNewsContent = useCallback(async (id: string) => {
     router.push(`/news/${id}`);
-  };
+  }, []);
 
   return (
     <Wrapper>
