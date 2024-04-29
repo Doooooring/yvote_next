@@ -12,12 +12,11 @@ type setCurPreviews = (curPreviews: curPreviews) => void;
 type KeyName = Keyword['keyword'];
 
 interface SearchBoxProps {
-  curPage: MutableRefObject<number>;
-  setSubmitWord: (submitWord: string) => void;
-  setCurPreviews: setCurPreviews;
+  page: number;
+  fetchPreviews: (filter : string | null) => Promise<void>;
 }
 
-export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: SearchBoxProps) {
+export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
   // 현재 검색어
   const [searchWord, setSearchWord] = useState<string>('');
   // 현재 검색어 기반 연관 검색어 목록
@@ -51,14 +50,7 @@ export default function SearchBox({ curPage, setSubmitWord, setCurPreviews }: Se
         setSearchWord(relatedWords[curFocusOnWord]);
       }
       // 새로운 검색어로 조회하기에 기존 페이지 초기화
-      const newsList = await NewsRepository.getPreviews(0, searchWord);
-      curPage.current = 20;
-      if (newsList.length !== 0) {
-        setSubmitWord(searchWord);
-        setCurPreviews(newsList);
-      } else {
-        alert('키워드가 존재하지 않습니다');
-      }
+      fetchPreviews(searchWord === "" ? null : searchWord);
     },
     [],
   );

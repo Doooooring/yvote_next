@@ -1,34 +1,41 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
 import { useUpdateNewsPreviews } from './newsList.tools';
+import { useRouter } from 'next/router';
 
 interface NewsListProps {
   page: number;
   previews: Preview[];
-  fetchNewsPreviews: () => Promise<void>;
-  showNewsContent: (id: string) => void;
+  isRequesting: boolean;
+  fetchPreviews: (filter: string | null | undefined) => Promise<void>;
 }
 
 export default function NewsList({
   page,
   previews,
-  fetchNewsPreviews,
-  showNewsContent,
+  isRequesting,
+  fetchPreviews,
 }: NewsListProps) {
+  const navigate = useRouter();
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
 
-  const [isRequesting, updateNewsPreviews] = useUpdateNewsPreviews(fetchNewsPreviews);
+  /**
+   * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
+   */
+  const showNewsContent = useCallback(async (id: string) => {
+    navigate.push(`/news/${id}`);
+  }, []);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
     //요청 중이라면 보내지 않기
     if (page != -1 && isOnScreen === true && isRequesting === false) {
-      updateNewsPreviews();
+      fetchPreviews(undefined);
     } else {
       return;
     }
@@ -38,7 +45,7 @@ export default function NewsList({
     <>
       <Wrapper>
         {previews.map((preview, idx) => (
-          <div className="preview-wrapper" key={preview._id}>
+          <div className="preview-wrapper" key={idx}>
             <PreviewBox preview={preview} click={showNewsContent} />
           </div>
         ))}
