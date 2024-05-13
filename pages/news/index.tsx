@@ -5,7 +5,7 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchNewsPreviews';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 type curPreviewsList = Preview[];
@@ -27,6 +27,10 @@ export default function NewsPage(props: pageProps) {
   
   const {page, isRequesting, isError, previews, fetchPreviews} = useFetchNewsPreviews(20);
 
+  useEffect(() => {
+    fetchPreviews();
+  }, [])
+
   return (
     <Wrapper>
       <div className="search-wrapper">
@@ -41,7 +45,7 @@ export default function NewsPage(props: pageProps) {
         <div className="main-contents-body">
           <NewsList
             page={page}
-            previews={previews}
+            previews={previews.length == 0 ? props.data : previews}
             isRequesting={isRequesting}
             fetchPreviews={fetchPreviews}
           />
