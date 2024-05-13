@@ -10,6 +10,7 @@ import { News, Preview } from '@utils/interface/news';
 
 import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchNewsPreviews';
 
 type curPreviewsList = Preview[];
 type curClicked = undefined | News['_id'];
@@ -64,27 +65,12 @@ export default function KeyExplanation({ data }: pageProps) {
 
   const newsWrapper = useRef<HTMLDivElement>(null);
 
-  const curPage = useRef<number>(20);
+  const {page, isRequesting, isError, previews, fetchPreviews} = useFetchNewsPreviews(0);
 
   useEffect(() => {
-    if (data) {
-      setCurPreviews(data.previews);
-    }
-  }, [data]);
+    fetchPreviews(data.keyword.keyword);
+  }, [])
 
-  const fetchNewsPreviews = useCallback(async () => {
-    const Previews: Array<Preview> = await NewsRepository.getPreviews(
-      curPage.current,
-      data.keyword?.keyword,
-    );
-    if (Previews.length === 0) {
-      curPage.current = -1;
-      return;
-    }
-    curPage.current += 20;
-    const newPreviews = curPreviews.concat(Previews);
-    setCurPreviews(newPreviews);
-  }, [curPage, curPreviews]);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
@@ -151,11 +137,11 @@ export default function KeyExplanation({ data }: pageProps) {
             </div>
           ) : (
             <NewsList
-              page={curPage.current ?? 0}
-              previews={curPreviews}
-              fetchNewsPreviews={fetchNewsPreviews}
-              showNewsContent={toggleNewsContentView}
-            />
+            page={page}
+            previews={previews}
+            isRequesting={isRequesting}
+            fetchPreviews={fetchPreviews}
+          />
           )}
         </div>
       </div>
