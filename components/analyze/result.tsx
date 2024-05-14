@@ -84,7 +84,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
       resultid = 6;
       break;
     case 'GLLL':
-      resultid = 12;
+      resultid = 11;
       break;
     case 'GLLG':
       resultid = 5;

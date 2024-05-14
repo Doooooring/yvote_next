@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import typesData from './types.json';
+import ImageFallback from '@components/common/imageFallback';
 
 interface Section {
   heading?: string;
@@ -25,7 +26,17 @@ const Types: React.FC<TypesProps> = ({ id }) => {
     <Wrapper>
       {type ? (
         <div>
-          <h1>{type.title}</h1>
+          <div className="header">
+            <div className="img-wrapper">
+              <ImageFallback
+                src={`/assets/img/test_${id}.svg`}
+                width="100%"
+                height="100%"
+                fill={true}
+              />
+            </div>
+            <h1>{type.title}</h1>
+          </div>
           {type.content.map((content, index) => (
             <p key={index}>{content}</p>
           ))}
@@ -38,7 +49,7 @@ const Types: React.FC<TypesProps> = ({ id }) => {
           ))}
         </div>
       ) : (
-        <p>Type with ID {id} not found.</p>
+        <p>Error : result not found.</p>
       )}
     </Wrapper>
   );
@@ -55,7 +66,7 @@ const Wrapper = styled.div`
   height: auto;
   h1 {
     font: inherit;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 550;
     margin: 10px 0;
     display: inline-block;
@@ -74,5 +85,19 @@ const Wrapper = styled.div`
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.6rem;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+  }
+  .img-wrapper {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 10px 0 0;
+    padding: 0;
+    flex-shrink: 0;
   }
 `;
