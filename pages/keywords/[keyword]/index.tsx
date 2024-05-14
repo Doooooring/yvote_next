@@ -10,7 +10,7 @@ import { News, Preview } from '@utils/interface/news';
 
 import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useFetchNewsPreviews } from '@utils/hook/useFetchNewsPreviews';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 
 type curPreviewsList = Preview[];
 type curClicked = undefined | News['_id'];
@@ -60,12 +60,11 @@ export default function KeyExplanation({ data }: pageProps) {
   // 현재 클릭된 뉴스
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
   const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
   const newsWrapper = useRef<HTMLDivElement>(null);
 
-  const {page, isRequesting, isError, previews, fetchPreviews} = useFetchNewsPreviews(0);
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
 
   useEffect(() => {
     fetchPreviews(data.keyword.keyword);
@@ -88,19 +87,7 @@ export default function KeyExplanation({ data }: pageProps) {
     setCurClicked(undefined);
     setVoteHistory(null);
   }, []);
-
-  const toggleNewsContentView = useCallback(
-    (id: string) => {
-      if (curClicked === id) {
-        setCurClicked(undefined);
-        setVoteHistory(null);
-      } else {
-        showNewsContent(id);
-      }
-    },
-    [curClicked],
-  );
-
+  
   return (
     <Wrapper ref={newsWrapper}>
       <div className="search-wrapper">
@@ -138,9 +125,10 @@ export default function KeyExplanation({ data }: pageProps) {
           ) : (
             <NewsList
             page={page}
-            previews={previews}
+            previews={previews.length == 0 ? data.previews : previews}
             isRequesting={isRequesting}
-            fetchPreviews={fetchPreviews}
+            fetchPreviews={fetchNextPreviews}
+            showNewsContent={showNewsContent}
           />
           )}
         </div>

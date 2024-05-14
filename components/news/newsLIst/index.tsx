@@ -12,6 +12,7 @@ interface NewsListProps {
   previews: Preview[];
   isRequesting: boolean;
   fetchPreviews: (filter: string | null | undefined) => Promise<void>;
+  showNewsContent : (id : string) => void;
 }
 
 export default function NewsList({
@@ -19,17 +20,11 @@ export default function NewsList({
   previews,
   isRequesting,
   fetchPreviews,
+  showNewsContent
 }: NewsListProps) {
-  const navigate = useRouter();
+
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
-
-  /**
-   * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
-   */
-  const showNewsContent = useCallback(async (id: string) => {
-    navigate.push(`/news/${id}`);
-  }, []);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {

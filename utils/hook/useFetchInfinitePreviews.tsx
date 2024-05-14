@@ -11,15 +11,9 @@ export const useFetchNewsPreviews = (limit : number) => {
     const [previews, setPreviews] = useState<Preview[]>([]);
 
     const fetchPreviews  = async (filter? : string | null) => {
-        let arr = previews;
-
-        if (filter === prevFilter.current && page.current === -1) return;
-
-        if (filter && filter != prevFilter.current) {
-            prevFilter.current = filter;
-            page.current = 0;
-            arr = [];
-        }
+        let arr : Preview[] = [];
+        prevFilter.current = filter;
+        page.current = 0;
 
         try {   
             setIsRequesting(true);
@@ -30,7 +24,28 @@ export const useFetchNewsPreviews = (limit : number) => {
                 return;
             }
             
-            page.current += 20;
+            page.current += limit;
+            setPreviews([...arr, ...datas]);
+        } catch (e) {
+            setIsError(true)
+        } finally {
+            setIsRequesting(false);
+        }
+    }
+
+    const fetchNextPreviews  = async () => {
+        let arr = previews;
+        if (page.current === -1) return;
+        try {   
+            setIsRequesting(true);
+            const datas  : Array<Preview> = await NewsRepository.getPreviews( page.current, prevFilter.current)
+
+            if (datas.length === 0) {
+                page.current = -1;
+                return;
+            }
+            
+            page.current += limit;
             setPreviews([...arr, ...datas]);
         } catch (e) {
             setIsError(true)
@@ -44,6 +59,7 @@ export const useFetchNewsPreviews = (limit : number) => {
         isRequesting,
         isError,
         previews,
-        fetchPreviews
+        fetchPreviews,
+        fetchNextPreviews
     }
 }

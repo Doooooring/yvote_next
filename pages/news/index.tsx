@@ -1,7 +1,7 @@
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
-import { useFetchNewsPreviews } from '@utils/hook/useFetchNewsPreviews';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -23,13 +23,16 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 };
 
 export default function NewsPage(props: pageProps) {
-  const router = useRouter();
-  
-  const {page, isRequesting, isError, previews, fetchPreviews} = useFetchNewsPreviews(20);
+  const navigate = useRouter();
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
 
   useEffect(() => {
     fetchPreviews();
   }, [])
+
+  const showNewsContent = useCallback(async (id: string) => {
+    navigate.push(`/news/${id}`);
+  }, []);
 
   return (
     <Wrapper>
@@ -47,7 +50,8 @@ export default function NewsPage(props: pageProps) {
             page={page}
             previews={previews.length == 0 ? props.data : previews}
             isRequesting={isRequesting}
-            fetchPreviews={fetchPreviews}
+            fetchPreviews={fetchNextPreviews}
+            showNewsContent={showNewsContent}
           />
         </div>
       </div>
