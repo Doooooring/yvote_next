@@ -17,7 +17,7 @@ interface pageProps {
 
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
-  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20, true);
 
   useEffect(() => {
     fetchPreviews();
@@ -29,26 +29,26 @@ export default function NewsPage(props: pageProps) {
 
   return (
     <Wrapper>
-    <div className="search-wrapper">
-      <SearchBox
-        page={page}
-        fetchPreviews={fetchPreviews}
-      />
-      {/* <SpeechBubble /> */}
-    </div>
-    <div className="main-contents">
-      <div className="main-header-wrapper"></div>
-      <div className="main-contents-body">
-        <NewsList
+      <div className="search-wrapper">
+        <SearchBox
           page={page}
-          previews={previews}
-          isRequesting={isRequesting}
-          fetchPreviews={fetchNextPreviews}
-          showNewsContent={showNewsContent}
+          fetchPreviews={fetchPreviews}
         />
+        {/* <SpeechBubble /> */}
       </div>
-    </div>
-  </Wrapper>
+      <div className="main-contents">
+        <div className="main-header-wrapper"></div>
+        <div className="main-contents-body">
+          <NewsList
+            page={page}
+            previews={ previews}
+            isRequesting={isRequesting}
+            fetchPreviews={fetchNextPreviews}
+            showNewsContent={showNewsContent}
+          />
+        </div>
+      </div>
+    </Wrapper>
   );
 }
 

@@ -2,7 +2,7 @@ import { Preview } from "@utils/interface/news";
 import NewsRepository from '@repositories/news';
 import { MutableRefObject, useRef, useState } from "react";
 
-export const useFetchNewsPreviews = (limit : number) => {
+export const useFetchNewsPreviews = (limit : number, isAdmin : boolean = false) => {
     let page = useRef(0);
     let prevFilter : MutableRefObject<string | null | undefined> = useRef(null);
 
@@ -17,8 +17,7 @@ export const useFetchNewsPreviews = (limit : number) => {
 
         try {   
             setIsRequesting(true);
-            const datas  : Array<Preview> = await NewsRepository.getPreviews( page.current, prevFilter.current)
-
+            const datas  : Array<Preview> = isAdmin ? await NewsRepository.getPreviewsAdmin( page.current, prevFilter.current ?? '') : await NewsRepository.getPreviews( page.current, prevFilter.current);
             if (datas.length === 0) {
                 page.current = -1;
                 return;
