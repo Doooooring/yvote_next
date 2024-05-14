@@ -3,6 +3,7 @@ import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { News, Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import styled from 'styled-components';
 
 interface PreviewBoxProps {

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpeechBubble } from '@components/common/figure';
@@ -7,6 +7,7 @@ import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 
 type curPreviewsList = Preview[];
 
@@ -15,61 +16,39 @@ interface pageProps {
 }
 
 export default function NewsPage(props: pageProps) {
-  const router = useRouter();
+  const navigate = useRouter();
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
 
-  // 검색어 바인딩
-  const [submitWord, setSubmitWord] = useState<string>('');
-  // 현재 보여지고 있는 뉴스 블록 리스트
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
-  // 현재 보여지고 있는 뉴스 컨텐츠에 대한 투표 기록 (블록 클릭 시 API 조회를 통해 받아옴)
-  const curPage = useRef<number>(0);
+  useEffect(() => {
+    fetchPreviews();
+  }, [])
 
-  /**
-   * 뉴스 블록들 조회 및 현재 페이지 업데이트
-   */
-  const fetchNewsPreviews = useCallback(async () => {
-    const Previews: Array<Preview> = await NewsRepository.getPreviewsAdmin(
-      curPage.current,
-      submitWord,
-    );
-    if (Previews.length === 0) {
-      curPage.current = -1;
-      return;
-    }
-    curPage.current += 20;
-    const newPreviews = curPreviews.concat(Previews);
-    setCurPreviews(newPreviews);
-  }, [curPage, curPreviews]);
-
-  /**
-   * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
-   */
-  const showNewsContent = async (id: string) => {
-    router.push(`/news/${id}`);
-  };
+  const showNewsContent = useCallback(async (id: string) => {
+    navigate.push(`/news/${id}`);
+  }, []);
 
   return (
     <Wrapper>
-      <div className="search-wrapper">
-        <SearchBox
-          curPage={curPage}
-          setSubmitWord={setSubmitWord}
-          setCurPreviews={setCurPreviews}
+    <div className="search-wrapper">
+      <SearchBox
+        page={page}
+        fetchPreviews={fetchPreviews}
+      />
+      {/* <SpeechBubble /> */}
+    </div>
+    <div className="main-contents">
+      <div className="main-header-wrapper"></div>
+      <div className="main-contents-body">
+        <NewsList
+          page={page}
+          previews={previews}
+          isRequesting={isRequesting}
+          fetchPreviews={fetchNextPreviews}
+          showNewsContent={showNewsContent}
         />
-        <SpeechBubble />
       </div>
-      <div className="main-contents">
-        <div className="main-header-wrapper"></div>
-        <div className="main-contents-body">
-          <NewsList
-            page={curPage.current ?? 0}
-            previews={curPreviews}
-            fetchNewsPreviews={fetchNewsPreviews}
-            showNewsContent={showNewsContent}
-          />
-        </div>
-      </div>
-    </Wrapper>
+    </div>
+  </Wrapper>
   );
 }
 

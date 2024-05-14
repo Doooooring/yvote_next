@@ -1,10 +1,11 @@
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 type curPreviewsList = Preview[];
@@ -22,43 +23,23 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 };
 
 export default function NewsPage(props: pageProps) {
-  const router = useRouter();
+  const navigate = useRouter();
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
 
-  // 검색어 바인딩
-  const [submitWord, setSubmitWord] = useState<string>('');
-  // 현재 보여지고 있는 뉴스 블록 리스트
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>(props.data);
-  // 현재 보여지고 있는 뉴스 컨텐츠에 대한 투표 기록 (블록 클릭 시 API 조회를 통해 받아옴)
-  const curPage = useRef<number>(20);
+  useEffect(() => {
+    fetchPreviews();
+  }, [])
 
-  /**
-   * 뉴스 블록들 조회 및 현재 페이지 업데이트
-   */
-  const fetchNewsPreviews = useCallback(async () => {
-    const Previews: Array<Preview> = await NewsRepository.getPreviews(curPage.current, submitWord);
-    if (Previews.length === 0) {
-      curPage.current = -1;
-      return;
-    }
-    curPage.current += 20;
-    const newPreviews = curPreviews.concat(Previews);
-    setCurPreviews(newPreviews);
-  }, [curPage, curPreviews]);
-
-  /**
-   * 뉴스 블록 클릭시 해당 뉴스 상세 내용 조회 및 업데이트
-   */
   const showNewsContent = useCallback(async (id: string) => {
-    router.push(`/news/${id}`);
+    navigate.push(`/news/${id}`);
   }, []);
 
   return (
     <Wrapper>
       <div className="search-wrapper">
         <SearchBox
-          curPage={curPage}
-          setSubmitWord={setSubmitWord}
-          setCurPreviews={setCurPreviews}
+          page={page}
+          fetchPreviews={fetchPreviews}
         />
         {/* <SpeechBubble /> */}
       </div>
@@ -66,9 +47,10 @@ export default function NewsPage(props: pageProps) {
         <div className="main-header-wrapper"></div>
         <div className="main-contents-body">
           <NewsList
-            page={curPage.current ?? 0}
-            previews={curPreviews}
-            fetchNewsPreviews={fetchNewsPreviews}
+            page={page}
+            previews={previews.length == 0 ? props.data : previews}
+            isRequesting={isRequesting}
+            fetchPreviews={fetchNextPreviews}
             showNewsContent={showNewsContent}
           />
         </div>

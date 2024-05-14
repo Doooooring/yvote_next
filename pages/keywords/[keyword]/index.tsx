@@ -1,11 +1,8 @@
-import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { SpeechBubble } from '@components/common/figure';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
-import icoNews from '@images/ico_news.png';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
@@ -13,6 +10,7 @@ import { News, Preview } from '@utils/interface/news';
 
 import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 
 type curPreviewsList = Preview[];
 type curClicked = undefined | News['_id'];
@@ -46,6 +44,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     id,
     0,
   );
+
   return {
     props: {
       data: {
@@ -61,35 +60,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
 export default function KeyExplanation({ data }: pageProps) {
   // 현재 클릭된 뉴스
   const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [curKeyword, setCurKeyword] = useState<KeywordOnDetail>();
   const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
-  const [curPreviews, setCurPreviews] = useState<curPreviewsList>([]);
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
   const newsWrapper = useRef<HTMLDivElement>(null);
 
-  const curPage = useRef<number>(20);
+  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
 
   useEffect(() => {
-    if (data) {
-      setCurKeyword(data.keyword);
-      setCurPreviews(data.previews);
-    }
-  }, [data]);
+    fetchPreviews(data.keyword.keyword);
+  }, [])
 
-  const fetchNewsPreviews = useCallback(async () => {
-    const Previews: Array<Preview> = await NewsRepository.getPreviews(
-      curPage.current,
-      curKeyword?.keyword,
-    );
-    if (Previews.length === 0) {
-      curPage.current = -1;
-      return;
-    }
-    curPage.current += 20;
-    const newPreviews = curPreviews.concat(Previews);
-    setCurPreviews(newPreviews);
-  }, [curPage, curKeyword, curPreviews]);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
@@ -108,18 +89,6 @@ export default function KeyExplanation({ data }: pageProps) {
     setVoteHistory(null);
   }, []);
 
-  const toggleNewsContentView = useCallback(
-    (id: string) => {
-      if (curClicked === id) {
-        setCurClicked(undefined);
-        setVoteHistory(null);
-      } else {
-        showNewsContent(id);
-      }
-    },
-    [curClicked],
-  );
-
   return (
     <Wrapper ref={newsWrapper}>
       <div className="search-wrapper">
@@ -127,10 +96,10 @@ export default function KeyExplanation({ data }: pageProps) {
       </div>
       <KeywordWrapper>
         <ExplanationComp
-          id={curKeyword?._id! ?? ''}
-          category={curKeyword?.category ?? 'etc'}
-          keyword={curKeyword?.keyword! ?? ''}
-          explain={curKeyword?.explain ?? ''}
+          id={data.keyword?._id! ?? ''}
+          category={data.keyword?.category ?? 'etc'}
+          keyword={data.keyword?.keyword! ?? ''}
+          explain={data.keyword?.explain ?? ''}
         />
       </KeywordWrapper>
       <div className="main-contents">
@@ -156,11 +125,12 @@ export default function KeyExplanation({ data }: pageProps) {
             </div>
           ) : (
             <NewsList
-              page={curPage.current ?? 0}
-              previews={curPreviews}
-              fetchNewsPreviews={fetchNewsPreviews}
-              showNewsContent={toggleNewsContentView}
-            />
+            page={page}
+            previews={previews.length == 0 ? data.previews : previews}
+            isRequesting={isRequesting}
+            fetchPreviews={fetchNextPreviews}
+            showNewsContent={showNewsContent}
+          />
           )}
         </div>
       </div>
