@@ -28,14 +28,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   });
   return {
     paths,
-    fallback: true,
+    fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news as string;
   const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
-  console.log(news.votes);
 
   return {
     props: {

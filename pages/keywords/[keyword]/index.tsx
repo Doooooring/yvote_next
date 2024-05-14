@@ -35,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyword },
     };
   });
-  return { paths, fallback: true };
+  return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -44,6 +44,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     id,
     0,
   );
+
   return {
     props: {
       data: {
@@ -87,7 +88,7 @@ export default function KeyExplanation({ data }: pageProps) {
     setCurClicked(undefined);
     setVoteHistory(null);
   }, []);
-  
+
   return (
     <Wrapper ref={newsWrapper}>
       <div className="search-wrapper">
