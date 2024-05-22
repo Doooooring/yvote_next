@@ -11,7 +11,7 @@ interface NewsListProps {
   page: number;
   previews: Preview[];
   isRequesting: boolean;
-  fetchPreviews: (filter: string | null | undefined) => Promise<void>;
+  fetchPreviews: () => Promise<void>;
   showNewsContent : (id : string) => void;
 }
 
@@ -30,7 +30,7 @@ export default function NewsList({
   useEffect(() => {
     //요청 중이라면 보내지 않기
     if (page != -1 && isOnScreen === true && isRequesting === false) {
-      fetchPreviews(undefined);
+      fetchPreviews();
     } else {
       return;
     }

@@ -159,7 +159,7 @@ const Wrapper = styled.div`
       margin: 0;
       font-size: 13px;
       min-height: 45px;
-      line-height: 2;
+      line-height: 2.25;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;

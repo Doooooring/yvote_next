@@ -41,7 +41,7 @@ export default function NewsPage(props: pageProps) {
         <div className="main-contents-body">
           <NewsList
             page={page}
-            previews={ previews}
+            previews={previews}
             isRequesting={isRequesting}
             fetchPreviews={fetchNextPreviews}
             showNewsContent={showNewsContent}
