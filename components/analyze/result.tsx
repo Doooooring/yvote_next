@@ -87,8 +87,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
       resultid = 11;
       break;
     case 'GLLG':
-      resultid = 5;
-      alert('엄...');
+      resultid = 12;
       break;
     case 'GLGL':
       resultid = 5;
@@ -169,7 +168,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
           ))}
         </DetailsContainer>
       )}
-      <Types id={resultid}></Types>
+      <Types id={12}></Types>
     </Wrapper>
   );
 };
