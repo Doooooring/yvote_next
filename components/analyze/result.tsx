@@ -168,7 +168,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
           ))}
         </DetailsContainer>
       )}
-      <Types id={12}></Types>
+      <Types id={resultid}></Types>
     </Wrapper>
   );
 };
