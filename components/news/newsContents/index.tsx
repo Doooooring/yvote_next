@@ -166,7 +166,7 @@ export default function NewsContent({
                   {newsContent.keywords?.map((keyword) => {
                     return (
                       <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
-                        {`#${keyword}`}
+                        {`# ${keyword}`}
                       </p>
                     );
                   })}
@@ -325,7 +325,7 @@ const BodyLeft = styled.div<BodyProps>`
   min-height: 1000px;
   background-color: white;
   border-radius: 5px;
-      border: 1px solid rgba(200, 200, 200, 0.5);
+  border: 1px solid rgba(200, 200, 200, 0.5);
   box-shadow: 0 0 35px -30px;
   position: relative;
   padding-bottom: 80px;
@@ -408,13 +408,19 @@ const BodyLeft = styled.div<BodyProps>`
       .keyword-wrapper {
         line-height: 1;
         .keyword {
-          display: inline;
+          display: inline-block;
           text-decoration: none;
-          font-size: 12px;
+          font-size: 15px;
+          font-weight : 700;
+          color: white;
           margin: 0;
           margin-left: 3px;
           margin-right: 6px;
-          color: #3a84e5;
+          margin-bottom: 3px;
+          padding : 0.25rem 0.25rem;
+          background-color : rgb(133, 200, 224);
+          border: 1px solid rgba(133, 200, 224, 0.2);
+          border-radius : 5px;
           cursor: pointer;
         }
       }
