@@ -158,7 +158,7 @@ const Wrapper = styled.div`
       color: #626060;
       margin: 0;
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.75;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
