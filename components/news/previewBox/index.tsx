@@ -100,7 +100,6 @@ const Wrapper = styled.div`
 
   .head-wrapper {
     -webkit-text-size-adjust: none;
-    color: #666;
     text-align: left;
     margin: 0;
     padding: 0;
@@ -117,7 +116,7 @@ const Wrapper = styled.div`
     }
     p {
       -webkit-text-size-adjust: none;
-      color: #666;
+      color: rgb(6,6,6);
       text-align: left;
       padding: 0;
       padding-right: 2px;
@@ -155,7 +154,7 @@ const Wrapper = styled.div`
       font: inherit;
       font-weight: 300;
       vertical-align: baseline;
-      color: #626060;
+      color: rgb(30, 30, 30);
       margin: 0;
       font-size: 14px;
       line-height: 1.7;
