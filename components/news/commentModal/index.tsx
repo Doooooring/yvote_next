@@ -147,14 +147,14 @@ export default function CommentModal({
           </div>
           {curComment === null ? (
             <div className="modal-body">
-              {isRequesting ? 
-                <LoadingWrapper>
-                  <LoadingCommon comment=""  fontColor="black" />
-                </LoadingWrapper>
-                : 
-                <></>
-              }
               <div className="modal-list">
+                {isRequesting ? 
+                  <LoadingWrapper>
+                    <LoadingCommon comment=""  fontColor="black" />
+                  </LoadingWrapper>
+                  : 
+                  <></>
+                }
                 {curComments.map((comment, idx) => {
                   return (
                     <div
@@ -321,11 +321,11 @@ const Wrapper = styled.div`
     }
     div.modal-body {
       padding-top: 1rem;
-      position : relative;
       div.modal-list {
         display: flex;
         flex-direction: column;
         gap: 12px;
+        position : relative;
         div.body-block {
           height: 60px;
           padding-left: 2rem;
