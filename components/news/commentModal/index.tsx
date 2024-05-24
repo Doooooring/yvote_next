@@ -1,4 +1,5 @@
 import ImageFallback from '@components/common/imageFallback';
+import LoadingCommon from '@components/common/loading';
 import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
 import arrowLeft from '@images/grey_arrow_left.png';
@@ -61,7 +62,7 @@ export default function CommentModal({
   }, []);
 
   const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
-
+  const [isRequesting, setIsRequesting] = useState<boolean>(false);
   /** 대표하는 이름이 변경되는 경우가 존재, 디비를 바꾸는 것이
    * 가장 바람직하나 일단은 아래와 같은 필터링으로 처리
    */
@@ -75,17 +76,31 @@ export default function CommentModal({
 
   const curPage = useRef(0);
 
+  async function fetchNewsComment(id: string, type: commentType, page: number) {
+    try {
+      setIsRequesting(true);
+      const response = await NewsRepository.getNewsComment(id, type, page);
+      setCurComments(response.comments);
+      if (response.comments === null || response.comments.length == 0) {
+      } else {
+        setCurComments(response.comments);
+        curPage.current += 10;
+      }
+    } catch (e)
+    {
+      console.log(e);
+    } finally {
+      setIsRequesting(false);
+    }
+  }
+
   useEffect(() => {
     if (comment === null) {
       setCurComments([]);
       curPage.current = 0;
       return;
     }
-    async function toAsync() {
-      const response = await NewsRepository.getNewsComment(id, comment!, curPage.current);
-      setCurComments(response.comments);
-    }
-    toAsync();
+    fetchNewsComment(id, comment!, curPage.current);
   }, [comment]);
 
   const getPageBefore = async () => {
@@ -95,12 +110,7 @@ export default function CommentModal({
     curPage.current -= 10;
   };
   const getPageAfter = async () => {
-    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current + 10);
-    if (response.comments === null || response.comments.length == 0) {
-    } else {
-      setCurComments(response.comments);
-      curPage.current += 10;
-    }
+    fetchNewsComment(id, comment!, curPage.current);
   };
 
   return useObserver(() => (
@@ -137,6 +147,13 @@ export default function CommentModal({
           </div>
           {curComment === null ? (
             <div className="modal-body">
+              {isRequesting ? 
+                <LoadingWrapper>
+                  <LoadingCommon comment=""  fontColor="black" />
+                </LoadingWrapper>
+                : 
+                <></>
+              }
               <div className="modal-list">
                 {curComments.map((comment, idx) => {
                   return (
@@ -304,6 +321,7 @@ const Wrapper = styled.div`
     }
     div.modal-body {
       padding-top: 1rem;
+      position : relative;
       div.modal-list {
         display: flex;
         flex-direction: column;
@@ -389,3 +407,12 @@ const Wrapper = styled.div`
     }
   }
 `;
+
+const LoadingWrapper = styled.div`
+  width : 100%;
+  height : 100%;
+  position : absolute;
+  top : 0;
+  left : 0;
+  backdrop-filter: blur(3px);
+  `
