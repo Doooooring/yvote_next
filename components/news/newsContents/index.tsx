@@ -387,6 +387,9 @@ const BodyLeft = styled.div<BodyProps>`
             margin: 0.1em 0 -0.1em 0;
           }
         }
+        span:hover {
+          cursor: pointer;
+        }
       }
 
       .summary {
@@ -410,17 +413,16 @@ const BodyLeft = styled.div<BodyProps>`
         .keyword {
           display: inline-block;
           text-decoration: none;
-          font-size: 15px;
-          font-weight : 700;
-          color: white;
+          font-size: 11px;
+          font-weight : 500;
+          color: rgb(120, 120, 120);
           margin: 0;
           margin-left: 3px;
           margin-right: 6px;
-          margin-bottom: 3px;
+          margin-bottom: 4px;
           padding : 0.25rem 0.25rem;
-          background-color : rgb(133, 200, 224);
-          border: 1px solid rgba(133, 200, 224, 0.2);
-          border-radius : 5px;
+          background-color : #f1f2f5;
+          border-radius : 2px;
           cursor: pointer;
         }
       }
