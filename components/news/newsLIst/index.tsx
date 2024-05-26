@@ -1,18 +1,16 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
-import { useUpdateNewsPreviews } from './newsList.tools';
-import { useRouter } from 'next/router';
 
 interface NewsListProps {
   page: number;
   previews: Preview[];
   isRequesting: boolean;
   fetchPreviews: () => Promise<void>;
-  showNewsContent : (id : string) => void;
+  showNewsContent: (id: string) => void;
 }
 
 export default function NewsList({
@@ -20,9 +18,8 @@ export default function NewsList({
   previews,
   isRequesting,
   fetchPreviews,
-  showNewsContent
+  showNewsContent,
 }: NewsListProps) {
-
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
 

@@ -5,7 +5,7 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 type curPreviewsList = Preview[];
@@ -24,11 +24,12 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
-  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
+  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
+    useFetchNewsPreviews(20);
 
   useEffect(() => {
     fetchPreviews();
-  }, [])
+  }, []);
 
   const showNewsContent = useCallback(async (id: string) => {
     navigate.push(`/news/${id}`);
@@ -37,14 +38,11 @@ export default function NewsPage(props: pageProps) {
   return (
     <Wrapper>
       <div className="search-wrapper">
-        <SearchBox
-          page={page}
-          fetchPreviews={fetchPreviews}
-        />
+        <SearchBox page={page} fetchPreviews={fetchPreviews} />
         {/* <SpeechBubble /> */}
       </div>
       <div className="main-contents">
-        <div className="main-header-wrapper"></div>
+        {/* <div className="main-header-wrapper"></div> */}
         <div className="main-contents-body">
           <NewsList
             page={page}
