@@ -1,6 +1,6 @@
+import { ResultAnswers } from '@components/analyze/result';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ResultAnswers } from '@components/analyze/result';
 import typedquestions from './questions.json';
 
 interface Question {
@@ -138,12 +138,12 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
 export default Questionnaire;
 
 const Wrapper = styled.div`
-  padding-bottom : 200px;
+  padding-bottom: 200px;
 
   .category-label {
     display: inline-block;
     padding: 0.1rem 0.6rem;
-    line-height : 1.8rem;
+    line-height: 1.8rem;
     text-align: center;
     border-radius: 4px;
     margin: 40px auto 20px;
@@ -192,12 +192,13 @@ const Wrapper = styled.div`
     transition: background-color 0.3s;
     background-color: white;
     &:hover {
-      color : black;
+      color: black;
     }
     &:disabled {
       background-color: #ccc;
       color: #666;
       cursor: default;
       opacity: 0.5;
+    }
   }
 `;
