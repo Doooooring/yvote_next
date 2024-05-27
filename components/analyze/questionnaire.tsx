@@ -28,7 +28,7 @@ const questions: Question[] = typedquestions as Question[];
 const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   const batchSize = 3;
   const [currentBatchStartIndex, setCurrentBatchStartIndex] = useState(0);
-  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120)].map(() => 3));
+  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120)].map(() => -1));
 
   const handleAnswer = (index: number, answer: number) => {
     const newAnswers = [...answers];
