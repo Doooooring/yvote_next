@@ -1,45 +1,33 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
 
 interface NewsListProps {
   page: number;
   previews: Preview[];
-  curClicked: string | undefined;
-  fetchNewsPreviews: () => Promise<void>;
+  isRequesting: boolean;
+  fetchPreviews: () => Promise<void>;
   showNewsContent: (id: string) => void;
 }
 
 export default function NewsList({
   page,
   previews,
-  curClicked,
-  fetchNewsPreviews,
+  isRequesting,
+  fetchPreviews,
   showNewsContent,
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const isOnScreen = useOnScreen(elementRef);
-  const [isRequesting, setIsRequesting] = useState<boolean>(false);
-
-  const getNewsContent = async () => {
-    setIsRequesting(true);
-    try {
-      await fetchNewsPreviews();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRequesting(false);
-    }
-  };
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
     //요청 중이라면 보내지 않기
     if (page != -1 && isOnScreen === true && isRequesting === false) {
-      getNewsContent();
+      fetchPreviews();
     } else {
       return;
     }
@@ -49,8 +37,8 @@ export default function NewsList({
     <>
       <Wrapper>
         {previews.map((preview, idx) => (
-          <div className="preview-wrapper" key={preview._id}>
-            <PreviewBox preview={preview} curClicked={curClicked} click={showNewsContent} />
+          <div className="preview-wrapper" key={idx}>
+            <PreviewBox preview={preview} click={showNewsContent} />
           </div>
         ))}
       </Wrapper>

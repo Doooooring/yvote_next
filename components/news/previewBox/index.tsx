@@ -1,19 +1,16 @@
 import ImageFallback from '@components/common/imageFallback';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
-import { News, Preview } from '@utils/interface/news';
+import { Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-type curClicked = undefined | News['_id'];
-
 interface PreviewBoxProps {
   preview: Preview;
-  curClicked: curClicked;
   click: (id: string) => void;
 }
 
-export default function PreviewBox({ preview, curClicked, click }: PreviewBoxProps) {
+export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { _id, order, title, summary, keywords, state } = preview;
 
@@ -28,7 +25,6 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
 
   return (
     <Wrapper
-      state={curClicked === _id}
       onClick={() => {
         click(_id);
       }}
@@ -62,11 +58,7 @@ export default function PreviewBox({ preview, curClicked, click }: PreviewBoxPro
   );
 }
 
-interface WrapperProps {
-  state: boolean;
-}
-
-const Wrapper = styled.div<WrapperProps>`
+const Wrapper = styled.div`
   -webkit-text-size-adjust: none;
   color: #666;
   margin: 0;
@@ -85,7 +77,7 @@ const Wrapper = styled.div<WrapperProps>`
     padding: 10px 10px;
   }
 
-  background-color: ${({ state }) => (state ? 'rgb(200, 200, 200)' : 'white')};
+  background-color: white;
   &:hover {
     cursor: pointer;
   }
@@ -107,7 +99,6 @@ const Wrapper = styled.div<WrapperProps>`
 
   .head-wrapper {
     -webkit-text-size-adjust: none;
-    color: #666;
     text-align: left;
     margin: 0;
     padding: 0;
@@ -124,7 +115,7 @@ const Wrapper = styled.div<WrapperProps>`
     }
     p {
       -webkit-text-size-adjust: none;
-      color: #666;
+      color: rgb(30, 30, 30);
       text-align: left;
       padding: 0;
       padding-right: 2px;
@@ -162,11 +153,11 @@ const Wrapper = styled.div<WrapperProps>`
       font: inherit;
       font-weight: 300;
       vertical-align: baseline;
-      color: #626060;
+      color: rgb(30, 30, 30);
       margin: 0;
-      font-size: 13px;
-      min-height: 45px;
-      line-height: 2;
+      font-size: 14px;
+      line-height: 1.7;
+      height: 3.4em;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;

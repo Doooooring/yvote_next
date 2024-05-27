@@ -1,9 +1,6 @@
-import styled from 'styled-components';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import styled from 'styled-components';
 
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
@@ -35,9 +32,8 @@ export default function NewsContent({
   hide,
 }: NewsContentProps) {
   const navigate = useRouter();
-  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+  const { setIsCommentModalUp } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
-
   const [showLeft, setShowLeft] = useState<boolean>(true);
 
   /**
@@ -78,35 +74,30 @@ export default function NewsContent({
 
   // 코멘트 순서 정렬 (와이보트 > 행정부 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
-    try {
-      return newsContent?.comments.sort((a, b) => {
-        const getOrder = (comment: commentType) => {
-          switch (comment) {
-            case commentType.와이보트:
-              return 6;
-            case commentType.행정부:
-              return 5;
-            case commentType.청와대:
-              return 4;
-            case commentType.국민의힘:
-              return 3;
-            case commentType.민주당:
-              return 2;
-            case commentType.기타:
-              return 1;
-            default:
-              return 0;
-          }
-        };
-        const aOrder = getOrder(a);
-        const bOrder = getOrder(b);
-        return bOrder - aOrder;
-      });
-    } catch (e) {
-      console.log('comment error');
-      console.log(e);
-      return [];
-    }
+    const getOrder = (comment: commentType) => {
+      switch (comment) {
+        case commentType.와이보트:
+          return 6;
+        case commentType.행정부:
+          return 5;
+        case commentType.청와대:
+          return 4;
+        case commentType.국민의힘:
+          return 3;
+        case commentType.민주당:
+          return 2;
+        case commentType.기타:
+          return 1;
+        default:
+          return 0;
+      }
+    };
+
+    return newsContent?.comments.sort((a, b) => {
+      const aOrder = getOrder(a);
+      const bOrder = getOrder(b);
+      return bOrder - aOrder;
+    });
   }, [newsContent]);
 
   if (curClicked === undefined || newsContent === undefined) {
@@ -114,24 +105,19 @@ export default function NewsContent({
   } else {
     return (
       <Wrapper>
-        <FaWrapper state={!showLeft} style={{ textAlign: 'left' }}>
-          <span onClick={toggleShowLeft}>
-            <FontAwesomeIcon icon={faArrowLeft as IconProp} width={12} /> 뉴스 상세 열기
-          </span>
-        </FaWrapper>
-        <FaWrapper state={showLeft} className="fa-flex">
+        <TabWrapper state={showLeft} className="fa-flex">
           <span
             onClick={(e) => {
               e.preventDefault();
-              hide();
+              showLeft ? hide() : toggleShowLeft();
             }}
           >
-            <FontAwesomeIcon icon={faArrowLeft as IconProp} width={12} /> 목록 보기
+            뒤로
           </span>
-          <span onClick={toggleShowLeft}>
-            평론 열기 <FontAwesomeIcon icon={faArrowRight as IconProp} width={12} />
+          <span onClick={toggleShowLeft} className="show-next">
+            다음
           </span>
-        </FaWrapper>
+        </TabWrapper>
         <Body>
           <BodyLeft state={showLeft}>
             <div className="close-wrapper">
@@ -176,7 +162,7 @@ export default function NewsContent({
                   {newsContent.keywords?.map((keyword) => {
                     return (
                       <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
-                        {`#${keyword}`}
+                        {`# ${keyword}`}
                       </p>
                     );
                   })}
@@ -246,7 +232,6 @@ const Wrapper = styled.div`
   width: 100%;
   border-width: 0px;
   border-color: #000000;
-  border-radius: 10px;
   border-style: solid;
   padding-top: 30px;
   padding-bottom: 160px;
@@ -275,27 +260,39 @@ const Wrapper = styled.div`
   }
 `;
 
-interface FaWrapperProps {
+interface TabWrapperProps {
   state: boolean;
 }
 
-const FaWrapper = styled.div<FaWrapperProps>`
+const TabWrapper = styled.div<TabWrapperProps>`
   display: none;
-  color: black;
-  font-weight: 500;
   margin-bottom: 12px;
-  &.fa-flex {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    @media screen and (max-width: 768px) {
-      display: ${({ state }) => (state ? 'flex' : 'none')};
-    }
-  }
+
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
   @media screen and (max-width: 768px) {
-    display: ${({ state }) => (state ? 'block' : 'none')};
+    display: flex;
+  }
+
+  @media screen and (max-width: 768px) {
     width: 100%;
     min-width: 0px;
+  }
+
+  span {
+    color: #666;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid rgba(200, 200, 200, 0.5);
+    box-shadow: 0px 0px 35px -30px;
+
+    &.show-next {
+      display: ${({ state }) => (state ? 'inline' : 'none')};
+    }
   }
 `;
 
@@ -321,6 +318,8 @@ const BodyLeft = styled.div<BodyProps>`
   width: 55%;
   min-height: 1000px;
   background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(200, 200, 200, 0.5);
   box-shadow: 0 0 35px -30px;
   position: relative;
   padding-bottom: 80px;
@@ -375,12 +374,15 @@ const BodyLeft = styled.div<BodyProps>`
         margin: 0.2em 0 1.7em 0;
         line-height: 1.6em;
         span {
-          color: rgb(85, 85, 85);
+          color: rgb(6, 6, 6);
           min-height: 20.25px;
           max-height: 48px;
           img {
             margin: 0.1em 0 -0.1em 0;
           }
+        }
+        span:hover {
+          cursor: pointer;
         }
       }
 
@@ -403,13 +405,18 @@ const BodyLeft = styled.div<BodyProps>`
       .keyword-wrapper {
         line-height: 1;
         .keyword {
-          display: inline;
+          display: inline-block;
           text-decoration: none;
-          font-size: 12px;
+          font-size: 11px;
+          font-weight: 500;
+          color: rgb(120, 120, 120);
           margin: 0;
           margin-left: 3px;
           margin-right: 6px;
-          color: #3a84e5;
+          margin-bottom: 6px;
+          padding: 0.25rem 0.25rem;
+          background-color: #f1f2f5;
+          border-radius: 2px;
           cursor: pointer;
         }
       }

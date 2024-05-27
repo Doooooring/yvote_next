@@ -6,9 +6,10 @@ export default function LoadingIndicator({ state }: { state: boolean }) {
   const device = useDevice();
 
   return (
-    <Modal state={state}>
+    <Modal state={state} backgroundColor={'rgb(255,255,255, 0.3)'}>
       <LoadingCommon
-        comment={'소식을 받아오고 있어요 !!!'}
+        comment={''}
+        fontColor = 'black'
         isRow={device === Device.pc ? false : true}
         fontSize={device === Device.pc ? '2rem' : '1.3rem'}
         iconSize={device === Device.pc ? 64 : 32}
