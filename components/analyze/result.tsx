@@ -14,7 +14,7 @@ interface BarProps {
 
 const Result = ({ answers }: { answers: ResultAnswers }) => {
   const colors = ['#4CAF50', '#FFC107', '#2196F3', '#666666'];
-  const titles = ['정부의존성', '이념성', '보수성', '정부불신'];
+  const titles = ['정부의존성', '이념성', '보수성', '정부신뢰도'];
   const [detailsVisible, setDetailsVisible] = useState(false);
   const fetchDetailId = (scoreIndex: number, detailIndex: number) => {
     const adjustedIndex = scoreIndex * 30 + detailIndex * 3;
@@ -59,52 +59,52 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
 
   let resultid;
   switch (key) {
-    case 'LLLL':
+    case 'LLLG':
       resultid = 0;
       break;
-    case 'LLLG':
+    case 'LLLL':
       resultid = 10;
-      break;
-    case 'LLGL':
-      resultid = 8;
       break;
     case 'LLGG':
       resultid = 7;
       break;
-    case 'LGLL':
-      resultid = 3;
+    case 'LLGL':
+      resultid = 8;
       break;
     case 'LGLG':
-      resultid = 9;
+      resultid = 3;
       break;
-    case 'LGGL':
-      resultid = 6;
+    case 'LGLL':
+      resultid = 9;
       break;
     case 'LGGG':
       resultid = 6;
       break;
-    case 'GLLL':
-      resultid = 11;
+    case 'LGGL':
+      resultid = 6;
       break;
     case 'GLLG':
+      resultid = 11;
+      break;
+    case 'GLLL':
       resultid = 12;
       break;
-    case 'GLGL':
+    case 'GLGG':
       resultid = 5;
       break;
-    case 'GLGG':
+    case 'GLGL':
       resultid = 4;
-      break;
-    case 'GGLL':
-      resultid = 1;
       break;
     case 'GGLG':
       resultid = 1;
       break;
-    case 'GGGL':
-      resultid = 2;
+    case 'GGLL':
+      resultid = 1;
       break;
     case 'GGGG':
+      resultid = 2;
+      break;
+    case 'GGGL':
       resultid = 2;
       break;
     default:
@@ -136,7 +136,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
               lengthAngle={-360}
               animate
               label={({ dataEntry }) =>
-                dataEntry.title === `Score ${index + 1}` ? `${dataEntry.value}` : ''
+                dataEntry.title === `Score ${index + 1}` ? `${Math.round(dataEntry.value)}` : ''
               }
               labelStyle={{
                 fontSize: '1.5rem',

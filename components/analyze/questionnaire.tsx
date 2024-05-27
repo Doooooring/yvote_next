@@ -18,7 +18,7 @@ interface CategoryColors {
   정부의존성: string;
   이념성: string;
   보수성: string;
-  정부불신: string;
+  정부신뢰도: string;
 }
 
 type Category = keyof CategoryColors;
@@ -28,7 +28,7 @@ const questions: Question[] = typedquestions as Question[];
 const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   const batchSize = 3;
   const [currentBatchStartIndex, setCurrentBatchStartIndex] = useState(0);
-  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120)].map(() => 2));
+  const [answers, setAnswers] = useState<ResultAnswers>([...Array(120)].map(() => 3));
 
   const handleAnswer = (index: number, answer: number) => {
     const newAnswers = [...answers];
@@ -66,7 +66,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
     정부의존성: '#4CAF50',
     이념성: '#FFC107',
     보수성: '#2196F3',
-    정부불신: '#666666',
+    정부신뢰도: '#666666',
   };
 
   const getColorByCategory = (category: Category): string => {
@@ -138,6 +138,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
 export default Questionnaire;
 
 const Wrapper = styled.div`
+  padding-bottom : 200px;
+
   .category-label {
     display: inline-block;
     padding: 0.1rem 0.6rem;
@@ -174,6 +176,9 @@ const Wrapper = styled.div`
       color: #666;
       font-size: 15px;
       font-weight: 500;
+      span {
+        text-align: center;
+      }
     }
   }
 
