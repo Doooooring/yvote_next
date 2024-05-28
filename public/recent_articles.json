@@ -1,0 +1,37 @@
+[
+  {
+    "writer": "Author 1",
+    "title": "Article Title 1",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In interdum erat arcu, eget fringilla urna sollicitudin et. Pellentesque ut felis tincidunt, sagittis tortor quis, facilisis tellus. Maecenas dignissim purus at imperdiet consectetur. Pellentesque eu congue leo, et auctor nunc. Vestibulum vestibulum gravida maximus. Nam ornare turpis in ipsum commodo faucibus. Morbi eu tempus libero. Suspendisse hendrerit condimentum mauris, vel commodo mauris maximus non. Sed porta ipsum condimentum nisi ornare, vitae tincidunt quam accumsan. Phasellus sit amet ex mauris. Nullam tempor neque at mauris viverra, vel sodales ante placerat. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean ultrices tellus id ex ullamcorper bibendum.",
+    "date": "2024-05-28",
+    "newsTitle": "News Title 1"
+  },
+  {
+    "writer": "Author 2",
+    "title": "Article Title 2",
+    "content": "Pellentesque ullamcorper dolor eu tellus hendrerit, eget pretium lorem viverra. Fusce ullamcorper massa sit amet tincidunt rhoncus. Etiam mauris libero, convallis non volutpat eget, sollicitudin placerat augue. Aenean nec tellus nec nibh tincidunt elementum. Sed bibendum iaculis maximus. Phasellus porttitor feugiat tortor sit amet cursus. Donec rutrum enim tortor, at vehicula libero imperdiet sit amet. Cras eget ipsum at sapien accumsan vulputate. Phasellus eget risus ex. Nulla purus ante, porta eu blandit rutrum, vehicula sit amet lorem. Nam semper non enim et vulputate. Nunc efficitur nisi quis pharetra vulputate. Proin ligula felis, ullamcorper eget ullamcorper id, lobortis quis urna.",
+    "date": "2024-05-27",
+    "newsTitle": "News Title 2"
+  },
+  {
+    "writer": "Author 3",
+    "title": "Article Title 3",
+    "content": "Phasellus bibendum consequat orci, ut consectetur nunc vulputate sit amet. Integer venenatis metus dolor, ut hendrerit magna placerat vel. Donec vel quam sit amet metus sollicitudin maximus. In placerat eget diam vitae congue. Etiam sed eleifend nisi. Proin ut metus mauris. Maecenas dapibus venenatis quam, ut mollis sem porttitor quis. Aenean eget elit non tortor dignissim suscipit. Quisque sit amet feugiat sapien, eu auctor tellus. Pellentesque ante arcu, vulputate eget euismod vel, vulputate vitae lacus. Praesent posuere nisi nisi, ac feugiat quam luctus sit amet. Phasellus eu erat et felis rhoncus vestibulum eu a diam.",
+    "date": "2024-05-27",
+    "newsTitle": "News Title 3"
+  },
+  {
+    "writer": "Author 4",
+    "title": "Article Title 4",
+    "content": "Maecenas nec libero tincidunt, tempor enim eu, dapibus nulla. Ut iaculis tincidunt commodo. Etiam imperdiet vitae lorem ut rutrum. In ut maximus eros. Vivamus nec urna at leo efficitur tempor eget et metus. Curabitur eros nisi, aliquet sit amet gravida at, volutpat vel velit. Integer imperdiet orci fermentum sem hendrerit imperdiet.",
+    "date": "2024-05-27",
+    "newsTitle": "News Title 4"
+  },
+  {
+    "writer": "Author 5",
+    "title": "Article Title 5",
+    "content": "Pellentesque aliquet mi tortor. Aenean suscipit mi a ullamcorper gravida. Phasellus scelerisque, urna vitae ultricies pretium, nibh nibh eleifend tellus, in gravida sapien tellus sit amet orci. Fusce feugiat, lorem nec posuere scelerisque, purus ex condimentum turpis, eu tincidunt felis turpis sed ipsum. Suspendisse eu hendrerit ipsum, id ornare nibh. Phasellus eget hendrerit velit, volutpat elementum nibh. Nam id ultrices leo. Pellentesque cursus auctor sapien id auctor. Proin non tristique metus. Cras et vulputate nisl. Ut eros ante, semper sed egestas sed, vestibulum scelerisque lacus. Duis porttitor egestas mattis.",
+    "date": "2024-05-27",
+    "newsTitle": "News Title 5"
+  }
+]
