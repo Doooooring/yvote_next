@@ -92,7 +92,9 @@ export default function Home() {
             실용적인 뉴스 서비스를 지향합니다
           </MobileTextParagraph>
         </Rectangle>
-        <ConnectingLine loaded={loaded} />
+        <MidlineWrapper>
+          <Midline />
+        </MidlineWrapper>
         <ListContainer>
           <List>
             {items.map((item) => (
@@ -114,13 +116,16 @@ const Wrapper = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   position: relative;
   height: 100vh;
-  overflow-y: auto;
+  overflow-y: hidden;
   background-color: black; /* Set initial background color to black */
   padding: 3rem 2rem;
   &::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
+  @media (max-height: 480px) {
+    overflow-y: auto;
+  }
 `;
 
 const Content = styled.div<{ show: boolean }>`
@@ -145,11 +150,10 @@ const Rectangle = styled.div<{ loaded: boolean }>`
   background-color: transparent;
   border-top: 1.5px solid white;
   border-bottom: 1.5px solid white;
-  margin: 0 auto 50px; /* Center horizontally and add bottom margin */
   position: relative;
   @media (max-width: 480px) {
-    flex-direction: column; // stack elements in a column on small screens
-    align-items: flex-start; // align items at start of column
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
@@ -176,11 +180,11 @@ const TextBox = styled.div<{ loaded: boolean }>`
   flex-grow: 1;
   height: auto;
   max-height: 40rem;
-  padding: ${({ loaded }) => (loaded ? '40px 16px' : '0 16px 0 0')};
+  padding: ${({ loaded }) => (loaded ? '40px 16px' : '5px 0 0 0')};
   opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   transition: padding 1s ease, opacity 1s ease;
   @media (max-width: 480px) {
-    padding: ${({ loaded }) => (loaded ? '16px 16px 0' : '0 0 0 0')};
+    padding: ${({ loaded }) => (loaded ? '15px 0 0 0' : '0 0 0 0')};
     opacity: ${({ loaded }) => (loaded ? '1' : '0')};
   }
 `;
@@ -219,30 +223,25 @@ const MobileTextParagraph = styled.p<{ loaded: boolean }>`
     width: 100%;
     font: inherit;
     color: white;
-    height: 28px;
     letter-spacing: 0.15rem;
-    font-size: 0.7rem;
-    margin-bottom: 4px;
+    font-size: 0.8rem;
+    padding: ${({ loaded }) => (loaded ? '0 0 10px 0' : '0 0 0 0')};
     opacity: ${({ loaded }) => (loaded ? '1' : '0')};
     transition: padding 1s ease, opacity 1s ease;
   }
 `;
 
-const ConnectingLine = styled.div<{ loaded: boolean }>`
-  position: absolute;
-  width: 0.5px;
-  height: 51px; /* Adjust based on your design */
-  background-color: white;
-  top: ${({ loaded }) =>
-    loaded ? `calc(2rem * 1.2 + 1rem + 1.6rem + 85px)` : 'calc(2rem * 1.3 + 1rem + 1.6rem + 1px)'};
-  left: calc(50% - 0.5px); /* Center horizontally */
-  z-index: 2;
-  transition: top 1s ease; /* Transition top position change */
+const MidlineWrapper = styled.div`
+  height: 30px;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+`;
 
-  @media (max-width: 480px) {
-    top: ${({ loaded }) =>
-      loaded ? `calc(2rem * 1.1 + 2.1rem + 71.5px)` : 'calc(2rem * 1.1 + 2.1rem + 56px)'};
-  }
+const Midline = styled.div`
+  height: 30px;
+  width: 1px;
+  background-color: white;
 `;
 
 const ListContainer = styled.div`
@@ -308,11 +307,14 @@ const ListItem = styled.li`
 
     &:last-child {
       border-bottom: none;
+      > a {
+        font-size: 0.7rem;
+      }
     }
-
     > a {
       width: 80%;
       margin: auto;
+      font-size: 0.8rem;
     }
   }
 `;

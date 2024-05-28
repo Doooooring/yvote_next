@@ -71,7 +71,7 @@ const Wrapper = styled.div`
   width: 100%;
   margin-top: 20px;
   margin-bottom: 10px;
-  max-width: 868px;
+  max-width: 1210px;
   min-width: 868px;
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
