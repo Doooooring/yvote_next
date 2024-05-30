@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import React, { useState } from 'react';
 import Questionnaire from '@components/analyze/questionnaire';
 import Result, { ResultAnswers } from '@components/analyze/result';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 export default function Analyze() {
   const [completed, setCompleted] = useState(false);
