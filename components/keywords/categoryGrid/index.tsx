@@ -102,8 +102,8 @@ const Wrapper = styled.div`
   .body-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* This centers the children vertically */
-    align-items: center; /* This centers the children horizontally */
+    justify-content: center;
+    align-items: center;
     position: relative;
     .grid-wrapper {
       width: 100%;
