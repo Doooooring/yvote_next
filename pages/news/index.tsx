@@ -2,10 +2,10 @@ import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 type curPreviewsList = Preview[];
@@ -23,7 +23,6 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 };
 
 export default function NewsPage(props: pageProps) {
-  const navigate = useRouter();
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
 
@@ -31,9 +30,7 @@ export default function NewsPage(props: pageProps) {
     fetchPreviews();
   }, []);
 
-  const showNewsContent = useCallback(async (id: string) => {
-    navigate.push(`/news/${id}`);
-  }, []);
+  const showNewsContent = useNewsNavigate();
 
   return (
     <Wrapper>

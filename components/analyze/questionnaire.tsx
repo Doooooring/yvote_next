@@ -85,7 +85,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
       )}
       {currentQuestions.map((question, index) => (
         <div
-          className="each"
+          className="each font-lg"
           key={question.id}
           style={{ borderLeft: `12px solid ${getColorByCategory(question.category)}` }}
         >
@@ -139,6 +139,14 @@ export default Questionnaire;
 
 const Wrapper = styled.div`
   padding-bottom: 200px;
+  font-size : 15px;
+
+  .font-lg {
+    font-size : 15px;
+    @media screen and (max-width: 768px) {
+      font-size : 12px;
+    }
+  }
 
   font-size: 15px;
   @media screen and (max-width: 768px) {
@@ -167,7 +175,6 @@ const Wrapper = styled.div`
       text-align: left;
       border: 0;
       vertical-align: baseline;
-      font-size: 15px;
       font-weight: 500;
       overflow: hidden;
       margin: 0;
@@ -179,7 +186,6 @@ const Wrapper = styled.div`
       align-items: center;
       justify-content: space-between;
       color: #666;
-      font-size: 15px;
       font-weight: 500;
       span {
         text-align: center;
