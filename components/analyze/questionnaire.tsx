@@ -140,6 +140,11 @@ export default Questionnaire;
 const Wrapper = styled.div`
   padding-bottom: 200px;
 
+  font-size: 15px;
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+  }
+
   .category-label {
     display: inline-block;
     padding: 0.1rem 0.6rem;
