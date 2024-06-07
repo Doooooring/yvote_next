@@ -42,6 +42,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   };
 
   const handleNext = () => {
+    onComplete(Array.from({ length: questions.length }, (_, i) => 4));
+    return;
+
     const nextBatchStartIndex = currentBatchStartIndex + batchSize;
     if (nextBatchStartIndex < questions.length) {
       setCurrentBatchStartIndex(nextBatchStartIndex);
@@ -89,7 +92,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
           key={question.id}
           style={{ borderLeft: `12px solid ${getColorByCategory(question.category)}` }}
         >
-          <h4>{question.content}</h4>
+          <p>{question.content}</p>
           <div className="select">
             <span>부정적</span>
             {Array.from({ length: 6 }, (_, i) => (
@@ -146,6 +149,9 @@ const Wrapper = styled.div`
     @media screen and (max-width: 768px) {
       font-size : 12px;
     }
+    @media screen and (max-width: 400px) {
+      font-size : 10px;
+    }
   }
 
   font-size: 15px;
@@ -171,6 +177,7 @@ const Wrapper = styled.div`
     text-align: left;
     padding: 15px 30px;
     background-color: white;
+
     > h4 {
       text-align: left;
       border: 0;
@@ -210,6 +217,15 @@ const Wrapper = styled.div`
       color: #666;
       cursor: default;
       opacity: 0.5;
+    }
+
+    @media screen and (max-width: 768px) {
+      padding : 6px 12px;
+      margin : 3px;
+    }
+    @media screen and (max-width: 434px) {
+      padding : 4px 8px;
+      margin : 2px;
     }
   }
 `;
