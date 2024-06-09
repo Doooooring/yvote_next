@@ -486,8 +486,8 @@ const BodyRight = styled.div<BodyProps>`
       overflow: hidden;
       aspect-ratio: 1 / 1;
       display: flex;
-      justify-content: center; /* Center horizontally */
-      align-items: center; /* Center vertically */
+      justify-content: center;
+      align-items: center;
     }
   }
 `;

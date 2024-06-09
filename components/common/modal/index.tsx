@@ -8,7 +8,12 @@ interface ModalProps {
   backgroundColor?: string;
 }
 
-export default function Modal({ children, state, outClickAction, backgroundColor="rgba(0,0,0,0.5)" }: ModalProps) {
+export default function Modal({
+  children,
+  state,
+  outClickAction,
+  backgroundColor = 'rgba(0,0,0,0.5)',
+}: ModalProps) {
   if (!state) return <></>;
 
   return (
@@ -18,11 +23,9 @@ export default function Modal({ children, state, outClickAction, backgroundColor
           outClickAction();
         }
       }}
-      style={
-        {
-         'backgroundColor'  : backgroundColor
-        }
-      }
+      style={{
+        backgroundColor: backgroundColor,
+      }}
     >
       {children}
     </Wrapper>
