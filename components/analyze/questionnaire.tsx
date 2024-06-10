@@ -42,8 +42,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
   };
 
   const handleNext = () => {
-    onComplete(Array.from({ length: questions.length }, (_, i) => 4));
-    return;
+    //onComplete(Array.from({ length: questions.length }, (_, i) => 4));
+    //return;
 
     const nextBatchStartIndex = currentBatchStartIndex + batchSize;
     if (nextBatchStartIndex < questions.length) {
