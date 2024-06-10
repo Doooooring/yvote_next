@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PieChart } from 'react-minimal-pie-chart';
 import typedquestions from './questions.json';
@@ -53,7 +53,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
     setDetailsVisible(!detailsVisible);
   };
 
-  const scores = calculateScores();
+  const scores = useMemo(() => calculateScores(), []);
 
   const key = scores.map((score) => (score.totalScore > 75 ? 'G' : 'L')).join('');
 
@@ -160,7 +160,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
                 <BarLabel key={detailIndex}>
                   <ScoreLabel>{fetchDetailId(index, detailIndex)}</ScoreLabel>
                   <Barbox>
-                    <Bar color={score.color} width={detailScore} max={15} />
+                    <Bar color={score.color} width={detailScore} max={14} />
                   </Barbox>
                 </BarLabel>
               ))}
@@ -183,7 +183,6 @@ const Wrapper = styled.div`
 const ChartContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
   align-items: center;
 `;
 
@@ -194,13 +193,23 @@ const ChartWrapper = styled.div`
   text-align: center;
   margin: 50px 0;
   width: 15%;
+  min-width : 65px;
   height: 15%;
 `;
 
-const ChartTitle = styled.h2`
+const ChartTitle = styled.p`
   margin: 10px 0;
   font-size: 1.2rem;
   color: #333;
+  white-space: nowrap;
+
+  @media screen and (max-width: 768px) {
+    font-size : 0.9rem;
+  }
+
+  @media screen and (max-width: 484px) {
+    font-size : 0.8rem;
+  }
 `;
 
 const DetailsContainer = styled.div`
@@ -220,11 +229,33 @@ const Detail = styled.div`
   width: 18%;
   border-radius: 10px;
   background-color: #f9f9f9;
+
+  @media screen and (max-width: 760px) {
+    width : 42%;
+    padding : 15px 10px;
+    margin-bottom : 16px;
+  }
+
+  @media screen and (max-width: 440px) {
+    width : 100%;
+    padding : 15px 12px;
+    margin-bottom : 12px;
+  }
+
 `;
 
 const DetailTitle = styled.h3`
   color: #333;
   font-size: 1.2rem;
+  white-space: nowrap;
+
+  @media screen and (max-width: 768px) {
+    font-size : 0.9rem;
+  }
+
+  @media screen and (max-width: 484px) {
+    font-size : 0.8rem;
+  }
   margin-bottom: 10px;
 `;
 
@@ -257,6 +288,9 @@ const ScoreLabel = styled.div`
   align-items: center;
   width: 60px;
   font-size: 0.8rem;
+  @media screen and (max-width: 484px) {
+    font-size : 0.9rem;
+  }
   color: #666;
   flex-shrink: 0;
   white-space: nowrap;

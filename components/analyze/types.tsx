@@ -64,6 +64,16 @@ const Wrapper = styled.div`
   border: 0;
   border-radius: 10px;
   height: auto;
+
+  @media screen and (max-width: 760px) {
+    margin-top : 20px;
+    padding : 30px 20px;
+  }
+
+  @media screen and (max-width: 434px) {
+    padding : 30px 15px;
+  }
+
   h1 {
     font: inherit;
     font-size: 1.6rem;
