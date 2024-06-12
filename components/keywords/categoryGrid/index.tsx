@@ -129,6 +129,7 @@ const GridContainer = styled.div<GridContainerProps>`
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
     overflow-y: hidden;
+    transform : translateX(0);
     ::-webkit-scrollbar {
       display: none;
     }
