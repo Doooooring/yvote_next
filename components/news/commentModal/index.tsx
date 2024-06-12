@@ -15,8 +15,6 @@ import styled from 'styled-components';
 import { typeExplain, typeToShow } from './commentModal.resource';
 import useForceUpdate from '@utils/hook/userForceUpdate';
 
-
-
 export default function CommentModal({
   id,
   comment,
@@ -50,11 +48,9 @@ export default function CommentModal({
     try {
       setIsRequesting(true);
       const response = await NewsRepository.getNewsComment(id, type, page);
-      setCurComments(response.comments);
       if (response.comments === null || response.comments.length == 0) {
       } else {
         setCurComments(response.comments);
-        curPage.current += 10;
       }
     } catch (e)
     {
@@ -75,12 +71,13 @@ export default function CommentModal({
 
   const getPageBefore = async () => {
     if (curPage.current === 0) return;
-    const response = await NewsRepository.getNewsComment(id, comment!, curPage.current - 10);
-    setCurComments(response.comments);
     curPage.current -= 10;
+    await fetchNewsComment(id, comment!, curPage.current);
+    
   };
   const getPageAfter = async () => {
-    fetchNewsComment(id, comment!, curPage.current);
+    await fetchNewsComment(id, comment!, curPage.current);
+    curPage.current += 10;
   };
 
   return useObserver(() => (

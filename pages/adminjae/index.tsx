@@ -8,6 +8,7 @@ import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useMount } from '@utils/hook/useMount';
 
 type curPreviewsList = Preview[];
 
@@ -19,9 +20,9 @@ export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
   const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20, true);
 
-  useEffect(() => {
+  useMount(() => {
     fetchPreviews();
-  }, [])
+  })
 
   const showNewsContent = useCallback(async (id: string) => {
     navigate.push(`/news/${id}`);
