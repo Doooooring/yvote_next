@@ -8,27 +8,21 @@ import NewsRepository from '@repositories/news';
 import indexStore from '@store/indexStore';
 import { commentType } from '@utils/interface/news';
 
-import { useObserver } from 'mobx-react';
+import { observer, useObserver } from 'mobx-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { typeExplain, typeToShow } from './commentModal.resource';
 import useForceUpdate from '@utils/hook/userForceUpdate';
 
-export default function CommentModal({
+const CommentModal = observer(({
   id,
-  comment,
-  commentOpen,
-  commentClose,
 }: {
   id: string;
-  comment: commentType | null;
-  commentOpen: (comment: commentType) => void;
-  commentClose: () => void;
-}) {
+}) => {
   const { currentStore } = indexStore;
   // 코멘트 모달 상태 전역으로 관리
-  const { isCommentModalUp, setIsCommentModalUp } = currentStore;
+  const { isCommentModalUp, curComment : comment, closeCommentModal} = currentStore;
   // 현재 보여지고 있는 평론들 ()
   const [curComments, setCurComments] = useState<
     Array<{
@@ -36,8 +30,6 @@ export default function CommentModal({
       comment: string;
     }>
   >([]);
-
-  const forceUpdate = useForceUpdate();
 
   const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -79,12 +71,10 @@ export default function CommentModal({
     curPage.current += 10;
   };
 
-  return useObserver(() => (
-    <Modal
+  return <Modal
       state={isCommentModalUp}
       outClickAction={() => {
-        commentClose();
-        forceUpdate();
+        closeCommentModal();
       }}
     >
       {comment ? (
@@ -92,7 +82,7 @@ export default function CommentModal({
           <div
             className="close-button"
             onClick={() => {
-              commentClose();
+              closeCommentModal();
             }}
           >
             <Image src={closeButton} width={16} height={16} alt="" />
@@ -181,8 +171,9 @@ export default function CommentModal({
         <></>
       )}
     </Modal>
-  ));
-}
+})
+
+export default CommentModal;
 
 const Wrapper = styled.div`
   display: flex;

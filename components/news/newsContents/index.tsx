@@ -32,7 +32,7 @@ export default function NewsContent({
   hide,
 }: NewsContentProps) {
   const navigate = useRouter();
-  const { setIsCommentModalUp } = currentStore;
+  const { openCommentModal } = currentStore;
   const [curComment, setCurComment] = useState<commentType | null>(null);
   const [showLeft, setShowLeft] = useState<boolean>(true);
 
@@ -47,16 +47,7 @@ export default function NewsContent({
    * 평론 모달 열기
    */
   const commentOpen = useCallback((comment: commentType) => {
-    setIsCommentModalUp(true);
-    setCurComment(comment);
-  }, []);
-
-  /**
-   * 평론 모달 닫기
-   */
-  const commentClose = useCallback(() => {
-    setIsCommentModalUp(false);
-    setCurComment(null);
+    openCommentModal(comment);
   }, []);
 
   /**
@@ -219,9 +210,6 @@ export default function NewsContent({
         </Body>
         <CommentModal
           id={newsContent._id}
-          comment={curComment}
-          commentOpen={commentOpen}
-          commentClose={commentClose}
         />
       </Wrapper>
     );

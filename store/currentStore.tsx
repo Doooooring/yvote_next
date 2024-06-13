@@ -1,18 +1,33 @@
-import { action, makeObservable, observable } from 'mobx';
+import { commentType } from '@utils/interface/news';
+import { action, computed, makeObservable, observable } from 'mobx';
 
 class Current {
-  isCommentModalUp: boolean = false;
+  curComment : commentType | null = null;
 
   constructor() {
     makeObservable(this, {
-      isCommentModalUp: observable,
-      setIsCommentModalUp: action,
+      isCommentModalUp: computed,
+      curComment : observable,
+      openCommentModal : action,
+      closeCommentModal : action
     });
   }
 
-  setIsCommentModalUp = (state: boolean) => {
-    this.isCommentModalUp = state;
-  };
+  get isCommentModalUp() {
+    return this.curComment != null;
+  }
+
+  private setCurComment = (comment : commentType | null) => {
+    this.curComment = comment;
+  }
+
+  openCommentModal = (comment : commentType) => {
+    this.setCurComment(comment);
+  }
+
+  closeCommentModal = () => {
+    this.setCurComment(null);
+  }
 }
 
 const currentStore = new Current();
