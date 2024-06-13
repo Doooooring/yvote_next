@@ -4,7 +4,7 @@ import NewsRepository, { NewsDetail } from '@repositories/news';
 import { HOST_URL } from '@public/assets/url';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import HeadMeta from '@components/common/HeadMeta';
 
@@ -57,17 +57,20 @@ export default function NewsDetailPage({ data }: pageProps) {
     router.push('/news');
   }, []);
 
-  const metaTagsProps = {
+  const metaTagsProps = useMemo(() => {
+    return {
     title: news?.title || '',
     description: news?.summary || '',
     image: `${HOST_URL}/images/news/${news?._id}`,
     url: `https://yvoting.com/news/${id}`,
     type: 'article',
-  };
+    }
+  },[]);
 
   return (
+    <>
+    <HeadMeta {...metaTagsProps} />
     <Wrapper>
-      <HeadMeta {...metaTagsProps} />
       <div className="main-contents">
         <div className="main-contents-body">
           <div className="news-contents-wrapper">
@@ -76,11 +79,12 @@ export default function NewsDetailPage({ data }: pageProps) {
               newsContent={news!}
               voteHistory={null}
               hide={hideNewsContent}
-            />
+              />
           </div>
         </div>
       </div>
     </Wrapper>
+    </>
   );
 }
 

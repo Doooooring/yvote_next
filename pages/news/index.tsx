@@ -32,6 +32,11 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
   };
 };
 
+const metaTagsProps = {
+  title: '뉴스 모아보기',
+  url: `https://yvoting.com/news`,
+};
+
 export default function NewsPage(props: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
@@ -40,14 +45,10 @@ export default function NewsPage(props: pageProps) {
 
   const showNewsContent = useNewsNavigate();
 
-  const metaTagsProps = {
-    title: '뉴스 모아보기',
-    url: `https://yvoting.com/news`,
-  };
-
   return (
+    <>
+    <HeadMeta {...metaTagsProps} />
     <Wrapper>
-      <HeadMeta {...metaTagsProps} />
       {/* <div className="articles-wrapper">
         <NewArticles list={} />
       </div> */}
@@ -64,10 +65,11 @@ export default function NewsPage(props: pageProps) {
             isRequesting={isRequesting}
             fetchPreviews={fetchNextPreviews}
             showNewsContent={showNewsContent}
-          />
+            />
         </div>
       </div>
     </Wrapper>
+    </>
   );
 }
 
