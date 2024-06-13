@@ -1,10 +1,13 @@
+import Head from 'next/head';
 import NewsContent from '@components/news/newsContents';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 
+import { HOST_URL } from '@public/assets/url';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import styled from 'styled-components';
+import MetaTags from '@components/news/metatags';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -55,8 +58,16 @@ export default function NewsDetailPage({ data }: pageProps) {
     router.push('/news');
   }, []);
 
+  const metaTagsProps = {
+    title: news?.title || '',
+    description: news?.summary || '',
+    image: `${HOST_URL}/images/news/${news?._id}`,
+    url: `https://yvoting.com/news/${id}`,
+  };
+
   return (
     <Wrapper>
+      <MetaTags {...metaTagsProps} />
       <div className="main-contents">
         <div className="main-contents-body">
           <div className="news-contents-wrapper">
