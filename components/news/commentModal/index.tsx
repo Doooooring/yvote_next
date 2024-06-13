@@ -52,8 +52,7 @@ export default function CommentModal({
       } else {
         setCurComments(response.comments);
       }
-    } catch (e)
-    {
+    } catch (e) {
       console.log(e);
     } finally {
       setIsRequesting(false);
@@ -115,13 +114,13 @@ export default function CommentModal({
           {curComment === null ? (
             <div className="modal-body">
               <div className="modal-list">
-                {isRequesting ? 
+                {isRequesting ? (
                   <LoadingWrapper>
-                    <LoadingCommon comment=""  fontColor="black" />
+                    <LoadingCommon comment="" fontColor="black" />
                   </LoadingWrapper>
-                  : 
+                ) : (
                   <></>
-                }
+                )}
                 {curComments.map((comment, idx) => {
                   return (
                     <div
@@ -292,11 +291,10 @@ const Wrapper = styled.div`
         display: flex;
         flex-direction: column;
         gap: 12px;
-        position : relative;
+        position: relative;
         div.body-block {
           height: 60px;
           padding-left: 2rem;
-
           box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
           border-radius: 16px;
           display: flex;
@@ -354,8 +352,6 @@ const Wrapper = styled.div`
             margin-bottom: 0.5rem;
             min-height: 10px;
           }
-          div.content-wrapper {
-          }
         }
       }
 
@@ -376,10 +372,10 @@ const Wrapper = styled.div`
 `;
 
 const LoadingWrapper = styled.div`
-  width : 100%;
-  height : 100%;
-  position : absolute;
-  top : 0;
-  left : 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
   backdrop-filter: blur(3px);
-  `
+`;

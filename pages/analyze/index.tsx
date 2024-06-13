@@ -1,6 +1,7 @@
 import Questionnaire from '@components/analyze/questionnaire';
 import Result, { ResultAnswers } from '@components/analyze/result';
 import { useState } from 'react';
+import HeadMeta from '@components/common/HeadMeta';
 import styled from 'styled-components';
 
 export default function Analyze() {
@@ -12,8 +13,15 @@ export default function Analyze() {
     setCompleted(true);
   };
 
+  const metaTagsProps = {
+    title: '와이보트 가치관 테스트',
+    description: '120개의 질문으로 나의 정치성향을 알아보세요',
+    url: `https://yvoting.com/analyze`,
+  };
+
   return (
     <Wrapper>
+      <HeadMeta {...metaTagsProps} />
       <MainContents>
         {!completed ? (
           <Questionnaire onComplete={handleComplete} />

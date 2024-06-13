@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import { Criteria } from '@components/about/criteria';
 import { Values } from '@components/about/values';
 import { ContactBox } from '@components/about/contactBox';
+import HeadMeta from '@components/common/HeadMeta';
 
 export default function About() {
   return (
     <Wrapper>
+      <HeadMeta />
       <BlockElement>
         <Criteria />
         <Values />

@@ -7,10 +7,12 @@ import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywo
 import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
+import { HOST_URL } from '@public/assets/url';
 
 import NewsList from '@components/news/newsLIst';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import HeadMeta from '@components/common/HeadMeta';
 
 type curPreviewsList = Preview[];
 type curClicked = undefined | News['_id'];
@@ -65,12 +67,12 @@ export default function KeyExplanation({ data }: pageProps) {
 
   const newsWrapper = useRef<HTMLDivElement>(null);
 
-  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20);
+  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
+    useFetchNewsPreviews(20);
 
   useEffect(() => {
     fetchPreviews(data.keyword.keyword);
-  }, [])
-
+  }, []);
 
   const showNewsContent = async (id: string) => {
     const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
@@ -89,8 +91,17 @@ export default function KeyExplanation({ data }: pageProps) {
     setVoteHistory(null);
   }, []);
 
+  const metaTagsProps = {
+    title: data.keyword.keyword,
+    description: data.keyword.explain || '',
+    image: `${HOST_URL}/images/keywords/${data.keyword._id}`,
+    url: `https://yvoting.com/keywords/${data.keyword._id}`,
+    type: 'article',
+  };
+
   return (
     <Wrapper ref={newsWrapper}>
+      <HeadMeta {...metaTagsProps} />
       <div className="search-wrapper">
         <SearchBox />
       </div>
@@ -125,12 +136,12 @@ export default function KeyExplanation({ data }: pageProps) {
             </div>
           ) : (
             <NewsList
-            page={page}
-            previews={previews.length == 0 ? data.previews : previews}
-            isRequesting={isRequesting}
-            fetchPreviews={fetchNextPreviews}
-            showNewsContent={showNewsContent}
-          />
+              page={page}
+              previews={previews.length == 0 ? data.previews : previews}
+              isRequesting={isRequesting}
+              fetchPreviews={fetchNextPreviews}
+              showNewsContent={showNewsContent}
+            />
           )}
         </div>
       </div>

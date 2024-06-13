@@ -32,6 +32,15 @@ export interface Timeline {
   title: string;
 }
 
+export interface Article {
+  writer: commentType;
+  title: string;
+  content: string;
+  date: string;
+  newsTitle: string;
+  news_id: string;
+}
+
 export interface News {
   _id: string;
   order: number;
