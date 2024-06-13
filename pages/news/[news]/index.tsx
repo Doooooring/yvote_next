@@ -63,6 +63,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     description: news?.summary || '',
     image: `${HOST_URL}/images/news/${news?._id}`,
     url: `https://yvoting.com/news/${id}`,
+    type: 'article',
   };
 
   return (

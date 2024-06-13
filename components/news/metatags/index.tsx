@@ -5,9 +5,10 @@ interface MetaTagsProps {
   description: string;
   image: string;
   url: string;
+  type: string;
 }
 
-const MetaTags: React.FC<MetaTagsProps> = ({ title, description, image, url }) => {
+const MetaTags: React.FC<MetaTagsProps> = ({ title, description, image, url, type }) => {
   return (
     <Head>
       <title>{title}</title>
@@ -15,7 +16,7 @@ const MetaTags: React.FC<MetaTagsProps> = ({ title, description, image, url }) =
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
       <meta property="og:url" content={url} />
-      <meta property="og:type" content="article" />
+      <meta property="og:type" content={type} />
     </Head>
   );
 };
