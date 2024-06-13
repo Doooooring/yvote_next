@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import NewsContent from '@components/news/newsContents';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 
@@ -7,7 +6,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import MetaTags from '@components/news/metatags';
+import HeadMeta from '@components/common/HeadMeta';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -68,7 +67,7 @@ export default function NewsDetailPage({ data }: pageProps) {
 
   return (
     <Wrapper>
-      <MetaTags {...metaTagsProps} />
+      <HeadMeta {...metaTagsProps} />
       <div className="main-contents">
         <div className="main-contents-body">
           <div className="news-contents-wrapper">

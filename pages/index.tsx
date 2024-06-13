@@ -7,6 +7,7 @@ import backgroundImage from '@images/voting.png';
 import { StaticImageData } from 'next/image';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import HeadMeta from '@components/common/HeadMeta';
 
 interface Item {
   name: string;
@@ -79,6 +80,7 @@ export default function Home() {
 
   return (
     <Wrapper>
+      <HeadMeta />
       <Content show={showModal}>
         <Rectangle loaded={loaded}>
           <FlexContainer>

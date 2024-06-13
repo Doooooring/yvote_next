@@ -8,6 +8,7 @@ import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
+import HeadMeta from '@components/common/HeadMeta';
 
 type curPreviewsList = Preview[];
 
@@ -96,8 +97,14 @@ export default function NewsPage(props: pageProps) {
     },
   ];
 
+  const metaTagsProps = {
+    title: '뉴스 모아보기',
+    url: `https://yvoting.com/news`,
+  };
+
   return (
     <Wrapper>
+      <HeadMeta {...metaTagsProps} />
       <div className="articles-wrapper">
         <NewArticles list={dummy} />
       </div>

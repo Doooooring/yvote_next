@@ -5,6 +5,7 @@ import { KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
+import HeadMeta from '@components/common/HeadMeta';
 
 interface pageProps {
   data: {
@@ -47,8 +48,14 @@ export default function KeywordsPage({ data }: pageProps) {
   const [keywordInSocial, setKeywordInSocial] = useState<Array<KeywordToView>>(data.social);
   const [keywordInEtc, setKeywordInEtc] = useState<Array<KeywordToView>>(data.etc);
 
+  const metaTagsProps = {
+    title: '키워드 모아보기',
+    url: `https://yvoting.com/keywords`,
+  };
+
   return (
     <Wrapper>
+      <HeadMeta />
       <div className="search-wrapper">
         <SearchBox />
       </div>
