@@ -100,5 +100,5 @@ const LoadingWrapper = styled.div`
 
 const LastLine = styled.div`
   width: 10px;
-  height: 120px;
+  height: 240px;
 `;
