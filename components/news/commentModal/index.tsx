@@ -41,8 +41,10 @@ const CommentModal = observer(({
       setIsRequesting(true);
       const response = await NewsRepository.getNewsComment(id, type, page);
       if (response.comments === null || response.comments.length == 0) {
+        return false;
       } else {
         setCurComments(response.comments);
+        return true;
       }
     } catch (e) {
       console.log(e);
@@ -67,8 +69,9 @@ const CommentModal = observer(({
     
   };
   const getPageAfter = async () => {
-    await fetchNewsComment(id, comment!, curPage.current);
     curPage.current += 10;
+    const response = await fetchNewsComment(id, comment!, curPage.current);
+    if (!response) curPage.current -= 10;
   };
 
   return <Modal
