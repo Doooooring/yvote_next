@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { typeExplain, typeToShow } from './commentModal.resource';
 import useForceUpdate from '@utils/hook/userForceUpdate';
+import { useFetchNewsComment } from './commentModal.hook';
 
 const CommentModal = observer(({
   id,
@@ -24,56 +25,10 @@ const CommentModal = observer(({
   // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, curComment : comment, closeCommentModal} = currentStore;
   // 현재 보여지고 있는 평론들 ()
-  const [curComments, setCurComments] = useState<
-    Array<{
-      title: string;
-      comment: string;
-    }>
-  >([]);
+  const {curComments, isRequesting, getPageBefore, getPageAfter} = useFetchNewsComment(id, comment);
 
   const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
-  const [isRequesting, setIsRequesting] = useState<boolean>(false);
-
-  const curPage = useRef(0);
-
-  async function fetchNewsComment(id: string, type: commentType, page: number) {
-    try {
-      setIsRequesting(true);
-      const response = await NewsRepository.getNewsComment(id, type, page);
-      if (response.comments === null || response.comments.length == 0) {
-        return false;
-      } else {
-        setCurComments(response.comments);
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsRequesting(false);
-    }
-  }
-
-  useEffect(() => {
-    if (comment === null) {
-      setCurComments([]);
-      curPage.current = 0;
-      return;
-    }
-    fetchNewsComment(id, comment!, curPage.current);
-  }, [comment]);
-
-  const getPageBefore = async () => {
-    if (curPage.current === 0) return;
-    curPage.current -= 10;
-    await fetchNewsComment(id, comment!, curPage.current);
-    
-  };
-  const getPageAfter = async () => {
-    curPage.current += 10;
-    const response = await fetchNewsComment(id, comment!, curPage.current);
-    if (!response) curPage.current -= 10;
-  };
-
+  
   return <Modal
       state={isCommentModalUp}
       outClickAction={() => {
