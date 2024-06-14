@@ -1,4 +1,5 @@
 import ImageFallback from '@components/common/imageFallback';
+import Image from 'next/image';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import keywordRepository from '@repositories/keywords';
@@ -39,9 +40,9 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
     <Wrapper>
       <div className="header-wrapper">
         <div className="image-wrapper">
-          <ImageFallback src={categoryImgUrl(category)} width="100%" height="100%" />
+          <Image src={categoryImgUrl(category)} alt="" fill />
         </div>
-        <div className="category-head">{categoryKoreanName(category)}</div>
+        <h3 className="category-head">{categoryKoreanName(category)}</h3>
       </div>
       <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
@@ -85,12 +86,21 @@ const Wrapper = styled.div`
     height: 30px;
     text-align: left;
     margin-bottom: 5px;
+
     .image-wrapper {
-      display: inline;
-      flex: 0 1 auto;
-      height: 60%;
+      position : relative;
+      height: 24px;
       padding-left: 5px;
       align-items: center;
+      img {
+        object-fit: contain !important;
+        position: relative !important;
+        width: auto !important;
+      }
+      & > span {
+        position: unset !important;
+       
+      }
     }
     .category-head {
       display: inline;
