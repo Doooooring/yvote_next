@@ -86,7 +86,8 @@ const Wrapper = styled.div`
     text-align: left;
     margin-bottom: 5px;
     .image-wrapper {
-      display: inline-flex;
+      display: inline;
+      flex: 0 1 auto;
       height: 60%;
       padding-left: 5px;
       align-items: center;
