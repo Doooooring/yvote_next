@@ -89,7 +89,7 @@ const Wrapper = styled.div`
 
     .image-wrapper {
       position : relative;
-      height: 24px;
+      height: 18px;
       padding-left: 5px;
       align-items: center;
       img {
