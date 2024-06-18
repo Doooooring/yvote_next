@@ -47,28 +47,26 @@ export default function NewsPage(props: pageProps) {
 
   return (
     <>
-    <HeadMeta {...metaTagsProps} />
-    <Wrapper>
-      {/* <div className="articles-wrapper">
+      <HeadMeta {...metaTagsProps} />
+      <Wrapper>
+        {/* <div className="articles-wrapper">
         <NewArticles list={} />
       </div> */}
-      <div className="search-wrapper">
-        <SearchBox page={page} fetchPreviews={fetchPreviews} />
-        {/* <SpeechBubble /> */}
-      </div>
-      <div className="main-contents">
-        {/* <div className="main-header-wrapper"></div> */}
-        <div className="main-contents-body">
-          <NewsList
-            page={page}
-            previews={previews.length == 0 ? props.data : previews}
-            isRequesting={isRequesting}
-            fetchPreviews={fetchNextPreviews}
-            showNewsContent={showNewsContent}
-            />
+        <div className="search-wrapper">
+          <SearchBox page={page} fetchPreviews={fetchPreviews} />
         </div>
-      </div>
-    </Wrapper>
+        <div className="main-contents">
+          <div className="main-contents-body">
+            <NewsList
+              page={page}
+              previews={previews.length == 0 ? props.data : previews}
+              isRequesting={isRequesting}
+              fetchPreviews={fetchNextPreviews}
+              showNewsContent={showNewsContent}
+            />
+          </div>
+        </div>
+      </Wrapper>
     </>
   );
 }

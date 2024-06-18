@@ -4,32 +4,27 @@ import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
 import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
-import NewsRepository from '@repositories/news';
 import indexStore from '@store/indexStore';
-import { commentType } from '@utils/interface/news';
 
-import { observer, useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeExplain, typeToShow } from './commentModal.resource';
-import useForceUpdate from '@utils/hook/userForceUpdate';
-import { useFetchNewsComment } from './commentModal.hook';
 
-const CommentModal = observer(({
-  id,
-}: {
-  id: string;
-}) => {
+const CommentModal = observer(({ id }: { id: string }) => {
   const { currentStore } = indexStore;
   // 코멘트 모달 상태 전역으로 관리
-  const { isCommentModalUp, curComment : comment, closeCommentModal} = currentStore;
+  const { isCommentModalUp, curComment: comment, closeCommentModal } = currentStore;
   // 현재 보여지고 있는 평론들 ()
-  const {curComments, isRequesting, getPageBefore, getPageAfter} = useFetchNewsComment(id, comment);
+  const { curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
+    id,
+    comment,
+  );
+  const { curComment, showCurComment, closeCurComment } = useCurComment();
 
-  const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
-  
-  return <Modal
+  return (
+    <Modal
       state={isCommentModalUp}
       outClickAction={() => {
         closeCommentModal();
@@ -75,7 +70,7 @@ const CommentModal = observer(({
                       key={comment.comment + idx}
                       className="body-block"
                       onClick={() => {
-                        setCurComment(comment);
+                        showCurComment(comment);
                       }}
                     >
                       <span>{comment.title}</span>
@@ -116,7 +111,7 @@ const CommentModal = observer(({
                 <div
                   className="back-button"
                   onClick={() => {
-                    setCurComment(null);
+                    closeCurComment();
                   }}
                 >
                   목록으로
@@ -129,7 +124,8 @@ const CommentModal = observer(({
         <></>
       )}
     </Modal>
-})
+  );
+});
 
 export default CommentModal;
 

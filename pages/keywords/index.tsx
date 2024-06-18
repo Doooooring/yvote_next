@@ -1,3 +1,4 @@
+import HeadMeta from '@components/common/HeadMeta';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
@@ -5,7 +6,6 @@ import { KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
-import HeadMeta from '@components/common/HeadMeta';
 
 interface pageProps {
   data: {
