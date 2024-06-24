@@ -32,6 +32,7 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
       <div className="img-wrapper">
         <ImageFallback
           src={`${HOST_URL}/images/news/${_id}`}
+          blurImg="/assets/img/와이보트.png"
           width="100%"
           height="100%"
           fill={true}
