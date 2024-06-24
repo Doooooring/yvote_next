@@ -10,7 +10,7 @@ export default function LoadingIndicator({ state }: { state: boolean }) {
       <LoadingCommon
         comment={''}
         fontColor = 'black'
-        isRow={device === Device.pc ? false : true}
+        isRow={false}
         fontSize={device === Device.pc ? '2rem' : '1.3rem'}
         iconSize={device === Device.pc ? 64 : 32}
       />

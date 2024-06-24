@@ -51,6 +51,7 @@ export const useFetchNewsComment = (id: string, comment: commentType | null) => 
   }, [comment]);
 
   return {
+    page : curPage.current,
     curComments,
     isRequesting,
     getPageBefore,

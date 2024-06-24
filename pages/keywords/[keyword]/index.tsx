@@ -3,7 +3,6 @@ import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
 import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
-import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
 import { useCallback, useState } from 'react';
@@ -14,10 +13,9 @@ import NewsList from '@components/news/newsLIst';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 
-type curPreviewsList = Preview[];
-type curClicked = undefined | News['_id'];
-type AnswerState = 'left' | 'right' | 'none' | null;
+
 
 interface pageProps {
   data: {
@@ -27,9 +25,6 @@ interface pageProps {
   };
 }
 
-interface getNewsContentResponse {
-  news: NewsDetail | null;
-}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords: string[] = await keywordRepository.getKeywordIdList();
@@ -61,31 +56,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
-  const [newsContent, setNewsContent] = useState<NewsDetail | null>(null);
-  const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
-
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
+  const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
     fetchPreviews(data.keyword.keyword);
   });
 
-  const showNewsContent = async (id: string) => {
-    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
-    const { news } = newsInfo;
-    if (news === null) {
-      Error('news content error');
-      return;
-    }
-    setNewsContent(news);
-    setVoteHistory(null);
-  };
-
-  const hideNewsContent = useCallback(() => {
-    setNewsContent(null);
-    setVoteHistory(null);
-  }, []);
 
   const metaTagsProps = {
     title: data.keyword.keyword,
