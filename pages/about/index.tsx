@@ -5,9 +5,14 @@ import { ContactBox } from '@components/about/contactBox';
 import HeadMeta from '@components/common/HeadMeta';
 
 export default function About() {
+  const metaTagsProps = {
+    title: 'About',
+    url: `https://yvoting.com/about`,
+  };
+
   return (
     <Wrapper>
-      <HeadMeta />
+      <HeadMeta {...metaTagsProps} />
       <BlockElement>
         <Criteria />
         <Values />

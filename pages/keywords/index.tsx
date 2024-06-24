@@ -55,7 +55,7 @@ export default function KeywordsPage({ data }: pageProps) {
 
   return (
     <Wrapper>
-      <HeadMeta />
+      <HeadMeta {...metaTagsProps} />
       <div className="search-wrapper">
         <SearchBox />
       </div>

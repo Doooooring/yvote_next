@@ -59,31 +59,31 @@ export default function NewsDetailPage({ data }: pageProps) {
 
   const metaTagsProps = useMemo(() => {
     return {
-    title: news?.title || '',
-    description: news?.summary || '',
-    image: `${HOST_URL}/images/news/${news?._id}`,
-    url: `https://yvoting.com/news/${id}`,
-    type: 'article',
-    }
-  },[]);
+      title: news?.title || '',
+      description: news?.summary || '',
+      image: `${HOST_URL}/images/news/${news?._id}`,
+      url: `https://yvoting.com/news/${id}`,
+      type: 'article',
+    };
+  }, []);
 
   return (
     <>
-    <HeadMeta {...metaTagsProps} />
-    <Wrapper>
-      <div className="main-contents">
-        <div className="main-contents-body">
-          <div className="news-contents-wrapper">
-            <NewsContent
-              curClicked={id}
-              newsContent={news!}
-              voteHistory={null}
-              hide={hideNewsContent}
+      <HeadMeta {...metaTagsProps} />
+      <Wrapper>
+        <div className="main-contents">
+          <div className="main-contents-body">
+            <div className="news-contents-wrapper">
+              <NewsContent
+                curClicked={id}
+                newsContent={news!}
+                voteHistory={null}
+                hide={hideNewsContent}
               />
+            </div>
           </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
     </>
   );
 }
