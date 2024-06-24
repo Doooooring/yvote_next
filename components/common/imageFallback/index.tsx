@@ -36,8 +36,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
-      />
+        blurDataURL='/assets/img/와이보트.png'  />
     );
   } else if (typeof width === 'number' && typeof height === 'number') {
     return (
@@ -56,8 +55,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
-      />
+        blurDataURL='/assets/img/와이보트.png'     />
     );
   } else {
     return (
@@ -77,7 +75,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
+        blurDataURL='/assets/img/와이보트.png'   
       />
     );
   }
