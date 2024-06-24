@@ -1,4 +1,5 @@
 import ImageFallback from '@components/common/imageFallback';
+import yVoting from '@images/와이보트.png';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
@@ -32,7 +33,7 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
       <div className="img-wrapper">
         <ImageFallback
           src={`${HOST_URL}/images/news/${_id}`}
-          blurImg="/assets/img/와이보트.png"
+          blurImg={yVoting.src}
           width="100%"
           height="100%"
           fill={true}
