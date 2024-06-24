@@ -36,7 +36,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='/_next/image?url=%2Fassets%2Fimg%2Flogo_image.png&w=1200&q=75'
+        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
       />
     );
   } else if (typeof width === 'number' && typeof height === 'number') {
@@ -56,7 +56,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='/_next/image?url=%2Fassets%2Fimg%2Flogo_image.png&w=640&q=75'
+        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
       />
     );
   } else {
@@ -77,7 +77,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='/_next/image?url=%2Fassets%2Fimg%2Flogo_image.png&w=640&q=75'
+        blurDataURL='https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75'
       />
     );
   }
