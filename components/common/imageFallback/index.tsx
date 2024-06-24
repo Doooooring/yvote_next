@@ -36,7 +36,7 @@ export default function ImageFallback({
           setIsLoading(false)
         }}
         placeholder='blur'
-        blurDataURL='/_next/image?url=%2Fassets%2Fimg%2Flogo_image.png&w=640&q=75'
+        blurDataURL='/_next/image?url=%2Fassets%2Fimg%2Flogo_image.png&w=1200&q=75'
       />
     );
   } else if (typeof width === 'number' && typeof height === 'number') {
