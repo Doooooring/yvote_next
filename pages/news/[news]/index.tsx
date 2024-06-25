@@ -1,12 +1,12 @@
 import NewsContent from '@components/news/newsContents';
 import NewsRepository, { NewsDetail } from '@repositories/news';
 
+import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import HeadMeta from '@components/common/HeadMeta';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -74,12 +74,7 @@ export default function NewsDetailPage({ data }: pageProps) {
         <div className="main-contents">
           <div className="main-contents-body">
             <div className="news-contents-wrapper">
-              <NewsContent
-                curClicked={id}
-                newsContent={news!}
-                voteHistory={null}
-                hide={hideNewsContent}
-              />
+              <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
             </div>
           </div>
         </div>

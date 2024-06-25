@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import ImageFallback from '@components/common/imageFallback';
@@ -8,212 +7,144 @@ import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new_2x.png';
 import { HOST_URL } from '@public/assets/url';
-import KeywordRepository from '@repositories/keywords';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
-import { News, commentType } from '@utils/interface/news';
-import { useRouter } from 'next/router';
+import { useBool } from '@utils/hook/useBool';
+import { useMemo } from 'react';
 import CommentModal from '../commentModal';
-
-type newsContent = undefined | NewsDetail;
-type curClicked = undefined | News['_id'];
+import { useRouteToKeyword } from './newsContents.hook';
+import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
-  curClicked: curClicked;
-  newsContent: newsContent;
+  newsContent: NewsDetail;
   voteHistory: 'left' | 'right' | 'none' | null;
   hide: () => void;
 }
 
-export default function NewsContent({
-  curClicked,
-  newsContent,
-  voteHistory,
-  hide,
-}: NewsContentProps) {
-  const navigate = useRouter();
+export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
   const { openCommentModal } = currentStore;
-  const [curComment, setCurComment] = useState<commentType | null>(null);
-  const [showLeft, setShowLeft] = useState<boolean>(true);
 
-  /**
-   * 반응형 페이지 상태
-   */
-  const toggleShowLeft = useCallback(() => {
-    setShowLeft(!showLeft);
-  }, [showLeft]);
+  const [isLeft, showLeft, showRight] = useBool(true);
 
-  /**
-   * 평론 모달 열기
-   */
-  const commentOpen = useCallback((comment: commentType) => {
-    openCommentModal(comment);
-  }, []);
+  const routeToKeywordPage = useRouteToKeyword();
 
-  /**
-   * 키워드를 통해 키워드 아이디 조회 후 페이지 이동
-   * @param key 키워드
-   */
-  const routeToKeyword = async (key: string) => {
-    const id = await KeywordRepository.getIdByKeyword(key);
-    if (!id) {
-      alert('다시 검색해주세요!');
-      return;
-    }
-    navigate.push(`/keywords/${id}`);
-  };
-
-  // 코멘트 순서 정렬 (와이보트 > 행정부 > 청와대 > 국민의힘 > 민주당 > 기타 > 그 외)
   const commentToShow = useMemo(() => {
-    const getOrder = (comment: commentType) => {
-      switch (comment) {
-        case commentType.와이보트:
-          return 6;
-        case commentType.행정부:
-          return 5;
-        case commentType.청와대:
-          return 4;
-        case commentType.국민의힘:
-          return 3;
-        case commentType.민주당:
-          return 2;
-        case commentType.기타:
-          return 1;
-        default:
-          return 0;
-      }
-    };
-
-    return newsContent?.comments.sort((a, b) => {
-      const aOrder = getOrder(a);
-      const bOrder = getOrder(b);
-      return bOrder - aOrder;
-    });
+    return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
 
-  if (curClicked === undefined || newsContent === undefined) {
-    return <div></div>;
-  } else {
-    return (
-      <Wrapper>
-        <TabWrapper state={showLeft} className="fa-flex">
-          <span
-            onClick={(e) => {
-              e.preventDefault();
-              showLeft ? hide() : toggleShowLeft();
-            }}
-          >
-            뒤로
-          </span>
-          <span onClick={toggleShowLeft} className="show-next">
-            다음
-          </span>
-        </TabWrapper>
-        <Body>
-          <BodyLeft state={showLeft}>
-            <div className="close-wrapper">
-              <input
-                type="button"
-                style={{ display: 'none' }}
-                id="contents-close-button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  hide();
-                }}
-              ></input>
-              <label className="close-button" htmlFor="contents-close-button">
-                <Image src={icoClose} alt="hmm" />
-              </label>
-            </div>
-            <div className="contents-body">
-              <div className="right">
-                <div className="summary">
-                  <div className="main-image-wrapper">
-                    <ImageFallback
-                      src={`${HOST_URL}/images/news/${newsContent._id}`}
-                      width={100}
-                      height={100}
-                    />
-                  </div>
-                  <h2 className="head">
-                    <span>
-                      {newsContent.title}{' '}
-                      {newsContent.state ? (
-                        <Image src={icoNew} alt="new" height="16" />
-                      ) : (
-                        <div></div>
-                      )}
-                    </span>
-                  </h2>
-                  {newsContent.summary.split('$').map((sentence) => {
-                    return <p>{sentence}</p>;
-                  })}
+  return (
+    <Wrapper>
+      <TabWrapper state={isLeft} className="fa-flex">
+        <span
+          onClick={(e) => {
+            e.preventDefault();
+            isLeft ? hide() : showLeft();
+          }}
+        >
+          뒤로
+        </span>
+        <span onClick={showRight} className="show-next">
+          다음
+        </span>
+      </TabWrapper>
+      <Body>
+        <BodyLeft state={isLeft}>
+          <div className="close-wrapper">
+            <input
+              type="button"
+              style={{ display: 'none' }}
+              id="contents-close-button"
+              onClick={(e) => {
+                e.preventDefault();
+                hide();
+              }}
+            ></input>
+            <label className="close-button" htmlFor="contents-close-button">
+              <Image src={icoClose} alt="hmm" />
+            </label>
+          </div>
+          <div className="contents-body">
+            <div className="right">
+              <div className="summary">
+                <div className="main-image-wrapper">
+                  <ImageFallback
+                    src={`${HOST_URL}/images/news/${newsContent._id}`}
+                    width={100}
+                    height={100}
+                  />
                 </div>
-                <div className="keyword-wrapper">
-                  {newsContent.keywords?.map((keyword) => {
-                    return (
-                      <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
-                        {`# ${keyword}`}
-                      </p>
-                    );
-                  })}
-                </div>
+                <h2 className="head">
+                  <span>
+                    {newsContent.title}{' '}
+                    {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <div></div>}
+                  </span>
+                </h2>
+                {newsContent.summary.split('$').map((sentence) => {
+                  return <p>{sentence}</p>;
+                })}
+              </div>
+              <div className="keyword-wrapper">
+                {newsContent.keywords?.map((keyword) => {
+                  return (
+                    <p
+                      className="keyword"
+                      key={keyword}
+                      onClick={() => routeToKeywordPage(keyword)}
+                    >
+                      {`# ${keyword}`}
+                    </p>
+                  );
+                })}
               </div>
             </div>
-            <div className="timeline-wrapper">
-              {newsContent.timeline.map((timeline, idx) => {
-                return (
-                  <div className="timeline">
-                    <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
-                      <ImageFallback src={blueCheck} height={'100%'} width={'100%'} />
-                    </ImgWrapper>
-                    <div className="timeline-sentence">
-                      <p>{timeline.date}</p>
-                      <div className="time-line-body">
-                        {timeline.title.split('$').map((title, idx) => {
-                          return <p key={idx}>{title}</p>;
-                        })}
-                      </div>
+          </div>
+          <div className="timeline-wrapper">
+            {newsContent.timeline.map((timeline, idx) => {
+              return (
+                <div className="timeline">
+                  <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
+                    <ImageFallback src={blueCheck} height={'100%'} width={'100%'} />
+                  </ImgWrapper>
+                  <div className="timeline-sentence">
+                    <p>{timeline.date}</p>
+                    <div className="time-line-body">
+                      {timeline.title.split('$').map((title, idx) => {
+                        return <p key={idx}>{title}</p>;
+                      })}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </BodyLeft>
-          <BodyRight state={!showLeft}>
-            <div className="comment_body">
-              {commentToShow!.map((comment) => {
-                return (
-                  <div
-                    className="comment"
-                    onClick={() => {
-                      commentOpen(comment);
-                    }}
-                  >
-                    <ImageFallback
-                      src={`/assets/img/${comment}.png`}
-                      width={'50%'}
-                      height={'50%'}
-                    ></ImageFallback>
-                  </div>
-                );
-              })}
-            </div>
-            <VoteBox
-              _id={newsContent._id}
-              state={newsContent.state}
-              opinions={newsContent.opinions}
-              votes={newsContent.votes}
-              voteHistory={voteHistory}
-            />
-          </BodyRight>
-        </Body>
-        <CommentModal
-          id={newsContent._id}
-        />
-      </Wrapper>
-    );
-  }
+                </div>
+              );
+            })}
+          </div>
+        </BodyLeft>
+        <BodyRight state={!isLeft}>
+          <div className="comment_body">
+            {commentToShow!.map((comment) => {
+              return (
+                <div
+                  className="comment"
+                  onClick={() => {
+                    openCommentModal(comment);
+                  }}
+                >
+                  <ImageFallback src={`/assets/img/${comment}.png`} width={'50%'} height={'50%'} />
+                </div>
+              );
+            })}
+          </div>
+          <VoteBox
+            _id={newsContent._id}
+            state={newsContent.state}
+            opinions={newsContent.opinions}
+            votes={newsContent.votes}
+            voteHistory={voteHistory}
+          />
+        </BodyRight>
+      </Body>
+      <CommentModal id={newsContent._id} />
+    </Wrapper>
+  );
 }
 
 const Wrapper = styled.div`

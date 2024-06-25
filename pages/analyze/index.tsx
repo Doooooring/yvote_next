@@ -1,8 +1,14 @@
 import Questionnaire from '@components/analyze/questionnaire';
 import Result, { ResultAnswers } from '@components/analyze/result';
-import { useState } from 'react';
 import HeadMeta from '@components/common/HeadMeta';
+import { useState } from 'react';
 import styled from 'styled-components';
+
+const metaTagsProps = {
+  title: '정치 성향 테스트',
+  description: '120개의 질문, 13가지 유형',
+  url: `https://yvoting.com/analyze`,
+};
 
 export default function Analyze() {
   const [completed, setCompleted] = useState(false);
@@ -11,12 +17,6 @@ export default function Analyze() {
   const handleComplete = (finalAnswers: ResultAnswers) => {
     setAnswers(finalAnswers);
     setCompleted(true);
-  };
-
-  const metaTagsProps = {
-    title: '정치 성향 테스트',
-    description: '120개의 질문, 13가지 유형',
-    url: `https://yvoting.com/analyze`,
   };
 
   return (

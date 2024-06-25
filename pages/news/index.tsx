@@ -54,10 +54,8 @@ export default function NewsPage(props: pageProps) {
       </div> */}
         <div className="search-wrapper">
           <SearchBox page={page} fetchPreviews={fetchPreviews} />
-          {/* <SpeechBubble /> */}
         </div>
         <div className="main-contents">
-          {/* <div className="main-header-wrapper"></div> */}
           <div className="main-contents-body">
             <NewsList
               page={page}

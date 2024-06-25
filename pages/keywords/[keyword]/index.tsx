@@ -1,22 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
+import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
-import NewsRepository, { NewsDetail } from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
-import { HOST_URL } from '@public/assets/url';
+import { useCallback, useState } from 'react';
+import styled from 'styled-components';
 
-import NewsList from '@components/news/newsLIst';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import HeadMeta from '@components/common/HeadMeta';
+import NewsList from '@components/news/newsLIst';
+import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useMount } from '@utils/hook/useMount';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 
-type curPreviewsList = Preview[];
-type curClicked = undefined | News['_id'];
-type AnswerState = 'left' | 'right' | 'none' | null;
+
 
 interface pageProps {
   data: {
@@ -26,9 +25,6 @@ interface pageProps {
   };
 }
 
-interface getNewsContentResponse {
-  news: NewsDetail | null;
-}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords: string[] = await keywordRepository.getKeywordIdList();
@@ -60,36 +56,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
-  // 현재 클릭된 뉴스
-  const [curClicked, setCurClicked] = useState<curClicked>(undefined);
-  const [newsContent, setNewsContent] = useState<NewsDetail | undefined>(undefined);
-  const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
-
-  const newsWrapper = useRef<HTMLDivElement>(null);
-
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
+  const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
-  useEffect(() => {
+  useMount(() => {
     fetchPreviews(data.keyword.keyword);
-  }, []);
+  });
 
-  const showNewsContent = async (id: string) => {
-    const newsInfo: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
-    const { news } = newsInfo;
-    if (news === null) {
-      Error('news content error');
-      return;
-    }
-    setNewsContent(news);
-    setCurClicked(id);
-    setVoteHistory(null);
-  };
-
-  const hideNewsContent = useCallback(() => {
-    setCurClicked(undefined);
-    setVoteHistory(null);
-  }, []);
 
   const metaTagsProps = {
     title: `키워드 - ${data.keyword.keyword}`,
@@ -100,7 +74,7 @@ export default function KeyExplanation({ data }: pageProps) {
   };
 
   return (
-    <Wrapper ref={newsWrapper}>
+    <Wrapper>
       <HeadMeta {...metaTagsProps} />
       <div className="search-wrapper">
         <SearchBox />
@@ -114,21 +88,10 @@ export default function KeyExplanation({ data }: pageProps) {
         />
       </KeywordWrapper>
       <div className="main-contents">
-        {/* {curClicked ? (
-          <></>
-        ) : (
-          <div className="main-header-wrapper">
-            <div className="main-header">
-              <Image src={icoNews} alt="hmm" height="18" />
-              <div className="category-name">{'관련 뉴스'}</div>
-            </div>
-          </div>
-        )} */}
         <div className="main-contents-body">
-          {curClicked ? (
+          {newsContent ? (
             <div className="news-contents-wrapper">
               <NewsContent
-                curClicked={curClicked}
                 newsContent={newsContent}
                 voteHistory={voteHistory}
                 hide={hideNewsContent}

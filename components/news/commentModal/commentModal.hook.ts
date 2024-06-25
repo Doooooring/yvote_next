@@ -1,11 +1,11 @@
-import { commentType } from "@utils/interface/news";
 import NewsRepository from '@repositories/news';
+import { commentType } from '@utils/interface/news';
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const useFetchNewsComment = (id : string, comment : commentType | null) => {
-    const curPage = useRef(0);
-    const [curComments, setCurComments] = useState<
+export const useFetchNewsComment = (id: string, comment: commentType | null) => {
+  const curPage = useRef(0);
+  const [curComments, setCurComments] = useState<
     Array<{
       title: string;
       comment: string;
@@ -13,7 +13,7 @@ export const useFetchNewsComment = (id : string, comment : commentType | null) =
   >([]);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
-  async function fetchNewsComment( page: number) {
+  async function fetchNewsComment(page: number) {
     try {
       setIsRequesting(true);
       const response = await NewsRepository.getNewsComment(id, comment!, page);
@@ -30,12 +30,10 @@ export const useFetchNewsComment = (id : string, comment : commentType | null) =
     }
   }
 
-  
   const getPageBefore = async () => {
     if (curPage.current === 0) return;
     curPage.current -= 10;
     await fetchNewsComment(curPage.current);
-    
   };
   const getPageAfter = async () => {
     curPage.current += 10;
@@ -48,12 +46,36 @@ export const useFetchNewsComment = (id : string, comment : commentType | null) =
       setCurComments([]);
       return;
     }
-    curPage.current=0;
+    curPage.current = 0;
     fetchNewsComment(0);
   }, [comment]);
 
   return {
-    curComments, isRequesting, getPageBefore, getPageAfter
-  }
+    page : curPage.current,
+    curComments,
+    isRequesting,
+    getPageBefore,
+    getPageAfter,
+  };
+};
 
-}
+export const useCurComment = () => {
+  const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
+
+  const showCurComment = useCallback(
+    (comment: { title: string; comment: string }) => {
+      setCurComment(comment);
+    },
+    [setCurComment],
+  );
+
+  const closeCurComment = useCallback(() => {
+    setCurComment(null);
+  }, [setCurComment]);
+
+  return {
+    curComment,
+    showCurComment,
+    closeCurComment,
+  };
+};

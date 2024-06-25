@@ -4,35 +4,35 @@ import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
 import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
-import NewsRepository from '@repositories/news';
 import indexStore from '@store/indexStore';
-import { commentType } from '@utils/interface/news';
 
-import { observer, useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeExplain, typeToShow } from './commentModal.resource';
-import useForceUpdate from '@utils/hook/userForceUpdate';
-import { useFetchNewsComment } from './commentModal.hook';
+import { useCallback } from 'react';
 
-const CommentModal = observer(({
-  id,
-}: {
-  id: string;
-}) => {
-  const { currentStore } = indexStore;
+const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리
-  const { isCommentModalUp, curComment : comment, closeCommentModal} = currentStore;
+  const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;
   // 현재 보여지고 있는 평론들 ()
-  const {curComments, isRequesting, getPageBefore, getPageAfter} = useFetchNewsComment(id, comment);
+  const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
+    id,
+    comment,
+  );
+  const { curComment, showCurComment, closeCurComment } = useCurComment();
 
-  const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
-  
-  return <Modal
+  const close = useCallback(() => {
+    closeCurComment();
+    closeCommentModal();
+  }, [closeCommentModal, closeCurComment])
+
+  return (
+    <Modal
       state={isCommentModalUp}
       outClickAction={() => {
-        closeCommentModal();
+        close();
       }}
     >
       {comment ? (
@@ -40,7 +40,7 @@ const CommentModal = observer(({
           <div
             className="close-button"
             onClick={() => {
-              closeCommentModal();
+              close();
             }}
           >
             <Image src={closeButton} width={16} height={16} alt="" />
@@ -75,7 +75,7 @@ const CommentModal = observer(({
                       key={comment.comment + idx}
                       className="body-block"
                       onClick={() => {
-                        setCurComment(comment);
+                        showCurComment(comment);
                       }}
                     >
                       <span>{comment.title}</span>
@@ -84,22 +84,24 @@ const CommentModal = observer(({
                 })}
               </div>
               <div className="page-button-wrapper">
-                <div
-                  className="page-button button-left"
+                <PageButton
+                  className="button-left"
+                  $state={page != 0}
                   onClick={async () => {
                     await getPageBefore();
                   }}
                 >
                   <Image src={arrowLeft} width={16} height={16} alt="" />
-                </div>
-                <div
-                  className="page-button button-right"
+                </PageButton>
+                <PageButton
+                  className="button-right"
+                  $state={true}
                   onClick={async () => {
                     await getPageAfter();
                   }}
                 >
                   <Image src={arrowRight} width={16} height={16} alt="" />
-                </div>
+                </PageButton>
               </div>
             </div>
           ) : (
@@ -116,7 +118,7 @@ const CommentModal = observer(({
                 <div
                   className="back-button"
                   onClick={() => {
-                    setCurComment(null);
+                    closeCurComment();
                   }}
                 >
                   목록으로
@@ -129,7 +131,8 @@ const CommentModal = observer(({
         <></>
       )}
     </Modal>
-})
+  );
+});
 
 export default CommentModal;
 
@@ -274,16 +277,6 @@ const Wrapper = styled.div`
         justify-content: end;
         gap: 12px;
         padding-top: 0.5rem;
-
-        div.page-button {
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          padding: 0.5rem;
-          border-radius: 30px;
-          box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-          cursor: pointer;
-        }
       }
 
       div.content-wrapper {
@@ -319,6 +312,20 @@ const Wrapper = styled.div`
     }
   }
 `;
+
+interface PageButtonProps {
+  $state : boolean;
+}
+
+const PageButton = styled.div<PageButtonProps>`
+  display: ${({$state}) => $state ? 'flex' : 'none'};
+  flex-direction: row;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 30px;
+  box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+`
 
 const LoadingWrapper = styled.div`
   width: 100%;
