@@ -1,20 +1,20 @@
 import defaultImg from '@images/default_image.png';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import styles from './imageFallback.module.css';
+import styles from './imageFallback.module.css'
 /** image load error 일 경우 default image 표시 component */
 export default function ImageFallback({
   src,
   width,
   height,
   fill,
-  blurImg = '/',
+  blurImg="/"
 }: {
   src: string;
   width?: number | string;
   height?: number | string;
   fill?: boolean;
-  blurImg?: string;
+  blurImg? : string;
 }) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<boolean>(false);
@@ -35,9 +35,9 @@ export default function ImageFallback({
           setLoadError(true);
         }}
         onLoad={() => {
-          setIsLoading(false);
+          setIsLoading(false)
         }}
-        placeholder="blur"
+        placeholder='blur'
         blurDataURL={blurImg}
       />
     );
@@ -55,16 +55,16 @@ export default function ImageFallback({
           setLoadError(true);
         }}
         onLoad={() => {
-          setIsLoading(false);
+          setIsLoading(false)
         }}
-        placeholder="blur"
-        blurDataURL={blurImg}
-      />
+        placeholder='blur'
+        blurDataURL={blurImg}   />
     );
   } else {
     return (
       <Image
-        className={isLoading ? styles.isLoading : ''}
+      className={isLoading ? styles.isLoading : ''}
+
         src={loadError ? defaultImg : src}
         height={Number((height as string).split('%')[0])}
         width={Number((width as string).split('%')[0])}
@@ -75,10 +75,10 @@ export default function ImageFallback({
           setLoadError(true);
         }}
         onLoad={() => {
-          setIsLoading(false);
+          setIsLoading(false)
         }}
-        placeholder="blur"
-        blurDataURL={blurImg}
+        placeholder='blur'
+        blurDataURL={blurImg}  
       />
     );
   }
