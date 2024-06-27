@@ -5,8 +5,8 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 const metaTagsProps = {
-  title: '와이보트 가치관 테스트',
-  description: '120개의 질문으로 나의 정치성향을 알아보세요',
+  title: '정치 성향 테스트',
+  description: '120개의 질문, 13가지 유형',
   url: `https://yvoting.com/analyze`,
 };
 

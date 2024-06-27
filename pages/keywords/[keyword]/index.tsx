@@ -66,7 +66,7 @@ export default function KeyExplanation({ data }: pageProps) {
 
 
   const metaTagsProps = {
-    title: data.keyword.keyword,
+    title: `키워드 - ${data.keyword.keyword}`,
     description: data.keyword.explain || '',
     image: `${HOST_URL}/images/keywords/${data.keyword._id}`,
     url: `https://yvoting.com/keywords/${data.keyword._id}`,
