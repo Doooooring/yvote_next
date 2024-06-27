@@ -16,10 +16,10 @@ export default function Header() {
         <LogoImgBox>
           <HomeLink href="/" $state={curRoute === 'home'}>
             <ImageWrapper className="image-l">
-              <ImageFallback src="/assets/img/김민재 로고.png" width="120" height="27" />
+              <ImageFallback src="/assets/img/김민재 로고.png" width="120" height="27" alt="logo" />
             </ImageWrapper>
             <ImageWrapper className="image-s">
-              <ImageFallback src="/assets/img/logo_image.png" width="50" height="50" />
+              <ImageFallback src="/assets/img/logo_image.png" width="50" height="50" alt="logo" />
             </ImageWrapper>
           </HomeLink>
         </LogoImgBox>

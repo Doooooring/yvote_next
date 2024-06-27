@@ -62,7 +62,7 @@ export default function ArticleBox({
           <div className="modal-header">
             <div className="image-wrapper">
               <div className="image-box">
-                <ImageFallback src={`/assets/img/${writer}.png`} fill={true} />
+                <ImageFallback src={`/assets/img/${writer}.png`} alt={writer ?? ''} fill={true} />
               </div>
             </div>
             <div className="head-title">

@@ -28,12 +28,7 @@ const Types: React.FC<TypesProps> = ({ id }) => {
         <div>
           <div className="header">
             <div className="img-wrapper">
-              <ImageFallback
-                src={`/assets/img/test_${id}.svg`}
-                width="100%"
-                height="100%"
-                fill={true}
-              />
+              <ImageFallback src={`/assets/img/test_${id}.svg`} alt="test" fill={true} />
             </div>
             <h1>{type.title}</h1>
           </div>
@@ -66,12 +61,12 @@ const Wrapper = styled.div`
   height: auto;
 
   @media screen and (max-width: 760px) {
-    margin-top : 20px;
-    padding : 30px 20px;
+    margin-top: 20px;
+    padding: 30px 20px;
   }
 
   @media screen and (max-width: 434px) {
-    padding : 30px 15px;
+    padding: 30px 15px;
   }
 
   h1 {

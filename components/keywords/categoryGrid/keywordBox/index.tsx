@@ -22,7 +22,16 @@ export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
     >
       <div className="wrapper">
         <div className="image-wrapper">
-          <ImageFallback src={`${HOST_URL}/images/keyword/${id}`} width={'75%'} height={'75%'} />
+          <ImageFallback
+            src={`${HOST_URL}/images/keyword/${id}`}
+            alt={keyword ?? ''}
+            width="100"
+            height="100"
+            style={{
+              width: '75%',
+              height: '75%',
+            }}
+          />
         </div>
         <div className="keyword-wrapper">
           <p className="keyword-title">{keyword}</p>

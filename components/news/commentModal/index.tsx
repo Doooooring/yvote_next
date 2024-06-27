@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeExplain, typeToShow } from './commentModal.resource';
 import { useCallback } from 'react';
+import { loadingImg } from '@public/assets/resource';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리
@@ -26,7 +27,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
   const close = useCallback(() => {
     closeCurComment();
     closeCommentModal();
-  }, [closeCommentModal, closeCurComment])
+  }, [closeCommentModal, closeCurComment]);
 
   return (
     <Modal
@@ -48,10 +49,14 @@ const CommentModal = observer(({ id }: { id: string }) => {
           <div className="modal-head">
             <div className="image-wrapper">
               <div className="image-box">
-                <ImageFallback src={`/assets/img/${comment}.png`} fill={true} />
+                <ImageFallback
+                  src={`/assets/img/${comment}.png`}
+                  blurImg={loadingImg}
+                  alt={comment}
+                  fill={true}
+                />
               </div>
             </div>
-
             <div className="head-body">
               <div className="head-title">
                 <p className="type-name">{typeToShow(comment)}</p>
@@ -314,18 +319,18 @@ const Wrapper = styled.div`
 `;
 
 interface PageButtonProps {
-  $state : boolean;
+  $state: boolean;
 }
 
 const PageButton = styled.div<PageButtonProps>`
-  display: ${({$state}) => $state ? 'flex' : 'none'};
+  display: ${({ $state }) => ($state ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: center;
   padding: 0.5rem;
   border-radius: 30px;
   box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
   cursor: pointer;
-`
+`;
 
 const LoadingWrapper = styled.div`
   width: 100%;

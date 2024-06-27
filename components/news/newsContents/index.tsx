@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import CommentModal from '../commentModal';
 import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
+import { loadingImg } from '@public/assets/resource';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -69,6 +70,8 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 <div className="main-image-wrapper">
                   <ImageFallback
                     src={`${HOST_URL}/images/news/${newsContent._id}`}
+                    alt={newsContent.title}
+                    blurImg={loadingImg}
                     width={100}
                     height={100}
                   />
@@ -103,7 +106,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               return (
                 <div className="timeline">
                   <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
-                    <ImageFallback src={blueCheck} height={'100%'} width={'100%'} />
+                    <ImageFallback src={blueCheck} alt="bluecheck" fill />
                   </ImgWrapper>
                   <div className="timeline-sentence">
                     <p>{timeline.date}</p>
@@ -128,7 +131,17 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     openCommentModal(comment);
                   }}
                 >
-                  <ImageFallback src={`/assets/img/${comment}.png`} width={'50%'} height={'50%'} />
+                  <ImageFallback
+                    src={`/assets/img/${comment}.png`}
+                    alt={comment}
+                    width={'200'}
+                    height={'200'}
+                    style={{
+                      width: '50%',
+                      height: '50%',
+                    }}
+                    blurImg={loadingImg}
+                  />
                 </div>
               );
             })}
@@ -374,6 +387,7 @@ interface ImageWrapperProps {
 }
 
 const ImgWrapper = styled.div<ImageWrapperProps>`
+  position: relative;
   height: 20px;
   aspect-ratio: 1 / 1;
   opacity: ${({ opacity }) => opacity};
