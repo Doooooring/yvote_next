@@ -17,15 +17,15 @@ export default function ImageFallback({
   ...others
 }: ImageFallbackProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loadError, setLoadError] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
   return (
     <Image
-      src={loadError ? defaultImg : src}
+      src={isError ? defaultImg : src}
       className={isLoading ? styles.isLoading : ''}
       alt={alt ?? 'image'}
       onError={() => {
-        setLoadError(true);
+        setIsError(true);
       }}
       onLoad={() => {
         setIsLoading(false);

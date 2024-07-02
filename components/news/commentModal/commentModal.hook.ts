@@ -36,9 +36,8 @@ export const useFetchNewsComment = (id: string, comment: commentType | null) => 
     await fetchNewsComment(curPage.current);
   };
   const getPageAfter = async () => {
-    curPage.current += 10;
-    const response = await fetchNewsComment(curPage.current);
-    if (!response) curPage.current -= 10;
+    const response = await fetchNewsComment(curPage.current + 10);
+    if (response) curPage.current += 10;
   };
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export const useFetchNewsComment = (id: string, comment: commentType | null) => 
   }, [comment]);
 
   return {
-    page : curPage.current,
+    page: curPage.current,
     curComments,
     isRequesting,
     getPageBefore,

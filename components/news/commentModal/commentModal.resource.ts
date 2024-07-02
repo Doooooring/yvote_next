@@ -1,3 +1,5 @@
+import { CommentQualification, commentType } from '@utils/interface/news';
+
 export const typeExplain = {
   전략가: `국민의힘은 대한민국의 보수주의 정당이다. 2020년 2월 17일, 자유한국당과 새로운보수당, 미래를향한전진4.0이 통합하여 '미래통합당'이라는 당명으로 창당되었으며, 2020년 9월 2일, 당명을 '국민의힘'으로 변경하였다. 2022년 4월 18일, 국민의당을 흡수하여 합당하였다. (구글에서 베껴온 임시 설명 실제로는 키워드 ‘국민의힘’에 직접 작성한 내용과 같을 예정)`,
   지도자: `국민의힘은 대한민국의 보수주의 정당이다. 2020년 2월 17일, 자유한국당과 새로운보수당, 미래를향한전진4.0이 통합하여 '미래통합당'이라는 당명으로 창당되었으며, 2020년 9월 2일, 당명을 '국민의힘'으로 변경하였다. 2022년 4월 18일, 국민의당을 흡수하여 합당하였다. (구글에서 베껴온 임시 설명 실제로는 키워드 ‘국민의힘’에 직접 작성한 내용과 같을 예정)`,
@@ -18,10 +20,46 @@ export const typeExplain = {
   기타: `대통령의 정치적 인지도가 높은 한국에서는, 실질적으로 대통령을 배출할 가능성을 높이기 위해 당을 합치는 경우가 많습니다. 이러한 이유로 두 개의 거대한 정당이 정치를 주도하는 현상이 나타나지만, 합당에 응하지 않는 정당들도 있습니다. 또한, 총선거에 소속 정당 없이 출마하여 당선되거나, 기존의 당에서 나온 국회의원들은 무소속으로 분류됩니다.`,
 };
 
-export function typeToShow(type: string) {
+export const typeQualification = (type: commentType) => {
+  switch (type) {
+    case commentType.전략가:
+    case commentType.지도자:
+    case commentType.예술가:
+    case commentType.감시자:
+    case commentType.운영자:
+    case commentType.공화주의자:
+    case commentType.관찰자:
+    case commentType.개혁가:
+    case commentType.이론가:
+    case commentType.자유주의자:
+      return CommentQualification.YVOTETYPE;
+    case commentType.민주당:
+    case commentType.국민의힘:
+    case commentType.청와대:
+    case commentType.행정부:
+    case commentType.헌법재판소:
+      return CommentQualification.PUBLIC;
+    case commentType.와이보트:
+      return CommentQualification.YVOTE;
+    case commentType.기타:
+      return CommentQualification.ETC;
+  }
+};
+
+export const typeCheckImg = (type: commentType) => {
+  const qualify = typeQualification(type);
+  switch (qualify) {
+    case CommentQualification.YVOTE:
+    case CommentQualification.YVOTETYPE:
+    case CommentQualification.PUBLIC:
+    case CommentQualification.ETC:
+  }
+};
+
+export const typeToShow = (type: string) => {
   if (type in typeExplain) {
     if (type === '민주당') return '더불어민주당';
     if (type === '청와대') return '대통령실';
     else return type;
   }
-}
+};

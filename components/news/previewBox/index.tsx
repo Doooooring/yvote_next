@@ -14,7 +14,7 @@ interface PreviewBoxProps {
 
 export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
-  const { _id, order, title, summary, keywords, state } = preview;
+  const { _id, title, summary, keywords, state } = preview;
 
   const routeToKeyword = async (key: string) => {
     const id = await KeywordRepository.getIdByKeyword(key);

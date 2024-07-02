@@ -27,6 +27,13 @@ export enum commentType {
   기타 = '기타',
 }
 
+export enum CommentQualification {
+  YVOTE = 0,
+  YVOTETYPE = 1,
+  PUBLIC = 2,
+  ETC = 3,
+}
+
 export interface Timeline {
   date: string;
   title: string;
