@@ -10,7 +10,7 @@ import { observer } from 'mobx-react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
-import { typeExplain, typeToShow } from './commentModal.resource';
+import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
 import { useCallback } from 'react';
 import { loadingImg } from '@public/assets/resource';
 
@@ -46,26 +46,27 @@ const CommentModal = observer(({ id }: { id: string }) => {
           >
             <Image src={closeButton} width={16} height={16} alt="" />
           </div>
-          <div className="modal-head">
-            <div className="image-wrapper">
-              <div className="image-box">
-                <ImageFallback
-                  src={`/assets/img/${comment}.png`}
-                  blurImg={loadingImg}
-                  alt={comment}
-                  fill={true}
-                />
-              </div>
-            </div>
+          <HeadBody>
+            <HeadTitle>
+              <CommentImageWrapper>
+                <div className="image-box">
+                  <ImageFallback
+                    src={`/assets/img/${comment}.png`}
+                    blurImg={loadingImg}
+                    alt={comment}
+                    fill={true}
+                  />
+                </div>
+              </CommentImageWrapper>
+              <p className="type-name">{typeToShow(comment)}</p>
+              <ImageFallback src={typeCheckImg(comment)} alt="check-img" width="10" height="10" />
+            </HeadTitle>
             <div className="head-body">
-              <div className="head-title">
-                <p className="type-name">{typeToShow(comment)}</p>
-              </div>
               <div className="type-explain">{typeExplain[comment]}</div>
             </div>
-          </div>
+          </HeadBody>
           {curComment === null ? (
-            <div className="modal-body">
+            <ModalBody>
               <div className="modal-list">
                 {isRequesting ? (
                   <LoadingWrapper>
@@ -108,9 +109,9 @@ const CommentModal = observer(({ id }: { id: string }) => {
                   <Image src={arrowRight} width={16} height={16} alt="" />
                 </PageButton>
               </div>
-            </div>
+            </ModalBody>
           ) : (
-            <div className="modal-body">
+            <ModalBody>
               <div className="content-wrapper">
                 <p className="content-title">{curComment.title}</p>
                 <div className="content-body">
@@ -129,7 +130,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
                   목록으로
                 </div>
               </div>
-            </div>
+            </ModalBody>
           )}
         </Wrapper>
       ) : (
@@ -183,137 +184,139 @@ const Wrapper = styled.div`
       border: 0;
       font: inherit;
       box-sizing: inherit;
+    }
+  }
+`;
+
+const HeadTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.5rem;
+
+  p.type-name {
+    padding-left: 0.5rem;
+    padding-right: 0.25rem;
+    font-weight: 600;
+    font-size: 18px;
+    @media screen and (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+`;
+
+const HeadBody = styled.div`
+  @media screen and (max-width: 768px) {
+    padding-left: 0;
+  }
+
+  div.type-explain {
+    color: #a1a1a1;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.7;
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+    }
+  }
+`;
+
+const CommentImageWrapper = styled.div`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  background-color: white;
+  border-radius: 200px;
+  border: 1px solid rgb(225, 225, 225);
+  overflow: hidden;
+  box-sizing: border-box;
+  @media screen and (max-width: 768px) {
+  }
+  .image-box {
+    width: 60%;
+    height: 60%;
+    position: absolute;
+  }
+`;
+
+const ModalBody = styled.div`
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 2px solid rgb(225, 225, 225);
+
+  div.modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    div.body-block {
+      height: 60px;
+      padding-left: 2rem;
+      box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 16px;
       display: flex;
       flex-direction: row;
-
+      align-items: center;
+      cursor: pointer;
+      box-sizing: border-box;
       @media screen and (max-width: 768px) {
-        display: block;
+        padding: 0rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
       }
-      div.image-wrapper {
-        display: flex;
-        position: relative;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        width: 140px;
-        height: 140px;
-        flex: 0 0 auto;
-        padding: 1.75rem;
-        background-color: white;
-        box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
-        border-radius: 200px;
+      span {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        box-sizing: border-box;
-        @media screen and (max-width: 768px) {
-          width: 100px;
-          height: 100px;
-          min-width: 0px;
-          float: left;
-          margin-left: 10px;
-          margin-right: 20px;
-        }
-        .image-box {
-          width: 50%;
-          height: 50%;
-          position: absolute;
-        }
-      }
-      div.head-body {
-        padding-left: 2rem;
-        @media screen and (max-width: 768px) {
-          padding-left: 0;
-        }
-        p.type-name {
-          font-weight: 600;
-          font-size: 18px;
-          @media screen and (max-width: 768px) {
-            font-size: 16px;
-          }
-        }
-        div.type-explain {
-          color: #a1a1a1;
-          font-weight: 500;
-          font-size: 15px;
-          line-height: 1.7;
-          @media screen and (max-width: 768px) {
-            padding-left: 4%;
-            font-size: 14px;
-          }
-        }
+        text-overflow: ellipsis;
+        font-size: 13px;
+        font-weight: 500;
+        color: #a1a1a1;
       }
     }
-    div.modal-body {
-      padding-top: 1rem;
-      div.modal-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        position: relative;
-        div.body-block {
-          height: 60px;
-          padding-left: 2rem;
-          box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-          border-radius: 16px;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          cursor: pointer;
-          box-sizing: border-box;
-          @media screen and (max-width: 768px) {
-            padding: 0rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-          }
-          span {
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 13px;
-            font-weight: 500;
-            color: #a1a1a1;
-          }
-        }
-      }
-      div.page-button-wrapper {
-        display: flex;
-        flex-direction: row;
-        justify-content: end;
-        gap: 12px;
-        padding-top: 0.5rem;
-      }
+  }
+  div.page-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 12px;
+    padding-top: 0.5rem;
+  }
 
-      div.content-wrapper {
-        padding: 1.25rem 4%;
-        box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-        color: rgb(102, 102, 102);
-        p.content-title {
-          color: #7e7e7e;
-          font-weight: 600;
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
-        }
-        div.content-body {
-          p {
-            margin-bottom: 0.5rem;
-            min-height: 10px;
-          }
-        }
+  div.content-wrapper {
+    padding: 1.25rem 4%;
+    box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+    color: rgb(102, 102, 102);
+    p.content-title {
+      color: #7e7e7e;
+      font-weight: 600;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    div.content-body {
+      p {
+        margin-bottom: 0.5rem;
+        min-height: 10px;
       }
+    }
+  }
 
-      div.back-button-wrapper {
-        padding-top: 1rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: end;
-        div.back-button {
-          box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-          padding: 0.5rem 1.5rem;
-          border-radius: 8px;
-          font-weight: 400;
-        }
-      }
+  div.back-button-wrapper {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    div.back-button {
+      box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 400;
     }
   }
 `;
