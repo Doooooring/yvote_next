@@ -6,13 +6,13 @@ import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
 import indexStore from '@store/indexStore';
 
+import { loadingImg } from '@public/assets/resource';
 import { observer } from 'mobx-react';
 import Image from 'next/image';
+import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
-import { useCallback } from 'react';
-import { loadingImg } from '@public/assets/resource';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리
@@ -291,11 +291,11 @@ const ModalBody = styled.div`
   }
 
   div.content-wrapper {
-    padding: 1.25rem 4%;
-    box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-    color: rgb(102, 102, 102);
+    padding: 1rem 0;
+    color: black;
     p.content-title {
-      color: #7e7e7e;
+      color: black;
+      font-size: 14px;
       font-weight: 600;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
@@ -318,6 +318,7 @@ const ModalBody = styled.div`
       padding: 0.5rem 1.5rem;
       border-radius: 8px;
       font-weight: 400;
+      cursor: pointer;
     }
   }
 `;
