@@ -211,7 +211,7 @@ const HeadBody = styled.div`
   }
 
   div.type-explain {
-    color: #a1a1a1;
+    color: black;
     font-weight: 500;
     font-size: 15px;
     line-height: 1.7;
@@ -247,23 +247,24 @@ const CommentImageWrapper = styled.div`
 const ModalBody = styled.div`
   margin-top: 0.5rem;
   padding-top: 0.5rem;
-  border-top: 2px solid rgb(225, 225, 225);
+  border-top: 1.5px solid rgb(225, 225, 225);
 
   div.modal-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
     position: relative;
     div.body-block {
       height: 60px;
-      padding-left: 2rem;
-      box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-      border-radius: 16px;
+      padding-left: 1rem;
+      padding-right: 1rem;
       display: flex;
       flex-direction: row;
       align-items: center;
       cursor: pointer;
       box-sizing: border-box;
+
+      border-bottom: 1.5px solid #ddd;
+
       @media screen and (max-width: 768px) {
         padding: 0rem;
         padding-left: 1rem;
@@ -277,7 +278,7 @@ const ModalBody = styled.div`
         text-overflow: ellipsis;
         font-size: 13px;
         font-weight: 500;
-        color: #a1a1a1;
+        color: black;
       }
     }
   }

@@ -55,11 +55,10 @@ export const typeCheckImg = (type: commentType) => {
   const qualify = typeQualification(type);
   switch (qualify) {
     case CommentQualification.YVOTE:
+    case CommentQualification.PUBLIC:
       return '/assets/img/yvote_check.svg';
     case CommentQualification.YVOTETYPE:
       return '/assets/img/green_check.svg';
-    case CommentQualification.PUBLIC:
-      return '/assets/img/blue_check.svg';
     case CommentQualification.ETC:
       return '/assets/img/grey_check.svg';
   }
