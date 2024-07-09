@@ -313,6 +313,8 @@ const ModalBody = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: end;
+    border-top: 1.5px solid rgb(225, 225, 225);
+
     div.back-button {
       box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
       padding: 0.5rem 1.5rem;

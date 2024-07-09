@@ -1,10 +1,5 @@
 import { CommentQualification, commentType } from '@utils/interface/news';
 
-import yvoteCheck from '@images/yvote_check.svg';
-import greenCheck from '@images/green_check.svg';
-import puppleCheck from '@images/pupple_check.svg';
-import greyCheck from '@images/grey_check.svg';
-
 export const typeExplain = {
   전략가: `국민의힘은 대한민국의 보수주의 정당이다. 2020년 2월 17일, 자유한국당과 새로운보수당, 미래를향한전진4.0이 통합하여 '미래통합당'이라는 당명으로 창당되었으며, 2020년 9월 2일, 당명을 '국민의힘'으로 변경하였다. 2022년 4월 18일, 국민의당을 흡수하여 합당하였다. (구글에서 베껴온 임시 설명 실제로는 키워드 ‘국민의힘’에 직접 작성한 내용과 같을 예정)`,
   지도자: `국민의힘은 대한민국의 보수주의 정당이다. 2020년 2월 17일, 자유한국당과 새로운보수당, 미래를향한전진4.0이 통합하여 '미래통합당'이라는 당명으로 창당되었으며, 2020년 9월 2일, 당명을 '국민의힘'으로 변경하였다. 2022년 4월 18일, 국민의당을 흡수하여 합당하였다. (구글에서 베껴온 임시 설명 실제로는 키워드 ‘국민의힘’에 직접 작성한 내용과 같을 예정)`,
@@ -64,10 +59,27 @@ export const typeCheckImg = (type: commentType) => {
   }
 };
 
-export const typeToShow = (type: string) => {
+export const typeToShow = (type: commentType) => {
   if (type in typeExplain) {
     if (type === '민주당') return '더불어민주당';
     if (type === '청와대') return '대통령실';
     else return type;
+  }
+};
+
+export const typeColor = (type: commentType) => {
+  switch (type) {
+    case commentType.민주당:
+      return 'rgb(11, 104, 179)';
+    case commentType.국민의힘:
+      return 'rgb(230, 30, 43)';
+    case commentType.청와대:
+      return 'rgb(189, 145, 103)';
+    case commentType.행정부:
+      return 'rgb(255, 255, 255)';
+    case commentType.헌법재판소:
+      return 'rgb(180, 123, 98)';
+    case commentType.와이보트:
+      return 'rgb(121, 192, 215)';
   }
 };

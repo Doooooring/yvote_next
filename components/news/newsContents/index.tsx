@@ -125,25 +125,36 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
           <div className="comment_body">
             {commentToShow!.map((comment) => {
               return (
-                <div
-                  className="comment"
-                  onClick={() => {
-                    openCommentModal(comment);
-                  }}
-                >
-                  <ImageFallback
-                    src={`/assets/img/${comment}.png`}
-                    alt={comment}
-                    width={'200'}
-                    height={'200'}
-                    style={{
-                      width: '50%',
-                      height: '50%',
-                    }}
-                    blurImg={loadingImg}
-                  />
-                </div>
+                <CommentBox>
+                  <div className="commentBox-header">
+                    <ImageFallback
+                      src={`/assets/img/${comment}.png`}
+                      alt={comment}
+                      width={'40'}
+                      height={'40'}
+                    />
+                  </div>
+                  <div className="commentBox-footer"></div>
+                </CommentBox>
               );
+              // <div
+              //   className="comment"
+              //   onClick={() => {
+              //     openCommentModal(comment);
+              //   }}
+              // >
+              //   <ImageFallback
+              //     src={`/assets/img/${comment}.png`}
+              //     alt={comment}
+              //     width={'200'}
+              //     height={'200'}
+              //     style={{
+              //       width: '50%',
+              //       height: '50%',
+              //     }}
+              //     blurImg={loadingImg}
+              //   />
+              // </div>;
             })}
           </div>
           <VoteBox
@@ -423,4 +434,9 @@ const BodyRight = styled.div<BodyProps>`
       align-items: center;
     }
   }
+`;
+
+const CommentBox = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
