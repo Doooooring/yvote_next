@@ -15,6 +15,7 @@ import CommentModal from '../commentModal';
 import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
 import { loadingImg } from '@public/assets/resource';
+import { typeColor } from '../commentModal/commentModal.resource';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -122,40 +123,59 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
           </div>
         </BodyLeft>
         <BodyRight state={!isLeft}>
+          <div className="comment_header">관련 자료 체크하기</div>
           <div className="comment_body">
-            {commentToShow!.map((comment) => {
-              return (
-                <CommentBox>
-                  <div className="commentBox-header">
-                    <ImageFallback
-                      src={`/assets/img/${comment}.png`}
-                      alt={comment}
-                      width={'40'}
-                      height={'40'}
-                    />
-                  </div>
-                  <div className="commentBox-footer"></div>
-                </CommentBox>
-              );
-              // <div
-              //   className="comment"
-              //   onClick={() => {
-              //     openCommentModal(comment);
-              //   }}
-              // >
-              //   <ImageFallback
-              //     src={`/assets/img/${comment}.png`}
-              //     alt={comment}
-              //     width={'200'}
-              //     height={'200'}
-              //     style={{
-              //       width: '50%',
-              //       height: '50%',
-              //     }}
-              //     blurImg={loadingImg}
-              //   />
-              // </div>;
-            })}
+            <div className="comment_scroll_wrapper">
+              {commentToShow!.map((comment) => {
+                return (
+                  <CommentBox>
+                    <div
+                      className="comment_box_header"
+                      style={{
+                        backgroundColor: typeColor(comment),
+                      }}
+                    >
+                      <div className="img-wrapper">
+                        <ImageFallback
+                          src={`/assets/img/${comment}.png`}
+                          alt={comment}
+                          width={'30'}
+                          height={'30'}
+                        />
+                      </div>
+                    </div>
+                    <div className="comment_box_footer">
+                      <div
+                        className="comment_box_footer_text"
+                        onClick={() => {
+                          openCommentModal(comment);
+                        }}
+                      >
+                        자료 보기
+                      </div>
+                    </div>
+                  </CommentBox>
+                );
+                // <div
+                //   className="comment"
+                //   onClick={() => {
+                //     openCommentModal(comment);
+                //   }}
+                // >
+                //   <ImageFallback
+                //     src={`/assets/img/${comment}.png`}
+                //     alt={comment}
+                //     width={'200'}
+                //     height={'200'}
+                //     style={{
+                //       width: '50%',
+                //       height: '50%',
+                //     }}
+                //     blurImg={loadingImg}
+                //   />
+                // </div>;
+              })}
+            </div>
           </div>
           <VoteBox
             _id={newsContent._id}
@@ -417,8 +437,12 @@ const BodyRight = styled.div<BodyProps>`
   }
 
   div.comment_body {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    overflow: scroll;
+  }
+
+  div.comment_scroll_wrapper {
+    display: flex;
+    flex-direction: row;
     gap: 10px;
     margin-bottom: 20px;
     padding-right: 4px;
@@ -437,6 +461,49 @@ const BodyRight = styled.div<BodyProps>`
 `;
 
 const CommentBox = styled.div`
+  flex: 1 0 auto;
+
   display: flex;
   flex-direction: column;
+
+  border: 1px solid rgb(250, 250, 250);
+  border-radius: 12px;
+  overflow: hidden;
+
+  .comment_box_header {
+    width: 100%;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgb(225, 225, 225);
+  }
+
+  .img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border-radius: 40px;
+  }
+
+  .comment_box_footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: white;
+
+    padding: 0.5rem;
+
+    .comment_box_footer_text {
+      padding: 0.25rem 1.25rem;
+      border: 1px solid rgb(225, 225, 225);
+      border-radius: 6px;
+    }
+  }
 `;
