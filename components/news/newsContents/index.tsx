@@ -16,6 +16,7 @@ import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
 import { loadingImg } from '@public/assets/resource';
 import { typeColor } from '../commentModal/commentModal.resource';
+import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -27,6 +28,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
+  const { scrollRef, onMouseDown, onMouseUp, onDragMove } = useHorizontalScroll();
 
   const routeToKeywordPage = useRouteToKeyword();
 
@@ -123,58 +125,49 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
           </div>
         </BodyLeft>
         <BodyRight state={!isLeft}>
-          <div className="comment_header">관련 자료 체크하기</div>
-          <div className="comment_body">
-            <div className="comment_scroll_wrapper">
-              {commentToShow!.map((comment) => {
-                return (
-                  <CommentBox>
-                    <div
-                      className="comment_box_header"
-                      style={{
-                        backgroundColor: typeColor(comment),
-                      }}
-                    >
-                      <div className="img-wrapper">
-                        <ImageFallback
-                          src={`/assets/img/${comment}.png`}
-                          alt={comment}
-                          width={'30'}
-                          height={'30'}
-                        />
-                      </div>
-                    </div>
-                    <div className="comment_box_footer">
+          <div className="comment_wrapper">
+            <h4 className="comment_header">관련 자료 체크하기</h4>
+            <div
+              className="comment_body"
+              ref={scrollRef}
+              onMouseDown={onMouseDown}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+              onMouseMove={onDragMove}
+            >
+              <div className="comment_scroll_wrapper">
+                {commentToShow!.map((comment) => {
+                  return (
+                    <CommentBox>
                       <div
-                        className="comment_box_footer_text"
-                        onClick={() => {
-                          openCommentModal(comment);
+                        className="comment_box_header"
+                        style={{
+                          backgroundColor: typeColor(comment),
                         }}
                       >
-                        자료 보기
+                        <div className="img-wrapper">
+                          <ImageFallback
+                            src={`/assets/img/${comment}.png`}
+                            alt={comment}
+                            width={'30'}
+                            height={'30'}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </CommentBox>
-                );
-                // <div
-                //   className="comment"
-                //   onClick={() => {
-                //     openCommentModal(comment);
-                //   }}
-                // >
-                //   <ImageFallback
-                //     src={`/assets/img/${comment}.png`}
-                //     alt={comment}
-                //     width={'200'}
-                //     height={'200'}
-                //     style={{
-                //       width: '50%',
-                //       height: '50%',
-                //     }}
-                //     blurImg={loadingImg}
-                //   />
-                // </div>;
-              })}
+                      <div className="comment_box_footer">
+                        <div
+                          className="comment_box_footer_text"
+                          onClick={() => {
+                            openCommentModal(comment);
+                          }}
+                        >
+                          자료 보기
+                        </div>
+                      </div>
+                    </CommentBox>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <VoteBox
@@ -436,16 +429,45 @@ const BodyRight = styled.div<BodyProps>`
     width: 100%;
   }
 
+  div.comment_wrapper {
+    padding: 0.5rem;
+    padding-bottom: 1rem;
+
+    margin-bottom: 1rem;
+
+    background-color: white;
+    border: 1px solid rgba(200, 200, 200, 0.5);
+    border-radius: 5px;
+    box-shadow: 0 0 35px -30px;
+  }
+
+  h4.comment_header {
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+
+    padding: 0.5rem;
+  }
+
   div.comment_body {
     overflow: scroll;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   div.comment_scroll_wrapper {
     display: flex;
     flex-direction: row;
     gap: 10px;
-    margin-bottom: 20px;
     padding-right: 4px;
+
+    &:hover {
+      cursor: pointer;
+    }
+
     div.comment {
       background-color: white;
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
@@ -461,12 +483,12 @@ const BodyRight = styled.div<BodyProps>`
 `;
 
 const CommentBox = styled.div`
-  flex: 1 0 auto;
+  flex: 0 0 auto;
 
   display: flex;
   flex-direction: column;
 
-  border: 1px solid rgb(250, 250, 250);
+  border: 1.5px solid rgb(240, 240, 240);
   border-radius: 12px;
   overflow: hidden;
 
@@ -501,9 +523,17 @@ const CommentBox = styled.div`
     padding: 0.5rem;
 
     .comment_box_footer_text {
-      padding: 0.25rem 1.25rem;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgb(30, 30, 30);
+
+      padding: 0.25rem 1.5rem;
       border: 1px solid rgb(225, 225, 225);
       border-radius: 6px;
+
+      &:hover {
+        color: rgb(50, 50, 50);
+      }
     }
   }
 `;

@@ -13,6 +13,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
+import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리

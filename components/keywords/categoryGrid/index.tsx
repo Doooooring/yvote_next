@@ -88,7 +88,7 @@ const Wrapper = styled.div`
     margin-bottom: 5px;
 
     .image-wrapper {
-      position : relative;
+      position: relative;
       height: 18px;
       padding-left: 5px;
       align-items: center;
@@ -99,7 +99,6 @@ const Wrapper = styled.div`
       }
       & > span {
         position: unset !important;
-       
       }
     }
     .category-head {
@@ -140,7 +139,7 @@ const GridContainer = styled.div<GridContainerProps>`
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
     overflow-y: hidden;
-    transform : translateX(0);
+    transform: translateX(0);
     ::-webkit-scrollbar {
       display: none;
     }

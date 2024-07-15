@@ -76,7 +76,7 @@ export const typeColor = (type: commentType) => {
     case commentType.청와대:
       return 'rgb(0, 32, 92)';
     case commentType.행정부:
-      return 'rgb(255, 255, 255)';
+      return 'rgb(87, 87, 87)';
     case commentType.헌법재판소:
       return 'rgb(180, 123, 98)';
     case commentType.와이보트:
