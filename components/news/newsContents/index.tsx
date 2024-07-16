@@ -17,6 +17,7 @@ import { sortComment } from './newsContents.util';
 import { loadingImg } from '@public/assets/resource';
 import { typeColor } from '../commentModal/commentModal.resource';
 import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
+import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -28,7 +29,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
-  const { scrollRef, onMouseDown, onMouseUp, onDragMove } = useHorizontalScroll();
 
   const routeToKeywordPage = useRouteToKeyword();
 
@@ -127,14 +127,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         <BodyRight state={!isLeft}>
           <div className="comment_wrapper">
             <h4 className="comment_header">관련 자료 체크하기</h4>
-            <div
-              className="comment_body"
-              ref={scrollRef}
-              onMouseDown={onMouseDown}
-              onMouseUp={onMouseUp}
-              onMouseLeave={onMouseUp}
-              onMouseMove={onDragMove}
-            >
+            <CommentBody>
               <div className="comment_scroll_wrapper">
                 {commentToShow!.map((comment) => {
                   return (
@@ -168,7 +161,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   );
                 })}
               </div>
-            </div>
+            </CommentBody>
           </div>
           <VoteBox
             _id={newsContent._id}
@@ -481,6 +474,8 @@ const BodyRight = styled.div<BodyProps>`
     }
   }
 `;
+
+const CommentBody = styled(HorizontalScroll)``;
 
 const CommentBox = styled.div`
   flex: 0 0 auto;
