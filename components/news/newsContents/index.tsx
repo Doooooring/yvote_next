@@ -1,23 +1,22 @@
 import Image from 'next/image';
 import styled from 'styled-components';
 
+import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import blueCheck from '@images/blue_check.svg';
 import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new_2x.png';
+import { loadingImg } from '@public/assets/resource';
 import { HOST_URL } from '@public/assets/url';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
 import { useMemo } from 'react';
 import CommentModal from '../commentModal';
+import { typeColor } from '../commentModal/commentModal.resource';
 import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
-import { loadingImg } from '@public/assets/resource';
-import { typeColor } from '../commentModal/commentModal.resource';
-import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
-import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -35,6 +34,8 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
+
+  console.log(newsContent.summary);
 
   return (
     <Wrapper>
@@ -85,9 +86,10 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <div></div>}
                   </span>
                 </h2>
-                {newsContent.summary.split('$').map((sentence) => {
+                <div dangerouslySetInnerHTML={{ __html: newsContent.summary }} />
+                {/* {newsContent.summary.split('$').map((sentence) => {
                   return <p>{sentence}</p>;
-                })}
+                })} */}
               </div>
               <div className="keyword-wrapper">
                 {newsContent.keywords?.map((keyword) => {

@@ -1,5 +1,4 @@
 import ImageFallback from '@components/common/imageFallback';
-import yVoting from '@images/와이보트.png';
 import { loadingImg } from '@public/assets/resource';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
@@ -46,7 +45,7 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
             <ImageFallback src="/assets/img/ico_new_2x.png" alt="new_ico" height="16" width="32" />
           )}
         </div>
-        <div className="summary">{summary.replace(/\$/g, '')}</div>
+        <div className="summary" dangerouslySetInnerHTML={{ __html: summary }}></div>
         <div className="keyword-wrapper">
           {keywords?.map((keyword) => {
             return (
