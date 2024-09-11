@@ -16,3 +16,10 @@ export const Center = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export const CommonLayoutBox = styled.div`
+  background-color: white;
+  border: 1px solid rgba(200, 200, 200, 0.5);
+  border-radius: 5px;
+  box-shadow: 0 0 35px -30px;
+`;

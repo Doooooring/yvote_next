@@ -18,6 +18,8 @@ import { loadingImg } from '@public/assets/resource';
 import { typeColor } from '../commentModal/commentModal.resource';
 import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
+import TimelineBox from './timelineBox';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -144,17 +146,17 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               </div>
             </CommentBody>
           </CommentWrapper>
-          <TimelineWrapper className="timeline-wrapper">
+          <TimelineWrapper className="timeline_wrapper">
             <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
             {newsContent.timeline.map((timeline, idx) => {
               return (
                 <div className="timeline">
-                  <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
+                  {/* <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
                     <ImageFallback src={blueCheck} alt="bluecheck" fill />
-                  </ImgWrapper>
-                  <div className="timeline-sentence">
-                    <p>{timeline.date}</p>
-                    <div className="time-line-body">
+                  </ImgWrapper> */}
+                  <div className="timeline_sentence">
+                    <p className="timeline_date">{timeline.date}</p>
+                    <div className="timeline_body">
                       {timeline.title.split('$').map((title, idx) => {
                         return <p key={idx}>{title}</p>;
                       })}
@@ -164,6 +166,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               );
             })}
           </TimelineWrapper>
+          <TimelineBox timelines={newsContent.timeline} />
           <VoteBox
             _id={newsContent._id}
             state={newsContent.state}
@@ -177,13 +180,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     </Wrapper>
   );
 }
-
-const CommonLayoutBox = styled.div`
-  background-color: white;
-  border: 1px solid rgba(200, 200, 200, 0.5);
-  border-radius: 5px;
-  box-shadow: 0 0 35px -30px;
-`;
 
 const CommonHeadLine = styled.h4`
   font-size: 14px;
@@ -280,10 +276,6 @@ interface BodyProps {
 const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   width: 55%;
   min-height: 1000px;
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid rgba(200, 200, 200, 0.5);
-  box-shadow: 0 0 35px -30px;
   position: relative;
   padding-bottom: 80px;
   @media screen and (max-width: 768px) {
@@ -521,7 +513,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   gap: 10px;
 
   padding: 1rem;
-  color: black;
+  color: #717171;
 
   .timeline {
     display: flex;
@@ -531,8 +523,11 @@ const TimelineWrapper = styled(CommonLayoutBox)`
     font-weight: 500;
     align-items: start;
 
-    div.timeline-sentence {
-      margin-left: 10px;
+    .timeline_date {
+      color: black;
+    }
+
+    div.timeline_sentence {
       display: flex;
       flex-direction: row;
       gap: 8px;
