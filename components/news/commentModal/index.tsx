@@ -13,7 +13,6 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
-import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리
@@ -117,7 +116,11 @@ const CommentModal = observer(({ id }: { id: string }) => {
                 <p className="content-title">{curComment.title}</p>
                 <div className="content-body">
                   {curComment.comment.split('$').map((comment, idx) => {
-                    return <p key={idx}>{comment}</p>;
+                    return (
+                      <p key={idx} className="content_line">
+                        {comment}
+                      </p>
+                    );
                   })}
                 </div>
               </div>
@@ -178,7 +181,6 @@ const Wrapper = styled.div`
     }
     div.modal-head {
       -webkit-text-size-adjust: none;
-      color: #666;
       text-align: left;
       margin: 0;
       padding: 0;
@@ -302,10 +304,12 @@ const ModalBody = styled.div`
       padding-bottom: 0.5rem;
     }
     div.content-body {
-      p {
-        margin-bottom: 0.5rem;
-        min-height: 10px;
-      }
+    }
+
+    p.content_line {
+      color: black;
+      margin-bottom: 0.5rem;
+      min-height: 10px;
     }
   }
 
