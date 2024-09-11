@@ -169,7 +169,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               );
             })}
           </TimelineWrapper>
-          <TimelineBox timelines={newsContent.timeline} />
+          {/* <TimelineBox timelines={newsContent.timeline} /> */}
           <VoteBox
             _id={newsContent._id}
             state={newsContent.state}
@@ -412,7 +412,6 @@ const BodyRight = styled.div<BodyProps>`
 const CommentWrapper = styled(CommonLayoutBox)`
   padding: 0.5rem;
   padding-bottom: 1rem;
-
   margin-bottom: 1rem;
 
   div.comment_body {
@@ -516,6 +515,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   gap: 10px;
 
   padding: 1rem;
+  margin-bottom: 1rem;
   color: #717171;
 
   .timeline {
