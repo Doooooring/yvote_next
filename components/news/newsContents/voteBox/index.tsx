@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import NewsRepository from '@repositories/news';
 import { News } from '@utils/interface/news';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 type AnswerState = 'left' | 'right' | 'none';
 type SubmitState = 'resolve' | 'pending' | 'error';
@@ -189,11 +190,11 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(CommonLayoutBox)`
   padding: 20px;
   margin-bottom: 20px;
-  border-radius: 15px;
-  background-color: rgba(121, 192, 215, 0.2);
+  // border-radius: 15px;
+  // background-color: rgba(121, 192, 215, 0.2);
   position: relative;
   & {
     input[type='radio'] {
