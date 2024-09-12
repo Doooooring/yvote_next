@@ -170,6 +170,7 @@ const Wrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 80%;
     min-width: 0px;
+    max-height: 70vh;
     padding: 3rem 1rem;
   }
   & {

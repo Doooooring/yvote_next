@@ -38,8 +38,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
 
-  console.log(newsContent.summary);
-
   return (
     <Wrapper>
       <TabWrapper state={isLeft} className="fa-flex">
