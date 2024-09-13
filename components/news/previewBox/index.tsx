@@ -4,6 +4,7 @@ import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
+import { Suspense } from 'react';
 import styled from 'styled-components';
 
 interface PreviewBoxProps {
@@ -25,39 +26,46 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   };
 
   return (
-    <Wrapper
-      onClick={() => {
-        click(_id);
-      }}
-    >
-      <div className="img-wrapper">
-        <ImageFallback
-          src={`${HOST_URL}/images/news/${_id}`}
-          blurImg={loadingImg}
-          alt={title}
-          fill={true}
-        />
-      </div>
-      <div className="body-wrapper">
-        <div className="head-wrapper">
-          <p>{title}</p>
-          {state && (
-            <ImageFallback src="/assets/img/ico_new_2x.png" alt="new_ico" height="16" width="32" />
-          )}
+    <Suspense fallback={'fall back sdflsflsk'}>
+      <Wrapper
+        onClick={() => {
+          click(_id);
+        }}
+      >
+        <div className="img-wrapper">
+          <ImageFallback
+            src={`${HOST_URL}/images/news/${_id}`}
+            alt={title}
+            fill={true}
+            suspense={true}
+          />
         </div>
-        <div className="summary" dangerouslySetInnerHTML={{ __html: summary }}></div>
-        <div className="keyword-wrapper">
-          {keywords?.map((keyword) => {
-            return (
-              <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
-                {`#${keyword}`}
-              </p>
-            );
-          })}
-          <p className="keyword"></p>
+        <div className="body-wrapper">
+          <div className="head-wrapper">
+            <p>{title}</p>
+            {state && (
+              <ImageFallback
+                src="/assets/img/ico_new_2x.png"
+                alt="new_ico"
+                height="16"
+                width="32"
+              />
+            )}
+          </div>
+          <div className="summary" dangerouslySetInnerHTML={{ __html: summary }}></div>
+          <div className="keyword-wrapper">
+            {keywords?.map((keyword) => {
+              return (
+                <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
+                  {`#${keyword}`}
+                </p>
+              );
+            })}
+            <p className="keyword"></p>
+          </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </Suspense>
   );
 }
 

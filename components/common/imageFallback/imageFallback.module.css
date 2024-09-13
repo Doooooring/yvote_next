@@ -1,13 +1,12 @@
 .isLoading {
-    animation: blink 0.75s ease-in-out infinite;
-
+  animation: blink 0.75s ease-in-out infinite;
 }
 
 @keyframes blink {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.5;
-    }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
