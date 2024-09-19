@@ -50,12 +50,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
             <HeadTitle>
               <CommentImageWrapper>
                 <div className="image-box">
-                  <ImageFallback
-                    src={`/assets/img/${comment}.png`}
-                    blurImg={loadingImg}
-                    alt={comment}
-                    fill={true}
-                  />
+                  <ImageFallback src={`/assets/img/${comment}.png`} alt={comment} fill={true} />
                 </div>
               </CommentImageWrapper>
               <p className="type-name">{typeToShow(comment)}</p>

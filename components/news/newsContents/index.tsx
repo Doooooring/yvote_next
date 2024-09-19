@@ -76,7 +76,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   <ImageFallback
                     src={`${HOST_URL}/images/news/${newsContent._id}`}
                     alt={newsContent.title}
-                    blurImg={loadingImg}
                     width={100}
                     height={100}
                   />
