@@ -1,5 +1,5 @@
 import Image, { ImageProps } from 'next/image';
-import { use, useCallback, useEffect, useState } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
 
 interface ImageFallbackProps extends ImageProps {
@@ -20,31 +20,40 @@ enum Status {
   error = 'error',
 }
 
-function usePromiseImg<T>(promise: Promise<T>) {
-  const [promiseImg, setPromiseImg] = useState<{ state: Status; result: T | null }>({
-    state: Status.pending,
-    result: null,
-  });
+function usePromiseImg(src: string) {
+  //   const [promiseImg, setPromiseImg] = useState<{
+  //     state: Status;
+  //     result: string | Promise<any> | null;
+  //   }>({
+  //     state: Status.pending,
+  //     result: null,
+  //   });
+  let status = Status.pending;
+  let result: any;
+  let suspender: Promise<any> | null = null;
 
-  const suspender = promise.then(
-    (res: T) => {
-      setPromiseImg({ state: Status.success, result: res });
-    },
-    (err) => {
-      setPromiseImg({ state: Status.error, result: null });
-    },
-  );
+  useEffect(() => {
+    const promise = fetchImg(src);
+    suspender = promise.then(
+      (res: string) => {
+        status = Status.success;
+        result = res;
+      },
+      (err) => {
+        status = Status.error;
+        result = null;
+      },
+    );
+  }, [src]);
 
   const read = useCallback(() => {
-    switch (promiseImg.state) {
-      case 'pending':
-        throw suspender;
-      case 'error':
-        throw promiseImg.result;
+    switch (status) {
+      case Status.success:
+        return result as string;
       default:
-        return promiseImg.result;
+        throw suspender;
     }
-  }, [promiseImg]);
+  }, [status, suspender]);
 
   return { read };
 }
@@ -57,8 +66,7 @@ export default function SuspenseImage({
   suspense,
   ...others
 }: ImageFallbackProps) {
-  const promise = usePromiseImg(fetchImg(src as string));
-  const img = promise.read();
+  const img = use(fetchImg(src as string));
 
-  return <Image src={img!} alt={alt ?? 'image'} style={imgStyle} {...others} />;
+  return <Image src={img as string} alt={alt ?? 'image'} style={imgStyle} {...others} />;
 }

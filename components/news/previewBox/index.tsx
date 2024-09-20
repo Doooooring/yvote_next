@@ -1,5 +1,4 @@
 import ImageFallback from '@components/common/imageFallback';
-import SuspenseImage from '@components/common/suspenseImage';
 import { loadingImg } from '@public/assets/resource';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
@@ -12,6 +11,7 @@ interface PreviewBoxProps {
   preview: Preview;
   click: (id: string) => void;
 }
+const SuspenseImage = React.lazy(() => import('@components/common/suspenseImage'));
 
 export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
