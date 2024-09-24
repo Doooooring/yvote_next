@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
-interface PreviewBoxLayoutProps {
+interface PreviewBoxLayoutProps extends HTMLAttributes<HTMLDivElement> {
   imgView: ReactNode;
   headView: ReactNode;
   contentView: ReactNode;
@@ -11,9 +11,10 @@ export default function PreviewBoxLayout({
   imgView,
   headView,
   contentView,
+  ...rest
 }: PreviewBoxLayoutProps) {
   return (
-    <Wrapper>
+    <Wrapper {...rest}>
       <ImgWrapper>{imgView}</ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>

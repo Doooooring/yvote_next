@@ -29,6 +29,9 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   };
   return (
     <PreviewBoxLayout
+      onClick={() => {
+        click(_id);
+      }}
       imgView={
         <SuspenseImage
           src={`${HOST_URL}/images/news/${_id}`}

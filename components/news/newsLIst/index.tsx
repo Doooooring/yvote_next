@@ -40,7 +40,7 @@ export default function NewsList({
     <>
       <Wrapper>
         {arrBatch(previews, 20).map((previews) => (
-          <Suspense fallback={<NewsListFallback length={10} />}>
+          <Suspense fallback={<NewsListFallback length={previews.length} />}>
             {previews.map((preview, idx) => (
               <div className="preview-wrapper" key={idx}>
                 <PreviewBox preview={preview} click={showNewsContent} />
