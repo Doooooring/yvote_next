@@ -9,8 +9,6 @@ interface ImageFallbackProps extends ImageProps {
   suspense?: boolean;
 }
 
-const imageCache = new Map<string, Promise<void>>();
-
 const fetchImg = async (src: string) => {
   const response = await fetch(src);
   const blob = await response.blob();
@@ -25,8 +23,8 @@ export default function SuspenseImage({
   suspense,
   ...others
 }: ImageFallbackProps) {
-  const read = useSuspense(async () => await fetchImg(src as string));
+  const read = useSuspense(src as string, async () => await fetchImg(src as string));
   const result = read();
-  if (!result) return <></>;
+
   return <Image src={result} alt={alt ?? 'image'} style={imgStyle} {...others} />;
 }

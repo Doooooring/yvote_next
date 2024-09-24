@@ -5,6 +5,8 @@ import { Suspense, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
 import { arrBatch } from '@utils/tools';
+import PreviewBoxFallback from '../previewsBoxFallback';
+import NewsListFallback from '../newsListFallback';
 
 interface NewsListProps {
   page: number;
@@ -38,7 +40,7 @@ export default function NewsList({
     <>
       <Wrapper>
         {arrBatch(previews, 20).map((previews) => (
-          <Suspense fallback={<div>is fetching ...</div>}>
+          <Suspense fallback={<NewsListFallback length={10} />}>
             {previews.map((preview, idx) => (
               <div className="preview-wrapper" key={idx}>
                 <PreviewBox preview={preview} click={showNewsContent} />
@@ -85,6 +87,8 @@ const Wrapper = styled.div`
   }
 
   div.preview-wrapper {
+    width: 100%;
+    box-sizing: border-box;
     -webkit-text-size-adjust: none;
     color: #666;
     text-align: center;
@@ -92,7 +96,6 @@ const Wrapper = styled.div`
     padding: 0;
     border: 0;
     font: inherit;
-    box-sizing: inherit;
     display: inline-block;
     padding-right: 0.25rem;
     padding-left: 0.25rem;

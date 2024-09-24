@@ -5,36 +5,52 @@ export enum Status {
   success = 'success',
   error = 'error',
 }
+class PromiseCache {
+  private static cacheMap = new Map<string, any>();
+
+  constructor() {}
+
+  static addMap(key: string, data: any) {
+    this.cacheMap.set(key, data);
+  }
+
+  static getData(key: string) {
+    return this.cacheMap.get(key);
+  }
+
+  static isKey(key: string) {
+    return this.cacheMap.has(key);
+  }
+
+  static keyList() {
+    return this.cacheMap.keys();
+  }
+}
 
 export const useSuspense = <t extends {}>(key: string, fetch: () => Promise<t>) => {
-  const [status, setStatus] = useState<Status>(Status.pending);
-  const [result, setResult] = useState<t | null>(null);
-  const [promise, setPromise] = useState<Promise<t> | null>(null);
+  const read = () => {
+    PromiseCache.keyList();
+    const data = PromiseCache.getData(key) as { status: Status; data: Promise<t> | t };
+    switch (data.status) {
+      case Status.success:
+        return data.data as t;
+      default:
+        throw data.data as Promise<t>;
+    }
+  };
 
-  useEffect(() => {
+  if (!PromiseCache.isKey(key)) {
     const promise = fetch();
     promise.then(
       (resolve) => {
-        setStatus(Status.success);
-        setResult(resolve);
+        PromiseCache.addMap(key, { status: Status.success, data: resolve });
       },
       (err) => {
-        setStatus(Status.error);
+        PromiseCache.addMap(key, { status: Status.error, data: err });
       },
     );
+    PromiseCache.addMap(key, { status: Status.pending, data: promise });
+  }
 
-    setPromise(promise);
-  }, []);
-
-  const read = () => {
-    if (!promise) return '';
-    switch (status) {
-      case Status.success:
-        return result;
-      case Status.pending:
-      case Status.error:
-        throw promise;
-    }
-  };
   return read;
 };

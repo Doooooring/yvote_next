@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { Suspense } from 'react';
 import styled from 'styled-components';
+import PreviewBoxLayout from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -26,43 +27,120 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
     }
     navigate.push(`/keywords/${id}`);
   };
-
   return (
-    <Wrapper
-      onClick={() => {
-        click(_id);
-      }}
-    >
-      <div className="img-wrapper">
+    <PreviewBoxLayout
+      imgView={
         <SuspenseImage
           src={`${HOST_URL}/images/news/${_id}`}
           alt={title}
           fill={true}
           suspense={true}
         />
-      </div>
-      <div className="body-wrapper">
-        <div className="head-wrapper">
-          <p>{title}</p>
+      }
+      headView={
+        <>
+          <Title>{title}</Title>
           {state && (
             <ImageFallback src="/assets/img/ico_new_2x.png" alt="new_ico" height="16" width="32" />
           )}
-        </div>
-        <div className="summary" dangerouslySetInnerHTML={{ __html: summary }}></div>
-        <div className="keyword-wrapper">
-          {keywords?.map((keyword) => {
-            return (
-              <p className="keyword" key={keyword} onClick={() => routeToKeyword(keyword)}>
-                {`#${keyword}`}
-              </p>
-            );
-          })}
-          <p className="keyword"></p>
-        </div>
-      </div>
-    </Wrapper>
+        </>
+      }
+      contentView={
+        <>
+          <Summary dangerouslySetInnerHTML={{ __html: summary }} />
+          <Keywords>
+            {keywords?.map((keyword) => {
+              return (
+                <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
+                  {`#${keyword}`}
+                </Keyword>
+              );
+            })}
+            <p className="keyword"></p>
+          </Keywords>
+        </>
+      }
+    />
   );
 }
+
+const Title = styled.p`
+  -webkit-text-size-adjust: none;
+  color: rgb(30, 30, 30);
+  text-align: left;
+  padding: 0;
+  padding-right: 2px;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  font-size: 15px;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+`;
+
+const Summary = styled.div`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-weight: 300;
+  vertical-align: baseline;
+  color: rgb(30, 30, 30);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  height: 3.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  ::after {
+    content: '';
+    display: block;
+    height: 10px;
+    background-color: white;
+  }
+`;
+
+const Keywords = styled.div`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Keyword = styled.p`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  display: inline;
+  text-decoration: none;
+  height: 14px;
+  font-size: 12px;
+  font-weight: 300;
+  margin: 0;
+  margin-right: 6px;
+  color: #3a84e5;
+`;
 
 const Wrapper = styled.div`
   -webkit-text-size-adjust: none;
