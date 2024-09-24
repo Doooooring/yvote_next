@@ -3,6 +3,7 @@ import { loadingImg } from '@public/assets/resource';
 import KeywordRepository from '@repositories/keywords';
 import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { Suspense } from 'react';
 import styled from 'styled-components';
@@ -11,7 +12,7 @@ interface PreviewBoxProps {
   preview: Preview;
   click: (id: string) => void;
 }
-const SuspenseImage = React.lazy(() => import('@components/common/suspenseImage'));
+const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
@@ -33,14 +34,12 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
       }}
     >
       <div className="img-wrapper">
-        <Suspense fallback={<div>is fetching ...</div>}>
-          <SuspenseImage
-            src={`${HOST_URL}/images/news/${_id}`}
-            alt={title}
-            fill={true}
-            suspense={true}
-          />
-        </Suspense>
+        <SuspenseImage
+          src={`${HOST_URL}/images/news/${_id}`}
+          alt={title}
+          fill={true}
+          suspense={true}
+        />
       </div>
       <div className="body-wrapper">
         <div className="head-wrapper">

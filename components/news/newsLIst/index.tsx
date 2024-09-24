@@ -1,9 +1,10 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
+import { arrBatch } from '@utils/tools';
 
 interface NewsListProps {
   page: number;
@@ -36,10 +37,14 @@ export default function NewsList({
   return (
     <>
       <Wrapper>
-        {previews.map((preview, idx) => (
-          <div className="preview-wrapper" key={idx}>
-            <PreviewBox preview={preview} click={showNewsContent} />
-          </div>
+        {arrBatch(previews, 20).map((previews) => (
+          <Suspense fallback={<div>is fetching ...</div>}>
+            {previews.map((preview, idx) => (
+              <div className="preview-wrapper" key={idx}>
+                <PreviewBox preview={preview} click={showNewsContent} />
+              </div>
+            ))}
+          </Suspense>
         ))}
       </Wrapper>
       {isRequesting ? (

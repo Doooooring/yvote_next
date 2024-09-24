@@ -1,3 +1,18 @@
+export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
+  const result: Array<Array<T>> = [];
+  let tmp: Array<T> = [];
+
+  arr.forEach((e, i) => {
+    tmp.push(e);
+    if (tmp.length == batchSize || i == arr.length) {
+      result.push(tmp);
+      tmp = [] as Array<T>;
+    }
+  });
+
+  return result;
+};
+
 export function getConstantVowel(wor: string, testWord = false) {
   // testWord 는 true일 경우 유저의 인풋을 의미한다.
   const f = [
