@@ -4,7 +4,7 @@ export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
 
   arr.forEach((e, i) => {
     tmp.push(e);
-    if (tmp.length == batchSize || i == arr.length) {
+    if (tmp.length == batchSize || i == arr.length - 1) {
       result.push(tmp);
       tmp = [] as Array<T>;
     }
