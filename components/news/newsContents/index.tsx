@@ -54,44 +54,49 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         </span>
       </TabWrapper>
       <Body>
+        {/* <CloseWrapper>
+          <input
+            type="button"
+            style={{ display: 'none' }}
+            id="contents-close-button"
+            onClick={(e) => {
+              e.preventDefault();
+              hide();
+            }}
+          ></input>
+          <label className="close-button" htmlFor="contents-close-button">
+            <Image src={icoClose} alt="hmm" />
+          </label>
+        </CloseWrapper> */}
         <BodyLeft state={isLeft}>
-          <div className="close-wrapper">
-            <input
-              type="button"
-              style={{ display: 'none' }}
-              id="contents-close-button"
-              onClick={(e) => {
-                e.preventDefault();
-                hide();
-              }}
-            ></input>
-            <label className="close-button" htmlFor="contents-close-button">
-              <Image src={icoClose} alt="hmm" />
-            </label>
-          </div>
           <div className="contents-body">
             <div className="right">
-              <div className="summary">
-                <div className="main-image-wrapper">
-                  <ImageFallback
-                    src={`${HOST_URL}/images/news/${newsContent._id}`}
-                    alt={newsContent.title}
-                    width={100}
-                    height={100}
-                  />
-                </div>
-                <h2 className="head">
+              <div className="main-image-wrapper">
+                <ImageFallback
+                  src={`${HOST_URL}/images/news/${newsContent._id}`}
+                  alt={newsContent.title}
+                  fill
+                  style={{
+                    objectFit: 'cover',
+                  }}
+                />
+                <h1 className="img-head">
+                  <span>{newsContent.title}</span>
+                </h1>
+              </div>
+              <div className="summary content">
+                <h1 className="head">
                   <span>
                     {newsContent.title}{' '}
                     {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <div></div>}
                   </span>
-                </h2>
+                </h1>
                 <div dangerouslySetInnerHTML={{ __html: newsContent.summary }} />
                 {/* {newsContent.summary.split('$').map((sentence) => {
                   return <p>{sentence}</p>;
                 })} */}
               </div>
-              <div className="keyword-wrapper">
+              <div className="keyword-wrapper content">
                 {newsContent.keywords?.map((keyword) => {
                   return (
                     <p
@@ -196,7 +201,7 @@ const Wrapper = styled.div`
   padding-bottom: 160px;
   text-align: left;
   position: absolute;
-  overflow-x: hidden;
+  overflow-x: visible;
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -224,16 +229,13 @@ interface TabWrapperProps {
 }
 
 const TabWrapper = styled.div<TabWrapperProps>`
-  display: none;
+  display: flex;
+
   margin-bottom: 12px;
 
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
-  @media screen and (max-width: 768px) {
-    display: flex;
-  }
 
   @media screen and (max-width: 768px) {
     width: 100%;
@@ -250,7 +252,10 @@ const TabWrapper = styled.div<TabWrapperProps>`
     box-shadow: 0px 0px 35px -30px;
 
     &.show-next {
-      display: ${({ state }) => (state ? 'inline' : 'none')};
+      display: none;
+      @media screen and (max-width: 768px) {
+        display: ${({ state }) => (state ? 'inline' : 'none')};
+      }
     }
   }
 `;
@@ -263,9 +268,32 @@ const Body = styled.div`
   line-height: 150%;
   text-align: left;
   position: relative;
-  padding-top: 1rem;
+  // padding-top: 1rem;
+  overflow: visible;
+
   @media screen and (max-width: 768px) {
     padding-top: 0;
+  }
+`;
+
+const CloseWrapper = styled.div`
+  padding: 5px;
+  position: absolute;
+  left: 0;
+  transform: translate(-50%, 0);
+  z-index: 9999;
+  .close-button {
+    text-align: right;
+    img {
+      width: 25px;
+      height: 25px;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -278,45 +306,52 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   min-height: 1000px;
   position: relative;
   padding-bottom: 80px;
+  overflow-x: visible;
+
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
     width: 100%;
     min-width: 0px;
   }
-  .close-wrapper {
-    padding-top: 5px;
-    padding-right: 5px;
-    text-align: right;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    .close-button {
-      text-align: right;
-      img {
-        width: 25px;
-        height: 25px;
-      }
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-  }
+
   .contents-body {
-    padding: 1rem;
-    padding-right: 2.5em;
+    padding-top: 1rem;
     .main-image-wrapper {
-      width: 100px;
-      height: 100px;
-      margin-top: 1px;
-      margin-right: 12px;
-      margin-bottom: 0px;
+      width: 95%;
+      height: 250px;
+      position: relative;
+      padding: 0;
+      margin-left: auto;
+      margin-right: auto;
       border: 1px solid rgb(230, 230, 230);
       border-radius: 10px;
-      overflow: hidden;
-      float: left;
+
+      @media screen and (max-width: 432px) {
+        height: 200px;
+      }
+
+      .img-head {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+
+        backdrop-filter: brightness(0.5);
+        font-size: 24px !important;
+        font-weight: 600;
+        color: rgb(220, 220, 220);
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        span {
+          padding: 1rem;
+          line-height: 1.2;
+        }
+      }
+      // overflow: hidden;
+      // float: left;
     }
     .right {
       .head {
@@ -324,9 +359,9 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         flex-direction: row;
         align-items: center;
         gap: 8px;
-        font-size: 15px;
+        font-size: 18px;
         font-weight: 600;
-        margin: 0.2em 0 1.7em 0;
+        margin: 0.2em 0 1rem 0;
         line-height: 1.6em;
         span {
           color: rgb(6, 6, 6);
@@ -340,9 +375,17 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           cursor: pointer;
         }
       }
+      .content {
+        padding: 1rem;
+        padding-left: 1.5rem;
+        @media screen and (max-width: 768px) {
+          padding-right: 1.5rem;
+        }
+      }
 
       .summary {
         display: inline-block;
+        padding-right: 2.5em;
         font-size: 14px;
         line-height: 2;
         color: rgb(10, 10, 10);
@@ -350,7 +393,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         word-break: break-all;
         & {
           p {
-            margin: 0 0 1em 0.5em;
+            margin: 0 0 1em 0;
             min-height: 10px;
             font-family: Helvetica, sans-serif;
           }
@@ -375,9 +418,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           cursor: pointer;
         }
       }
-    }
-    @media screen and (max-width: 768px) {
-      padding-right: 1.5rem;
     }
   }
 `;

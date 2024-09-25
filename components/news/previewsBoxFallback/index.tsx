@@ -45,8 +45,6 @@ const Wrapper = styled.div`
   border: 0;
   font: inherit;
   display: inline-block;
-  padding-right: 0.25rem;
-  padding-left: 0.25rem;
 `;
 
 const Backdrop = styled.div`

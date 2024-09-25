@@ -72,8 +72,8 @@ const Wrapper = styled.div`
   box-sizing: inherit;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 50%);
-  column-gap: 0px;
+  grid-template-columns: repeat(auto-fill, calc(50% - 0.25rem));
+  column-gap: 0.5rem;
   justify-items: center;
   border-style: solid;
   border-radius: 10px;
@@ -97,8 +97,6 @@ const Wrapper = styled.div`
     border: 0;
     font: inherit;
     display: inline-block;
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
   }
 `;
 
