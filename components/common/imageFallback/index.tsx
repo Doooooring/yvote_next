@@ -18,18 +18,13 @@ export default function ImageFallback({
   suspense,
   ...others
 }: ImageFallbackProps) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
   return (
     <Image
       src={isError ? defaultImg : src}
-      className={isLoading ? styles.isLoading : ''}
       alt={alt ?? 'image'}
       onError={() => {
         setIsError(true);
-      }}
-      onLoad={() => {
-        setIsLoading(false);
       }}
       style={imgStyle}
       placeholder="blur"
