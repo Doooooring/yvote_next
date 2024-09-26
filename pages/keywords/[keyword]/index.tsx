@@ -5,7 +5,7 @@ import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { News, Preview } from '@utils/interface/news';
-import { useCallback, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import HeadMeta from '@components/common/HeadMeta';
@@ -14,8 +14,8 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
-
-
+import NewsContentFallback from '@components/news/newsContentFallback';
+import ExplainFallback from '@components/keywords/explainFallback';
 
 interface pageProps {
   data: {
@@ -24,7 +24,6 @@ interface pageProps {
     previews: Array<Preview>;
   };
 }
-
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords: string[] = await keywordRepository.getKeywordIdList();
@@ -64,7 +63,6 @@ export default function KeyExplanation({ data }: pageProps) {
     fetchPreviews(data.keyword.keyword);
   });
 
-
   const metaTagsProps = {
     title: `키워드 - ${data.keyword.keyword}`,
     description: data.keyword.explain || '',
@@ -79,35 +77,37 @@ export default function KeyExplanation({ data }: pageProps) {
       <div className="search-wrapper">
         <SearchBox />
       </div>
-      <KeywordWrapper>
-        <ExplanationComp
-          id={data.keyword?._id! ?? ''}
-          category={data.keyword?.category ?? 'etc'}
-          keyword={data.keyword?.keyword! ?? ''}
-          explain={data.keyword?.explain ?? ''}
-        />
-      </KeywordWrapper>
-      <div className="main-contents">
-        <div className="main-contents-body">
-          {newsContent ? (
-            <div className="news-contents-wrapper">
-              <NewsContent
-                newsContent={newsContent}
-                voteHistory={voteHistory}
-                hide={hideNewsContent}
+      <Suspense fallback={<ExplainFallback />}>
+        <KeywordWrapper>
+          <ExplanationComp
+            id={data.keyword?._id! ?? ''}
+            category={data.keyword?.category ?? 'etc'}
+            keyword={data.keyword?.keyword! ?? ''}
+            explain={data.keyword?.explain ?? ''}
+          />
+        </KeywordWrapper>
+        <div className="main-contents">
+          <div className="main-contents-body">
+            {newsContent ? (
+              <div className="news-contents-wrapper">
+                <NewsContent
+                  newsContent={newsContent}
+                  voteHistory={voteHistory}
+                  hide={hideNewsContent}
+                />
+              </div>
+            ) : (
+              <NewsList
+                page={page}
+                previews={previews.length == 0 ? data.previews : previews}
+                isRequesting={isRequesting}
+                fetchPreviews={fetchNextPreviews}
+                showNewsContent={showNewsContent}
               />
-            </div>
-          ) : (
-            <NewsList
-              page={page}
-              previews={previews.length == 0 ? data.previews : previews}
-              isRequesting={isRequesting}
-              fetchPreviews={fetchNextPreviews}
-              showNewsContent={showNewsContent}
-            />
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      </Suspense>
     </Wrapper>
   );
 }

@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
+
+const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function ExplanationComp({
   id,
@@ -20,8 +23,6 @@ export default function ExplanationComp({
 }) {
   const navigation = useRouter();
 
-  const [keywordTagLoadError, setKeywordTagLoadError] = useState<boolean>(false);
-  const [keywordImgLoadError, setKeywordImgLoadError] = useState<boolean>(false);
   if (explain === undefined) {
     return <div></div>;
   }
@@ -42,27 +43,11 @@ export default function ExplanationComp({
       </div>
       <div className="explanation-header">
         <p>{keyword}</p>
-        {/* <Image
-          src={keywordTagLoadError ? defaultImg : `/assets/img/${category}.png`}
-          alt="hmm"
-          width="20"
-          height="20"
-          onError={() => {
-            setKeywordTagLoadError(true);
-          }}
-        /> */}
       </div>
       <div className="body-wrapper">
         <div className="explanation-list">
           <div className="keyword-img">
-            <Image
-              src={keywordImgLoadError ? defaultImg : `${HOST_URL}/images/keyword/${id}`}
-              alt="hmm"
-              fill
-              onError={() => {
-                setKeywordImgLoadError(true);
-              }}
-            />
+            <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
           </div>
           {explain.split('$').map((s, idx) => {
             return (
