@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import PreviewBoxLayout from '../previewBox/previewBox.style';
-import { Row } from '@components/common/commonStyles';
+import { Backdrop, FallbackBox, Row, backgroundSlide } from '@components/common/commonStyles';
 
 export default function PreviewBoxFallback() {
   return (
@@ -25,15 +25,6 @@ export default function PreviewBoxFallback() {
   );
 }
 
-const backgroundSlide = keyframes`
-  0% {
-    background-position : -10% 0%;
-  }
-  100% {
-    background-position : 110% 0%;
-  }
-`;
-
 const Wrapper = styled.div`
   width: 100%;
   box-sizing: border-box;
@@ -45,26 +36,6 @@ const Wrapper = styled.div`
   border: 0;
   font: inherit;
   display: inline-block;
-`;
-
-const Backdrop = styled.div`
-  width: 100%;
-  height: 100%;
-  box-sizing: content-box;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), white, rgba(255, 255, 255, 0));
-  background-size: 20% auto;
-  background-repeat: no-repeat;
-  animation: ${backgroundSlide} 1s ease-in-out infinite;
-`;
-
-const FallbackBox = styled.div`
-  background-color: ${({ theme }) => theme.colors.fallback};
-
-  border: 1px solid rgb(230, 230, 230);
-  border-radius: 4px;
 `;
 
 const ImgView = styled(FallbackBox)`

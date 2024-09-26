@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const Row = styled.div`
   display: flex;
@@ -22,4 +22,32 @@ export const CommonLayoutBox = styled.div`
   border: 1px solid rgba(200, 200, 200, 0.5);
   border-radius: 5px;
   box-shadow: 0 0 35px -30px;
+`;
+
+export const backgroundSlide = keyframes`
+  0% {
+    background-position : -10% 0%;
+  }
+  100% {
+    background-position : 110% 0%;
+  }
+`;
+export const Backdrop = styled.div`
+  width: 100%;
+  height: 100%;
+  box-sizing: content-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), white, rgba(255, 255, 255, 0));
+  background-size: 20% auto;
+  background-repeat: no-repeat;
+  animation: ${backgroundSlide} 1s ease-in-out infinite;
+`;
+
+export const FallbackBox = styled.div`
+  background-color: ${({ theme }) => theme.colors.fallback};
+
+  border: 1px solid rgb(230, 230, 230);
+  border-radius: 4px;
 `;

@@ -21,10 +21,16 @@ export default function SuspenseImage({
   imgStyle = {},
   blurImg = 'data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBAB  bWyZJf74GZgAAAABJRU5ErkJggg==',
   suspense,
+  children,
   ...others
 }: ImageFallbackProps) {
   const read = useSuspense(src as string, async () => await fetchImg(src as string));
   const result = read();
 
-  return <Image src={result} alt={alt ?? 'image'} style={imgStyle} {...others} />;
+  return (
+    <>
+      <Image src={result} alt={alt ?? 'image'} style={imgStyle} {...others} />
+      {children}
+    </>
+  );
 }

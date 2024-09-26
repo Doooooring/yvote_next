@@ -12,7 +12,7 @@ import { HOST_URL } from '@public/assets/url';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
 import { typeColor } from '../commentModal/commentModal.resource';
 import { useRouteToKeyword } from './newsContents.hook';
@@ -20,12 +20,16 @@ import { sortComment } from './newsContents.util';
 import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 import TimelineBox from './timelineBox';
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import NewsContentFallback from '../newsContentFallback';
+import dynamic from 'next/dynamic';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
   voteHistory: 'left' | 'right' | 'none' | null;
   hide: () => void;
 }
+
+const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
   const { openCommentModal } = currentStore;
@@ -71,19 +75,22 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         <BodyLeft state={isLeft}>
           <div className="contents-body">
             <div className="right">
-              <div className="main-image-wrapper">
-                <ImageFallback
-                  src={`${HOST_URL}/images/news/${newsContent._id}`}
-                  alt={newsContent.title}
-                  fill
-                  style={{
-                    objectFit: 'cover',
-                  }}
-                />
-                <h1 className="img-head">
-                  <span>{newsContent.title}</span>
-                </h1>
-              </div>
+              <Suspense fallback={<></>}>
+                <div className="main-image-wrapper">
+                  <SuspenseImage
+                    src={`${HOST_URL}/images/news/${newsContent._id}`}
+                    alt={newsContent.title}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                    }}
+                  >
+                    <p className="img-head">
+                      <span>{newsContent.title}</span>
+                    </p>
+                  </SuspenseImage>
+                </div>
+              </Suspense>
               <div className="summary content">
                 <h1 className="head">
                   <span>
