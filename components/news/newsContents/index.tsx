@@ -58,20 +58,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         </span>
       </TabWrapper>
       <Body>
-        {/* <CloseWrapper>
-          <input
-            type="button"
-            style={{ display: 'none' }}
-            id="contents-close-button"
-            onClick={(e) => {
-              e.preventDefault();
-              hide();
-            }}
-          ></input>
-          <label className="close-button" htmlFor="contents-close-button">
-            <Image src={icoClose} alt="hmm" />
-          </label>
-        </CloseWrapper> */}
         <BodyLeft state={isLeft}>
           <div className="contents-body">
             <div className="right">
@@ -99,9 +85,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   </span>
                 </h1>
                 <div dangerouslySetInnerHTML={{ __html: newsContent.summary }} />
-                {/* {newsContent.summary.split('$').map((sentence) => {
-                  return <p>{sentence}</p>;
-                })} */}
               </div>
               <div className="keyword-wrapper content">
                 {newsContent.keywords?.map((keyword) => {
@@ -163,9 +146,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
             {newsContent.timeline.map((timeline, idx) => {
               return (
                 <div className="timeline">
-                  {/* <ImgWrapper opacity={(idx + 1) / newsContent.timeline.length}>
-                    <ImageFallback src={blueCheck} alt="bluecheck" fill />
-                  </ImgWrapper> */}
                   <div className="timeline_sentence">
                     <p className="timeline_date">{timeline.date}</p>
                     <div className="timeline_body">
