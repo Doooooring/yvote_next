@@ -42,20 +42,21 @@ export default function ExplanationComp({
         </label>
       </div>
       <div className="explanation-header">
-        <p>{keyword}</p>
+        <h1>{keyword}</h1>
       </div>
       <div className="body-wrapper">
         <div className="explanation-list">
           <div className="keyword-img">
             <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
           </div>
-          {explain.split('$').map((s, idx) => {
+          <div className="explanation" dangerouslySetInnerHTML={{ __html: explain }} />
+          {/* {explain.split('$').map((s, idx) => {
             return (
               <p className="explanation" key={idx}>
                 {s}
               </p>
             );
-          })}
+          })} */}
         </div>
       </div>
     </ExplanationWrapper>
@@ -101,7 +102,7 @@ const ExplanationWrapper = styled.div`
     font-size: 18px;
     font-weight: 600;
 
-    p {
+    h1 {
       margin: 0;
       padding: 0;
     }
@@ -136,7 +137,7 @@ const ExplanationWrapper = styled.div`
       margin-bottom: 20px;
       font-size: 14px;
       line-height: 2;
-      color: #747272;
+      color: black;
       font-weight: 500;
       word-break: keep-all;
       min-height: 10px;
