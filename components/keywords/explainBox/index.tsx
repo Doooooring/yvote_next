@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
@@ -50,27 +51,18 @@ export default function ExplanationComp({
             <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
           </div>
           <div className="explanation" dangerouslySetInnerHTML={{ __html: explain }} />
-          {/* {explain.split('$').map((s, idx) => {
-            return (
-              <p className="explanation" key={idx}>
-                {s}
-              </p>
-            );
-          })} */}
         </div>
       </div>
     </ExplanationWrapper>
   );
 }
 
-const ExplanationWrapper = styled.div`
+const ExplanationWrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
   gap: 15px;
   width: 100%;
-  background-color: white;
   padding: 1.8rem 2rem 1rem;
-  box-shadow: 0 8px 35px -25px;
   position: relative;
   box-sizing: border-box;
   @media screen and (max-width: 768px) {
