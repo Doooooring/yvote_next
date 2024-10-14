@@ -4,18 +4,17 @@ import NewsContent from '@components/news/newsContents';
 import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import { KeywordOnDetail } from '@utils/interface/keywords';
-import { News, Preview } from '@utils/interface/news';
-import { Suspense, useCallback, useState } from 'react';
+import { Preview } from '@utils/interface/news';
+import { Suspense } from 'react';
 import styled from 'styled-components';
 
 import HeadMeta from '@components/common/HeadMeta';
+import ExplainFallback from '@components/keywords/explainFallback';
 import NewsList from '@components/news/newsLIst';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
-import NewsContentFallback from '@components/news/newsContentFallback';
-import ExplainFallback from '@components/keywords/explainFallback';
 
 interface pageProps {
   data: {
@@ -203,14 +202,4 @@ const KeywordWrapper = styled.div`
     width: 90%;
     min-width: 0px;
   }
-`;
-
-const PreviewBoxWrapper = styled.div`
-  display: inline-block;
-  width: 470px;
-`;
-
-const LastLine = styled.div`
-  width: 10px;
-  height: 10px;
 `;
