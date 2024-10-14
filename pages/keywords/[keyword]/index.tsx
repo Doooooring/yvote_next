@@ -16,6 +16,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 import NewsContentFallback from '@components/news/newsContentFallback';
 import ExplainFallback from '@components/keywords/explainFallback';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface pageProps {
   data: {
@@ -74,9 +75,9 @@ export default function KeyExplanation({ data }: pageProps) {
   return (
     <Wrapper>
       <HeadMeta {...metaTagsProps} />
-      <div className="search-wrapper">
+      <SearchWrapper>
         <SearchBox />
-      </div>
+      </SearchWrapper>
       <Suspense fallback={<ExplainFallback />}>
         <KeywordWrapper>
           <ExplanationComp
@@ -133,29 +134,6 @@ const Wrapper = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-  .search-wrapper {
-    display: flex;
-    width: 70%;
-    min-width: 800px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 30px -20px;
-    position: relative;
-    -webkit-text-size-adjust: none;
-    color: #666;
-    text-align: center;
-    margin: 0 0 20px 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
-    justify-content: center;
-    align-items: center;
-    @media screen and (max-width: 768px) {
-      width: 90%;
-      min-width: 0px;
-    }
-  }
 
   .main-contents {
     width: 70%;
@@ -205,12 +183,22 @@ const KeywordWrapper = styled.div`
   }
 `;
 
-const PreviewBoxWrapper = styled.div`
-  display: inline-block;
-  width: 470px;
-`;
-
-const LastLine = styled.div`
-  width: 10px;
-  height: 10px;
+const SearchWrapper = styled(CommonLayoutBox)`
+  display: flex;
+  width: 70%;
+  min-width: 800px;
+  position: relative;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  text-align: center;
+  margin: 0 0 20px 0;
+  padding: 0;
+  font: inherit;
+  box-sizing: inherit;
+  justify-content: center;
+  align-items: center;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
+  }
 `;

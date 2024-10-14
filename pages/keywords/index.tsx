@@ -1,4 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
@@ -56,9 +57,9 @@ export default function KeywordsPage({ data }: pageProps) {
   return (
     <Wrapper>
       <HeadMeta {...metaTagsProps} />
-      <div className="search-wrapper">
+      <SearchWrapper>
         <SearchBox />
-      </div>
+      </SearchWrapper>
       <GridContainer>
         <CategoryGrid
           category={'recent'}
@@ -122,28 +123,25 @@ const Wrapper = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-  .search-wrapper {
-    display: flex;
-    width: 70%;
-    min-width: 800px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 30px -20px;
-    position: relative;
-    -webkit-text-size-adjust: none;
-    color: #666;
-    text-align: center;
-    margin: 0 0 20px 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
-    justify-content: center;
-    align-items: center;
-    @media screen and (max-width: 768px) {
-      width: 90%;
-      min-width: 0px;
-    }
+`;
+
+const SearchWrapper = styled(CommonLayoutBox)`
+  display: flex;
+  width: 70%;
+  min-width: 800px;
+  position: relative;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  text-align: center;
+  margin: 0 0 20px 0;
+  padding: 0;
+  font: inherit;
+  box-sizing: inherit;
+  justify-content: center;
+  align-items: center;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
   }
 `;
 

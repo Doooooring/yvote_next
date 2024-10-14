@@ -136,6 +136,7 @@ const GridContainer = styled.div<GridContainerProps>`
   grid-column-gap: 15px;
   transform: ${({ curView }) => `translateX(calc(-${curView * 75}px - ${curView * 50}rem))`};
   transition-duration: 0.5s;
+
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
     overflow-y: hidden;

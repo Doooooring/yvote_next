@@ -1,4 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
@@ -52,9 +53,9 @@ export default function NewsPage(props: pageProps) {
         {/* <div className="articles-wrapper">
         <NewArticles list={} />
       </div> */}
-        <div className="search-wrapper">
+        <SearchWrapper>
           <SearchBox page={page} fetchPreviews={fetchPreviews} />
-        </div>
+        </SearchWrapper>
         <div className="main-contents">
           <div className="main-contents-body">
             <NewsList
@@ -103,29 +104,7 @@ const Wrapper = styled.div`
       min-width: 0px;
     }
   }
-  .search-wrapper {
-    display: flex;
-    width: 70%;
-    min-width: 800px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 30px -20px;
-    position: relative;
-    -webkit-text-size-adjust: none;
-    color: #666;
-    text-align: center;
-    margin: 0 0 20px 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
-    justify-content: center;
-    align-items: center;
-    @media screen and (max-width: 768px) {
-      width: 90%;
-      min-width: 0px;
-    }
-  }
+
   .main-header-wrapper {
     -webkit-text-size-adjust: none;
     color: #666;
@@ -187,5 +166,25 @@ const Wrapper = styled.div`
       height: 800px;
       font-size: 13px;
     }
+  }
+`;
+
+const SearchWrapper = styled(CommonLayoutBox)`
+  display: flex;
+  width: 70%;
+  min-width: 800px;
+  position: relative;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  text-align: center;
+  margin: 0 0 20px 0;
+  padding: 0;
+  font: inherit;
+  box-sizing: inherit;
+  justify-content: center;
+  align-items: center;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
   }
 `;
