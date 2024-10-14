@@ -1,13 +1,11 @@
-import defaultImg from '@images/img_thumb@2x.png';
+import { CommonLayoutBox } from '@components/common/commonStyles';
+import icoClose from '@images/ico_close.png';
 import { HOST_URL } from '@public/assets/url';
 import { category } from '@utils/interface/keywords';
-import icoClose from '@images/ico_close.png';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import styled from 'styled-components';
-import dynamic from 'next/dynamic';
-import { CommonLayoutBox } from '@components/common/commonStyles';
 
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
@@ -134,7 +132,6 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
       word-break: keep-all;
       min-height: 10px;
       font-family: Helvetica, sans-serif;
-      }
     }
   }
 `;

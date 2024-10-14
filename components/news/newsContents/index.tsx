@@ -1,27 +1,22 @@
 import Image from 'next/image';
 import styled from 'styled-components';
 
+import { CommonLayoutBox } from '@components/common/commonStyles';
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
-import blueCheck from '@images/blue_check.svg';
-import icoClose from '@images/ico_close.png';
 import icoNew from '@images/ico_new_2x.png';
-import { loadingImg } from '@public/assets/resource';
 import { HOST_URL } from '@public/assets/url';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
+import { useOverlay } from '@utils/hook/useOverlay';
+import dynamic from 'next/dynamic';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
 import { typeColor } from '../commentModal/commentModal.resource';
 import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
-import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
-import TimelineBox from './timelineBox';
-import { CommonLayoutBox } from '@components/common/commonStyles';
-import NewsContentFallback from '../newsContentFallback';
-import dynamic from 'next/dynamic';
 
 interface NewsContentProps {
   newsContent: NewsDetail;
@@ -42,12 +37,13 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
 
+  const { show, close } = useOverlay();
+
   return (
     <Wrapper>
       <TabWrapper state={isLeft} className="fa-flex">
         <span
           onClick={(e) => {
-            e.preventDefault();
             isLeft ? hide() : showLeft();
           }}
         >
@@ -172,6 +168,12 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     </Wrapper>
   );
 }
+
+const Block = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color: 'black';
+`;
 
 const CommonHeadLine = styled.h4`
   font-size: 14px;

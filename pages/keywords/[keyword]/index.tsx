@@ -4,18 +4,18 @@ import NewsContent from '@components/news/newsContents';
 import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
 import { KeywordOnDetail } from '@utils/interface/keywords';
-import { News, Preview } from '@utils/interface/news';
-import { Suspense, useCallback, useState } from 'react';
+import { Preview } from '@utils/interface/news';
+import { Suspense } from 'react';
 import styled from 'styled-components';
 
 import HeadMeta from '@components/common/HeadMeta';
+import ExplainFallback from '@components/keywords/explainFallback';
 import NewsList from '@components/news/newsLIst';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
-import NewsContentFallback from '@components/news/newsContentFallback';
-import ExplainFallback from '@components/keywords/explainFallback';
+
 import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface pageProps {
