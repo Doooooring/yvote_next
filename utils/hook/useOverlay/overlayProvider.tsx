@@ -13,7 +13,6 @@ export function OverlayProvider({ children, ...others }: PropsWithChildren) {
   const [overlays, setOverlays] = useState<Node[]>([]);
 
   const show = (ele: ReactNode) => {
-    console.log('is here??');
     id += 1;
     setOverlays([...overlays, { id: id, element: ele }]);
     return id;

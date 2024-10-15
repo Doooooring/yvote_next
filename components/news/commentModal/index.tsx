@@ -13,6 +13,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   // 코멘트 모달 상태 전역으로 관리
@@ -141,7 +142,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
 
 export default CommentModal;
 
-const Wrapper = styled.div`
+const Wrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
   width: 60%;
@@ -152,7 +153,7 @@ const Wrapper = styled.div`
   margin-right: auto;
   padding: 3rem 3rem;
   flex: 0 0 auto;
-  background-color: white;
+
   position: fixed;
   top: 50%;
   left: 50%;
