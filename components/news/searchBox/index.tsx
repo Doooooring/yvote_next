@@ -20,7 +20,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
   // 현재 검색어
   const [searchWord, setSearchWord] = useState<string>('');
   // 현재 검색어 기반 연관 검색어 목록
-  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해 봅시다']);
+  const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해보아요!']);
   // 전체 키워드 리스트
   const [keylist, setKeyList] = useState<KeyName[]>([]);
   // 방향키에 맞춰서 포커스된 단어 업데이트
@@ -148,7 +148,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
         <input
           className="input-box"
           type="text"
-          placeholder="키워드로 뉴스 필터링"
+          placeholder="키워드로 뉴스 검색"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);

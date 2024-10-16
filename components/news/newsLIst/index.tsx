@@ -7,6 +7,7 @@ import PreviewBox from '../previewBox';
 import { arrBatch } from '@utils/tools';
 import PreviewBoxFallback from '../previewsBoxFallback';
 import NewsListFallback from '../newsListFallback';
+import { useOverlay } from '@utils/hook/useOverlay';
 
 interface NewsListProps {
   page: number;
@@ -24,11 +25,13 @@ export default function NewsList({
   showNewsContent,
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
+  const { show: showOverlay } = useOverlay();
   const isOnScreen = useOnScreen(elementRef);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
     //요청 중이라면 보내지 않기
+
     if (page != -1 && isOnScreen === true && isRequesting === false) {
       fetchPreviews();
     } else {
@@ -107,4 +110,8 @@ const LoadingWrapper = styled.div`
 const LastLine = styled.div`
   width: 10px;
   height: 240px;
+`;
+
+const Block = styled.div`
+  background-color: red;
 `;
