@@ -23,8 +23,6 @@ export function OverlayProvider({ children, ...others }: PropsWithChildren) {
   };
 
   const unMount = (id: number) => {
-    console.log('delete id : ', id);
-    console.log(overlays);
     setOverlays((prev) => [...prev.filter((node) => node.id != id)]);
   };
 
@@ -77,7 +75,7 @@ interface OverlayWrapperProps {
 
 const OverlayWrapper = styled.div<OverlayWrapperProps>`
   position: fixed;
-  top: 0%;
+
   left: 50%;
   transform: translate(-50%, 0%);
   z-index: 99999;
@@ -89,17 +87,21 @@ const OverlayWrapper = styled.div<OverlayWrapperProps>`
   @keyframes showAnimation {
     0% {
       opacity: 0;
+      top: 7%;
     }
     100% {
       opacity: 1;
+      top: 12%;
     }
   }
 
   @keyframes closeAnimation {
     0% {
       opacity: 1;
+      top: 12%;
     }
     100% {
+      top: 7%;
       opacity: 0;
     }
   }

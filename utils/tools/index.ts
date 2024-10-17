@@ -13,6 +13,25 @@ export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   return result;
 };
 
+export const ffToInt = (ff: string) => {
+  return parseInt(ff, 16);
+};
+
+export const hexToRgb = (hex: string) => {
+  const hstr = hex.split('#')[1];
+  return [ffToInt(hstr.slice(0, 2)), ffToInt(hstr.slice(2, 4)), ffToInt(hstr.slice(4, 6))];
+};
+
+export const RGB = (hex: string) => {
+  const [r, g, b] = hexToRgb(hex);
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
+export const RGBA = (hex: string, opacity: number) => {
+  const [r, g, b] = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
 export function getConstantVowel(wor: string, testWord = false) {
   // testWord 는 true일 경우 유저의 인풋을 의미한다.
   const f = [

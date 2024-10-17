@@ -1,19 +1,20 @@
 import LoadingCommon from '@components/common/loading';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { Preview } from '@utils/interface/news';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PreviewBox from '../previewBox';
 import { arrBatch } from '@utils/tools';
 import PreviewBoxFallback from '../previewsBoxFallback';
 import NewsListFallback from '../newsListFallback';
 import { useOverlay } from '@utils/hook/useOverlay';
+import { PositiveMessageBox } from '@components/common/messageBox';
 
 interface NewsListProps {
   page: number;
   previews: Preview[];
   isRequesting: boolean;
-  fetchPreviews: () => Promise<void>;
+  fetchPreviews: () => Promise<boolean>;
   showNewsContent: (id: string) => void;
 }
 
@@ -28,12 +29,24 @@ export default function NewsList({
   const { show: showOverlay } = useOverlay();
   const isOnScreen = useOnScreen(elementRef);
 
+  const showFetchEndMessage = useCallback(() => {
+    showOverlay(
+      <PositiveMessageBox>
+        <p>{'모든 소식을 받아왔어요 !'}</p>
+      </PositiveMessageBox>,
+    );
+  }, [showOverlay]);
+
+  const fetChPreviewsWithVal = useCallback(async () => {
+    const res = await fetchPreviews();
+    if (!res) showFetchEndMessage();
+  }, [fetchPreviews, showFetchEndMessage]);
+
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
     //요청 중이라면 보내지 않기
-
     if (page != -1 && isOnScreen === true && isRequesting === false) {
-      fetchPreviews();
+      fetChPreviewsWithVal();
     } else {
       return;
     }
