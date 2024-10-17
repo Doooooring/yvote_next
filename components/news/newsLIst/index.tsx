@@ -39,7 +39,7 @@ export default function NewsList({
 
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
-    if (res) showFetchEndMessage();
+    if (!res) showFetchEndMessage();
   }, [fetchPreviews, showFetchEndMessage]);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
