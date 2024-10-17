@@ -25,20 +25,20 @@ export function NegativeMessageBox({ children, style }: MessageBoxProps) {
 
 const Wrapper = styled(CommonLayoutBox)`
   box-sizing: content-box;
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 2rem;
   min-width: 200px;
-  max-width: 70%;
+  max-width: 90%;
 
   position: relative;
   z-index: 1;
 `;
 
 const PositiveWrapper = styled(Wrapper)`
-  background-color: ${({ theme }) => RGBA(theme.colors.yvote01, 1)};
-  border-color: white;
+  color: ${({ theme }) => RGBA(theme.colors.yvote02, 1)};
+  border-color: ${({ theme }) => RGBA(theme.colors.yvote02, 1)};
+  background-color: white;
   p {
-    color: white;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 16px;
   }
 `;

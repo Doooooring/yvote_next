@@ -32,14 +32,14 @@ export default function NewsList({
   const showFetchEndMessage = useCallback(() => {
     showOverlay(
       <PositiveMessageBox>
-        <p>{'모든 소식을 받아왔어요 !'}</p>
+        <p>{'와이보트가 준비한 모든 소식을 받아왔어요 !'}</p>
       </PositiveMessageBox>,
     );
   }, [showOverlay]);
 
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
-    if (!res) showFetchEndMessage();
+    if (res) showFetchEndMessage();
   }, [fetchPreviews, showFetchEndMessage]);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
