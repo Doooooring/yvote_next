@@ -25,9 +25,9 @@ export function NegativeMessageBox({ children, style }: MessageBoxProps) {
 
 const Wrapper = styled(CommonLayoutBox)`
   box-sizing: content-box;
-  padding: 0.5rem 1rem;
-  min-width: 300px;
-
+  padding: 0.5rem 1.5rem;
+  min-width: 200px;
+  text-align: center;
   p {
     white-space: nowrap;
     font-weight: 500;
@@ -37,7 +37,7 @@ const Wrapper = styled(CommonLayoutBox)`
 
   @media screen and (max-width: 550px) {
     min-width: 200px;
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem 1.2rem;
     p {
       font-weight: 500;
 
@@ -50,9 +50,9 @@ const Wrapper = styled(CommonLayoutBox)`
 `;
 
 const PositiveWrapper = styled(Wrapper)`
-  color: ${({ theme }) => RGBA(theme.colors.yvote02, 1)};
-  border-color: ${({ theme }) => RGBA(theme.colors.yvote02, 1)};
-  background-color: white;
+  background-color: ${({ theme }) => RGBA(theme.colors.gray700, 1)};
+  border: none;
+  color: white;
 `;
 
 const NegativeWrapper = styled(Wrapper)``;

@@ -14,8 +14,11 @@ import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import { useOverlay } from '@utils/hook/useOverlay';
+import { PositiveMessageBox } from '@components/common/messageBox';
 
 const CommentModal = observer(({ id }: { id: string }) => {
+  const { show: showCommentEndMessage } = useOverlay();
   // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;
   // 현재 보여지고 있는 평론들 ()
@@ -24,6 +27,17 @@ const CommentModal = observer(({ id }: { id: string }) => {
     comment,
   );
   const { curComment, showCurComment, closeCurComment } = useCurComment();
+
+  const getPageAfterWithMessage = useCallback(async () => {
+    const response = await getPageAfter();
+    if (!response) {
+      showCommentEndMessage(
+        <PositiveMessageBox>
+          <p>준비된 평론들을 모두 확인했어요</p>
+        </PositiveMessageBox>,
+      );
+    }
+  }, [getPageAfter]);
 
   const close = useCallback(() => {
     closeCurComment();
@@ -99,7 +113,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
                   className="button-right"
                   $state={true}
                   onClick={async () => {
-                    await getPageAfter();
+                    await getPageAfterWithMessage();
                   }}
                 >
                   <Image src={arrowRight} width={16} height={16} alt="" />

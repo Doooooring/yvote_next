@@ -25,19 +25,22 @@ export const useFetchNewsComment = (id: string, comment: commentType | null) => 
       }
     } catch (e) {
       console.log(e);
+      return false;
     } finally {
       setIsRequesting(false);
     }
   }
 
   const getPageBefore = async () => {
-    if (curPage.current === 0) return;
+    if (curPage.current === 0) return false;
     curPage.current -= 10;
-    await fetchNewsComment(curPage.current);
+    const response = await fetchNewsComment(curPage.current);
+    return response;
   };
   const getPageAfter = async () => {
     const response = await fetchNewsComment(curPage.current + 10);
     if (response) curPage.current += 10;
+    return response;
   };
 
   useEffect(() => {

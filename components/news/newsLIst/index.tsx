@@ -32,7 +32,7 @@ export default function NewsList({
   const showFetchEndMessage = useCallback(() => {
     showOverlay(
       <PositiveMessageBox>
-        <p>{'와이보트가 준비한 모든 소식을 받아왔어요 !'}</p>
+        <p>{'와이보트가 준비한 모든 소식을 받아왔어요'}</p>
       </PositiveMessageBox>,
     );
   }, [showOverlay]);

@@ -18,7 +18,7 @@ export function OverlayProvider({ children, ...others }: PropsWithChildren) {
     setOverlays([...overlays, { id: nodeId, element: ele, is: true }]);
     setTimeout(() => {
       close(nodeId);
-    }, 3000);
+    }, 2000);
     return nodeId;
   };
 
@@ -60,15 +60,6 @@ function Overlay({ children, is }: OverlayProps) {
   return <OverlayWrapper $isShow={is}>{children}</OverlayWrapper>;
 }
 
-const animation = keyframes`
-  0% {
-    opacity  :1 ;
-  }
-  100% {
-    opacity:  0;
-  }
-`;
-
 interface OverlayWrapperProps {
   $isShow: boolean;
 }
@@ -81,13 +72,13 @@ const OverlayWrapper = styled.div<OverlayWrapperProps>`
   z-index: 99999;
   animation: ${({ $isShow }) =>
     $isShow
-      ? 'showAnimation 0.5s ease-in-out forwards'
-      : 'closeAnimation 0.5s ease-in-out forwards'};
+      ? 'showAnimation 0.3s ease-in-out forwards'
+      : 'closeAnimation 0.3s ease-in-out forwards'};
 
   @keyframes showAnimation {
     0% {
       opacity: 0;
-      top: 7%;
+      top: 9%;
     }
     100% {
       opacity: 1;
@@ -101,7 +92,7 @@ const OverlayWrapper = styled.div<OverlayWrapperProps>`
       top: 12%;
     }
     100% {
-      top: 7%;
+      top: 9%;
       opacity: 0;
     }
   }
