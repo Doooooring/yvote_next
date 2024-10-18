@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Header from '@components/common/header';
 
-import { OverlayProvider } from '@utils/hook/useOverlay';
+import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import { useRouteState } from './layout.tool';
 import LoadingIndicator from './loadingIndicator';
@@ -11,13 +11,13 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const routeState = useRouteState();
 
   return (
-    <OverlayProvider>
+    <ToastMessageProvider>
       <Wrapper>
         <Header />
         <Body>{children}</Body>
         <LoadingIndicator state={routeState} />
       </Wrapper>
-    </OverlayProvider>
+    </ToastMessageProvider>
   );
 };
 

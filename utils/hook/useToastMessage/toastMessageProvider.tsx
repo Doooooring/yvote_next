@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { OverlayContext } from './useOverlay';
+import { ToastMessageContext } from './useToastMessage';
 
 let id = 0;
 
@@ -10,12 +10,12 @@ interface Node {
   is: boolean;
 }
 
-export function OverlayProvider({ children, ...others }: PropsWithChildren) {
-  const [overlays, setOverlays] = useState<Node[]>([]);
+export function ToastMessageProvider({ children, ...others }: PropsWithChildren) {
+  const [toastMessages, setToastMessages] = useState<Node[]>([]);
 
   const show = (ele: ReactNode) => {
     let nodeId = (id += 1);
-    setOverlays([...overlays, { id: nodeId, element: ele, is: true }]);
+    setToastMessages([...toastMessages, { id: nodeId, element: ele, is: true }]);
     setTimeout(() => {
       close(nodeId);
     }, 2000);
@@ -23,11 +23,11 @@ export function OverlayProvider({ children, ...others }: PropsWithChildren) {
   };
 
   const unMount = (id: number) => {
-    setOverlays((prev) => [...prev.filter((node) => node.id != id)]);
+    setToastMessages((prev) => [...prev.filter((node) => node.id != id)]);
   };
 
   const close = (id: number) => {
-    setOverlays((prev) => [
+    setToastMessages((prev) => [
       ...prev.map((node) => {
         if (node.id === id) {
           node.is = false;
@@ -41,30 +41,30 @@ export function OverlayProvider({ children, ...others }: PropsWithChildren) {
   };
 
   return (
-    <OverlayContext.Provider value={{ show, close }} {...others}>
+    <ToastMessageContext.Provider value={{ show, close }} {...others}>
       {children}
-      {overlays.map((node) => (
-        <Overlay key={node.id} is={node.is}>
+      {toastMessages.map((node) => (
+        <ToastMessage key={node.id} is={node.is}>
           {node.element}
-        </Overlay>
+        </ToastMessage>
       ))}
-    </OverlayContext.Provider>
+    </ToastMessageContext.Provider>
   );
 }
 
-interface OverlayProps extends PropsWithChildren {
+interface ToastMessageProps extends PropsWithChildren {
   is: boolean;
 }
 
-function Overlay({ children, is }: OverlayProps) {
-  return <OverlayWrapper $isShow={is}>{children}</OverlayWrapper>;
+function ToastMessage({ children, is }: ToastMessageProps) {
+  return <ToastMessageWrapper $isShow={is}>{children}</ToastMessageWrapper>;
 }
 
-interface OverlayWrapperProps {
+interface ToastMessageWrapperProps {
   $isShow: boolean;
 }
 
-const OverlayWrapper = styled.div<OverlayWrapperProps>`
+const ToastMessageWrapper = styled.div<ToastMessageWrapperProps>`
   position: fixed;
 
   left: 50%;

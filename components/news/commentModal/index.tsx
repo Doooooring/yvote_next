@@ -14,11 +14,11 @@ import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
 import { CommonLayoutBox } from '@components/common/commonStyles';
-import { useOverlay } from '@utils/hook/useOverlay';
+import { useToastMessage } from '@utils/hook/useToastMessage';
 import { PositiveMessageBox } from '@components/common/messageBox';
 
 const CommentModal = observer(({ id }: { id: string }) => {
-  const { show: showCommentEndMessage } = useOverlay();
+  const { show: showCommentEndMessage } = useToastMessage();
   // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;
   // 현재 보여지고 있는 평론들 ()

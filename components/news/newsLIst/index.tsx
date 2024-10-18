@@ -7,7 +7,7 @@ import PreviewBox from '../previewBox';
 import { arrBatch } from '@utils/tools';
 import PreviewBoxFallback from '../previewsBoxFallback';
 import NewsListFallback from '../newsListFallback';
-import { useOverlay } from '@utils/hook/useOverlay';
+import { useToastMessage } from '@utils/hook/useToastMessage';
 import { PositiveMessageBox } from '@components/common/messageBox';
 
 interface NewsListProps {
@@ -26,16 +26,16 @@ export default function NewsList({
   showNewsContent,
 }: NewsListProps) {
   const elementRef = useRef<HTMLDivElement>(null);
-  const { show: showOverlay } = useOverlay();
+  const { show: showToastMessage } = useToastMessage();
   const isOnScreen = useOnScreen(elementRef);
 
   const showFetchEndMessage = useCallback(() => {
-    showOverlay(
+    showToastMessage(
       <PositiveMessageBox>
-        <p>{'와이보트가 준비한 모든 소식을 받아왔어요'}</p>
+        <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
       </PositiveMessageBox>,
     );
-  }, [showOverlay]);
+  }, [showToastMessage]);
 
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
