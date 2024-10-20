@@ -10,7 +10,6 @@ import { HOST_URL } from '@public/assets/url';
 import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
-import { useToastMessage } from '@utils/hook/useToastMessage';
 import dynamic from 'next/dynamic';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
@@ -36,8 +35,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
-
-  const { show, close } = useToastMessage();
 
   return (
     <Wrapper>

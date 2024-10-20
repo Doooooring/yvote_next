@@ -1,5 +1,5 @@
 import { PropsWithChildren, ReactNode, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { ToastMessageContext } from './useToastMessage';
 
 let id = 0;
@@ -13,12 +13,12 @@ interface Node {
 export function ToastMessageProvider({ children, ...others }: PropsWithChildren) {
   const [toastMessages, setToastMessages] = useState<Node[]>([]);
 
-  const show = (ele: ReactNode) => {
+  const show = (ele: ReactNode, time: number) => {
     let nodeId = (id += 1);
     setToastMessages([...toastMessages, { id: nodeId, element: ele, is: true }]);
     setTimeout(() => {
       close(nodeId);
-    }, 2000);
+    }, time);
     return nodeId;
   };
 

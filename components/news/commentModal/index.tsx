@@ -6,16 +6,15 @@ import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
 import indexStore from '@store/indexStore';
 
-import { loadingImg } from '@public/assets/resource';
+import { CommonLayoutBox } from '@components/common/commonStyles';
+import { PositiveMessageBox } from '@components/common/messageBox';
+import { useToastMessage } from '@utils/hook/useToastMessage';
 import { observer } from 'mobx-react';
 import Image from 'next/image';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
-import { CommonLayoutBox } from '@components/common/commonStyles';
-import { useToastMessage } from '@utils/hook/useToastMessage';
-import { PositiveMessageBox } from '@components/common/messageBox';
 
 const CommentModal = observer(({ id }: { id: string }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -35,6 +34,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
         <PositiveMessageBox>
           <p>준비된 평론들을 모두 확인했어요</p>
         </PositiveMessageBox>,
+        2000,
       );
     }
   }, [getPageAfter]);

@@ -1,14 +1,13 @@
 import LoadingCommon from '@components/common/loading';
+import { PositiveMessageBox } from '@components/common/messageBox';
 import { useOnScreen } from '@utils/hook/useOnScreen';
+import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
+import { arrBatch } from '@utils/tools';
 import { Suspense, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import PreviewBox from '../previewBox';
-import { arrBatch } from '@utils/tools';
-import PreviewBoxFallback from '../previewsBoxFallback';
 import NewsListFallback from '../newsListFallback';
-import { useToastMessage } from '@utils/hook/useToastMessage';
-import { PositiveMessageBox } from '@components/common/messageBox';
+import PreviewBox from '../previewBox';
 
 interface NewsListProps {
   page: number;
@@ -34,6 +33,7 @@ export default function NewsList({
       <PositiveMessageBox>
         <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
       </PositiveMessageBox>,
+      2000,
     );
   }, [showToastMessage]);
 

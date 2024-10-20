@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext } from 'react';
 
 export interface ToastMessageContextProp {
-  show: (comp: ReactNode) => number;
+  show: (comp: ReactNode, time: number) => number;
   close: (id: number) => void;
 }
 
