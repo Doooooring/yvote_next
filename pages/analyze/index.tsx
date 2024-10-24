@@ -25,7 +25,7 @@ export default function Analyze() {
   const { show } = useToastMessage();
 
   useMount(() => {
-    show(<PositiveMessageBox>현재 준비 중인 서비스입니다.</PositiveMessageBox>);
+    show(<PositiveMessageBox>현재 준비 중인 서비스입니다.</PositiveMessageBox>, 2000);
   });
 
   return (
