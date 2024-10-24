@@ -1,7 +1,10 @@
 import Questionnaire from '@components/analyze/questionnaire';
 import Result, { ResultAnswers } from '@components/analyze/result';
 import HeadMeta from '@components/common/HeadMeta';
-import { useState } from 'react';
+import { PositiveMessageBox } from '@components/common/messageBox';
+import { useMount } from '@utils/hook/useMount';
+import { useToastMessage } from '@utils/hook/useToastMessage';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const metaTagsProps = {
@@ -18,6 +21,12 @@ export default function Analyze() {
     setAnswers(finalAnswers);
     setCompleted(true);
   };
+
+  const { show } = useToastMessage();
+
+  useMount(() => {
+    show(<PositiveMessageBox>현재 준비 중인 서비스입니다.</PositiveMessageBox>);
+  });
 
   return (
     <Wrapper>
