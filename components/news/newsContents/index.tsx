@@ -57,8 +57,8 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         <BodyLeft state={isLeft}>
           <div className="contents-body">
             <div className="right">
-              <Suspense fallback={<></>}>
-                <div className="main-image-wrapper">
+              <div className="main-image-wrapper">
+                <Suspense fallback={<></>}>
                   <SuspenseImage
                     src={`${HOST_URL}/images/news/${newsContent._id}`}
                     alt={newsContent.title}
@@ -71,8 +71,8 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                       <span>{newsContent.title}</span>
                     </p>
                   </SuspenseImage>
-                </div>
-              </Suspense>
+                </Suspense>
+              </div>
               <div className="summary content">
                 <h1 className="head">
                   <span>
@@ -168,12 +168,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     </Wrapper>
   );
 }
-
-const Block = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: 'black';
-`;
 
 const CommonHeadLine = styled.h4`
   font-size: 14px;
