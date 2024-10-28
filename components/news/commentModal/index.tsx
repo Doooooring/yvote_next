@@ -134,16 +134,15 @@ const CommentModal = observer(({ id }: { id: string }) => {
                   })}
                 </div>
               </div>
-              <div className="back-button-wrapper">
-                <div
-                  className="back-button"
+              <BackButtonWrapper>
+                <BackButton
                   onClick={() => {
                     closeCurComment();
                   }}
                 >
                   목록으로
-                </div>
-              </div>
+                </BackButton>
+              </BackButtonWrapper>
             </ModalBody>
           )}
         </Wrapper>
@@ -323,22 +322,6 @@ const ModalBody = styled.div`
       min-height: 10px;
     }
   }
-
-  div.back-button-wrapper {
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    border-top: 1.5px solid rgb(225, 225, 225);
-
-    div.back-button {
-      box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-      padding: 0.5rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 400;
-      cursor: pointer;
-    }
-  }
 `;
 
 interface PageButtonProps {
@@ -362,4 +345,18 @@ const LoadingWrapper = styled.div`
   top: 0;
   left: 0;
   backdrop-filter: blur(3px);
+`;
+
+const BackButtonWrapper = styled.div`
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  border-top: 1.5px solid rgb(225, 225, 225);
+`;
+
+const BackButton = styled(CommonLayoutBox)`
+  padding: 0.5rem 1.5rem;
+  font-weight: 400;
+  cursor: pointer;
 `;

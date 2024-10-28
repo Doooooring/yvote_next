@@ -151,7 +151,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               );
             })}
           </TimelineWrapper>
-          {/* <TimelineBox timelines={newsContent.timeline} /> */}
           <VoteBox
             _id={newsContent._id}
             state={newsContent.state}

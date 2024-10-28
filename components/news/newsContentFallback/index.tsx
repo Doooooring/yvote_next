@@ -8,7 +8,6 @@ export default function NewsContentFallback() {
     <Wrapper>
       <Left>
         <Backdrop />
-
         <ImageFallback />
         <HeadFallback />
         <ContentFallback />

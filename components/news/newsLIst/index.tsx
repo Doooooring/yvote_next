@@ -8,6 +8,7 @@ import { Suspense, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface NewsListProps {
   page: number;
@@ -28,19 +29,17 @@ export default function NewsList({
   const { show: showToastMessage } = useToastMessage();
   const isOnScreen = useOnScreen(elementRef);
 
-  const showFetchEndMessage = useCallback(() => {
-    showToastMessage(
-      <PositiveMessageBox>
-        <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
-      </PositiveMessageBox>,
-      2000,
-    );
-  }, [showToastMessage]);
-
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
-    if (!res) showFetchEndMessage();
-  }, [fetchPreviews, showFetchEndMessage]);
+    if (!res) {
+      showToastMessage(
+        <PositiveMessageBox>
+          <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
+        </PositiveMessageBox>,
+        2000,
+      );
+    }
+  }, [fetchPreviews, showToastMessage]);
 
   //뷰에 들어옴이 감지될 때 요청 보내기
   useEffect(() => {
@@ -116,7 +115,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const LoadingWrapper = styled.div`
+const LoadingWrapper = styled(CommonLayoutBox)`
   background-color: white;
 `;
 
