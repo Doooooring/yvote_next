@@ -270,6 +270,12 @@ const ListItem = styled.li`
   position: relative;
   color: white;
   display: flex;
+  cursor: pointer;
+
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #c1c1c1;
+  }
 
   &:not(:last-child)::after {
     content: '';

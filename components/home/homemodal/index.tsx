@@ -127,7 +127,7 @@ const ModalBox = styled.div`
   position: relative;
   width: 35rem;
   max-width: 90%;
-  background-color: rgba(27, 31, 34, 0.85);
+  background-color: rgb(27, 31, 34);
   border-radius: 4px;
   transform: translateY(0);
   opacity: 0; // initially fully transparent
@@ -307,7 +307,7 @@ const SubmitButton = styled.button`
   -webkit-text-size-adjust: none;
   list-style: none;
   box-sizing: inherit;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   appearance: none;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   border-radius: 4px;
@@ -328,6 +328,6 @@ const SubmitButton = styled.button`
   background-color: #ffffff;
   color: #1b1f22;
   font-weight: 600;
-  margin: auto; 
-  width: 30%;   
+  margin: auto;
+  width: 30%;
 `;
