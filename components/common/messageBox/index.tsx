@@ -28,15 +28,15 @@ const Wrapper = styled(CommonLayoutBox)`
   padding: 0.5rem 1.5rem;
   min-width: 200px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
   p {
-    white-space: nowrap;
     font-weight: 500;
 
     font-size: 16px;
   }
 
   @media screen and (max-width: 550px) {
-    min-width: 200px;
     padding: 0.4rem 1.2rem;
     p {
       font-weight: 500;

@@ -314,6 +314,7 @@ const ModalBody = styled.div`
       padding-bottom: 0.5rem;
     }
     div.content-body {
+      font-weight: 500;
     }
 
     p.content_line {
@@ -336,6 +337,12 @@ const PageButton = styled.div<PageButtonProps>`
   border-radius: 30px;
   box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
   cursor: pointer;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;
 
 const LoadingWrapper = styled.div`
@@ -359,4 +366,8 @@ const BackButton = styled(CommonLayoutBox)`
   padding: 0.5rem 1.5rem;
   font-weight: 400;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;

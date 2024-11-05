@@ -74,7 +74,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 <h1 className="head">
                   <span>
                     {newsContent.title}{' '}
-                    {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <div></div>}
+                    {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
                 <div dangerouslySetInnerHTML={{ __html: newsContent.summary }} />
@@ -229,6 +229,11 @@ const TabWrapper = styled.div<TabWrapperProps>`
     border-radius: 5px;
     border: 1px solid rgba(200, 200, 200, 0.5);
     box-shadow: 0px 0px 35px -30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    &:hover {
+      background-color: #f0f0f0;
+    }
 
     &.show-next {
       display: none;
@@ -252,27 +257,6 @@ const Body = styled.div`
 
   @media screen and (max-width: 768px) {
     padding-top: 0;
-  }
-`;
-
-const CloseWrapper = styled.div`
-  padding: 5px;
-  position: absolute;
-  left: 0;
-  transform: translate(-50%, 0);
-  z-index: 9999;
-  .close-button {
-    text-align: right;
-    img {
-      width: 25px;
-      height: 25px;
-    }
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  @media screen and (max-width: 768px) {
-    display: none;
   }
 `;
 
@@ -345,7 +329,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         span {
           color: rgb(6, 6, 6);
           min-height: 20.25px;
-          max-height: 48px;
           img {
             margin: 0.1em 0 -0.1em 0;
           }
@@ -384,7 +367,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         .keyword {
           display: inline-block;
           text-decoration: none;
-          font-size: 11px;
+          font-size: 13px;
           font-weight: 500;
           color: rgb(120, 120, 120);
           margin: 0;
@@ -399,17 +382,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       }
     }
   }
-`;
-
-interface ImageWrapperProps {
-  opacity: number;
-}
-
-const ImgWrapper = styled.div<ImageWrapperProps>`
-  position: relative;
-  height: 20px;
-  aspect-ratio: 1 / 1;
-  opacity: ${({ opacity }) => opacity};
 `;
 
 const BodyRight = styled.div<BodyProps>`
@@ -517,6 +489,12 @@ const CommentBox = styled.div`
       padding: 0.25rem 1.5rem;
       border: 1px solid rgb(225, 225, 225);
       border-radius: 6px;
+
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      &:hover {
+        background-color: #f0f0f0;
+      }
 
       &:hover {
         color: rgb(50, 50, 50);

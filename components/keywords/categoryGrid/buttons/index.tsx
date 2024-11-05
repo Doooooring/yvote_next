@@ -51,8 +51,10 @@ const ButtonWrapper = styled.div`
   box-shadow: 0 0 30px -15px;
   background-color: white;
   z-index: 99;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   &:hover {
-    cursor: pointer;
+    background-color: #f0f0f0;
   }
   @media screen and (max-width: 768px) {
     display: none !important;

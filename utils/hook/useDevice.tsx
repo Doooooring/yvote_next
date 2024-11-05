@@ -18,11 +18,9 @@ export const useDevice = () => {
       }
     };
 
-    // Update comment on mount and when resizing the window
     updateCommentBasedOnWidth();
     window.addEventListener('resize', updateCommentBasedOnWidth);
 
-    // Cleanup event listener on component unmount
     return () => window.removeEventListener('resize', updateCommentBasedOnWidth);
   }, []);
 
