@@ -59,7 +59,7 @@ const CommentModal = observer(({ id }: { id: string }) => {
               close();
             }}
           >
-            <Image src={closeButton} width={16} height={16} alt="" />
+            &times;
           </div>
           <HeadBody>
             <HeadTitle>
@@ -186,8 +186,12 @@ const Wrapper = styled(CommonLayoutBox)`
     div.close-button {
       position: absolute;
       top: 10px;
-      right: 14px;
+      right: 10px;
       cursor: pointer;
+      text-indent: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 2rem;
     }
     div.modal-head {
       -webkit-text-size-adjust: none;

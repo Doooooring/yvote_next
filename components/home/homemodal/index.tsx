@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { StaticImageData } from 'next/image';
+import Modal from '@components/common/modal';
+import { Center } from '@components/common/commonStyles';
 
 interface ModalProps {
   show: boolean;
@@ -17,7 +19,7 @@ interface ModalProps {
   } | null;
 }
 
-const Modal: React.FC<ModalProps> = ({ show, onClose, content }) => {
+export default function HomeModal({ show, onClose, content }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,100 +44,89 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, content }) => {
     }
   }, [show]);
 
-  if (!show || !content) return null;
+  if (!show || !content) return <></>;
 
   if (content.name === 'Contact') {
     return (
-      <ModalWrapper>
-        <ModalBox ref={modalRef}>
-          <ModalTitle>{content.title}</ModalTitle>
-          <ContactForm>
-            <InputsRow>
-              <FieldContainer>
-                <Label htmlFor="name">Name</Label>
-                <Input type="text" name="name" id="name" />
-              </FieldContainer>
-              <FieldContainer>
-                <Label htmlFor="email">Email</Label>
-                <Input type="text" name="email" id="email" />
-              </FieldContainer>
-            </InputsRow>
-            <Label htmlFor="message">Message</Label>
-            <TextArea name="message" id="message" rows={6}></TextArea>
-            <SubmitButton type="submit">Submit</SubmitButton>
-          </ContactForm>
-          <CloseButton onClick={onClose}>&times;</CloseButton>
-        </ModalBox>
-      </ModalWrapper>
+      <Modal state={show}>
+        <Wrapper>
+          <ModalBox ref={modalRef}>
+            <ModalTitle>{content.title}</ModalTitle>
+            <ContactForm>
+              <InputsRow>
+                <FieldContainer>
+                  <Label htmlFor="name">Name</Label>
+                  <Input type="text" name="name" id="name" />
+                </FieldContainer>
+                <FieldContainer>
+                  <Label htmlFor="email">Email</Label>
+                  <Input type="text" name="email" id="email" />
+                </FieldContainer>
+              </InputsRow>
+              <Label htmlFor="message">Message</Label>
+              <TextArea name="message" id="message" rows={6}></TextArea>
+              <SubmitButton type="submit">Submit</SubmitButton>
+            </ContactForm>
+            <CloseButton onClick={onClose}>&times;</CloseButton>
+          </ModalBox>
+        </Wrapper>
+      </Modal>
     );
   }
 
   return (
-    <ModalWrapper>
-      <ModalBox ref={modalRef}>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
-        <ModalTitle>{content.title}</ModalTitle>
-        {content.description?.split('\n').map((paragraph, index) => (
-          <ModalParagraph key={index}>{paragraph}</ModalParagraph>
-        ))}
-        <ImageContainer>
-          <Image
-            src={content.imageUrl}
-            alt={content.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        </ImageContainer>
-        <ModalLink href={content.linkUrl}>{content.linkText}</ModalLink>
-      </ModalBox>
-    </ModalWrapper>
+    <Modal state={show}>
+      <Wrapper>
+        <ModalBox ref={modalRef}>
+          <CloseButton onClick={onClose}>&times;</CloseButton>
+          <ModalTitle>{content.title}</ModalTitle>
+          {content.description?.split('\n').map((paragraph, index) => (
+            <ModalParagraph key={index}>{paragraph}</ModalParagraph>
+          ))}
+          <ImageContainer>
+            <Image
+              src={content.imageUrl}
+              alt={content.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </ImageContainer>
+          <ModalLink href={content.linkUrl}>{content.linkText}</ModalLink>
+        </ModalBox>
+      </Wrapper>
+    </Modal>
   );
-};
+}
 
-export default Modal;
-
-const ModalWrapper = styled.div`
-  position: fixed;
-  z-index: 9999;
+const Wrapper = styled(Center)`
+  box-sizing: border-box;
   width: 100%;
-  height: 100%; // Now includes padding
-  padding: 1rem 0 7rem; // Move ModalBox's vertical padding here
-  box-sizing: border-box; // Includes padding in height
-  top: 80px;
-  left: 0;
-  display: flex;
-  overflow-y: auto;
-  justify-content: center;
-  align-items: flex-start;
-  background: rgba(0, 0, 0, 0.2);
-  ::-webkit-scrollbar {
-    display: none; // for Chrome, Safari, and Opera
-  }
-  -ms-overflow-style: none; // for IE and Edge
-  scrollbar-width: none; // for Firefox
+  height: 100%;
+  padding: 1rem;
 `;
 
 const ModalBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   -webkit-text-size-adjust: none;
   color: #ffffff;
   box-sizing: inherit;
   margin-top: 0;
   border: 0;
+  max-width: 600px;
+
   font: inherit;
   vertical-align: baseline;
   transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
   padding: 2rem 2rem 1rem 2rem;
   position: relative;
-  width: 35rem;
-  max-width: 90%;
   background-color: rgb(27, 31, 34);
   border-radius: 4px;
   transform: translateY(0);
-  opacity: 0; // initially fully transparent
-  filter: blur(100px); // initially has significant blur
-  transition: opacity 500ms, filter 300ms; // transition takes half second
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  opacity: 0;
+  filter: blur(100px);
+  transition: opacity 500ms, filter 300ms;
   line-height: 1.5rem;
 `;
 
