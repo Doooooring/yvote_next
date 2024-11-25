@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
@@ -9,31 +9,23 @@ import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
 
 interface ArticleBoxProps {
-  writer: Article['writer'] | undefined;
-  title: Article['title'] | undefined;
-  content: Article['content'] | undefined;
-  date: Article['date'] | undefined;
-  newsTitle: Article['newsTitle'] | undefined;
-  news_id: Article['news_id'] | undefined;
+  article: Article;
 }
 
-export default function ArticleBox({
-  writer,
-  title,
-  content,
-  date,
-  newsTitle,
-  news_id,
-}: ArticleBoxProps) {
+export default function ArticleBox({ article }: ArticleBoxProps) {
+  const { id, commentType, title, comment, date } = article;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = useCallback(() => {
+    setIsModalOpen(true);
+  }, [setIsModalOpen]);
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, [setIsModalOpen]);
 
-  const formatDate = (dateString: string | undefined): string => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const month = date.getMonth() + 1; // getMonth() is zero-based
+  const formatDate = (date: Date): string => {
+    const month = date.getMonth() + 1;
     const day = date.getDate();
     return `(${month}/${day})`;
   };
@@ -45,7 +37,7 @@ export default function ArticleBox({
         <div className="wrapper">
           <div className="text-wrapper">
             <p className="title-wrapper">- {title}</p>
-            <p className="writer-wrapper">{writer}</p>
+            <p className="writer-wrapper">{commentType}</p>
           </div>
         </div>
       </LinkWrapper>
@@ -62,7 +54,11 @@ export default function ArticleBox({
           <div className="modal-header">
             <div className="image-wrapper">
               <div className="image-box">
-                <ImageFallback src={`/assets/img/${writer}.png`} alt={writer ?? ''} fill={true} />
+                <ImageFallback
+                  src={`/assets/img/${commentType}.png`}
+                  alt={commentType}
+                  fill={true}
+                />
               </div>
             </div>
             <div className="head-title">
@@ -72,11 +68,9 @@ export default function ArticleBox({
           <div className="content-wrapper">
             <div className="modal-content">
               <div className="paragraph">
-                {content ? (
-                  content.split('$').map((comment, idx) => <p key={idx}>{comment}</p>)
-                ) : (
-                  <p>No content available</p>
-                )}
+                {comment.split('$').map((comment, idx) => (
+                  <p key={comment}>{comment}</p>
+                ))}
               </div>
             </div>
           </div>

@@ -35,33 +35,38 @@ export enum CommentQualification {
 }
 
 export interface Timeline {
+  id: number;
   date: string;
   title: string;
 }
 
 export interface Article {
-  writer: commentType;
+  id: number;
+  commentType: commentType;
   title: string;
-  content: string;
-  date: string;
-  newsTitle: string;
-  news_id: string;
+  comment: string;
+  date: Date;
+  newsId: number;
 }
 
 export interface News {
-  _id: string;
+  id: number;
   order: number;
   title: string;
   summary: string;
-  keywords: Array<string>;
+  keywords: Array<{
+    id: number;
+    keyword: string;
+  }>;
+  newsImage: string;
+  isPublished: boolean;
   state: boolean;
   timeline: Array<Timeline>;
-  opinions: {
-    left: string;
-    right: string;
-  };
+  opininonLeft: string;
+  opinionRight: string;
   comments: {
     [key in commentType]: Array<{
+      id: string;
       title: string;
       comment: string;
     }>;
@@ -74,4 +79,4 @@ export interface News {
 }
 
 export interface Preview
-  extends Pick<News, '_id' | 'order' | 'title' | 'summary' | 'keywords' | 'state'> {}
+  extends Pick<News, 'id' | 'order' | 'newsImage' | 'title' | 'summary' | 'keywords' | 'state'> {}

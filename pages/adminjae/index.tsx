@@ -9,6 +9,7 @@ import { Preview } from '@utils/interface/news';
 import { useRouter } from 'next/router';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 
 type curPreviewsList = Preview[];
 
@@ -18,23 +19,19 @@ interface pageProps {
 
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
-  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20, true);
+  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
+    useFetchNewsPreviews(20, true);
 
   useMount(() => {
     fetchPreviews();
-  })
+  });
 
-  const showNewsContent = useCallback(async (id: string) => {
-    navigate.push(`/news/${id}`);
-  }, []);
+  const showNewsContent = useNewsNavigate();
 
   return (
     <Wrapper>
       <div className="search-wrapper">
-        <SearchBox
-          page={page}
-          fetchPreviews={fetchPreviews}
-        />
+        <SearchBox page={page} fetchPreviews={fetchPreviews} />
         {/* <SpeechBubble /> */}
       </div>
       <div className="main-contents">

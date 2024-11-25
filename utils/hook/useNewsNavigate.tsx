@@ -1,12 +1,12 @@
-import { useRouter } from "next/router"
-import { useCallback } from "react"
+import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 
 export const useNewsNavigate = () => {
-    const navigate = useRouter()
+  const navigate = useRouter();
 
-    const moveToNewsDetail = useCallback((id : string) => {
-        navigate.push(`/news/${id}`);
-    } , [])
+  const moveToNewsDetail = useCallback((id: number) => {
+    navigate.push(`/news/${id}`);
+  }, []);
 
-    return moveToNewsDetail;
-}
+  return moveToNewsDetail;
+};

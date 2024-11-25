@@ -15,7 +15,7 @@ interface NewsListProps {
   previews: Preview[];
   isRequesting: boolean;
   fetchPreviews: () => Promise<boolean>;
-  showNewsContent: (id: string) => void;
+  showNewsContent: (id: number) => void;
 }
 
 export default function NewsList({

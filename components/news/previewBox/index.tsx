@@ -11,13 +11,13 @@ import PreviewBoxLayout from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
-  click: (id: string) => void;
+  click: (id: number) => void;
 }
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
-  const { _id, title, summary, keywords, state } = preview;
+  const { id, title, summary, newsImage, keywords, state } = preview;
 
   const routeToKeyword = async (key: string) => {
     const id = await KeywordRepository.getIdByKeyword(key);
@@ -31,16 +31,9 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
     <Wrapper>
       <PreviewBoxLayout
         onClick={() => {
-          click(_id);
+          click(id);
         }}
-        imgView={
-          <SuspenseImage
-            src={`${HOST_URL}/images/news/${_id}`}
-            alt={title}
-            fill={true}
-            suspense={true}
-          />
-        }
+        imgView={<SuspenseImage src={newsImage} alt={title} fill={true} suspense={true} />}
         headView={
           <>
             <Title>{title}</Title>
@@ -58,7 +51,7 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
           <>
             <Summary dangerouslySetInnerHTML={{ __html: summary }} />
             <Keywords>
-              {keywords?.map((keyword) => {
+              {keywords?.map(({ id, keyword }) => {
                 return (
                   <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
                     {`#${keyword}`}
