@@ -8,18 +8,19 @@ export type category =
   | 'etc';
 
 export interface Keyword {
-  _id: string;
+  id: number;
   keyword: string;
   explain: string;
   category: category;
   recent: boolean;
-  news: Array<string>;
+  keywordImage: string;
 }
 
-export interface KeywordToView extends Pick<Keyword, '_id' | 'keyword' | 'category' | 'recent'> {}
+export interface KeywordToView
+  extends Pick<Keyword, 'id' | 'keyword' | 'category' | 'recent' | 'keywordImage'> {}
 
 export interface KeywordOnDetail
-  extends Partial<Pick<Keyword, '_id' | 'keyword' | 'explain' | 'category'>> {}
+  extends Partial<Pick<Keyword, 'id' | 'keyword' | 'explain' | 'category' | 'keywordImage'>> {}
 
 export interface KeywordInHuman extends KeywordToView {
   category: 'human';

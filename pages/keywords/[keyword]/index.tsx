@@ -3,11 +3,11 @@ import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
 import { HOST_URL } from '@public/assets/url';
 import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
+import newsRepository from '@repositories/news';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { Preview } from '@utils/interface/news';
 import { Suspense } from 'react';
 import styled from 'styled-components';
-
 import HeadMeta from '@components/common/HeadMeta';
 import ExplainFallback from '@components/keywords/explainFallback';
 import NewsList from '@components/news/newsLIst';
@@ -27,8 +27,8 @@ interface pageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const keywords: string[] = await keywordRepository.getKeywordIdList();
-  const paths = keywords.map((keyword: string) => {
+  const keywords = await keywordRepository.getKeywordIdList();
+  const paths = keywords.map(({ keyword }) => {
     return {
       params: { keyword },
     };
@@ -37,12 +37,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const id = context.params!.keyword as string;
-  const { keyword, previews }: getKeywordDetailResponse = await keywordRepository.getKeywordDetail(
-    id,
-    0,
-  );
-
+  const key = context.params!.keyword as string;
+  const pm1 = keywordRepository.getKeywordByKey(key);
+  const pm2 = newsRepository.getPreviews(0, key);
   return {
     props: {
       data: {
@@ -56,19 +53,20 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
+  const { id, keyword, previews: initialPreviews } = data;
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
-    fetchPreviews(data.keyword.keyword);
+    fetchPreviews(keyword.keyword);
   });
 
   const metaTagsProps = {
-    title: `키워드 - ${data.keyword.keyword}`,
-    description: data.keyword.explain || '',
-    image: `${HOST_URL}/images/keywords/${data.keyword._id}`,
-    url: `https://yvoting.com/keywords/${data.keyword._id}`,
+    title: `키워드 - ${keyword.keyword}`,
+    description: keyword.explain || '',
+    image: `${HOST_URL}/images/keywords/${keyword.id}`,
+    url: `https://yvoting.com/keywords/${keyword.id}`,
     type: 'article',
   };
 
@@ -81,10 +79,10 @@ export default function KeyExplanation({ data }: pageProps) {
       <Suspense fallback={<ExplainFallback />}>
         <KeywordWrapper>
           <ExplanationComp
-            id={data.keyword?._id! ?? ''}
-            category={data.keyword?.category ?? 'etc'}
-            keyword={data.keyword?.keyword! ?? ''}
-            explain={data.keyword?.explain ?? ''}
+            id={keyword?.id}
+            category={keyword?.category ?? 'etc'}
+            keyword={keyword?.keyword! ?? ''}
+            explain={keyword?.explain ?? ''}
           />
         </KeywordWrapper>
         <div className="main-contents">
@@ -100,7 +98,7 @@ export default function KeyExplanation({ data }: pageProps) {
             ) : (
               <NewsList
                 page={page}
-                previews={previews.length == 0 ? data.previews : previews}
+                previews={previews.length == 0 ? initialPreviews : previews}
                 isRequesting={isRequesting}
                 fetchPreviews={fetchNextPreviews}
                 showNewsContent={showNewsContent}
