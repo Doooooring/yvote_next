@@ -26,6 +26,20 @@ interface NewsContentProps {
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
+  const {
+    id,
+    title,
+    order,
+    summary,
+    newsImage,
+    keywords,
+    state,
+    timeline,
+    opinionLeft,
+    opinionRight,
+    votes,
+  } = newsContent;
+
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
@@ -57,15 +71,15 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               <div className="main-image-wrapper">
                 <Suspense fallback={<></>}>
                   <SuspenseImage
-                    src={`${HOST_URL}/images/news/${newsContent._id}`}
-                    alt={newsContent.title}
+                    src={newsImage}
+                    alt={title}
                     fill
                     style={{
                       objectFit: 'cover',
                     }}
                   >
                     <p className="img-head">
-                      <span>{newsContent.title}</span>
+                      <span>{title}</span>
                     </p>
                   </SuspenseImage>
                 </Suspense>
@@ -73,14 +87,13 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               <div className="summary content">
                 <h1 className="head">
                   <span>
-                    {newsContent.title}{' '}
-                    {newsContent.state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
+                    {title} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
-                <div dangerouslySetInnerHTML={{ __html: newsContent.summary }} />
+                <div dangerouslySetInnerHTML={{ __html: summary }} />
               </div>
               <div className="keyword-wrapper content">
-                {newsContent.keywords?.map((keyword) => {
+                {keywords?.map(({ keyword }) => {
                   return (
                     <p
                       className="keyword"
@@ -136,7 +149,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
           </CommentWrapper>
           <TimelineWrapper className="timeline_wrapper">
             <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
-            {newsContent.timeline.map((timeline, idx) => {
+            {timeline.map((timeline, idx) => {
               return (
                 <div className="timeline">
                   <div className="timeline_sentence">
@@ -152,15 +165,15 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
             })}
           </TimelineWrapper>
           <VoteBox
-            _id={newsContent._id}
-            state={newsContent.state}
-            opinions={newsContent.opinions}
-            votes={newsContent.votes}
+            id={id}
+            state={state}
+            opinions={{ left: opinionLeft, right: opinionRight }}
+            votes={votes}
             voteHistory={voteHistory}
           />
         </BodyRight>
       </Body>
-      <CommentModal id={newsContent._id} />
+      <CommentModal id={id} />
     </Wrapper>
   );
 }
@@ -347,12 +360,17 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
       .summary {
         display: inline-block;
+        padding-left: 1.5rem;
         padding-right: 2.5em;
         font-size: 14px;
         line-height: 2;
         color: rgb(10, 10, 10);
         font-weight: 450;
         word-break: break-all;
+        @media screen and (max-width: 768px) {
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+        }
         & {
           p {
             margin: 0 0 1em 0;

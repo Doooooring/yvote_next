@@ -3,7 +3,7 @@ import { commentType } from '@utils/interface/news';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const useFetchNewsComment = (id: string, comment: commentType | null) => {
+export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
   const [curComments, setCurComments] = useState<
     Array<{

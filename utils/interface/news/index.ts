@@ -62,7 +62,7 @@ export interface News {
   isPublished: boolean;
   state: boolean;
   timeline: Array<Timeline>;
-  opininonLeft: string;
+  opinionLeft: string;
   opinionRight: string;
   comments: {
     [key in commentType]: Array<{

@@ -22,10 +22,10 @@ interface pageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr: Array<{ _id: string }> = await NewsRepository.getNewsIds();
-  const paths = newsIdArr.map((item: { _id: string }) => {
+  const newsIdArr: Array<{ id: string }> = await NewsRepository.getNewsIds();
+  const paths = newsIdArr.map((item: { id: string }) => {
     return {
-      params: { news: item['_id'] },
+      params: { news: item['id'] },
     };
   });
   return {
@@ -35,8 +35,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const id = context.params!.news as string;
-  const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
+  const id = context.params!.news;
+  const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(Number(id), null);
 
   return {
     props: {
@@ -61,7 +61,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     return {
       title: news?.title || '',
       description: news?.summary || '',
-      image: `${HOST_URL}/images/news/${news?._id}`,
+      image: `${HOST_URL}/images/news/${news?.id}`,
       url: `https://yvoting.com/news/${id}`,
       type: 'article',
     };

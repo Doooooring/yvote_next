@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
 
-const CommentModal = observer(({ id }: { id: string }) => {
+const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
   // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;

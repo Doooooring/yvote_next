@@ -8,11 +8,15 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 type AnswerState = 'left' | 'right' | 'none';
 type SubmitState = 'resolve' | 'pending' | 'error';
 
-interface VoteBoxProps extends Pick<News, '_id' | 'state' | 'opinions' | 'votes'> {
+interface VoteBoxProps extends Pick<News, 'id' | 'state' | 'votes'> {
   voteHistory: 'left' | 'right' | 'none' | null;
+  opinions: {
+    left: string;
+    right: string;
+  };
 }
 
-export default function VoteBox({ _id, state, opinions, votes, voteHistory }: VoteBoxProps) {
+export default function VoteBox({ id, state, opinions, votes, voteHistory }: VoteBoxProps) {
   const [haveThinked, setHaveThinked] = useState<boolean | null>(false);
   const [checkLeftRight, setCheckLeftRight] = useState<'left' | 'right' | 'none' | null>(null);
   const [submitState, setSubmitState] = useState<SubmitState>('pending');
@@ -32,7 +36,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
 
   const vote = async (voteAnswer: AnswerState) => {
     const token = localStorage.getItem('yVote');
-    const response = await NewsRepository.vote(_id, voteAnswer, token);
+    const response = await NewsRepository.vote(id, voteAnswer, token);
     localStorage.setItem('yVote', response.token);
     return;
   };
@@ -78,7 +82,7 @@ export default function VoteBox({ _id, state, opinions, votes, voteHistory }: Vo
       setCheckLeftRight(null);
       setSubmitState('pending');
     }
-  }, [_id]);
+  }, [id]);
 
   return (
     <Wrapper>
