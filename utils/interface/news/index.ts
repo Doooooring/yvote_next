@@ -7,6 +7,8 @@
 //   동아 = '동아',
 // }
 
+import { Keyword } from '../keywords';
+
 export enum commentType {
   전략가 = '전략가',
   지도자 = '지도자',
@@ -54,28 +56,24 @@ export interface News {
   order: number;
   title: string;
   summary: string;
-  keywords: Array<{
-    id: number;
-    keyword: string;
-  }>;
+  keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;
   state: boolean;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
-  comments: {
-    [key in commentType]: Array<{
-      id: string;
-      title: string;
-      comment: string;
-    }>;
-  };
+  comments: Array<Comment>;
   votes: {
     left: number;
     right: number;
     none: number;
   };
+}
+
+export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
+  keywords: Array<{ id: number; keyword: string }>;
+  comments: Array<commentType>;
 }
 
 export interface Preview
