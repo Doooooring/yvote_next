@@ -41,7 +41,7 @@ export function ToastMessageProvider({ children, ...others }: PropsWithChildren)
   };
 
   return (
-    <ToastMessageContext.Provider value={{ show, close }} {...others}>
+    <ToastMessageContext.Provider value={{ show }} {...others}>
       {children}
       {toastMessages.map((node) => (
         <ToastMessage key={node.id} is={node.is}>

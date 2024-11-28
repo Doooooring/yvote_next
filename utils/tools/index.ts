@@ -13,6 +13,12 @@ export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   return result;
 };
 
+export const fillArr = <T, K>(arr: Array<T>, size: number, element: K) => {
+  const newArr = [...arr] as Array<T | K>;
+  if (size < newArr.length) return newArr;
+  return newArr.concat(new Array(size - newArr.length).fill(element));
+};
+
 export const ffToInt = (ff: string) => {
   return parseInt(ff, 16);
 };
