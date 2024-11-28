@@ -1,17 +1,18 @@
-export type category =
-  | 'human'
-  | 'politics'
-  | 'policy'
-  | 'economics'
-  | 'social'
-  | 'organization'
-  | 'etc';
+export enum KeywordCategory {
+  Human = 'human',
+  Politics = 'politics',
+  Policy = 'policy',
+  Economics = 'economics',
+  Social = 'social',
+  Organization = 'organization',
+  Etc = 'etc',
+}
 
 export interface Keyword {
   id: number;
   keyword: string;
   explain: string;
-  category: category;
+  category: KeywordCategory;
   recent: boolean;
   keywordImage: string;
 }
@@ -21,25 +22,3 @@ export interface KeywordToView
 
 export interface KeywordOnDetail
   extends Partial<Pick<Keyword, 'id' | 'keyword' | 'explain' | 'category' | 'keywordImage'>> {}
-
-export interface KeywordInHuman extends KeywordToView {
-  category: 'human';
-}
-export interface KeywordInPolitics extends KeywordToView {
-  category: 'politics';
-}
-export interface KeywordInPolicy extends KeywordToView {
-  category: 'policy';
-}
-export interface KeywordInEconomy extends KeywordToView {
-  category: 'economics';
-}
-export interface KeywordInSocial extends KeywordToView {
-  category: 'social';
-}
-export interface KeywordInOrganization extends KeywordToView {
-  category: 'organization';
-}
-export interface KeywordInEtc extends KeywordToView {
-  category: 'etc';
-}

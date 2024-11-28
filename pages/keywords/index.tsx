@@ -2,7 +2,7 @@ import HeadMeta from '@components/common/HeadMeta';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
-import KeywordRepository, { getKeywordsResponse } from '@repositories/keywords';
+import KeywordRepository from '@repositories/keywords';
 import { KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';

@@ -6,23 +6,12 @@ import NewsRepository from '@repositories/news';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { Preview, commentType } from '@utils/interface/news';
+import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import styled from 'styled-components';
 
-type curPreviewsList = Preview[];
-
 interface pageProps {
   data: Array<Preview>;
-}
-
-interface Article {
-  writer: commentType;
-  title: string;
-  content: string;
-  date: string;
-  newsTitle: string;
-  news_id: string;
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {

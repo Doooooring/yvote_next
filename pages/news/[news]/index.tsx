@@ -1,8 +1,9 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository, { NewsDetail } from '@repositories/news';
+import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
+import { NewsInView } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
@@ -10,22 +11,18 @@ import styled from 'styled-components';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
-interface getNewsContentResponse {
-  news: NewsDetail | null;
-}
-
 interface pageProps {
   data: {
     id: string;
-    news: NewsDetail | null;
+    news: NewsInView;
   };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr: Array<{ id: string }> = await NewsRepository.getNewsIds();
-  const paths = newsIdArr.map((item: { id: string }) => {
+  const newsIdArr = await NewsRepository.getNewsIds();
+  const paths = newsIdArr.map((item) => {
     return {
-      params: { news: item['id'] },
+      params: { news: String(item['id']) },
     };
   });
   return {
@@ -36,7 +33,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news;
-  const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(Number(id), null);
+  const news = await NewsRepository.getNewsContent(Number(id), null);
 
   return {
     props: {

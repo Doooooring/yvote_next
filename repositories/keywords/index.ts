@@ -1,25 +1,12 @@
 import axios from 'axios';
 
 import { HOST_URL } from '@url';
-import { category, Keyword, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
-import { Preview } from '@utils/interface/news';
+import { KeywordCategory, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
 
 interface Response<T> {
   data: {
     success: boolean;
     result: T;
-  };
-}
-
-export interface otherObject {
-  _id: category;
-  keywords: Array<KeywordToView>;
-}
-
-export interface getKeywordsResponse {
-  keywords: {
-    recent: Array<KeywordToView>;
-    other: Array<otherObject>;
   };
 }
 
@@ -32,56 +19,54 @@ export interface getKeywordDetailResponse {
 }
 
 class KeywordsRepository {
-  async getKeywords() {
-    try {
-      const response: Response<getKeywordsResponse> = await axios.get(`${HOST_URL}/keywords`);
-      const keywords = response.data.result;
-      return keywords;
-    } catch (e) {
-      console.log(e);
-      return {
-        keywords: {
-          recent: [] as Array<KeywordToView>,
-          other: [] as Array<otherObject>,
-        },
-      };
-    }
+  async getKeywordsShort(
+    offset: number,
+    limit: number,
+    option: { search?: string; category?: KeywordCategory; isRecent?: boolean } = {},
+  ) {
+    const response: Response<KeywordToView[]> = await axios.get(`${HOST_URL}/keywords`, {
+      params: { ...option, offset, limit },
+    });
+    return response.data.result;
   }
-
-  async getKeywordList() {
-    try {
-      const response: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
-        await axios.get(`${HOST_URL}/keywords/keyword`);
-      const keylist: Array<{ _id: string; keyword: string }> = response.data.result?.keywords ?? [];
-      const result = keylist.map((key) => {
-        return key.keyword;
-      });
-      return result;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
-  }
-
-  async getKeywordIdList() {
-    try {
-      const response: Response<{ keywords: Array<{ id: number; keyword: string }> }> =
-        await axios.get(`${HOST_URL}/keywords/keyword`);
-      const keylist = response.data.result?.keywords ?? [];
-
-      return keylist;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
-  }
-
   async getKeywordByKey(key: string) {
-    const response: Response<{ keyword: Keyword }> = await axios.get(
-      `${HOST_URL}/keywords?key=${key}`,
-    );
+    const response: Response<KeywordOnDetail> = await axios.get(`${HOST_URL}/keyword?key=${key}`);
     return response.data.result.keyword;
   }
+
+  async getKeywordById(id: number) {
+    const response: Response<KeywordOnDetail> = await axios.get(`${HOST_URL}/keyword?id=${id}`);
+    const keywordDetail = response.data.result;
+    return keywordDetail;
+  }
+
+  // async getKeywordList() {
+  //   try {
+  //     const response: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
+  //       await axios.get(`${HOST_URL}/keywords/keyword`);
+  //     const keylist: Array<{ _id: string; keyword: string }> = response.data.result?.keywords ?? [];
+  //     const result = keylist.map((key) => {
+  //       return key.keyword;
+  //     });
+  //     return result;
+  //   } catch (e) {
+  //     console.log(e);
+  //     return [];
+  //   }
+  // }
+
+  // async getKeywordIdList() {
+  //   try {
+  //     const response: Response<{ keywords: Array<{ id: number; keyword: string }> }> =
+  //       await axios.get(`${HOST_URL}/keywords/keyword`);
+  //     const keylist = response.data.result?.keywords ?? [];
+
+  //     return keylist;
+  //   } catch (e) {
+  //     console.log(e);
+  //     return [];
+  //   }
+  // }
 
   // async getIdByKeyword(key: string) {
   //   try {
@@ -96,24 +81,10 @@ class KeywordsRepository {
   //   }
   // }
 
-  async getIdByKeyword(key: string) {
-    const response: Response<{ keyword: Keyword }> = await axios.get(`${HOST_URL}/keywords/${key}`);
-
-    return response.data.result.keyword.id;
-  }
-
-  async getKeywordsByCategory(category: category, page: number) {
+  async getKeywordsByCategory(category: KeywordCategory, page: number) {
     const response: Response<getKeywordsByCategoryResponse> = await axios.get(
       `${HOST_URL}/keywords/category/${category}?page=${page}`,
     );
-  }
-
-  async getKeywordDetail(id: string) {
-    const response: Response<getKeywordDetailResponse> = await axios.get(
-      `${HOST_URL}/keywords/detail?id=${id}`,
-    );
-    const keywordDetail = response.data.result;
-    return keywordDetail;
   }
 }
 

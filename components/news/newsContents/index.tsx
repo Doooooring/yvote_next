@@ -6,10 +6,9 @@ import HorizontalScroll from '@components/common/horizontalScroll/horizontalScro
 import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import icoNew from '@images/ico_new_2x.png';
-import { HOST_URL } from '@public/assets/url';
-import { NewsDetail } from '@repositories/news';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
+import { NewsInView } from '@utils/interface/news';
 import dynamic from 'next/dynamic';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
@@ -18,7 +17,7 @@ import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
-  newsContent: NewsDetail;
+  newsContent: NewsInView;
   voteHistory: 'left' | 'right' | 'none' | null;
   hide: () => void;
 }

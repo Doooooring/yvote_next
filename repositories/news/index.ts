@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { HOST_URL } from '@url';
 import { Article, News, NewsInView, Preview, commentType } from '@utils/interface/news';
+import axios from 'axios';
 
 type AnswerState = 'left' | 'right' | 'none';
 
@@ -9,28 +9,6 @@ interface Response<T> {
     success: boolean;
     result: T;
   };
-}
-
-export interface NewsDetail
-  extends Pick<
-    News,
-    | 'id'
-    | 'title'
-    | 'order'
-    | 'summary'
-    | 'newsImage'
-    | 'keywords'
-    | 'state'
-    | 'timeline'
-    | 'opinionLeft'
-    | 'opinionRight'
-    | 'votes'
-  > {
-  comments: Array<commentType>;
-}
-
-interface getNewsContentResponse {
-  news: NewsDetail;
 }
 
 interface NewsCommentResponse {
@@ -125,9 +103,10 @@ class NewsRepository {
     id: News['id'],
     type: commentType,
     page: number,
+    limit: number = 20,
   ): Promise<NewsCommentResponse> {
     const response: Response<NewsCommentResponse> = await axios.get(
-      `${HOST_URL}/news/${id}/comment?type=${type}&page=${page}`,
+      `${HOST_URL}/news/${id}/comment?type=${type}&offset=${page}&limit=${limit}`,
     );
     if (response.data.success) {
       return response.data.result;
@@ -147,7 +126,7 @@ class NewsRepository {
    */
   async vote(id: News['id'], answer: AnswerState, token: string | null): Promise<VoteResponse> {
     const response = await axios.post(
-      `${HOST_URL}/vote`,
+      `${HOST_URL}/news/vote`,
       {
         news: id,
         response: answer,
