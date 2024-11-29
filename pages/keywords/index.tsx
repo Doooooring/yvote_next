@@ -2,33 +2,18 @@ import HeadMeta from '@components/common/HeadMeta';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
-import KeywordRepository from '@repositories/keywords';
-import { KeywordToView } from '@utils/interface/keywords';
+import { getKeywordsGroupByCategoryAndRecent } from '@controller';
+import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
 
 interface pageProps {
-  data: {
-    recent: KeywordToView[];
-    human: KeywordToView[];
-    economics: KeywordToView[];
-    organization: KeywordToView[];
-    policy: KeywordToView[];
-    politics: KeywordToView[];
-    social: KeywordToView[];
-    etc: KeywordToView[];
-  };
+  data: Array<{ category: KeywordCategory | 'recent' }>;
 }
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
-  const response: getKeywordsResponse = await KeywordRepository.getKeywords();
-  const { recent, other } = response.keywords;
-  const data = { recent } as any;
-  other.forEach((o) => {
-    const { _id, keywords } = o;
-    data[_id] = keywords;
-  });
+  const response = await getKeywordsGroupByCategoryAndRecent(20);
 
   return {
     props: {
