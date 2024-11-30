@@ -40,6 +40,12 @@ class KeywordsRepository {
     return keywordDetail;
   }
 
+  async getKeywordsByCategory(category: KeywordCategory, page: number) {
+    const response: Response<getKeywordsByCategoryResponse> = await axios.get(
+      `${HOST_URL}/keywords/category/${category}?page=${page}`,
+    );
+  }
+
   // async getKeywordList() {
   //   try {
   //     const response: Response<{ keywords: Array<{ _id: string; keyword: string }> }> =
@@ -80,12 +86,6 @@ class KeywordsRepository {
   //     console.log(e);
   //   }
   // }
-
-  async getKeywordsByCategory(category: KeywordCategory, page: number) {
-    const response: Response<getKeywordsByCategoryResponse> = await axios.get(
-      `${HOST_URL}/keywords/category/${category}?page=${page}`,
-    );
-  }
 }
 
 export default new KeywordsRepository();

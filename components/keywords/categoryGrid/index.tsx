@@ -1,21 +1,19 @@
-import ImageFallback from '@components/common/imageFallback';
-import Image from 'next/image';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
-import { Dispatch, SetStateAction, useRef } from 'react';
+import Image from 'next/image';
+import { useRef } from 'react';
 import styled from 'styled-components';
 import { categoryImgUrl, categoryKoreanName } from './categoryGrid.tool';
 
 interface CategoryGridProps {
   category: KeywordToView['category'] | 'recent';
   keywords: Array<KeywordToView>;
-  setKeywords: Dispatch<SetStateAction<KeywordToView[]>>;
 }
 
-export default function CategoryGrid({ category, keywords, setKeywords }: CategoryGridProps) {
+export default function CategoryGrid({ category, keywords }: CategoryGridProps) {
   const page = useRef(1);
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
@@ -25,10 +23,10 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
       return;
     }
     try {
-      const response = await keywordRepository.getKeywordsByCategory(category, page.current);
-      if (response.length === 0) {
+      const response = await keywordRepository.getKeywordsShort(page.current, 20, { category });
+      if (!response) {
       } else {
-        setKeywords([...keywords, ...response]);
+        //setKeywords([...keywords, ...response]);
         page.current += 1;
       }
     } catch (e) {
@@ -49,7 +47,7 @@ export default function CategoryGrid({ category, keywords, setKeywords }: Catego
         <div className="grid-wrapper">
           <GridContainer curView={curView}>
             {keywords.map((keyword) => {
-              return <KeywordBox key={keyword._id} id={keyword._id} keyword={keyword.keyword} />;
+              return <KeywordBox key={keyword.id} id={keyword.id} keyword={keyword.keyword} />;
             })}
           </GridContainer>
         </div>

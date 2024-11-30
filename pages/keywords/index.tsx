@@ -5,11 +5,13 @@ import SearchBox from '@components/keywords/searchBox';
 import { getKeywordsGroupByCategoryAndRecent } from '@controller';
 import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
-import { useState } from 'react';
 import styled from 'styled-components';
 
 interface pageProps {
-  data: Array<{ category: KeywordCategory | 'recent' }>;
+  data: Array<{
+    category: KeywordCategory | 'recent';
+    data: KeywordToView[];
+  }>;
 }
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
@@ -17,23 +19,12 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
 
   return {
     props: {
-      data,
+      data: response,
     },
   };
 };
 
 export default function KeywordsPage({ data }: pageProps) {
-  const [recentKeywords, setRecentKeywords] = useState<Array<KeywordToView>>(data.recent);
-  const [keywordInHuman, setKeywordInHuman] = useState<Array<KeywordToView>>(data.human);
-  const [keywordInEconomy, setKeywordInEconomy] = useState<Array<KeywordToView>>(data.economics);
-  const [keywordInOrganization, setkeywordInOrganization] = useState<Array<KeywordToView>>(
-    data.organization,
-  );
-  const [keywordInPolicy, setKeywordInPolicy] = useState<Array<KeywordToView>>(data.policy);
-  const [keywordInPolitics, setKeywordInPolitics] = useState<Array<KeywordToView>>(data.politics);
-  const [keywordInSocial, setKeywordInSocial] = useState<Array<KeywordToView>>(data.social);
-  const [keywordInEtc, setKeywordInEtc] = useState<Array<KeywordToView>>(data.etc);
-
   const metaTagsProps = {
     title: '키워드 모아보기',
     url: `https://yvoting.com/keywords`,
@@ -46,42 +37,9 @@ export default function KeywordsPage({ data }: pageProps) {
         <SearchBox />
       </SearchWrapper>
       <GridContainer>
-        <CategoryGrid
-          category={'recent'}
-          keywords={recentKeywords}
-          setKeywords={setRecentKeywords}
-        />
-        <CategoryGrid
-          category={'organization'}
-          keywords={keywordInOrganization}
-          setKeywords={setkeywordInOrganization}
-        />
-        <CategoryGrid
-          category={'politics'}
-          keywords={keywordInPolitics}
-          setKeywords={setKeywordInPolitics}
-        />
-        <CategoryGrid
-          category={'economics'}
-          keywords={keywordInEconomy}
-          setKeywords={setKeywordInEconomy}
-        />
-        <CategoryGrid
-          category={'social'}
-          keywords={keywordInSocial}
-          setKeywords={setKeywordInSocial}
-        />
-        {/* <CategoryGrid
-          category={'policy'}
-          keywords={keywordInPolicy}
-          setKeywords={setKeywordInPolicy}
-        /> */}
-        {/* <CategoryGrid
-          category={'human'}
-          keywords={keywordInHuman}
-          setKeywords={setKeywordInHuman}
-        /> */}
-        {/* <CategoryGrid category={'etc'} keywords={keywordInEtc} setKeywords={setKeywordInEtc} /> */}
+        {data.map(({ category, data }) => {
+          return <CategoryGrid category={category} keywords={data} />;
+        })}
       </GridContainer>
     </Wrapper>
   );
