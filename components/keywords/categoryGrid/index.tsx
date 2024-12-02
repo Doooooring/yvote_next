@@ -14,7 +14,6 @@ interface CategoryGridProps {
 }
 
 export default function CategoryGrid({ category, keywords }: CategoryGridProps) {
-  const page = useRef(1);
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
   //onClick event에 keyword 추가 콜백 wip
@@ -23,11 +22,10 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
       return;
     }
     try {
-      const response = await keywordRepository.getKeywordsShort(page.current, 20, { category });
+      const response = await keywordRepository.getKeywordsShort(curView, 20, { category });
       if (!response) {
       } else {
         //setKeywords([...keywords, ...response]);
-        page.current += 1;
       }
     } catch (e) {
       console.log(e);

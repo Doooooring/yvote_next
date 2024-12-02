@@ -20,14 +20,13 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface pageProps {
   data: {
-    id: string;
     keyword: KeywordOnDetail;
     previews: Array<Preview>;
   };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const keywords = await keywordRepository.getKeywordIdList();
+  const keywords = await keywordRepository.getKeywordsKeyList();
   const paths = keywords.map(({ keyword }) => {
     return {
       params: { keyword },
@@ -40,10 +39,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const key = context.params!.keyword as string;
   const pm1 = keywordRepository.getKeywordByKey(key);
   const pm2 = newsRepository.getPreviews(0, key);
+  const resolves = await Promise.all([pm1, pm2]);
+
+  const keyword = resolves[0];
+  const previews = resolves[1];
+
   return {
     props: {
       data: {
-        id,
         keyword,
         previews,
       },
@@ -53,7 +56,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
-  const { id, keyword, previews: initialPreviews } = data;
+  const { keyword, previews: initialPreviews } = data;
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(20);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
@@ -79,10 +82,10 @@ export default function KeyExplanation({ data }: pageProps) {
       <Suspense fallback={<ExplainFallback />}>
         <KeywordWrapper>
           <ExplanationComp
-            id={keyword?.id}
-            category={keyword?.category ?? 'etc'}
-            keyword={keyword?.keyword! ?? ''}
-            explain={keyword?.explain ?? ''}
+            id={keyword.id!}
+            category={keyword.category!}
+            keyword={keyword?.keyword!}
+            explain={keyword?.explain!}
           />
         </KeywordWrapper>
         <div className="main-contents">

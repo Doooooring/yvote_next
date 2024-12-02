@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { HOST_URL } from '@url';
 import { KeywordCategory, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
+import { INF } from '@public/assets/resource';
 
 interface Response<T> {
   data: {
@@ -19,6 +20,13 @@ export interface getKeywordDetailResponse {
 }
 
 class KeywordsRepository {
+  async getKeywordsKeyList(offset: number = 0, limit: number = INF) {
+    const response: Response<Array<{ id: number; keyword: string }>> = await axios.get(
+      `${HOST_URL}/keywords/key-list`,
+    );
+    return response.data.result;
+  }
+
   async getKeywordsShort(
     offset: number,
     limit: number,
@@ -31,13 +39,12 @@ class KeywordsRepository {
   }
   async getKeywordByKey(key: string) {
     const response: Response<KeywordOnDetail> = await axios.get(`${HOST_URL}/keyword?key=${key}`);
-    return response.data.result.keyword;
+    return response.data.result;
   }
 
   async getKeywordById(id: number) {
     const response: Response<KeywordOnDetail> = await axios.get(`${HOST_URL}/keyword?id=${id}`);
-    const keywordDetail = response.data.result;
-    return keywordDetail;
+    return response.data.result;
   }
 
   async getKeywordsByCategory(category: KeywordCategory, page: number) {
