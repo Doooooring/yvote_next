@@ -1,7 +1,7 @@
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import icoClose from '@images/ico_close.png';
 import { HOST_URL } from '@public/assets/url';
-import { category } from '@utils/interface/keywords';
+import { KeywordCategory } from '@utils/interface/keywords';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -16,7 +16,7 @@ export default function ExplanationComp({
   keyword,
 }: {
   id: string;
-  category: category;
+  category: KeywordCategory;
   explain: string | undefined;
   keyword: string;
 }) {
