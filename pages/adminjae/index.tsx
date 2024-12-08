@@ -18,23 +18,21 @@ interface pageProps {
 
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
-  const {page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews} = useFetchNewsPreviews(20, true);
+  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
+    useFetchNewsPreviews(20, true);
 
   useMount(() => {
     fetchPreviews();
-  })
+  });
 
   const showNewsContent = useCallback(async (id: string) => {
-    navigate.push(`/news/${id}`);
+    navigate.push(`/adminjae/${id}`);
   }, []);
 
   return (
     <Wrapper>
       <div className="search-wrapper">
-        <SearchBox
-          page={page}
-          fetchPreviews={fetchPreviews}
-        />
+        <SearchBox page={page} fetchPreviews={fetchPreviews} />
         {/* <SpeechBubble /> */}
       </div>
       <div className="main-contents">
