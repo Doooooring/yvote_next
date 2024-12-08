@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         previews,
       },
     },
-    revalidate: 10,
+    revalidate: 3600,
   };
 };
 
