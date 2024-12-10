@@ -43,7 +43,7 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
         }
         headView={
           <>
-            <Title>{title}</Title>
+            <Title className="title">{title}</Title>
             {state && (
               <ImageFallback
                 src="/assets/img/ico_new_2x.png"
@@ -156,8 +156,24 @@ const Wrapper = styled.div`
   filter: saturate(80%);
 
   transition: filter 0.2s ease;
+
+  img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .title {
+    transition: color 0.3s ease;
+  }
+
   &:hover {
     filter: saturate(130%);
+
+    img {
+      transform: scale(1.1);
+    }
+    .title {
+      color: ${({ theme }) => theme.colors.primary};
+    }
   }
 `;
 
