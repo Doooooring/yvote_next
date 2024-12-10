@@ -7,6 +7,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -18,6 +19,7 @@ interface pageProps {
   data: {
     id: string;
     news: NewsDetail | null;
+    description: string;
   };
 }
 
@@ -37,12 +39,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news as string;
   const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
+  const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';
 
   return {
     props: {
       data: {
         id,
         news,
+        description: description,
       },
     },
     revalidate: 3600,
@@ -51,7 +55,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const router = useRouter();
-  const { id, news } = data;
+  const { id, news, description } = data;
 
   const hideNewsContent = useCallback(() => {
     router.push('/news');
@@ -60,7 +64,7 @@ export default function NewsDetailPage({ data }: pageProps) {
   const metaTagsProps = useMemo(() => {
     return {
       title: news?.title || '',
-      description: news?.summary || '',
+      description: description,
       image: `${HOST_URL}/images/news/${news?._id}`,
       url: `https://yvoting.com/news/${id}`,
       type: 'article',

@@ -1,3 +1,5 @@
+import { load } from 'cheerio';
+
 export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   const result: Array<Array<T>> = [];
   let tmp: Array<T> = [];
@@ -36,6 +38,18 @@ export const RGB = (hex: string) => {
 export const RGBA = (hex: string, opacity: number) => {
   const [r, g, b] = hexToRgb(hex);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
+export const getTextContentFromHtmlText = (html: string) => {
+  if (typeof window !== 'undefined') {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    return doc.body.textContent;
+  } else {
+    const $ = load(html);
+
+    return $('body').text();
+  }
 };
 
 export function getConstantVowel(wor: string, testWord = false) {

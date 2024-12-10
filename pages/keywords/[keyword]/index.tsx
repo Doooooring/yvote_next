@@ -17,12 +17,14 @@ import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface pageProps {
   data: {
     id: string;
     keyword: KeywordOnDetail;
     previews: Array<Preview>;
+    description: string;
   };
 }
 
@@ -43,12 +45,15 @@ export const getStaticProps: GetStaticProps = async (context) => {
     0,
   );
 
+  const description = getTextContentFromHtmlText(keyword?.explain ?? '')?.split('.')[0] ?? '';
+
   return {
     props: {
       data: {
         id,
         keyword,
         previews,
+        description,
       },
     },
     revalidate: 3600,
@@ -66,7 +71,7 @@ export default function KeyExplanation({ data }: pageProps) {
 
   const metaTagsProps = {
     title: `키워드 - ${data.keyword.keyword}`,
-    description: data.keyword.explain || '',
+    description: data.description || '',
     image: `${HOST_URL}/images/keywords/${data.keyword._id}`,
     url: `https://yvoting.com/keywords/${data.keyword._id}`,
     type: 'article',
