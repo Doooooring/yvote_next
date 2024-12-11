@@ -6,12 +6,15 @@ import styled from 'styled-components';
 
 import KeywordRepository from '@repositories/keywords';
 import { Keyword } from '@utils/interface/keywords';
-import { getConstantVowel } from '@utils/tools';
+import { arrObjIncludeProp, getConstantVowel } from '@utils/tools';
+import { useToastMessage } from '@utils/hook/useToastMessage';
+import { PositiveMessageBox } from '@components/common/messageBox';
 
-type KeyName = Keyword['keyword'];
+interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
 
 export default function SearchBox() {
   const navigate = useRouter();
+  const { show } = useToastMessage();
   const [searchWord, setSearchWord] = useState<string>('');
   const [relatedWords, setRelatedWords] = useState<string[]>([
     '국무회의',
@@ -19,13 +22,13 @@ export default function SearchBox() {
     '행정부',
     '헌법재판소',
   ]);
-  const [keylist, setKeyList] = useState<KeyName[]>([]);
+  const [keylist, setKeyList] = useState<Array<KeyTitle>>([]);
   const [curFocusOnWord, setCurFocusOnWord] = useState<number>(-1);
   const [arrowKeyActive, setArrowKeyActive] = useState<boolean>(false);
 
   const getKeys = useCallback(async () => {
     try {
-      const response = await KeywordRepository.getKeywordList();
+      const response = await KeywordRepository.getKeywordsKeyList();
       setKeyList(response);
     } catch (e) {
       console.log(e);
@@ -61,10 +64,10 @@ export default function SearchBox() {
       const findRelatedWords: string[] = [];
       const preValueToChars = getConstantVowel(preValue, true) as string[];
       for (const key of keylist) {
-        const keyToChar = getConstantVowel(key, false) as string;
+        const keyToChar = getConstantVowel(key.keyword, false) as string;
         preValueToChars.forEach((preValueToChar) => {
           if (keyToChar.includes(preValueToChar)) {
-            findRelatedWords.push(key);
+            findRelatedWords.push(key.keyword);
           }
         });
         if (findRelatedWords.length === 10) {
@@ -84,16 +87,17 @@ export default function SearchBox() {
   async function handleArrowKey(e: React.KeyboardEvent<HTMLInputElement>, searchWord: string) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (!keylist.includes(searchWord)) {
-        alert('키워드가 존재하지 않습니다');
-      } else {
-        const id = await KeywordRepository.getIdByKeyword(searchWord);
-        if (!id) {
-          alert('키워드가 존재하지 않습니다');
-          return;
-        }
-        navigate.push(`/keywords/${id}`);
+      if (!arrObjIncludeProp(keylist, 'keyword', searchWord)) {
+        show(
+          <PositiveMessageBox>
+            <p>{'존재하지 않는 키워드에요.'}</p>
+          </PositiveMessageBox>,
+          2000,
+        );
+        return;
       }
+
+      navigate.push(`/keywords/${searchWord}`);
     } else if (
       e.key === 'ArrowUp' ||
       e.key === 'ArrowDown' ||

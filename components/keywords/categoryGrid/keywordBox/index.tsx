@@ -2,17 +2,11 @@ import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
 import Link from 'next/link';
-import { useState } from 'react';
 import styled from 'styled-components';
 
-interface KeywordBoxProps {
-  id: Keyword['id'] | undefined;
-  keyword: Keyword['keyword'] | undefined;
-}
+interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword'> {}
 
 export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
-  const [loadError, setLoadError] = useState<boolean>(false);
-
   return (
     <LinkWrapper
       href={`/keywords/${id}`}

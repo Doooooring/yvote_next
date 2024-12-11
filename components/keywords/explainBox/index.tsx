@@ -15,16 +15,13 @@ export default function ExplanationComp({
   category,
   keyword,
 }: {
-  id: string;
+  id: number;
   category: KeywordCategory;
-  explain: string | undefined;
+  explain: string;
   keyword: string;
 }) {
   const navigation = useRouter();
 
-  if (explain === undefined) {
-    return <div></div>;
-  }
   return (
     <ExplanationWrapper>
       <div className="news-box-close">

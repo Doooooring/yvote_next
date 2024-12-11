@@ -13,6 +13,21 @@ export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   return result;
 };
 
+export function deepCompare(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+export function arrObjIncludeProp<T extends object, K extends keyof T>(
+  arr: T[],
+  key: K,
+  value: T[K],
+): T | undefined {
+  return arr.find((obj) => {
+    if (obj == null || typeof obj !== 'object') return false;
+    return deepCompare(obj[key], value);
+  });
+}
+
 export const ffToInt = (ff: string) => {
   return parseInt(ff, 16);
 };

@@ -19,14 +19,6 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { id, title, summary, newsImage, keywords, state } = preview;
 
-  const routeToKeyword = async (key: string) => {
-    const id = await KeywordRepository.getIdByKeyword(key);
-    if (!id) {
-      alert('다시 검색해주세요!');
-      return;
-    }
-    navigate.push(`/keywords/${id}`);
-  };
   return (
     <Wrapper>
       <PreviewBoxLayout
@@ -53,7 +45,12 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
             <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (
-                  <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
+                  <Keyword
+                    key={keyword}
+                    onClick={() => {
+                      navigate.push(`/keywords/${keyword}`);
+                    }}
+                  >
                     {`#${keyword}`}
                   </Keyword>
                 );
