@@ -9,7 +9,7 @@ import { getConstantVowel } from '@utils/tools';
 
 type curPreviews = Array<Preview>;
 type setCurPreviews = (curPreviews: curPreviews) => void;
-type KeyName = Keyword['keyword'];
+interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
 
 interface SearchBoxProps {
   page: number;
@@ -22,7 +22,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
   // 현재 검색어 기반 연관 검색어 목록
   const [relatedWords, setRelatedWords] = useState<string[]>(['키워드를 검색해보아요!']);
   // 전체 키워드 리스트
-  const [keylist, setKeyList] = useState<KeyName[]>([]);
+  const [keylist, setKeyList] = useState<KeyTitle[]>([]);
   // 방향키에 맞춰서 포커스된 단어 업데이트
   const [curFocusOnWord, setCurFocusOnWord] = useState<number>(-1);
   // 위,아래 방향키 입력시 최상단 및 최하단 (더 이상 방향키 액션이 발생하지 못하는 때) 감지
@@ -32,12 +32,8 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
    * 검색 가능한 키워드들을 보여주기 위한 전체 키워드 리스트 fetch
    */
   const getKeys = useCallback(async () => {
-    try {
-      const response: KeyName[] = await KeywordsRepository.getKeywordList();
-      setKeyList(response);
-    } catch {
-      Error();
-    }
+    const response: KeyTitle[] = await KeywordsRepository.getKeywordsKeyList();
+    setKeyList(response);
   }, []);
 
   /**
@@ -84,10 +80,10 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
       const findRelatedWords: string[] = [];
       const preValueToChars = getConstantVowel(preValue, true) as string[];
       for (const key of keylist) {
-        const keyToChar = getConstantVowel(key, false) as string;
+        const keyToChar = getConstantVowel(key.keyword, false) as string;
         preValueToChars.forEach((preValueToChar) => {
           if (keyToChar.includes(preValueToChar)) {
-            findRelatedWords.push(key);
+            findRelatedWords.push(key.keyword);
           }
         });
         if (findRelatedWords.length === 10) {

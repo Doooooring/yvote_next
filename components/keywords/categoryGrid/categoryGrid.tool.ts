@@ -1,10 +1,10 @@
-import { category } from '@utils/interface/keywords';
+import { KeywordCategory } from '@utils/interface/keywords';
 
-export const categoryImgUrl = (c: 'recent' | category) => {
+export const KeywordCategoryImgUrl = (c: 'recent' | KeywordCategory) => {
   return `/assets/img/${c}.png`;
 };
 
-export const categoryKoreanName = (c: 'recent' | category) => {
+export const KeywordCategoryKoreanName = (c: 'recent' | KeywordCategory) => {
   switch (c) {
     case 'recent':
       return '최근 업데이트';
