@@ -14,12 +14,7 @@ export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
   const [loadError, setLoadError] = useState<boolean>(false);
 
   return (
-    <LinkWrapper
-      href={`/keywords/${id}`}
-      onClick={(e) => {
-        return;
-      }}
-    >
+    <LinkWrapper href={`/keywords/${id}`}>
       <div className="wrapper">
         <div className="image-wrapper">
           <ImageFallback
@@ -34,7 +29,7 @@ export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
           />
         </div>
         <div className="keyword-wrapper">
-          <p className="keyword-title">{keyword}</p>
+          <p className="keyword-title title">{keyword}</p>
         </div>
       </div>
     </LinkWrapper>
@@ -45,6 +40,32 @@ const LinkWrapper = styled(Link)`
   display: block;
   width: 10rem;
   text-decoration: none;
+
+  filter: saturate(80%);
+
+  transition: filter 0.2s ease;
+
+  img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .title {
+    color: rgb(50, 50, 50);
+
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    filter: saturate(130%);
+
+    img {
+      transform: scale(1.2);
+    }
+    .title {
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
+
   .wrapper {
     width: 10rem;
     display: flex;
@@ -79,7 +100,6 @@ const LinkWrapper = styled(Link)`
     .keyword-title {
       font-size: 0.8rem;
       font-weight: 600;
-      color: rgb(50, 50, 50);
       margin: 0;
       @media screen and (max-width: 768px) {
         font-size: 0.8rem;

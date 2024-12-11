@@ -218,7 +218,6 @@ const RelatedBox = styled.div`
   top: 100%;
   text-align: left;
   z-index: 3;
-  opacity: 0.7;
 `;
 
 interface RelatedWordProps {
