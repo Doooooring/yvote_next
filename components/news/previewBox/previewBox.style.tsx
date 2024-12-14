@@ -43,7 +43,7 @@ const Wrapper = styled.div`
   padding: 7px 10px;
   position: relative;
   @media screen and (max-width: 768px) {
-    padding: 10px 10px;
+    padding: 5px 5px;
   }
 
   background-color: white;

@@ -147,7 +147,7 @@ const Wrapper = styled.div`
     box-sizing: inherit;
 
     @media screen and (max-width: 768px) {
-      width: 90%;
+      width: 98%;
       min-width: 0px;
     }
   }
@@ -184,7 +184,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 98%;
     min-width: 0px;
   }
 `;

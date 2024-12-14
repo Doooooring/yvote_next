@@ -209,16 +209,15 @@ interface TabWrapperProps {
 
 const TabWrapper = styled.div<TabWrapperProps>`
   display: flex;
-
   margin-bottom: 12px;
-
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
     min-width: 0px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 
   span {
@@ -280,7 +279,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   .contents-body {
     padding-top: 1rem;
     .main-image-wrapper {
-      width: 95%;
+      width: 92%;
       height: 250px;
       position: relative;
       padding: 0;
@@ -289,8 +288,9 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       border: 1px solid rgb(230, 230, 230);
       border-radius: 10px;
 
-      @media screen and (max-width: 432px) {
-        height: 200px;
+      @media screen and (max-width: 760px) {
+        height: 220px;
+        width: 98%;
       }
 
       .img-head {
@@ -340,9 +340,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       .content {
         padding: 1rem;
         padding-left: 1.5rem;
-        @media screen and (max-width: 768px) {
-          padding-right: 1.5rem;
-        }
       }
 
       .summary {
@@ -359,6 +356,10 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             min-height: 10px;
             font-family: Helvetica, sans-serif;
           }
+        }
+        @media screen and (max-width: 768px) {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
         }
       }
 
@@ -378,6 +379,10 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           background-color: #f1f2f5;
           border-radius: 2px;
           cursor: pointer;
+        }
+        @media screen and (max-width: 768px) {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
         }
       }
     }
