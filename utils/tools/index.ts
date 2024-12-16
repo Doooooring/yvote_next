@@ -21,11 +21,11 @@ export function arrObjIncludeProp<T extends object, K extends keyof T>(
   arr: T[],
   key: K,
   value: T[K],
-): T | undefined {
+): T | null {
   return arr.find((obj) => {
     if (obj == null || typeof obj !== 'object') return false;
     return deepCompare(obj[key], value);
-  });
+  }) ?? null;
 }
 
 export const ffToInt = (ff: string) => {
