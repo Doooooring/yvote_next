@@ -18,7 +18,7 @@ export const useFetchNewsPreviews = (limit: number, isAdmin: boolean = false) =>
     try {
       setIsRequesting(true);
       const datas: Array<Preview> = isAdmin
-        ? await NewsRepository.getPreviewsAdmin(page.current, prevFilter.current ?? '')
+        ? await NewsRepository.getPreviewsAdmin(page.current, limit, prevFilter.current ?? '')
         : await NewsRepository.getPreviews(page.current, limit, prevFilter.current);
       if (datas.length === 0) {
         page.current = -1;
