@@ -126,7 +126,7 @@ const Summary = styled.div`
   font: inherit;
   font-weight: 400;
   vertical-align: baseline;
-  color: rgb(60, 60, 60);
+  color: rgb(80, 80, 80);
   margin: 0;
   font-size: 14.5px;
   line-height: 1.7;

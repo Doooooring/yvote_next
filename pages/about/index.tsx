@@ -42,8 +42,7 @@ const BlockElement = styled.div`
   min-width: 980px;
   color: #747272;
   @media screen and (max-width: 1080px) {
-    width: 800px;
-    max-width: 90%;
+    width: 98%;
     min-width: 300px;
   }
   margin: auto;
