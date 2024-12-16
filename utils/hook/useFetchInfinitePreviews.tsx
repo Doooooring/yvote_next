@@ -2,7 +2,7 @@ import { Preview } from '@utils/interface/news';
 import NewsRepository from '@repositories/news';
 import { MutableRefObject, useRef, useState } from 'react';
 
-export const useFetchNewsPreviews = (limit: number, isAdmin: boolean = false) => {
+export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
   let page = useRef(0);
   let prevFilter: MutableRefObject<string | null | undefined> = useRef(null);
 
@@ -10,16 +10,17 @@ export const useFetchNewsPreviews = (limit: number, isAdmin: boolean = false) =>
   const [isError, setIsError] = useState<boolean>(false);
   const [previews, setPreviews] = useState<Preview[]>([]);
 
-  const fetchPreviews = async (filter?: string | null) => {
+  const fetchPreviews = async (option?: { filter?: string | null; limit?: number }) => {
     let arr: Preview[] = [];
+    const { filter = null, limit = defaultLimit } = option ?? {};
     prevFilter.current = filter;
     page.current = 0;
 
     try {
       setIsRequesting(true);
       const datas: Array<Preview> = isAdmin
-        ? await NewsRepository.getPreviewsAdmin(page.current, prevFilter.current ?? '')
-        : await NewsRepository.getPreviews(page.current, prevFilter.current);
+        ? await NewsRepository.getPreviewsAdmin(page.current, limit, prevFilter.current ?? '')
+        : await NewsRepository.getPreviews(page.current, limit, prevFilter.current);
       if (datas.length === 0) {
         page.current = -1;
         return;
@@ -41,6 +42,7 @@ export const useFetchNewsPreviews = (limit: number, isAdmin: boolean = false) =>
       setIsRequesting(true);
       const datas: Array<Preview> = await NewsRepository.getPreviews(
         page.current,
+        defaultLimit,
         prevFilter.current,
       );
 
@@ -49,7 +51,7 @@ export const useFetchNewsPreviews = (limit: number, isAdmin: boolean = false) =>
         return false;
       }
 
-      page.current += limit;
+      page.current += defaultLimit;
       setPreviews([...arr, ...datas]);
       return true;
     } catch (e) {
