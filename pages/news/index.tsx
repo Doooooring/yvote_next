@@ -26,10 +26,10 @@ interface Article {
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
-  const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
+  //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
   return {
-    props: { data },
-    revalidate: 10,
+    props: { data: [] },
+    revalidate: 300,
   };
 };
 

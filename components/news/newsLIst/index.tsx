@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import NewsBlock from '../newsBlock';
+import IsShow from '@components/common/isShow';
 
 interface NewsListProps {
   page: number;
@@ -56,21 +58,15 @@ export default function NewsList({
       <Wrapper>
         {arrBatch(previews, 20).map((previews) => (
           <Suspense fallback={<NewsListFallback length={previews.length} />}>
-            {previews.map((preview, idx) => (
-              <div className="preview-wrapper" key={idx}>
-                <PreviewBox preview={preview} click={showNewsContent} />
-              </div>
-            ))}
+            <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
           </Suspense>
         ))}
       </Wrapper>
-      {isRequesting ? (
+      <IsShow state={isRequesting}>
         <LoadingWrapper>
           <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
         </LoadingWrapper>
-      ) : (
-        <></>
-      )}
+      </IsShow>
       <LastLine ref={elementRef}></LastLine>
     </>
   );
