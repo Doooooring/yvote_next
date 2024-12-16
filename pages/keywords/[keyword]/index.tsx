@@ -66,7 +66,7 @@ export default function KeyExplanation({ data }: pageProps) {
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
-    fetchPreviews(data.keyword.keyword);
+    fetchPreviews({ filter: data.keyword.keyword });
   });
 
   const metaTagsProps = {

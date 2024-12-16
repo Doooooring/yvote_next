@@ -42,7 +42,9 @@ export default function NewsPage(props: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(12);
 
-  useMount(fetchPreviews);
+  useMount(() => {
+    fetchPreviews({ limit: 20 });
+  });
 
   const showNewsContent = useNewsNavigate();
 

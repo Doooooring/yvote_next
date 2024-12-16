@@ -13,7 +13,7 @@ type KeyName = Keyword['keyword'];
 
 interface SearchBoxProps {
   page: number;
-  fetchPreviews: (filter: string | null) => Promise<void>;
+  fetchPreviews: (option: { filter?: string | null; limit?: number }) => Promise<void>;
 }
 
 export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
@@ -50,7 +50,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
         setSearchWord(relatedWords[curFocusOnWord]);
       }
       // 새로운 검색어로 조회하기에 기존 페이지 초기화
-      fetchPreviews(searchWord === '' ? null : searchWord);
+      fetchPreviews({ filter: searchWord === '' ? null : searchWord, limit: 20 });
     },
     [],
   );

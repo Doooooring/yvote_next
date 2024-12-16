@@ -22,7 +22,7 @@ export default function NewsPage(props: pageProps) {
     useFetchNewsPreviews(12, true);
 
   useMount(() => {
-    fetchPreviews();
+    fetchPreviews({ limit: 20 });
   });
 
   const showNewsContent = useCallback(async (id: string) => {
