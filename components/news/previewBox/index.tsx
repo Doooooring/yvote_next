@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import React, { Suspense, useCallback } from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -59,7 +60,9 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         }
         contentView={
           <>
-            <Summary dangerouslySetInnerHTML={{ __html: summary }} />
+            <Summary>
+              <p>{getTextContentFromHtmlText(summary)?.slice(0, 100)}</p>
+            </Summary>
             <Keywords>
               {keywords?.map((keyword) => (
                 <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
