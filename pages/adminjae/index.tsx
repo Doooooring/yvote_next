@@ -19,7 +19,7 @@ interface pageProps {
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20, true);
+    useFetchNewsPreviews(12, true);
 
   useMount(() => {
     fetchPreviews();

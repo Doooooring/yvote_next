@@ -5,28 +5,32 @@ import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface PreviewBoxProps {
   preview: Preview;
+  img?: string;
   click: (id: string) => void;
 }
-const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
-
-export default function PreviewBox({ preview, click }: PreviewBoxProps) {
+function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { _id, title, summary, keywords, state } = preview;
 
-  const routeToKeyword = async (key: string) => {
-    const id = await KeywordRepository.getIdByKeyword(key);
-    if (!id) {
-      alert('다시 검색해주세요!');
-      return;
-    }
-    navigate.push(`/keywords/${id}`);
-  };
+  const routeToKeyword = useCallback(
+    async (key: string) => {
+      const id = await KeywordRepository.getIdByKeyword(key);
+      if (!id) {
+        alert('다시 검색해주세요!');
+        return;
+      }
+      navigate.push(`/keywords/${id}`);
+    },
+    [navigate],
+  );
+
   return (
     <Wrapper>
       <PreviewBoxLayout
@@ -34,8 +38,8 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
           click(_id);
         }}
         imgView={
-          <SuspenseImage
-            src={`${HOST_URL}/images/news/${_id}`}
+          <ImageFallback
+            src={img ?? `${HOST_URL}/images/news/${_id}`}
             alt={title}
             fill={true}
             suspense={true}
@@ -56,15 +60,15 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
         }
         contentView={
           <>
-            <Summary dangerouslySetInnerHTML={{ __html: summary }} />
+            <Summary>
+              <p>{summary}</p>
+            </Summary>
             <Keywords>
-              {keywords?.map((keyword) => {
-                return (
-                  <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
-                    {`#${keyword}`}
-                  </Keyword>
-                );
-              })}
+              {keywords?.map((keyword) => (
+                <Keyword key={keyword} onClick={() => routeToKeyword(keyword)}>
+                  {`#${keyword}`}
+                </Keyword>
+              ))}
               <p className="keyword"></p>
             </Keywords>
           </>
@@ -73,6 +77,10 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
     </Wrapper>
   );
 }
+
+export default React.memo(PreviewBox, (prevProps, nextProps) => {
+  return prevProps.preview._id === nextProps.preview._id && prevProps.click === nextProps.click;
+});
 
 const Title = styled.p`
   -webkit-text-size-adjust: none;
