@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { HOST_URL } from '@url';
 import { News, Preview, commentType } from '@utils/interface/news';
+import { clone, getTextContentFromHtmlText } from '@utils/tools';
 
 type AnswerState = 'left' | 'right' | 'none';
 
@@ -74,7 +75,11 @@ class NewsRepository {
         `${HOST_URL}/news/preview?page=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
       );
       const data = response.data;
-      return data.result.news;
+      return data.result.news.map((news) => {
+        const preview = clone(news);
+        preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+        return preview;
+      });
     } catch (e) {
       return [];
     }

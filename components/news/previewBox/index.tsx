@@ -61,7 +61,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         contentView={
           <>
             <Summary>
-              <p>{getTextContentFromHtmlText(summary)?.slice(0, 100)}</p>
+              <p>{summary}</p>
             </Summary>
             <Keywords>
               {keywords?.map((keyword) => (
