@@ -56,7 +56,7 @@ export default function NewsList({
   return (
     <>
       <Wrapper>
-        {arrBatch(previews, 12).map((previews) => (
+        {arrBatch(previews, 16).map((previews) => (
           <Suspense fallback={<NewsListFallback length={previews.length} />}>
             <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
           </Suspense>
