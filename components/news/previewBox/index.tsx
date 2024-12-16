@@ -14,8 +14,6 @@ interface PreviewBoxProps {
   img?: string;
   click: (id: string) => void;
 }
-const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
-
 function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { _id, title, summary, keywords, state } = preview;

@@ -64,10 +64,14 @@ class NewsRepository {
    * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
    * @param keyword 검색 키워드 (전체 검색시 null)
    */
-  async getPreviews(curNum: number, keyword: string | null = null): Promise<Array<Preview>> {
+  async getPreviews(
+    curNum: number,
+    limit: number,
+    keyword: string | null = null,
+  ): Promise<Array<Preview>> {
     try {
       const response: Response<{ news: Array<Preview> }> = await axios.get(
-        `${HOST_URL}/news/preview?page=${curNum}&keyword=${keyword ?? ""}`,
+        `${HOST_URL}/news/preview?page=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
       );
       const data = response.data;
       return data.result.news;

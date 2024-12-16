@@ -40,7 +40,7 @@ const metaTagsProps = {
 
 export default function NewsPage(props: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20);
+    useFetchNewsPreviews(12);
 
   useMount(fetchPreviews);
 
