@@ -209,7 +209,7 @@ const TextParagraph = styled.p`
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   line-height: 2;
 
   @media (max-width: 480px) {
@@ -282,7 +282,7 @@ const ListItem = styled.li`
     position: absolute;
     top: 0;
     right: 0;
-    width: 0.5px;
+    width: 0.7px;
     height: 100%;
     background-color: white;
   }
@@ -295,12 +295,12 @@ const ListItem = styled.li`
     padding: 0 1rem 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.15rem;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     border-bottom: 0;
   }
 
   &:last-child > a {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
   }
 
   @media (max-width: 480px) {
@@ -312,17 +312,16 @@ const ListItem = styled.li`
     &:not(:last-child)::after {
       display: none;
     }
-
+    > a {
+      width: 80%;
+      margin: auto;
+      font-size: 0.8rem;
+    }
     &:last-child {
       border-bottom: none;
       > a {
         font-size: 0.7rem;
       }
-    }
-    > a {
-      width: 80%;
-      margin: auto;
-      font-size: 0.8rem;
     }
   }
 `;

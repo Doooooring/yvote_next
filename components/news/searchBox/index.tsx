@@ -195,25 +195,25 @@ const Wrapper = styled.form`
     .input-box {
       display: inline-flex;
       border: 0;
-      border-radius: 5px;
+      border-radius: 3px;
       width: 100%;
       height: auto;
       color: rgb(170, 170, 170);
-      font-weight: 600;
+      font-weight: 500;
       padding: 0;
       margin: 0;
       font: inherit;
-      font-size: 13px;
+      font-size: 14px;
       text-align: center;
 
       &::placeholder {
         color: rgb(170, 170, 170);
-        font-size: 13px;
-        font-weight: 800;
+        font-size: 14px;
+        font-weight: 500;
       }
       &:focus {
-        outline: 2px solid rgb(133, 200, 224);
-        font-size: 13px;
+        outline: 1px solid rgb(133, 200, 224);
+        font-size: 14px;
       }
     }
     .related-box {
@@ -223,7 +223,7 @@ const Wrapper = styled.form`
       border-style: solid;
       border-width: 2px;
       border-color: rgb(133, 200, 224);
-      border-radius: 5px;
+      border-radius: 2px;
       position: absolute;
       top: 100%;
       text-align: left;
@@ -245,11 +245,11 @@ const RelatedWord = styled.p<RelatedWordProps>`
   font: inherit;
   box-sizing: inherit;
   color: white;
-  font-weight: 700;
+  font-weight: 400;
   padding-left: 5px;
   margin-bottom: 5px;
   border-width: 1px;
-  font-size: 13px;
+  font-size: 14px;
   border-style: solid;
   z-index: 1;
   background-color: ${({ isFocused }) => (isFocused ? 'rgb(101, 177, 205)' : 'rgba(0,0,0,0)')};

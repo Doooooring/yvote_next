@@ -145,7 +145,7 @@ const Wrapper = styled.div`
     min-width: 800px;
     text-align: left;
     @media screen and (max-width: 768px) {
-      width: 90%;
+      width: 98%;
       min-width: 0px;
     }
   }
@@ -183,7 +183,7 @@ const KeywordWrapper = styled.div`
   min-width: 800px;
   margin-bottom: 30px;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 98%;
     min-width: 0px;
   }
 `;

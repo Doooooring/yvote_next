@@ -160,13 +160,13 @@ const Wrapper = styled(CommonLayoutBox)`
   flex-direction: column;
   width: 60%;
   min-width: 680px;
-  max-height: 80vh; /* make sure modal does not exceed screen height */
+  max-height: 80vh;
   overflow: auto;
   margin-left: auto;
   margin-right: auto;
   padding: 3rem 3rem;
   flex: 0 0 auto;
-
+  letter-spacing: -0.5px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -177,7 +177,7 @@ const Wrapper = styled(CommonLayoutBox)`
   -ms-overflow-style: none;
   scrollbar-width: none;
   @media screen and (max-width: 768px) {
-    width: 80%;
+    width: 90%;
     min-width: 0px;
     max-height: 70vh;
     padding: 3rem 1rem;
@@ -213,9 +213,9 @@ const HeadTitle = styled.div`
 
   p.type-name {
     padding-left: 0.5rem;
-    padding-right: 0.25rem;
-    font-weight: 600;
-    font-size: 18px;
+    padding-right: 0.4rem;
+    font-weight: 500;
+    font-size: 22px;
     @media screen and (max-width: 768px) {
       font-size: 16px;
     }
@@ -229,11 +229,11 @@ const HeadBody = styled.div`
 
   div.type-explain {
     color: black;
-    font-weight: 500;
-    font-size: 15px;
+    font-weight: 400;
+    font-size: 16px;
     line-height: 1.7;
     @media screen and (max-width: 768px) {
-      font-size: 14px;
+      font-size: 14.5px;
     }
   }
 `;
@@ -262,8 +262,7 @@ const CommentImageWrapper = styled.div`
 `;
 
 const ModalBody = styled.div`
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
+  margin-top: 1rem;
   border-top: 1.5px solid rgb(225, 225, 225);
 
   div.modal-list {
@@ -279,22 +278,15 @@ const ModalBody = styled.div`
       align-items: center;
       cursor: pointer;
       box-sizing: border-box;
-
       border-bottom: 1.5px solid #ddd;
-
-      @media screen and (max-width: 768px) {
-        padding: 0rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
       span {
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: 13px;
-        font-weight: 500;
+        font-size: 15px;
+        font-weight: 400;
         color: black;
       }
     }
@@ -312,13 +304,16 @@ const ModalBody = styled.div`
     color: black;
     p.content-title {
       color: black;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      padding-bottom: 1.5rem;
+      @media screen and (max-width: 768px) {
+        font-weight: 500;
+      }
     }
     div.content-body {
-      font-weight: 500;
+      font-weight: 400;
+      font-size: 15px;
     }
 
     p.content_line {
@@ -364,6 +359,7 @@ const BackButtonWrapper = styled.div`
   flex-direction: row;
   justify-content: end;
   border-top: 1.5px solid rgb(225, 225, 225);
+  font-size: 14px;
 `;
 
 const BackButton = styled(CommonLayoutBox)`

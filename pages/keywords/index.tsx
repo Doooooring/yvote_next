@@ -108,7 +108,7 @@ const Wrapper = styled.div`
   margin: 0;
   padding: 0;
   border: 0;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Noto Sans KR', Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
   display: flex;
@@ -154,7 +154,7 @@ const GridContainer = styled.div`
   margin-bottom: 150px;
   min-width: 800px;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 98%;
     min-width: 0;
   }
 `;

@@ -74,9 +74,13 @@ const Wrapper = styled.div`
   margin-bottom: 10px;
   max-width: 1210px;
   min-width: 868px;
+  font-family: 'Noto Sans KR', Helvetica, sans-serif;
   @media screen and (max-width: 768px) {
     overflow-x: scroll;
     min-width: 0;
+    ::-webkit-scrollbar {
+      display: none;
+    }
   }
   .header-wrapper {
     display: flex;
@@ -105,8 +109,8 @@ const Wrapper = styled.div`
       display: inline;
       color: rgb(64, 64, 64);
       margin-left: 7px;
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-weight: 600;
+      font-size: 16px;
     }
   }
   .body-wrapper {

@@ -269,7 +269,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   position: relative;
   padding-bottom: 80px;
   overflow-x: visible;
-
+  letter-spacing: -0.5px;
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
     width: 100%;
@@ -344,22 +344,29 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
       .summary {
         display: inline-block;
+        padding-top: 1.5rem;
         padding-right: 2.5em;
-        font-size: 14px;
+        font-size: 16px;
         line-height: 2;
         color: rgb(10, 10, 10);
-        font-weight: 450;
+        font-weight: 400;
         word-break: break-all;
         & {
           p {
             margin: 0 0 1em 0;
             min-height: 10px;
-            font-family: Helvetica, sans-serif;
+            font-family: Noto Sans KR, Helvetica, sans-serif;
+            @media screen and (max-width: 768px) {
+              font-size: 17px;
+            }
           }
         }
         @media screen and (max-width: 768px) {
           padding-left: 0.8rem;
           padding-right: 0.8rem;
+          > h1 {
+            display: none;
+          }
         }
       }
 
@@ -368,7 +375,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         .keyword {
           display: inline-block;
           text-decoration: none;
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 500;
           color: rgb(120, 120, 120);
           margin: 0;
@@ -377,7 +384,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           margin-bottom: 6px;
           padding: 0.25rem 0.25rem;
           background-color: #f1f2f5;
-          border-radius: 2px;
+          border-radius: 4px;
           cursor: pointer;
         }
         @media screen and (max-width: 768px) {
@@ -488,13 +495,11 @@ const CommentBox = styled.div`
 
     .comment_box_footer_text {
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       color: rgb(30, 30, 30);
-
       padding: 0.25rem 1.5rem;
       border: 1px solid rgb(225, 225, 225);
       border-radius: 6px;
-
       cursor: pointer;
       transition: background-color 0.3s ease;
       &:hover {
@@ -512,7 +517,6 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   padding: 1rem;
   margin-bottom: 1rem;
   color: #717171;
@@ -522,7 +526,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
     padding-bottom: 0.4rem;
     flex-direction: row;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     align-items: start;
 
     .timeline_date {

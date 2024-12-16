@@ -175,13 +175,13 @@ const HomeLink = styled(Link)<homeLinkProps>`
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 400;
   border-bottom: ${({ $state }) => ($state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
   height: 100%;
-  .image-l {
-    @media screen and (max-width: 768px) {
-    }
-  }
+  // .image-l {
+  //   @media screen and (max-width: 768px) {
+  //   }
+  // }
   .image-s {
     display: none;
   }

@@ -161,11 +161,6 @@ const Wrapper = styled.div`
     font: inherit;
     vertical-align: baseline;
     position: relative;
-    .news-contents-wrapper {
-      width: 100%;
-      height: 800px;
-      font-size: 13px;
-    }
   }
 `;
 

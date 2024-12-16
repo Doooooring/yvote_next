@@ -74,6 +74,31 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   );
 }
 
+const Wrapper = styled.div`
+  filter: saturate(80%);
+  font-family: Noto Sans KR, Helvetica, sans-serif;
+  transition: filter 0.2s ease;
+
+  img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .title {
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    filter: saturate(130%);
+
+    img {
+      transform: scale(1.1);
+    }
+    .title {
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
+`;
+
 const Title = styled.p`
   -webkit-text-size-adjust: none;
   color: rgb(30, 30, 30);
@@ -84,7 +109,7 @@ const Title = styled.p`
   font: inherit;
   vertical-align: baseline;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -150,31 +175,6 @@ const Keyword = styled.p`
   margin: 0;
   margin-right: 6px;
   color: #3a84e5;
-`;
-
-const Wrapper = styled.div`
-  filter: saturate(80%);
-
-  transition: filter 0.2s ease;
-
-  img {
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .title {
-    transition: color 0.3s ease;
-  }
-
-  &:hover {
-    filter: saturate(130%);
-
-    img {
-      transform: scale(1.1);
-    }
-    .title {
-      color: ${({ theme }) => theme.colors.primary};
-    }
-  }
 `;
 
 interface NewProps {

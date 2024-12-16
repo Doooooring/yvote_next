@@ -98,11 +98,11 @@ const LinkWrapper = styled(Link)`
     width: 6rem;
     height: 100%;
     .keyword-title {
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 500;
       margin: 0;
       @media screen and (max-width: 768px) {
-        font-size: 0.8rem;
+        font-size: 14px;
       }
     }
   }

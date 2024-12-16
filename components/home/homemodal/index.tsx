@@ -108,15 +108,13 @@ const ModalBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   -webkit-text-size-adjust: none;
   color: #ffffff;
   box-sizing: inherit;
   margin-top: 0;
   border: 0;
   max-width: 600px;
-
-  font: inherit;
+  font-family: 'Noto Sans KR', Helvetica, sans-serif;
   vertical-align: baseline;
   transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
   padding: 2rem 2rem 1rem 2rem;
@@ -161,9 +159,9 @@ const ModalTitle = styled.h2`
   font: inherit;
   vertical-align: baseline;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  font-size: 1.2rem;
+  font-size: 18px;
   line-height: 1.4rem;
   letter-spacing: 0.5rem;
   border-bottom: solid 1px #ffffff;
@@ -180,11 +178,11 @@ const ModalParagraph = styled.p`
   padding: 0;
   border: 0;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 15px;
   vertical-align: baseline;
   margin: 0 0 1.5rem 0;
   width: 100%;
-  font-weight: 200;
+  font-weight: 300;
 `;
 
 const ModalLink = styled.a`
@@ -202,7 +200,7 @@ const ModalLink = styled.a`
   color: inherit;
   align-self: flex-start;
   font: inherit;
-  font-size: 0.7rem;
+  font-size: 12px;
   opacity: 0.7;
 `;
 
@@ -240,7 +238,7 @@ const Label = styled.label`
   vertical-align: baseline;
   color: #ffffff;
   display: block;
-  font-size: 0.6rem;
+  font-size: 12px;
   font-weight: 300;
   letter-spacing: 0.2rem;
   line-height: 1.5;
@@ -259,7 +257,6 @@ const FieldContainer = styled.div`
   display: flex;
   flex-direction: column; // Stack the label and input vertically
   margin-right: 2rem; // Space between the field containers
-
   &:last-child {
     margin-right: 0;
   }
@@ -298,7 +295,7 @@ const SubmitButton = styled.button`
   -webkit-text-size-adjust: none;
   list-style: none;
   box-sizing: inherit;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Noto Sans KR', Helvetica, sans-serif;
   appearance: none;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   border-radius: 4px;
@@ -306,7 +303,7 @@ const SubmitButton = styled.button`
   box-shadow: inset 0 0 0 1px #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 12px;
   height: 2.4rem;
   letter-spacing: 0.15rem;
   outline: 0;
@@ -318,7 +315,7 @@ const SubmitButton = styled.button`
   line-height: calc(2.75rem - 2px);
   background-color: #ffffff;
   color: #1b1f22;
-  font-weight: 600;
+  font-weight: 500;
   margin: auto;
   width: 30%;
 `;
