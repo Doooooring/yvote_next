@@ -1,9 +1,8 @@
-import Link from 'next/link';
-import { useState } from 'react';
-import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
+import Link from 'next/link';
+import styled from 'styled-components';
 
 interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword'> {}
 
