@@ -86,10 +86,9 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
     flex-direction: row;
     align-items: center;
     gap: 8px;
-    font-size: 18px;
-    font-weight: 600;
-
     h1 {
+      font-weight: 500;
+      font-size: 18px;
       margin: 0;
       padding: 0;
     }
@@ -103,10 +102,6 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
   .body-wrapper {
     .explanation-list {
       padding-left: 0.25rem;
-
-      @media screen and (max-width: 768px) {
-        font-size: 14px;
-      }
       .keyword-img {
         float: right;
         margin-left: 16px;
@@ -122,13 +117,16 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
     .explanation {
       text-align: left;
       margin-bottom: 20px;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 2;
       color: black;
-      font-weight: 500;
+      font-weight: 400;
       word-break: keep-all;
       min-height: 10px;
-      font-family: Helvetica, sans-serif;
+      font-family: 'Noto Sans KR', Helvetica, sans-serif;
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+      }
     }
   }
 `;

@@ -93,19 +93,22 @@ const Wrapper = styled.div`
 const Header = styled.div`
   display: block;
   align-items: center;
-  font-size: 0.8em;
   padding: 40px 40px 0 40px;
   color: rgb(64, 64, 64);
   h2 {
     font: inherit;
-    font-size: 1.6rem;
-    font-weight: 550;
+    font-size: 30px;
+    font-weight: 500;
     border-bottom: 2px solid rgb(64, 64, 64);
     padding-bottom: 5px;
     display: inline-block;
   }
   hr {
     margin: 20px 0 0 0;
+  }
+  @media (max-width: 1080px) {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 `;
 
@@ -116,7 +119,7 @@ const Body = styled.div`
   justify-content: center;
   @media (max-width: 1080px) {
     display: block;
-    padding: 0 40px 1rem;
+    padding: 0 10px 1rem;
   }
 `;
 
@@ -125,7 +128,7 @@ const EachValue = styled.div`
   padding: 0 20px;
   h3 {
     font: inherit;
-    font-size: 1.3rem;
+    font-size: 22px;
     line-height: 1.5em;
     margin: 0.5rem 0 0 0;
     color: rgb(64, 64, 64);
@@ -136,9 +139,8 @@ const EachValue = styled.div`
   }
   p {
     margin: 1rem 0 0 0;
-    font-family: summary-font;
     font-weight: 400;
-    font-size: 0.9rem;
+    font-size: 16px;
     line-height: 1.8em;
   }
   @media (max-width: 1080px) {
@@ -147,7 +149,7 @@ const EachValue = styled.div`
     margin-bottom: 30px;
     h3.bullet-point::before {
       content: '• ';
-      font-size: 1.3rem;
+      font-size: 18px;
     }
   }
 `;

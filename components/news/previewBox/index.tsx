@@ -5,17 +5,17 @@ import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface PreviewBoxProps {
   preview: Preview;
   click: (id: number) => void;
+  img?: string;
 }
-const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
-
-export default function PreviewBox({ preview, click }: PreviewBoxProps) {
+function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const navigate = useRouter();
   const { id, title, summary, newsImage, keywords, state } = preview;
 
@@ -25,10 +25,17 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
         onClick={() => {
           click(id);
         }}
-        imgView={<SuspenseImage src={newsImage} alt={title} fill={true} suspense={true} />}
+        imgView={
+          <ImageFallback
+            src={img ?? `${HOST_URL}/images/news/${id}`}
+            alt={title}
+            fill={true}
+            suspense={true}
+          />
+        }
         headView={
           <>
-            <Title>{title}</Title>
+            <Title className="title">{title}</Title>
             {state && (
               <ImageFallback
                 src="/assets/img/ico_new_2x.png"
@@ -41,7 +48,9 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
         }
         contentView={
           <>
-            <Summary dangerouslySetInnerHTML={{ __html: summary }} />
+            <Summary>
+              <p>{summary}</p>
+            </Summary>
             <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (
@@ -64,17 +73,46 @@ export default function PreviewBox({ preview, click }: PreviewBoxProps) {
   );
 }
 
+export default React.memo(PreviewBox, (prevProps, nextProps) => {
+  return prevProps.preview.id === nextProps.preview.id && prevProps.click === nextProps.click;
+});
+
+const Wrapper = styled.div`
+  filter: saturate(80%);
+  font-family: Noto Sans KR, Helvetica, sans-serif;
+  transition: filter 0.2s ease;
+
+  img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .title {
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    filter: saturate(130%);
+
+    img {
+      transform: scale(1.1);
+    }
+    .title {
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
+`;
+
 const Title = styled.p`
   -webkit-text-size-adjust: none;
-  color: rgb(30, 30, 30);
+  color: rgb(20, 20, 20);
   text-align: left;
   padding: 0;
   padding-right: 2px;
   border: 0;
   font: inherit;
   vertical-align: baseline;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 500;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -89,11 +127,11 @@ const Summary = styled.div`
   padding: 0;
   border: 0;
   font: inherit;
-  font-weight: 300;
+  font-weight: 400;
   vertical-align: baseline;
-  color: rgb(30, 30, 30);
+  color: rgb(80, 80, 80);
   margin: 0;
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.7;
   height: 3.4em;
   display: -webkit-box;
@@ -135,20 +173,11 @@ const Keyword = styled.p`
   display: inline;
   text-decoration: none;
   height: 14px;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 400;
   margin: 0;
   margin-right: 6px;
   color: #3a84e5;
-`;
-
-const Wrapper = styled.div`
-  filter: saturate(80%);
-
-  transition: filter 0.2s ease;
-  &:hover {
-    filter: saturate(130%);
-  }
 `;
 
 interface NewProps {

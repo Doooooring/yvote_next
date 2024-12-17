@@ -219,8 +219,6 @@ const Wrapper = styled(CommonLayoutBox)`
 `;
 
 const HaveThinked = styled.div`
-  font-size: 20px;
-  font-weight: 800;
   margin-bottom: 20px;
   text-align: center;
   color: black;
@@ -228,7 +226,7 @@ const HaveThinked = styled.div`
 
 const VotingSentence = styled.div`
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: left;
   margin-bottom: 10px;
   color: black;
@@ -243,7 +241,7 @@ const VotingBlocks = styled.div`
 const VotingBlock = styled.div`
   text-align: left;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: #2b2c2d;
   display: flex;
   align-items: center;
@@ -259,7 +257,7 @@ const LeftRightBox = styled.div`
 
 const LeftRightHead = styled.div`
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: left;
   margin-bottom: 10px;
   color: black;
@@ -278,7 +276,7 @@ const CheckBox = styled.input`
 const LRComment = styled.span`
   text-align: left;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: #2b2c2d;
 `;
 
@@ -295,8 +293,8 @@ const SubmitButton = styled.button`
   border-radius: 10px;
   background-color: #79c0d7;
   color: white;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
   &:hover {
     cursor: pointer;
   }

@@ -20,13 +20,15 @@ interface pageProps {
 export default function NewsPage(props: pageProps) {
   const navigate = useRouter();
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20, true);
+    useFetchNewsPreviews(16, true);
 
   useMount(() => {
-    fetchPreviews();
+    fetchPreviews({ limit: 16 });
   });
 
-  const showNewsContent = useNewsNavigate();
+  const showNewsContent = useCallback(async (id: number) => {
+    navigate.push(`/adminjae/${id}`);
+  }, []);
 
   return (
     <Wrapper>

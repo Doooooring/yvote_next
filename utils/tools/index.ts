@@ -1,3 +1,9 @@
+import { load } from 'cheerio';
+
+export function deepCompare(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   const result: Array<Array<T>> = [];
   let tmp: Array<T> = [];
@@ -13,20 +19,24 @@ export const arrBatch = <T>(arr: Array<T>, batchSize: number) => {
   return result;
 };
 
-export function deepCompare(a: unknown, b: unknown): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
 export function arrObjIncludeProp<T extends object, K extends keyof T>(
   arr: T[],
   key: K,
   value: T[K],
 ): T | null {
-  return arr.find((obj) => {
-    if (obj == null || typeof obj !== 'object') return false;
-    return deepCompare(obj[key], value);
-  }) ?? null;
+  return (
+    arr.find((obj) => {
+      if (obj == null || typeof obj !== 'object') return false;
+      return deepCompare(obj[key], value);
+    }) ?? null
+  );
 }
+
+export const fillArr = <T, K>(arr: Array<T>, size: number, element: K) => {
+  const newArr = [...arr] as Array<T | K>;
+  if (size < newArr.length) return newArr;
+  return newArr.concat(new Array(size - newArr.length).fill(element));
+};
 
 export const ffToInt = (ff: string) => {
   return parseInt(ff, 16);
@@ -47,6 +57,21 @@ export const RGBA = (hex: string, opacity: number) => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
+export const getTextContentFromHtmlText = (html: string) => {
+  if (typeof window !== 'undefined') {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    return doc.body.textContent;
+  } else {
+    const $ = load(html);
+
+    return $('body').text();
+  }
+};
+
+export function clone<T>(obj: T) {
+  return JSON.parse(JSON.stringify(obj)) as T;
+}
 export function getConstantVowel(wor: string, testWord = false) {
   // testWord 는 true일 경우 유저의 인풋을 의미한다.
   const f = [

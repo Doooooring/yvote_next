@@ -221,16 +221,15 @@ interface TabWrapperProps {
 
 const TabWrapper = styled.div<TabWrapperProps>`
   display: flex;
-
   margin-bottom: 12px;
-
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
     min-width: 0px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 
   span {
@@ -282,7 +281,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   position: relative;
   padding-bottom: 80px;
   overflow-x: visible;
-
+  letter-spacing: -0.5px;
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};
     width: 100%;
@@ -292,7 +291,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   .contents-body {
     padding-top: 1rem;
     .main-image-wrapper {
-      width: 95%;
+      width: 92%;
       height: 250px;
       position: relative;
       padding: 0;
@@ -301,8 +300,9 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       border: 1px solid rgb(230, 230, 230);
       border-radius: 10px;
 
-      @media screen and (max-width: 432px) {
-        height: 200px;
+      @media screen and (max-width: 760px) {
+        height: 220px;
+        width: 98%;
       }
 
       .img-head {
@@ -352,19 +352,16 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       .content {
         padding: 1rem;
         padding-left: 1.5rem;
-        @media screen and (max-width: 768px) {
-          padding-right: 1.5rem;
-        }
       }
 
       .summary {
         display: inline-block;
-        padding-left: 1.5rem;
+        padding-top: 1.5rem;
         padding-right: 2.5em;
-        font-size: 14px;
+        font-size: 16px;
         line-height: 2;
         color: rgb(10, 10, 10);
-        font-weight: 450;
+        font-weight: 400;
         word-break: break-all;
         @media screen and (max-width: 768px) {
           padding-left: 0.75rem;
@@ -374,7 +371,17 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           p {
             margin: 0 0 1em 0;
             min-height: 10px;
-            font-family: Helvetica, sans-serif;
+            font-family: Noto Sans KR, Helvetica, sans-serif;
+            @media screen and (max-width: 768px) {
+              font-size: 17px;
+            }
+          }
+        }
+        @media screen and (max-width: 768px) {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
+          > h1 {
+            display: none;
           }
         }
       }
@@ -384,7 +391,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         .keyword {
           display: inline-block;
           text-decoration: none;
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 500;
           color: rgb(120, 120, 120);
           margin: 0;
@@ -393,8 +400,12 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           margin-bottom: 6px;
           padding: 0.25rem 0.25rem;
           background-color: #f1f2f5;
-          border-radius: 2px;
+          border-radius: 4px;
           cursor: pointer;
+        }
+        @media screen and (max-width: 768px) {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
         }
       }
     }
@@ -500,13 +511,11 @@ const CommentBox = styled.div`
 
     .comment_box_footer_text {
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       color: rgb(30, 30, 30);
-
       padding: 0.25rem 1.5rem;
       border: 1px solid rgb(225, 225, 225);
       border-radius: 6px;
-
       cursor: pointer;
       transition: background-color 0.3s ease;
       &:hover {
@@ -524,7 +533,6 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   padding: 1rem;
   margin-bottom: 1rem;
   color: #717171;
@@ -534,7 +542,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
     padding-bottom: 0.4rem;
     flex-direction: row;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     align-items: start;
 
     .timeline_date {

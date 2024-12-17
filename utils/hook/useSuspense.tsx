@@ -25,7 +25,7 @@ class PromiseCache {
   }
 
   isKey(key: string) {
-    return this.cacheMap.has(key);
+    return this.cacheMap.has(key); 
   }
 
   keyList() {

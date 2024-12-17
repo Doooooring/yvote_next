@@ -1,5 +1,7 @@
 import { HOST_URL } from '@url';
 import { Article, News, NewsInView, Preview, commentType } from '@utils/interface/news';
+
+import { clone, getTextContentFromHtmlText } from '@utils/tools';
 import axios from 'axios';
 
 type AnswerState = 'left' | 'right' | 'none';
@@ -40,19 +42,24 @@ class NewsRepository {
    */
   async getPreviews(
     curNum: number,
+    limit: number,
     keyword: string | null = null,
-    limit: number = 20,
   ): Promise<Array<Preview>> {
     const response: Response<Array<Preview>> = await axios.get(
       `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
     );
     const data = response.data;
-    return data.result;
+    return data.result.map((news) => {
+      const preview = clone(news);
+      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      return preview;
+    });
   }
 
   /**
    * (@FIXME) 뉴스 블록들 조회 API (ADMIN)
-   * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
+   * @param curNum offset (보여지고 있는 뉴스 개수)
+   * @param limit  limit (보여지고 있는 뉴스 개수)
    * @param keyword 검색 키워드 (전체 검색시 null)
    */
   async getPreviewsAdmin(
@@ -64,7 +71,11 @@ class NewsRepository {
       `${HOST_URL}/news/preview?offset=${curNum}&limit=${limit}&keyword=${keyword}&isAdmin=${true}`,
     );
     const data = response.data;
-    return data.result;
+    return data.result.map((news) => {
+      const preview = clone(news);
+      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      return preview;
+    });
   }
 
   /**

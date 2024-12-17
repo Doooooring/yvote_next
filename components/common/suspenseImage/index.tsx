@@ -1,6 +1,6 @@
 import { useSuspense } from '@utils/hook/useSuspense';
+import { fetchImg } from '@utils/tools/async';
 import Image, { ImageProps } from 'next/image';
-import { use, useCallback, useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
 
 interface ImageFallbackProps extends ImageProps {
@@ -8,12 +8,6 @@ interface ImageFallbackProps extends ImageProps {
   imgStyle?: CSSProperties;
   suspense?: boolean;
 }
-
-const fetchImg = async (src: string) => {
-  const response = await fetch(src);
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
-};
 
 export default function SuspenseImage({
   src,

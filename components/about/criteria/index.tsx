@@ -138,13 +138,12 @@ const Wrapper = styled.div`
 const Header = styled.div`
   display: block;
   align-items: center;
-  font-size: 0.8em;
   padding: 40px 40px 0 40px;
   color: rgb(64, 64, 64);
   h2 {
     font: inherit;
-    font-size: 1.6rem;
-    font-weight: 550;
+    font-size: 30px;
+    font-weight: 500;
     border-bottom: 2px solid rgb(64, 64, 64);
     padding-bottom: 5px;
     display: inline-block;
@@ -152,12 +151,20 @@ const Header = styled.div`
   hr {
     margin: 20px 0 0 0;
   }
+  @media (max-width: 1080px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 `;
 
 const Body = styled.div`
   display: block;
   padding: 0 30px 20px 30px;
   justify-content: center;
+  @media (max-width: 1080px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 `;
 
 const EachOne = styled.div`
@@ -202,7 +209,7 @@ const Text = styled.div`
   h3 {
     font: inherit;
     color: rgb(64, 64, 64);
-    font-size: 1.3rem;
+    font-size: 22px;
     line-height: 1.5em;
     margin: 0;
     font-weight: 400;
@@ -215,8 +222,7 @@ const Text = styled.div`
   }
   p {
     margin: 1rem 0 0 0;
-    font-family: summary-font;
-    font-size: 0.9rem;
+    font-size: 16px;
     line-height: 1.8em;
     font-weight: 400;
   }
@@ -225,7 +231,7 @@ const Text = styled.div`
     line-height: 1.3em;
     > span {
       margin-left: 0.4rem;
-      font-size: 0.8rem;
+      font-size: 14px;
       font-weight: 300;
       color: #3a84e5;
     }
@@ -237,7 +243,7 @@ const Text = styled.div`
     width: 100%;
     h3.bullet-point::before {
       content: '• ';
-      font-size: 1.3rem;
+      font-size: 18px;
     }
   }
 `;

@@ -17,11 +17,13 @@ import { useMount } from '@utils/hook/useMount';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface pageProps {
   data: {
     keyword: KeywordOnDetail;
     previews: Array<Preview>;
+    description: string;
   };
 }
 
@@ -32,7 +34,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { keyword },
     };
   });
-  return { paths, fallback: false };
+  return { paths, fallback: 'blocking' };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -44,25 +46,28 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const keyword = resolves[0];
   const previews = resolves[1];
 
+  const description = getTextContentFromHtmlText(keyword?.explain ?? '')?.split('.')[0] ?? '';
+
   return {
     props: {
       data: {
         keyword,
-        previews,
+        previews: [],
+        description,
       },
     },
-    revalidate: 10,
+    revalidate: 3600,
   };
 };
 
 export default function KeyExplanation({ data }: pageProps) {
   const { keyword, previews: initialPreviews } = data;
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20);
+    useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
-    fetchPreviews(keyword.keyword);
+    fetchPreviews({ filter: keyword.keyword });
   });
 
   const metaTagsProps = {
@@ -70,6 +75,7 @@ export default function KeyExplanation({ data }: pageProps) {
     description: keyword.explain || '',
     image: `${HOST_URL}/images/keywords/${keyword.id}`,
     url: `https://yvoting.com/keywords/${keyword.id}`,
+
     type: 'article',
   };
 
@@ -141,7 +147,7 @@ const Wrapper = styled.div`
     min-width: 800px;
     text-align: left;
     @media screen and (max-width: 768px) {
-      width: 90%;
+      width: 98%;
       min-width: 0px;
     }
   }
@@ -179,7 +185,7 @@ const KeywordWrapper = styled.div`
   min-width: 800px;
   margin-bottom: 30px;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 98%;
     min-width: 0px;
   }
 `;

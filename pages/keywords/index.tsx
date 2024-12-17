@@ -51,7 +51,7 @@ const Wrapper = styled.div`
   margin: 0;
   padding: 0;
   border: 0;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Noto Sans KR', Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
   display: flex;
@@ -70,7 +70,7 @@ const Wrapper = styled.div`
 
 const SearchWrapper = styled(CommonLayoutBox)`
   display: flex;
-  width: 70%;
+  width: 10%;
   min-width: 800px;
   position: relative;
   -webkit-text-size-adjust: none;
@@ -83,7 +83,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 60%;
     min-width: 0px;
   }
 `;
@@ -97,7 +97,7 @@ const GridContainer = styled.div`
   margin-bottom: 150px;
   min-width: 800px;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 98%;
     min-width: 0;
   }
 `;

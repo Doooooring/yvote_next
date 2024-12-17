@@ -15,10 +15,10 @@ interface pageProps {
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
-  const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
+  //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
   return {
-    props: { data },
-    revalidate: 10,
+    props: { data: [] },
+    revalidate: 300,
   };
 };
 
@@ -29,9 +29,11 @@ const metaTagsProps = {
 
 export default function NewsPage(props: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20);
+    useFetchNewsPreviews(16);
 
-  useMount(fetchPreviews);
+  useMount(() => {
+    fetchPreviews({ limit: 16 });
+  });
 
   const showNewsContent = useNewsNavigate();
 
@@ -136,7 +138,7 @@ const Wrapper = styled.div`
     box-sizing: inherit;
 
     @media screen and (max-width: 768px) {
-      width: 90%;
+      width: 98%;
       min-width: 0px;
     }
   }
@@ -150,17 +152,12 @@ const Wrapper = styled.div`
     font: inherit;
     vertical-align: baseline;
     position: relative;
-    .news-contents-wrapper {
-      width: 100%;
-      height: 800px;
-      font-size: 13px;
-    }
   }
 `;
 
 const SearchWrapper = styled(CommonLayoutBox)`
   display: flex;
-  width: 70%;
+  width: 10%;
   min-width: 800px;
   position: relative;
   -webkit-text-size-adjust: none;
@@ -173,7 +170,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 60%;
     min-width: 0px;
   }
 `;

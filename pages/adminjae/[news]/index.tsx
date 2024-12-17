@@ -1,30 +1,32 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository from '@repositories/news';
+import NewsRepository, { NewsDetail } from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
-import { NewsInView } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { getTextContentFromHtmlText } from '@utils/tools';
+import LoadingCommon from '@components/common/loading';
+import { useMount } from '@utils/hook/useMount';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
+
+interface getNewsContentResponse {
+  news: NewsDetail | null;
+}
 
 interface pageProps {
   data: {
     id: string;
-    news: NewsInView;
-    description: string;
   };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr = await NewsRepository.getNewsIds();
-  const paths = newsIdArr.map((item) => {
+  const newsIdArr: Array<{ _id: string }> = await NewsRepository.getNewsIds();
+  const paths = newsIdArr.map((item: { _id: string }) => {
     return {
-      params: { news: String(item['id']) },
+      params: { news: item['_id'] },
     };
   });
   return {
@@ -34,49 +36,43 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const id = context.params!.news;
-  const news = await NewsRepository.getNewsContent(Number(id), null);
-  const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';
+  const id = context.params!.news as string;
 
   return {
     props: {
       data: {
         id,
-        news,
-        description: description,
       },
     },
-    revalidate: 3600,
+    revalidate: 20,
   };
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
+  const [news, setNews] = useState<NewsDetail | null>(null);
   const router = useRouter();
-  const { id, news, description } = data;
+  const { id } = data;
 
   const hideNewsContent = useCallback(() => {
-    router.push('/news');
+    router.push('/adminjae');
   }, []);
 
-  const metaTagsProps = useMemo(() => {
-    return {
-      title: news?.title || '',
-
-      description: description,
-      image: `${HOST_URL}/images/news/${news?.id}`,
-      url: `https://yvoting.com/news/${id}`,
-      type: 'article',
-    };
-  }, []);
+  useMount(async () => {
+    const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
+    setNews(news);
+  });
 
   return (
     <>
-      <HeadMeta {...metaTagsProps} />
       <Wrapper>
         <div className="main-contents">
           <div className="main-contents-body">
             <div className="news-contents-wrapper">
-              <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+              {news ? (
+                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+              ) : (
+                <LoadingCommon comment={'기다려주세요~'} />
+              )}
             </div>
           </div>
         </div>
@@ -105,7 +101,7 @@ const Wrapper = styled.div`
     width: 70%;
     min-width: 800px;
     @media screen and (max-width: 768px) {
-      width: 98%;
+      width: 90%;
       min-width: 0px;
     }
   }
