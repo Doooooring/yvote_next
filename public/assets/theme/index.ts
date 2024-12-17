@@ -16,6 +16,7 @@ export const customTheme = {
     gray800: '#343a40',
     gray900: '#212529',
     fallback: '#F2F2F2',
+    hovergray: '#f0f0f0',
   },
   fonts: {
     body: 'Arial, sans-serif',
