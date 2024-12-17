@@ -2,8 +2,6 @@ import { Backdrop, CommonLayoutBox, FallbackBox, Row } from '@components/common/
 import styled from 'styled-components';
 
 export default function NewsContentFallback() {
-  console.log('is susepsne loaded');
-
   return (
     <Wrapper>
       <Left>

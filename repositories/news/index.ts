@@ -1,6 +1,7 @@
-import axios from 'axios';
 import { HOST_URL } from '@url';
 import { News, Preview, commentType } from '@utils/interface/news';
+import { clone, getTextContentFromHtmlText } from '@utils/tools';
+import axios from 'axios';
 
 type AnswerState = 'left' | 'right' | 'none';
 
@@ -64,13 +65,21 @@ class NewsRepository {
    * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
    * @param keyword 검색 키워드 (전체 검색시 null)
    */
-  async getPreviews(curNum: number, keyword: string | null = null): Promise<Array<Preview>> {
+  async getPreviews(
+    curNum: number,
+    limit: number,
+    keyword: string | null = null,
+  ): Promise<Array<Preview>> {
     try {
       const response: Response<{ news: Array<Preview> }> = await axios.get(
-        `${HOST_URL}/news/preview?page=${curNum}&keyword=${keyword ?? ""}`,
+        `${HOST_URL}/news/preview?page=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
       );
       const data = response.data;
-      return data.result.news;
+      return data.result.news.map((news) => {
+        const preview = clone(news);
+        preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+        return preview;
+      });
     } catch (e) {
       return [];
     }
@@ -78,16 +87,25 @@ class NewsRepository {
 
   /**
    * (@FIXME) 뉴스 블록들 조회 API (ADMIN)
-   * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
+   * @param curNum offset (보여지고 있는 뉴스 개수)
+   * @param limit  limit (보여지고 있는 뉴스 개수)
    * @param keyword 검색 키워드 (전체 검색시 null)
    */
-  async getPreviewsAdmin(curNum: number, keyword: string | null = null): Promise<Array<Preview>> {
+  async getPreviewsAdmin(
+    curNum: number,
+    limit: number,
+    keyword: string | null = null,
+  ): Promise<Array<Preview>> {
     try {
       const response: Response<{ news: Array<Preview> }> = await axios.get(
-        `${HOST_URL}/news/preview?page=${curNum}&keyword=${keyword}&isAdmin=${true}`,
+        `${HOST_URL}/news/preview?page=${curNum}&limit=${limit}&keyword=${keyword}&isAdmin=${true}`,
       );
       const data = response.data;
-      return data.result.news;
+      return data.result.news.map((news) => {
+        const preview = clone(news);
+        preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+        return preview;
+      });
     } catch (e) {
       return [];
     }

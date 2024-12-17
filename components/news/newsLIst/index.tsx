@@ -8,7 +8,11 @@ import { Suspense, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
-import { CommonLayoutBox } from '@components/common/commonStyles';
+import { Center, CommonLayoutBox } from '@components/common/commonStyles';
+import NewsBlock from '../newsBlock';
+import IsShow from '@components/common/isShow';
+import useLazyLoad from '@utils/hook/useLazyLoad';
+import { useNewsInfiniteScroll } from './newsList.tools';
 
 interface NewsListProps {
   page: number;
@@ -28,7 +32,6 @@ export default function NewsList({
   const elementRef = useRef<HTMLDivElement>(null);
   const { show: showToastMessage } = useToastMessage();
   const isOnScreen = useOnScreen(elementRef);
-
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
     if (!res) {
@@ -41,37 +44,34 @@ export default function NewsList({
     }
   }, [fetchPreviews, showToastMessage]);
 
-  //뷰에 들어옴이 감지될 때 요청 보내기
-  useEffect(() => {
-    //요청 중이라면 보내지 않기
-    if (page != -1 && isOnScreen === true && isRequesting === false) {
-      fetChPreviewsWithVal();
-    } else {
-      return;
-    }
-  }, [isOnScreen]);
+  useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
+  const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
+
+  const clickFetchButton = useCallback(() => {
+    fetChPreviewsWithVal();
+    closeFetchButton();
+  }, [fetChPreviewsWithVal, closeFetchButton]);
 
   return (
     <>
       <Wrapper>
-        {arrBatch(previews, 20).map((previews) => (
+        {arrBatch(previews, 16).map((previews) => (
           <Suspense fallback={<NewsListFallback length={previews.length} />}>
-            {previews.map((preview, idx) => (
-              <div className="preview-wrapper" key={idx}>
-                <PreviewBox preview={preview} click={showNewsContent} />
-              </div>
-            ))}
+            <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
           </Suspense>
         ))}
       </Wrapper>
-      {isRequesting ? (
+      <IsShow state={isRequesting}>
         <LoadingWrapper>
           <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
         </LoadingWrapper>
-      ) : (
-        <></>
-      )}
-      <LastLine ref={elementRef}></LastLine>
+      </IsShow>
+      <IsShow state={page != -1 && isShowFetchButton}>
+        <Center style={{ width: '100%' }}>
+          <FetchButton onClick={clickFetchButton}>더 보기</FetchButton>
+        </Center>
+      </IsShow>
+      <LastLine ref={elementRef} />
     </>
   );
 }
@@ -117,6 +117,17 @@ const Wrapper = styled.div`
 
 const LoadingWrapper = styled(CommonLayoutBox)`
   background-color: white;
+`;
+
+const FetchButton = styled(CommonLayoutBox)`
+  background-color: white;
+  padding: 0.5rem 3rem;
+  margin-top: 1rem;
+  color: ${({ theme }) => theme.colors.gray900};
+  cursor: pointer;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.hovergray};
+  }
 `;
 
 const LastLine = styled.div`

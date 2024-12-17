@@ -52,6 +52,9 @@ export const getTextContentFromHtmlText = (html: string) => {
   }
 };
 
+export function clone<T>(obj: T) {
+  return JSON.parse(JSON.stringify(obj)) as T;
+}
 export function getConstantVowel(wor: string, testWord = false) {
   // testWord 는 true일 경우 유저의 인풋을 의미한다.
   const f = [

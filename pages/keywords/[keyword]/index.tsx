@@ -62,11 +62,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(20);
+    useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
-    fetchPreviews(data.keyword.keyword);
+    fetchPreviews({ filter: data.keyword.keyword });
   });
 
   const metaTagsProps = {
