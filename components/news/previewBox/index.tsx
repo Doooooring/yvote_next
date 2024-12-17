@@ -108,7 +108,7 @@ const Title = styled.p`
   border: 0;
   font: inherit;
   vertical-align: baseline;
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 500;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -116,6 +116,9 @@ const Title = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+  @media screen and (max-width: 768px) {
+    font-size: 15px;
+  }
 `;
 
 const Summary = styled.div`
@@ -124,9 +127,9 @@ const Summary = styled.div`
   padding: 0;
   border: 0;
   font: inherit;
-  font-weight: 300;
+  font-weight: 400;
   vertical-align: baseline;
-  color: rgb(30, 30, 30);
+  color: rgb(80, 80, 80);
   margin: 0;
   font-size: 14px;
   line-height: 1.7;
@@ -142,6 +145,10 @@ const Summary = styled.div`
     display: block;
     height: 10px;
     background-color: white;
+  }
+  @media screen and (max-width: 768px) {
+    color: rgb(100, 100, 100);
+    font-size: 13.5px;
   }
 `;
 
@@ -175,6 +182,9 @@ const Keyword = styled.p`
   margin: 0;
   margin-right: 6px;
   color: #3a84e5;
+  @media screen and (max-width: 768px) {
+    font-weight: 400;
+  }
 `;
 
 interface NewProps {

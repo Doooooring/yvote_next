@@ -210,14 +210,14 @@ const HeadTitle = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 0.5rem;
-
   p.type-name {
     padding-left: 0.5rem;
     padding-right: 0.4rem;
     font-weight: 500;
-    font-size: 22px;
+    font-size: 20px;
     @media screen and (max-width: 768px) {
-      font-size: 16px;
+      font-size: 17px;
+      font-weight: 600;
     }
   }
 `;
@@ -233,7 +233,7 @@ const HeadBody = styled.div`
     font-size: 16px;
     line-height: 1.7;
     @media screen and (max-width: 768px) {
-      font-size: 14.5px;
+      font-size: 15px;
     }
   }
 `;
@@ -264,7 +264,6 @@ const CommentImageWrapper = styled.div`
 const ModalBody = styled.div`
   margin-top: 1rem;
   border-top: 1.5px solid rgb(225, 225, 225);
-
   div.modal-list {
     display: flex;
     flex-direction: column;
@@ -286,8 +285,8 @@ const ModalBody = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 15px;
-        font-weight: 400;
-        color: black;
+        font-weight: 500;
+        color: rgb(50, 50, 50);
       }
     }
   }
@@ -308,7 +307,7 @@ const ModalBody = styled.div`
       font-weight: 600;
       padding-bottom: 1.5rem;
       @media screen and (max-width: 768px) {
-        font-weight: 500;
+        font-weight: 600;
       }
     }
     div.content-body {
