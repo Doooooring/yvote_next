@@ -38,8 +38,8 @@ const Header = styled.div`
   color: rgb(64, 64, 64);
   h2 {
     font: inherit;
-    font-size: 1.6rem;
-    font-weight: 550;
+    font-size: 22px;
+    font-weight: 500;
     border-bottom: 2px solid rgb(64, 64, 64);
     padding-bottom: 5px;
     display: inline-block;
@@ -47,18 +47,26 @@ const Header = styled.div`
   hr {
     margin: 20px 0 0 0;
   }
+  @media (max-width: 1080px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 `;
 
 const Body = styled.div`
   padding: 0 40px 30px;
-  font-size: 0.9rem;
+  font-size: 16px;
   line-height: 1.8em;
   font-weight: 400;
   text-align: baseline;
+  @media (max-width: 1080px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 `;
 
 const IconWrapper = styled.div`
   display: inline-flex;
-  width: 13px;
+  width: 14px;
   height: auto;
 `;

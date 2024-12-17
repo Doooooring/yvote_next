@@ -44,21 +44,21 @@ export default function Header() {
         <NavigationBox isMenuOpen={isMenuOpen}>
           <NavBox
             link={'/news'}
-            comment={device === Device.pc ? '뉴스 모아보기' : '뉴스'}
+            comment={'뉴스 모아보기'}
             state={curRoute === 'news'}
             onNavigate={closeMenu} // Close menu on click
           />
 
           <NavBox
             link={'/keywords'}
-            comment={device === Device.pc ? '키워드 모아보기' : '키워드'}
+            comment={'키워드 모아보기'}
             state={curRoute === 'keywords'}
             onNavigate={closeMenu} // Close menu on click
           />
 
           <NavBox
             link={'/analyze'}
-            comment={device === Device.pc ? '정치 성향 테스트' : '가치관'}
+            comment={'정치 성향 테스트'}
             state={curRoute === 'analyze'}
             onNavigate={closeMenu} // Close menu on click
           />

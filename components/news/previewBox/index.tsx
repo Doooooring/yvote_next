@@ -101,7 +101,7 @@ const Wrapper = styled.div`
 
 const Title = styled.p`
   -webkit-text-size-adjust: none;
-  color: rgb(30, 30, 30);
+  color: rgb(20, 20, 20);
   text-align: left;
   padding: 0;
   padding-right: 2px;
@@ -131,7 +131,7 @@ const Summary = styled.div`
   vertical-align: baseline;
   color: rgb(80, 80, 80);
   margin: 0;
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.7;
   height: 3.4em;
   display: -webkit-box;
@@ -177,8 +177,8 @@ const Keyword = styled.p`
   display: inline;
   text-decoration: none;
   height: 14px;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 400;
   margin: 0;
   margin-right: 6px;
   color: #3a84e5;

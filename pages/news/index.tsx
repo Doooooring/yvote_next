@@ -166,7 +166,7 @@ const Wrapper = styled.div`
 
 const SearchWrapper = styled(CommonLayoutBox)`
   display: flex;
-  width: 70%;
+  width: 10%;
   min-width: 800px;
   position: relative;
   -webkit-text-size-adjust: none;
@@ -179,7 +179,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 60%;
     min-width: 0px;
   }
 `;
