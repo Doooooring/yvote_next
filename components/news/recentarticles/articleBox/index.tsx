@@ -7,6 +7,7 @@ import { HOST_URL } from '@url';
 import { Article, commentType } from '@utils/interface/news';
 import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -21,7 +22,6 @@ export default function ArticleBox({
   article: { id, title, comment, commentType: type, date = new Date() },
 }: ArticleBoxProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  let a: string;
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -32,6 +32,7 @@ export default function ArticleBox({
   };
 
   const formattedTitle = `${title} ${formatDate(date)}`;
+
   return (
     <>
       <LinkWrapper onClick={openModal}>

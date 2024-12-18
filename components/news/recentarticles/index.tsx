@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import { useRef } from 'react';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 export default function NewArticles() {
   const numToShow = useRef(5);
@@ -39,20 +40,19 @@ export default function NewArticles() {
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(CommonLayoutBox)`
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0px 0px 30px -20px;
+
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
   padding: 15px 10px;
-  border: 0;
   font: inherit;
   box-sizing: border-box;
   width: 100%;
   margin: 5px 0 20px;
   width: 100%;
+
   .header-wrapper {
     display: flex;
     flex-direction: row;
@@ -69,6 +69,7 @@ const Wrapper = styled.div`
       font-size: 1.1rem;
     }
   }
+
   .body-wrapper {
     display: flex;
     flex-direction: column;

@@ -54,11 +54,11 @@ export default function NewsPage(props: pageProps) {
     <>
       <HeadMeta {...metaTagsProps} />
       <Wrapper>
-        <div className="articles-wrapper">
+        <ArticlesWrapper>
           <Suspense fallback={<></>}>
             <NewArticles />
           </Suspense>
-        </div>
+        </ArticlesWrapper>
         <SearchWrapper>
           <SearchBox page={page} fetchPreviews={fetchPreviews} />
         </SearchWrapper>
@@ -100,16 +100,6 @@ const Wrapper = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-  .articles-wrapper {
-    display: flex;
-    width: 70%;
-    min-width: 800px;
-    position: relative;
-    @media screen and (max-width: 768px) {
-      width: 90%;
-      min-width: 0px;
-    }
-  }
 
   .main-header-wrapper {
     -webkit-text-size-adjust: none;
@@ -167,6 +157,17 @@ const Wrapper = styled.div`
     font: inherit;
     vertical-align: baseline;
     position: relative;
+  }
+`;
+
+const ArticlesWrapper = styled.div`
+  display: flex;
+  width: 70%;
+  min-width: 800px;
+  position: relative;
+  @media screen and (max-width: 768px) {
+    width: 98%;
+    min-width: 0px;
   }
 `;
 
