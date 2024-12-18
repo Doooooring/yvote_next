@@ -40,12 +40,12 @@ export interface Timeline {
 }
 
 export interface Article {
-  writer: commentType;
+  id: number;
+  commentType: commentType;
   title: string;
-  content: string;
-  date: string;
-  newsTitle: string;
-  news_id: string;
+  comment: string;
+  date: Date;
+  newsId: number;
 }
 
 export interface News {

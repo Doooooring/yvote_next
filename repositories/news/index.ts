@@ -1,5 +1,5 @@
 import { HOST_URL } from '@url';
-import { News, Preview, commentType } from '@utils/interface/news';
+import { Article, News, Preview, commentType } from '@utils/interface/news';
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
 import axios from 'axios';
 
@@ -173,6 +173,23 @@ class NewsRepository {
         },
       };
     }
+  }
+
+  async getRecentUpdatedComments(offset: number, limit: number) {
+    const result = [] as Array<Article>;
+
+    for (let i = 0; i < limit; i++) {
+      result.push({
+        id: i,
+        commentType: commentType.와이보트,
+        title: `테스트 제목입니다. 테스트-${i}`,
+        comment: `테스트 내용입니다. 긴 텍스트가 들어갈 수 있습니다. 테스트-${i}`,
+        date: new Date(),
+        newsId: i,
+      });
+    }
+
+    return result;
   }
 
   /**

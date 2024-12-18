@@ -4,35 +4,28 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
-import { Article } from '@utils/interface/news';
+import { Article, commentType } from '@utils/interface/news';
 import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
 
+interface ArticlePartial extends Partial<Article> {
+  id: number;
+  commentType: commentType;
+}
+
 interface ArticleBoxProps {
-  writer: Article['writer'] | undefined;
-  title: Article['title'] | undefined;
-  content: Article['content'] | undefined;
-  date: Article['date'] | undefined;
-  newsTitle: Article['newsTitle'] | undefined;
-  news_id: Article['news_id'] | undefined;
+  article: ArticlePartial;
 }
 
 export default function ArticleBox({
-  writer,
-  title,
-  content,
-  date,
-  newsTitle,
-  news_id,
+  article: { id, title, comment, commentType: type, date = new Date() },
 }: ArticleBoxProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  let a: string;
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const formatDate = (dateString: string | undefined): string => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
+  const formatDate = (date: Date): string => {
     const month = date.getMonth() + 1; // getMonth() is zero-based
     const day = date.getDate();
     return `(${month}/${day})`;
@@ -43,9 +36,9 @@ export default function ArticleBox({
     <>
       <LinkWrapper onClick={openModal}>
         <div className="wrapper">
-          <div className="text-wrapper">
-            <p className="title-wrapper">- {title}</p>
-            <p className="writer-wrapper">{writer}</p>
+          <div className="text-wrapper text">
+            <p className="title-wrapper text">- {title ?? ''}</p>
+            <p className="writer-wrapper text">{type}</p>
           </div>
         </div>
       </LinkWrapper>
@@ -62,7 +55,7 @@ export default function ArticleBox({
           <div className="modal-header">
             <div className="image-wrapper">
               <div className="image-box">
-                <ImageFallback src={`/assets/img/${writer}.png`} alt={writer ?? ''} fill={true} />
+                <ImageFallback src={`/assets/img/${type}.png`} alt={type} fill={true} />
               </div>
             </div>
             <div className="head-title">
@@ -72,8 +65,8 @@ export default function ArticleBox({
           <div className="content-wrapper">
             <div className="modal-content">
               <div className="paragraph">
-                {content ? (
-                  content.split('$').map((comment, idx) => <p key={idx}>{comment}</p>)
+                {comment ? (
+                  comment.split('$').map((comment, idx) => <p key={idx}>{comment}</p>)
                 ) : (
                   <p>No content available</p>
                 )}
@@ -90,6 +83,18 @@ const LinkWrapper = styled.div`
   display: block;
   text-decoration: none;
   width: 100%;
+  cursor: pointer;
+
+  .text {
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    .text {
+      color: ${({ theme }) => theme.colors.primary} !important;
+    }
+  }
+
   .wrapper {
     display: flex;
     align-items: center;
