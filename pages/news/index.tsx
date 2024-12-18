@@ -1,6 +1,7 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import NewsList from '@components/news/newsLIst';
+import SuspenseNewsArticles from '@components/news/recentarticles';
 import NewArticles from '@components/news/recentarticles';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
@@ -9,22 +10,10 @@ import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { Preview, commentType } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { Suspense } from 'react';
 import styled from 'styled-components';
-
-type curPreviewsList = Preview[];
 
 interface pageProps {
   data: Array<Preview>;
-}
-
-interface Article {
-  writer: commentType;
-  title: string;
-  content: string;
-  date: string;
-  newsTitle: string;
-  news_id: string;
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
@@ -55,9 +44,7 @@ export default function NewsPage(props: pageProps) {
       <HeadMeta {...metaTagsProps} />
       <Wrapper>
         <ArticlesWrapper>
-          <Suspense fallback={<></>}>
-            <NewArticles />
-          </Suspense>
+          <SuspenseNewsArticles />
         </ArticlesWrapper>
         <SearchWrapper>
           <SearchBox page={page} fetchPreviews={fetchPreviews} />

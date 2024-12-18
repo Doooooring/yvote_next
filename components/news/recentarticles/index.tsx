@@ -4,10 +4,10 @@ import { useSlide } from '@utils/hook/useSlide';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 
-export default function NewArticles() {
+function NewArticles() {
   const numToShow = useRef(5);
   const recentArticles = useRecentArticles();
   const [curView, onSlideLeft, onSlideRight] = useSlide();
@@ -37,6 +37,14 @@ export default function NewArticles() {
         />
       </div>
     </Wrapper>
+  );
+}
+
+export default function SuspenseNewsArticles() {
+  return (
+    <Suspense fallback={<></>}>
+      <NewArticles />
+    </Suspense>
   );
 }
 
