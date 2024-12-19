@@ -312,7 +312,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         align-items: center;
         width: 100%;
         height: 100%;
-
         backdrop-filter: brightness(0.5);
         font-size: 24px !important;
         font-weight: 600;
@@ -323,6 +322,9 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         span {
           padding: 1rem;
           line-height: 1.2;
+          @media screen and (max-width: 760px) {
+            font-size: 20px;
+          }
         }
       }
       // overflow: hidden;
@@ -360,7 +362,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         padding-right: 2.5em;
         font-size: 16px;
         line-height: 2;
-        color: rgb(10, 10, 10);
+        color: rgb(30, 30, 30);
         font-weight: 400;
         word-break: break-all;
         @media screen and (max-width: 768px) {
@@ -373,7 +375,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             min-height: 10px;
             font-family: Noto Sans KR, Helvetica, sans-serif;
             @media screen and (max-width: 768px) {
-              font-size: 17px;
+              font-weight: 400;
             }
           }
         }
