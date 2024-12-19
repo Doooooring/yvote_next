@@ -6,12 +6,12 @@ import { fetchImg } from '@utils/tools/async';
 
 interface NewsBlockProps {
   previews: Array<Preview>;
-  onPreviewClick: (id: string) => void;
+  onPreviewClick: (id: number) => void;
 }
 
 const fetchNewsImages = async (previews: Array<Preview>) => {
-  const promises = previews.map(({ _id }) => {
-    const response = fetchImg(`${HOST_URL}/images/news/${_id}`);
+  const promises = previews.map(({ id }) => {
+    const response = fetchImg(`${HOST_URL}/images/news/${id}`);
     return response;
   });
   const response = await Promise.all(promises);
@@ -19,19 +19,17 @@ const fetchNewsImages = async (previews: Array<Preview>) => {
 };
 
 export default function NewsBlock({ previews, onPreviewClick }: NewsBlockProps) {
-  const read = useSuspense(previews[0]._id, async () => await fetchNewsImages(previews));
+  const read = useSuspense(
+    'previewImages' + String(previews[0].id),
+    async () => await fetchNewsImages(previews),
+  );
   const images = read();
 
   return (
     <>
       {previews.map((preview, idx) => {
         return (
-          <PreviewBox
-            key={preview._id}
-            preview={preview}
-            img={images[idx]}
-            click={onPreviewClick}
-          />
+          <PreviewBox key={preview.id} preview={preview} img={images[idx]} click={onPreviewClick} />
         );
       })}
     </>

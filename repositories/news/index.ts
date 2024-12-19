@@ -64,8 +64,8 @@ class NewsRepository {
    */
   async getPreviewsAdmin(
     curNum: number,
-    keyword: string | null = null,
     limit: number = 20,
+    keyword: string | null = null,
   ): Promise<Array<Preview>> {
     const response: Response<Array<Preview>> = await axios.get(
       `${HOST_URL}/news/preview?offset=${curNum}&limit=${limit}&keyword=${keyword}&isAdmin=${true}`,

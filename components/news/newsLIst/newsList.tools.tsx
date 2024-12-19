@@ -1,5 +1,4 @@
-import { useOnScreen } from '@utils/hook/useOnScreen';
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useUpdateNewsPreviews = (fetchNewsPreviews: () => Promise<void>) => {
   const [isRequesting, setIsRequesting] = useState<boolean>(false);

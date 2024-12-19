@@ -40,11 +40,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const key = context.params!.keyword as string;
   const pm1 = keywordRepository.getKeywordByKey(key);
-  const pm2 = newsRepository.getPreviews(0, key);
-  const resolves = await Promise.all([pm1, pm2]);
+
+  const resolves = await Promise.all([pm1]);
 
   const keyword = resolves[0];
-  const previews = resolves[1];
 
   const description = getTextContentFromHtmlText(keyword?.explain ?? '')?.split('.')[0] ?? '';
 

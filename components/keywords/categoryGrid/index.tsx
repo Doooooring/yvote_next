@@ -6,7 +6,7 @@ import { KeywordToView } from '@utils/interface/keywords';
 import Image from 'next/image';
 import { useRef } from 'react';
 import styled from 'styled-components';
-import { categoryImgUrl, categoryKoreanName } from './categoryGrid.tool';
+import { KeywordCategoryImgUrl, KeywordCategoryKoreanName } from './categoryGrid.tool';
 
 interface CategoryGridProps {
   category: KeywordToView['category'] | 'recent';
@@ -36,9 +36,9 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
     <Wrapper>
       <div className="header-wrapper">
         <div className="image-wrapper">
-          <Image src={categoryImgUrl(category)} alt="" fill />
+          <Image src={KeywordCategoryImgUrl(category)} alt="" fill />
         </div>
-        <h3 className="category-head">{categoryKoreanName(category)}</h3>
+        <h3 className="category-head">{KeywordCategoryKoreanName(category)}</h3>
       </div>
       <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
