@@ -211,7 +211,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   justify-content: center;
   padding: 0 10px;
   white-space: nowrap;
-  color: ${({ $state }) => ($state ? 'rgb(114, 190, 218)' : '#747272')};
+  color: ${({ $state }) => ($state ? 'rgb(114, 190, 218) !important' : '#747272')};
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
@@ -230,6 +230,11 @@ const HomeLink = styled(Link)<homeLinkProps>`
     padding: 0 5px;
     font-size: 13px;
     border-bottom: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: ${({ theme }) => theme.colors.gray400};
+    }
   }
 `;
 
