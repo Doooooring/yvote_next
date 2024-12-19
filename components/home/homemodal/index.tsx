@@ -1,10 +1,9 @@
-import React from 'react';
+import { Center } from '@components/common/commonStyles';
+import Modal from '@components/common/modal';
+import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
-import { StaticImageData } from 'next/image';
-import Modal from '@components/common/modal';
-import { Center } from '@components/common/commonStyles';
 
 interface ModalProps {
   show: boolean;
@@ -25,22 +24,16 @@ export default function HomeModal({ show, onClose, content }: ModalProps) {
   useEffect(() => {
     if (modalRef.current) {
       if (show) {
+        document.body.style.overflowY = 'auto';
         setTimeout(() => {
-          modalRef.current!.style.opacity = '1'; // fully opaque
-          modalRef.current!.style.filter = 'blur(0px)'; // no blur
+          modalRef.current!.style.opacity = '1';
+          modalRef.current!.style.filter = 'blur(0px)';
         }, 10);
       } else {
-        modalRef.current!.style.opacity = '0'; // fully transparent
-        modalRef.current!.style.filter = 'blur(10px)'; // return to initial blur
+        document.body.style.overflowY = 'unset';
+        modalRef.current!.style.opacity = '0';
+        modalRef.current!.style.filter = 'blur(10px)';
       }
-    }
-  }, [show]);
-
-  useEffect(() => {
-    if (show) {
-      document.body.style.overflowY = 'auto';
-    } else {
-      document.body.style.overflowY = 'unset';
     }
   }, [show]);
 
@@ -48,10 +41,18 @@ export default function HomeModal({ show, onClose, content }: ModalProps) {
 
   if (content.name === 'Contact') {
     return (
-      <Modal state={show}>
-        <Wrapper>
+      <Modal state={show} outClickAction={onClose}>
+        <Wrapper
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              onClose();
+            }
+          }}
+        >
           <ModalBox ref={modalRef}>
-            <ModalTitle>{content.title}</ModalTitle>
+            <Link href={content.linkUrl}>
+              <ModalTitle>{content.title}</ModalTitle>
+            </Link>
             <ContactForm>
               <InputsRow>
                 <FieldContainer>
@@ -75,11 +76,19 @@ export default function HomeModal({ show, onClose, content }: ModalProps) {
   }
 
   return (
-    <Modal state={show}>
-      <Wrapper>
+    <Modal state={show} outClickAction={onClose}>
+      <Wrapper
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      >
         <ModalBox ref={modalRef}>
           <CloseButton onClick={onClose}>&times;</CloseButton>
-          <ModalTitle>{content.title}</ModalTitle>
+          <Link href={content.linkUrl}>
+            <ModalTitle>{content.title}</ModalTitle>
+          </Link>
           {content.description?.split('\n').map((paragraph, index) => (
             <ModalParagraph key={index}>{paragraph}</ModalParagraph>
           ))}
@@ -90,7 +99,6 @@ export default function HomeModal({ show, onClose, content }: ModalProps) {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </ImageContainer>
-          <ModalLink href={content.linkUrl}>{content.linkText}</ModalLink>
         </ModalBox>
       </Wrapper>
     </Modal>
@@ -102,12 +110,14 @@ const Wrapper = styled(Center)`
   width: 100%;
   height: 100%;
   padding: 1rem;
+
+  * {
+    text-decoration: none !important;
+  }
 `;
 
 const ModalBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  height: 100%;
   -webkit-text-size-adjust: none;
   color: #ffffff;
   box-sizing: inherit;
@@ -126,6 +136,7 @@ const ModalBox = styled.div`
   filter: blur(100px);
   transition: opacity 500ms, filter 300ms;
   line-height: 1.5rem;
+  overflow-y: scroll;
 `;
 
 const CloseButton = styled.button`
@@ -137,18 +148,17 @@ const CloseButton = styled.button`
   padding: 0;
   border: 0;
   font: inherit;
-  vertical-align: baseline;
   display: block;
   position: absolute;
   top: 0;
   right: 0;
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   cursor: pointer;
   text-indent: 0;
   overflow: hidden;
   white-space: nowrap;
-  font-size: 2rem;
+  font-size: 1.5rem;
 `;
 
 const ModalTitle = styled.h2`
@@ -214,7 +224,7 @@ const ImageContainer = styled.div`
   border-radius: 4px;
   border: 0;
   position: relative;
-  display: flex; // Change block to flex
+  display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -222,11 +232,10 @@ const ImageContainer = styled.div`
   width: 100%;
 `;
 
-// Styles for the form and its elements
 const ContactForm = styled.form`
   display: flex;
   flex-direction: column;
-  width: 100%; // full width of the parent
+  width: 100%;
 `;
 
 const Label = styled.label`
