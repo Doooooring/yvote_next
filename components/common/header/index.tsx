@@ -42,7 +42,7 @@ export default function Header() {
 
         {/* Navigation Menu */}
         <NavAnimation isMenuOpen={isMenuOpen}>
-          <NavigationBox isMenuOpen={isMenuOpen}>
+          <NavigationBox>
             <NavBox
               link={'/news'}
               comment={'뉴스 모아보기'}
@@ -257,7 +257,7 @@ const NavAnimation = styled.div<{ isMenuOpen: boolean }>`
   }
 `;
 
-const NavigationBox = styled.div<{ isMenuOpen: boolean }>`
+const NavigationBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
