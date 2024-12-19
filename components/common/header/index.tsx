@@ -41,35 +41,37 @@ export default function Header() {
         </Hamburger>
 
         {/* Navigation Menu */}
-        <NavigationBox isMenuOpen={isMenuOpen}>
-          <NavBox
-            link={'/news'}
-            comment={'뉴스 모아보기'}
-            state={curRoute === 'news'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+        <NavAnimation isMenuOpen={isMenuOpen}>
+          <NavigationBox isMenuOpen={isMenuOpen}>
+            <NavBox
+              link={'/news'}
+              comment={'뉴스 모아보기'}
+              state={curRoute === 'news'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/keywords'}
-            comment={'키워드 모아보기'}
-            state={curRoute === 'keywords'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+            <NavBox
+              link={'/keywords'}
+              comment={'키워드 모아보기'}
+              state={curRoute === 'keywords'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/analyze'}
-            comment={'정치 성향 테스트'}
-            state={curRoute === 'analyze'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+            <NavBox
+              link={'/analyze'}
+              comment={'정치 성향 테스트'}
+              state={curRoute === 'analyze'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/about'}
-            comment={'ABOUT'}
-            state={curRoute === 'about'}
-            onNavigate={closeMenu} // Close menu on click
-          />
-        </NavigationBox>
+            <NavBox
+              link={'/about'}
+              comment={'ABOUT'}
+              state={curRoute === 'about'}
+              onNavigate={closeMenu} // Close menu on click
+            />
+          </NavigationBox>
+        </NavAnimation>
       </HeaderBody>
     </Wrapper>
   );
@@ -101,6 +103,10 @@ const Hamburger = styled.div<HamburgerProps>`
   justify-content: space-between;
   width: 20px;
   cursor: pointer;
+
+  @media screen and (max-width: 300px) {
+    margin: 0.5rem 0;
+  }
 
   div {
     width: 1px;
@@ -232,8 +238,23 @@ const ImageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+
   padding: 0;
   margin: 0;
+`;
+
+const NavAnimation = styled.div<{ isMenuOpen: boolean }>`
+  flex: 1 1 auto;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    max-height: ${({ isMenuOpen }) => (isMenuOpen ? '300px' : '0')};
+    transition: max-height 0.75s ease;
+    overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
 `;
 
 const NavigationBox = styled.div<{ isMenuOpen: boolean }>`
@@ -241,25 +262,18 @@ const NavigationBox = styled.div<{ isMenuOpen: boolean }>`
   justify-content: space-between;
   align-items: center;
   gap: 3%;
-  flex: 4;
-  margin: 0 10%;
   height: 100%;
   border: 0;
-  z-index: 9998;
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 30%;
+
+    width: 100%;
     background-color: white;
     padding: 1rem;
     margin: 0;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     gap: 1rem;
-    height: auto;
-    transform: ${({ isMenuOpen }) => (isMenuOpen ? 'translateX(0)' : 'translateX(100%)')};
-    transition: transform 0.3s ease-in-out;
+    // height: auto;
   }
 `;
