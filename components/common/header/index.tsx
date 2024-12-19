@@ -34,42 +34,44 @@ export default function Header() {
         </LogoImgBox>
 
         {/* Hamburger Button */}
-        <Hamburger onClick={toggleMenu}>
-          <span />
-          <span />
-          <span />
+        <Hamburger onClick={toggleMenu} $state={isMenuOpen}>
+          <div className="line1" />
+          <div className="line2" />
+          <div className="line3" />
         </Hamburger>
 
         {/* Navigation Menu */}
-        <NavigationBox isMenuOpen={isMenuOpen}>
-          <NavBox
-            link={'/news'}
-            comment={'뉴스 모아보기'}
-            state={curRoute === 'news'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+        <NavAnimation isMenuOpen={isMenuOpen}>
+          <NavigationBox>
+            <NavBox
+              link={'/news'}
+              comment={'뉴스 모아보기'}
+              state={curRoute === 'news'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/keywords'}
-            comment={'키워드 모아보기'}
-            state={curRoute === 'keywords'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+            <NavBox
+              link={'/keywords'}
+              comment={'키워드 모아보기'}
+              state={curRoute === 'keywords'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/analyze'}
-            comment={'정치 성향 테스트'}
-            state={curRoute === 'analyze'}
-            onNavigate={closeMenu} // Close menu on click
-          />
+            <NavBox
+              link={'/analyze'}
+              comment={'정치 성향 테스트'}
+              state={curRoute === 'analyze'}
+              onNavigate={closeMenu} // Close menu on click
+            />
 
-          <NavBox
-            link={'/about'}
-            comment={'ABOUT'}
-            state={curRoute === 'about'}
-            onNavigate={closeMenu} // Close menu on click
-          />
-        </NavigationBox>
+            <NavBox
+              link={'/about'}
+              comment={'ABOUT'}
+              state={curRoute === 'about'}
+              onNavigate={closeMenu} // Close menu on click
+            />
+          </NavigationBox>
+        </NavAnimation>
       </HeaderBody>
     </Wrapper>
   );
@@ -90,18 +92,49 @@ function NavBox({ link, comment, state, onNavigate }: NavBoxProps) {
   );
 }
 
-const Hamburger = styled.div`
+interface HamburgerProps {
+  $state: boolean;
+}
+
+const Hamburger = styled.div<HamburgerProps>`
   display: none;
   flex-direction: column;
+  gap: 5px;
   justify-content: space-between;
-  height: 20px;
+  width: 20px;
   cursor: pointer;
 
-  span {
-    width: 25px;
-    height: 3px;
-    background-color: black;
-    border-radius: 2px;
+  @media screen and (max-width: 300px) {
+    margin: 0.5rem 0;
+  }
+
+  div {
+    width: 1px;
+    height: 2px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  div::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0.5px;
+    width: 20px;
+    height: 1.5px;
+    background: black;
+  }
+
+  div.line1 {
+    transform: ${({ $state }) => ($state ? 'rotate(45deg)' : 'rotate(0)')};
+  }
+
+  div.line2 {
+    opacity: ${({ $state }) => ($state ? '0' : '1')};
+  }
+
+  div.line3 {
+    transform: ${({ $state }) => ($state ? 'rotate(-45deg)' : 'rotate(0)')};
   }
 
   @media screen and (max-width: 768px) {
@@ -114,13 +147,17 @@ const Wrapper = styled.header`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80px;
   box-shadow: 0px 0px 30px -25px;
   position: sticky;
   top: 0;
   z-index: 9999;
   background-color: white;
   border-bottom: 2px solid white;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+  }
+
   @media screen and (max-width: 300px) {
     justify-content: center;
   }
@@ -151,9 +188,12 @@ const LogoImgBox = styled.div`
   margin-left: 2%;
   height: 100%;
   border: 0;
+  padding: 1.25rem 0;
+
   @media screen and (max-width: 768px) {
     margin: 0;
     justify-content: center;
+    padding: 0.75rem 0;
   }
   @media screen and (max-width: 300px) {
     display: none;
@@ -176,7 +216,8 @@ const HomeLink = styled(Link)<homeLinkProps>`
   font: inherit;
   font-size: 1rem;
   font-weight: 400;
-  border-bottom: ${({ $state }) => ($state ? '3px solid rgb(114, 190, 218)' : '3px solid white')};
+  // border-bottom: ${({ $state }) =>
+    $state ? '3px solid rgb(114, 190, 218)' : '3px solid white'};
   height: 100%;
   // .image-l {
   //   @media screen and (max-width: 768px) {
@@ -197,32 +238,42 @@ const ImageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+
   padding: 0;
   margin: 0;
 `;
 
-const NavigationBox = styled.div<{ isMenuOpen: boolean }>`
+const NavAnimation = styled.div<{ isMenuOpen: boolean }>`
+  flex: 1 1 auto;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    max-height: ${({ isMenuOpen }) => (isMenuOpen ? '300px' : '0')};
+    transition: max-height 0.75s ease;
+    overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+`;
+
+const NavigationBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 3%;
-  flex: 4;
-  margin: 0 10%;
   height: 100%;
   border: 0;
+
   @media screen and (max-width: 768px) {
     flex-direction: column;
-    position: absolute;
-    top: 80px; // Match header height
-    right: 0;
-    width: 30%;
+
+    width: 100%;
     background-color: white;
     padding: 1rem;
     margin: 0;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     gap: 1rem;
-    height: auto;
-    transform: ${({ isMenuOpen }) => (isMenuOpen ? 'translateY(0)' : 'translateY(-200%)')};
-    transition: transform 0.3s ease-in-out;
+    // height: auto;
   }
 `;
