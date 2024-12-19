@@ -258,6 +258,7 @@ const NavAnimation = styled.div<{ isMenuOpen: boolean }>`
 `;
 
 const NavigationBox = styled.div`
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
