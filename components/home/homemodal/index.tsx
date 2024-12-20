@@ -112,15 +112,15 @@ const Wrapper = styled(Center)`
   padding: 1rem;
 
   * {
+    box-sizing: content-box;
     text-decoration: none !important;
   }
 `;
 
 const ModalBox = styled.div`
-  height: 100%;
+  max-height: 85%;
   -webkit-text-size-adjust: none;
   color: #ffffff;
-  box-sizing: inherit;
   margin-top: 0;
   border: 0;
   max-width: 600px;
@@ -137,6 +137,10 @@ const ModalBox = styled.div`
   transition: opacity 500ms, filter 300ms;
   line-height: 1.5rem;
   overflow-y: scroll;
+
+  @media screen and (max-width: 768px) {
+    padding: 1rem 1rem 0.5rem 1rem;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -258,14 +262,14 @@ const Label = styled.label`
 const InputsRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.2rem;
+  gap: 10px;
+  margin-bottom: 10px;
 `;
 
 const FieldContainer = styled.div`
-  flex: 1;
+  width: 100%;
   display: flex;
-  flex-direction: column; // Stack the label and input vertically
-  margin-right: 2rem; // Space between the field containers
+  flex-direction: column;
   &:last-child {
     margin-right: 0;
   }
@@ -277,13 +281,11 @@ const Input = styled.input`
   font-size: 0.8rem;
   background: transparent;
   color: #ffffff;
-  border: 1px solid #ffffff; // Border and border-radius applied here
+  border: 1px solid #ffffff;
   border-radius: 4px;
-  width: 100%; // Input takes the full width of the FieldContainer
 `;
 
 const TextArea = styled.textarea`
-  width: 100%;
   font: inherit;
   font-size: 0.8rem;
   padding: 0.5rem;
@@ -291,7 +293,7 @@ const TextArea = styled.textarea`
   border: 1px solid #ffffff;
   background: transparent;
   color: #ffffff;
-  border-radius: 4px; // round borders
+  border-radius: 4px;
   resize: none;
   ::-webkit-scrollbar {
     display: none;
