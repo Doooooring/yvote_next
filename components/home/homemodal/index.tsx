@@ -139,7 +139,9 @@ const ModalBox = styled.div`
   overflow-y: scroll;
 
   @media screen and (max-width: 768px) {
+    max-height: 80%;
     padding: 1rem 1rem 0.5rem 1rem;
+    transform: translateY(-10%);
   }
 `;
 
@@ -167,7 +169,6 @@ const CloseButton = styled.button`
 
 const ModalTitle = styled.h2`
   -webkit-text-size-adjust: none;
-  box-sizing: inherit;
   padding: 0;
   border: 0;
   font: inherit;
@@ -188,7 +189,6 @@ const ModalTitle = styled.h2`
 const ModalParagraph = styled.p`
   -webkit-text-size-adjust: none;
   color: #ffffff;
-  box-sizing: inherit;
   padding: 0;
   border: 0;
   font: inherit;
@@ -201,7 +201,6 @@ const ModalParagraph = styled.p`
 
 const ModalLink = styled.a`
   -webkit-text-size-adjust: none;
-  box-sizing: inherit;
   margin: 0;
   padding: 0;
   border: 0;
@@ -221,7 +220,6 @@ const ModalLink = styled.a`
 const ImageContainer = styled.div`
   -webkit-text-size-adjust: none;
   color: #ffffff;
-  box-sizing: inherit;
   padding: 0;
   font: inherit;
   vertical-align: baseline;
@@ -244,11 +242,9 @@ const ContactForm = styled.form`
 
 const Label = styled.label`
   -webkit-text-size-adjust: none;
-  box-sizing: inherit;
   padding: 0;
   border: 0;
   font: inherit;
-  vertical-align: baseline;
   color: #ffffff;
   display: block;
   font-size: 12px;
@@ -268,6 +264,7 @@ const InputsRow = styled.div`
 
 const FieldContainer = styled.div`
   width: 100%;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   &:last-child {
@@ -276,6 +273,7 @@ const FieldContainer = styled.div`
 `;
 
 const Input = styled.input`
+  width: 120px;
   padding: 0.5rem;
   font: inherit;
   font-size: 0.8rem;
