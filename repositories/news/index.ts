@@ -85,7 +85,7 @@ class NewsRepository {
     const response: Response<Array<Article>> = await axios.get(
       `${HOST_URL}/news/comment-updated?offset=${offset}&limit=${limit}`,
     );
-    const data = response.data;
+    const data = response.data.result;
     return data;
   }
 

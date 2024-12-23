@@ -4,9 +4,15 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
-import { Article } from '@utils/interface/news';
+import { Article, commentType } from '@utils/interface/news';
 import Modal from '@components/common/modal';
 import closeButton from '@images/close_icon.png';
+import { CommonLayoutBox } from '@components/common/commonStyles';
+
+interface ArticlePartial extends Partial<Article> {
+  id: number;
+  commentType: commentType;
+}
 
 interface ArticleBoxProps {
   article: Article;
@@ -26,11 +32,13 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
 
   const formatDate = (date: Date): string => {
     const month = date.getMonth() + 1;
+
     const day = date.getDate();
     return `(${month}/${day})`;
   };
 
   const formattedTitle = `${title} ${formatDate(date)}`;
+
   return (
     <>
       <LinkWrapper onClick={openModal}>
@@ -84,6 +92,18 @@ const LinkWrapper = styled.div`
   display: block;
   text-decoration: none;
   width: 100%;
+  cursor: pointer;
+
+  .text {
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    .text {
+      color: ${({ theme }) => theme.colors.primary} !important;
+    }
+  }
+
   .wrapper {
     display: flex;
     align-items: center;
