@@ -46,7 +46,7 @@ class NewsRepository {
     keyword: string | null = null,
   ): Promise<Array<Preview>> {
     const response: Response<Array<Preview>> = await axios.get(
-      `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
+      `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${''}`,
     );
     const data = response.data;
     return data.result.map((news) => {
