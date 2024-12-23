@@ -9,11 +9,12 @@ import icoNew from '@images/ico_new_2x.png';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
 import { NewsInView } from '@utils/interface/news';
+import { getDotDateForm } from '@utils/tools';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
 import { typeColor } from '../commentModal/commentModal.resource';
-import { useRouteToKeyword } from './newsContents.hook';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
@@ -25,6 +26,8 @@ interface NewsContentProps {
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
+  console.log('===========================');
+  console.log(newsContent);
   const {
     id,
     title,
@@ -38,12 +41,10 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     opinionRight,
     votes,
   } = newsContent;
-
+  const navigate = useRouter();
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
-
-  const routeToKeywordPage = useRouteToKeyword();
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -97,7 +98,9 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     <p
                       className="keyword"
                       key={keyword}
-                      onClick={() => routeToKeywordPage(keyword)}
+                      onClick={() => {
+                        navigate.push(`/keywords/${keyword}`);
+                      }}
                     >
                       {`# ${keyword}`}
                     </p>
@@ -152,7 +155,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               return (
                 <div className="timeline">
                   <div className="timeline_sentence">
-                    <p className="timeline_date">{timeline.date}</p>
+                    <p className="timeline_date">{getDotDateForm(timeline.date)}</p>
                     <div className="timeline_body">
                       {timeline.title.split('$').map((title, idx) => {
                         return <p key={idx}>{title}</p>;

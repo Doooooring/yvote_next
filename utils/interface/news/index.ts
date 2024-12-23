@@ -38,7 +38,7 @@ export enum CommentQualification {
 
 export interface Timeline {
   id: number;
-  date: string;
+  date: Date;
   title: string;
 }
 
@@ -49,6 +49,15 @@ export interface Article {
   comment: string;
   date: Date;
   newsId: number;
+}
+
+export interface Comment {
+  id: number;
+  order: number;
+  commentType: commentType;
+  title: string;
+  comment: string;
+  date: Date;
 }
 
 export interface News {

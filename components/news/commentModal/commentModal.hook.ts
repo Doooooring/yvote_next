@@ -16,11 +16,13 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   async function fetchNewsComment(page: number) {
     try {
       setIsRequesting(true);
+      console.log('is start comment');
       const response = await NewsRepository.getNewsComment(id, comment!, page);
-      if (response.comments === null || response.comments.length == 0) {
+      console.log(response);
+      if (!response || response.length == 0) {
         return false;
       } else {
-        setCurComments(response.comments);
+        setCurComments(response);
         return true;
       }
     } catch (e) {

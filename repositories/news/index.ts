@@ -1,5 +1,5 @@
 import { HOST_URL } from '@url';
-import { Article, News, NewsInView, Preview, commentType } from '@utils/interface/news';
+import { Article, Comment, News, NewsInView, Preview, commentType } from '@utils/interface/news';
 
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
 import axios from 'axios';
@@ -11,13 +11,6 @@ interface Response<T> {
     success: boolean;
     result: T;
   };
-}
-
-interface NewsCommentResponse {
-  comments: Array<{
-    title: string;
-    comment: string;
-  }>;
 }
 
 interface VoteResponse {
@@ -110,21 +103,15 @@ class NewsRepository {
    * @param type 평론 타입
    * @param page 불러온 평론 페이지 (현재 보여진 평론 개수)
    */
-  async getNewsComment(
-    id: News['id'],
-    type: commentType,
-    page: number,
-    limit: number = 20,
-  ): Promise<NewsCommentResponse> {
-    const response: Response<NewsCommentResponse> = await axios.get(
+  async getNewsComment(id: News['id'], type: commentType, page: number, limit: number = 20) {
+    const response: Response<Comment[]> = await axios.get(
       `${HOST_URL}/news/${id}/comment?type=${type}&offset=${page}&limit=${limit}`,
     );
+    console.log(response.data);
     if (response.data.success) {
       return response.data.result;
     } else {
-      return {
-        comments: [],
-      };
+      return [] as Comment[];
     }
   }
 

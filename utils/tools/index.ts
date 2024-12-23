@@ -57,6 +57,15 @@ export const RGBA = (hex: string, opacity: number) => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
+export const getDotDateForm = (date: Date) => {
+  if (typeof date === 'string') date = new Date(date);
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+};
+
+export const getStandardDateForm = (date: Date) => {
+  return date.toISOString().split('T')[0];
+};
+
 export const getTextContentFromHtmlText = (html: string) => {
   if (typeof window !== 'undefined') {
     const parser = new DOMParser();
