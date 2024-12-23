@@ -5,6 +5,7 @@ import { category } from '@utils/interface/keywords';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { Suspense } from 'react';
 import styled from 'styled-components';
 
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
@@ -46,7 +47,9 @@ export default function ExplanationComp({
       <div className="body-wrapper">
         <div className="explanation-list">
           <div className="keyword-img">
-            <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
+            <Suspense fallback={<></>}>
+              <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
+            </Suspense>
           </div>
           <div className="explanation" dangerouslySetInnerHTML={{ __html: explain }} />
         </div>

@@ -1,8 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 import PreviewBoxLayout from '../previewBox/previewBox.style';
 import { Backdrop, FallbackBox, Row, backgroundSlide } from '@components/common/commonStyles';
+import { memo } from 'react';
 
-export default function PreviewBoxFallback() {
+function PreviewBoxFallback() {
   return (
     <Wrapper>
       <PreviewBoxLayout
@@ -24,6 +25,8 @@ export default function PreviewBoxFallback() {
     </Wrapper>
   );
 }
+
+export default memo(PreviewBoxFallback);
 
 const Wrapper = styled.div`
   width: 100%;
