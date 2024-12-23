@@ -1,8 +1,8 @@
 import { HOST_URL } from '@public/assets/url';
 import { useSuspense } from '@utils/hook/useSuspense';
 import { Preview } from '@utils/interface/news';
-import PreviewBox from '../previewBox';
 import { fetchImg } from '@utils/tools/async';
+import PreviewBox from '../previewBox';
 
 interface NewsBlockProps {
   previews: Array<Preview>;
@@ -18,8 +18,14 @@ const fetchNewsImages = async (previews: Array<Preview>) => {
   return response;
 };
 
+const getImagesIds = (previews: Array<Preview>) => {
+  return previews.reduce((acc, cur) => {
+    return acc + cur._id;
+  }, '');
+};
+
 export default function NewsBlock({ previews, onPreviewClick }: NewsBlockProps) {
-  const read = useSuspense(previews[0]._id, async () => await fetchNewsImages(previews));
+  const read = useSuspense(getImagesIds(previews), async () => await fetchNewsImages(previews));
   const images = read();
 
   return (
