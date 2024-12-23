@@ -22,7 +22,7 @@ export interface getKeywordDetailResponse {
 class KeywordsRepository {
   async getKeywordsKeyList(offset: number = 0, limit: number = INF) {
     const response: Response<Array<{ id: number; keyword: string }>> = await axios.get(
-      `${HOST_URL}/keywords/key-list`,
+      `${HOST_URL}/keyword/key-list`,
     );
     return response.data.result;
   }
@@ -32,7 +32,7 @@ class KeywordsRepository {
     limit: number,
     option: { search?: string; category?: KeywordCategory; isRecent?: boolean } = {},
   ) {
-    const response: Response<KeywordToView[]> = await axios.get(`${HOST_URL}/keywords`, {
+    const response: Response<KeywordToView[]> = await axios.get(`${HOST_URL}/keyword`, {
       params: { ...option, offset, limit },
     });
     return response.data.result;

@@ -30,7 +30,8 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const formatDate = (date: Date): string => {
+  const formatDate = (d: Date): string => {
+    const date = new Date(d);
     const month = date.getMonth() + 1;
 
     const day = date.getDate();
