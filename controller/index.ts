@@ -17,6 +17,6 @@ export const getKeywordsGroupByCategoryAndRecent = async (batchSize: number) => 
     };
   })();
 
-  const response = await Promise.all([...promises, recentPromise]);
+  const response = await Promise.all([recentPromise, ...promises]);
   return response;
 };

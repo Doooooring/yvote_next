@@ -39,6 +39,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const key = context.params!.keyword as string;
+  if (!key) throw Error();
   const pm1 = keywordRepository.getKeywordByKey(key);
 
   const resolves = await Promise.all([pm1]);

@@ -107,7 +107,6 @@ class NewsRepository {
     const response: Response<Comment[]> = await axios.get(
       `${HOST_URL}/news/${id}/comment?type=${type}&offset=${page}&limit=${limit}`,
     );
-    console.log(response.data);
     if (response.data.success) {
       return response.data.result;
     } else {

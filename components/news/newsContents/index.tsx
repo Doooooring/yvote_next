@@ -26,8 +26,6 @@ interface NewsContentProps {
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
 export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
-  console.log('===========================');
-  console.log(newsContent);
   const {
     id,
     title,

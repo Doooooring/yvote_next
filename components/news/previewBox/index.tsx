@@ -25,14 +25,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         onClick={() => {
           click(id);
         }}
-        imgView={
-          <ImageFallback
-            src={img ?? `${HOST_URL}/images/news/${id}`}
-            alt={title}
-            fill={true}
-            suspense={true}
-          />
-        }
+        imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
           <>
             <Title className="title">{title}</Title>

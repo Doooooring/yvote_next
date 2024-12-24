@@ -4,15 +4,15 @@ import { Keyword } from '@utils/interface/keywords';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword'> {}
+interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword' | 'keywordImage'> {}
 
-export default function KeywordBox({ id, keyword }: KeywordBoxProps) {
+export default function KeywordBox({ id, keyword, keywordImage }: KeywordBoxProps) {
   return (
-    <LinkWrapper href={`/keywords/${id}`}>
+    <LinkWrapper href={`/keywords/${keyword}`}>
       <div className="wrapper">
         <div className="image-wrapper">
           <ImageFallback
-            src={`${HOST_URL}/images/keyword/${id}`}
+            src={keywordImage ?? ''}
             alt={keyword ?? ''}
             width="100"
             height="100"

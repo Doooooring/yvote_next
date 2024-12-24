@@ -16,9 +16,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   async function fetchNewsComment(page: number) {
     try {
       setIsRequesting(true);
-      console.log('is start comment');
       const response = await NewsRepository.getNewsComment(id, comment!, page);
-      console.log(response);
       if (!response || response.length == 0) {
         return false;
       } else {

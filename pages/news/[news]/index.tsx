@@ -22,6 +22,7 @@ interface pageProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const newsIdArr = await NewsRepository.getNewsIds();
+  console.log('id arr : ', newsIdArr);
   const paths = newsIdArr.map((item) => {
     return {
       params: { news: String(item['id']) },
@@ -35,6 +36,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news;
+  console.log('id : ', id);
+  if (!id) throw Error('static props null');
   const news = await NewsRepository.getNewsContent(Number(id), null);
   const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';
 

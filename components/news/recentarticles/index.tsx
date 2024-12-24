@@ -18,7 +18,8 @@ function NewArticles() {
     <Wrapper>
       <div className="header-wrapper">
         <div className="category-head">
-          지난 뉴스 업데이트 ({numToShow.current * (curView + 1)} / {recentArticles.length})
+          지난 뉴스 업데이트 ({Math.min(numToShow.current * (curView + 1), recentArticles.length)} /{' '}
+          {recentArticles.length})
         </div>
       </div>
       <div className="body-wrapper">

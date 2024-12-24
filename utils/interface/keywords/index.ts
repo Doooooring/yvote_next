@@ -1,11 +1,11 @@
 export enum KeywordCategory {
-  Human = 'human',
-  Politics = 'politics',
-  Policy = 'policy',
-  Economics = 'economics',
-  Social = 'social',
-  Organization = 'organization',
-  Etc = 'etc',
+  human = 'human',
+  politics = 'politics',
+  policy = 'policy',
+  economics = 'economics',
+  social = 'social',
+  organization = 'organization',
+  etc = 'etc',
 }
 
 export interface Keyword {

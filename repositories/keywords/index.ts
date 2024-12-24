@@ -32,7 +32,7 @@ class KeywordsRepository {
     limit: number,
     option: { search?: string; category?: KeywordCategory; isRecent?: boolean } = {},
   ) {
-    const response: Response<KeywordToView[]> = await axios.get(`${HOST_URL}/keyword`, {
+    const response: Response<KeywordToView[]> = await axios.get(`${HOST_URL}/keyword/keywords`, {
       params: { ...option, offset, limit },
     });
     return response.data.result;
