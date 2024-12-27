@@ -90,6 +90,7 @@ export default function KeyExplanation({ data }: pageProps) {
           <ExplanationComp
             id={keyword.id!}
             category={keyword.category!}
+            keywordImage={keyword.keywordImage ?? ''}
             keyword={keyword?.keyword!}
             explain={keyword?.explain!}
           />

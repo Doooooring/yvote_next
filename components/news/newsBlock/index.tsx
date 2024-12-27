@@ -10,8 +10,8 @@ interface NewsBlockProps {
 }
 
 const fetchNewsImages = async (previews: Array<Preview>) => {
-  const promises = previews.map(({ id }) => {
-    const response = fetchImg(`${HOST_URL}/images/news/${id}`);
+  const promises = previews.map(({ newsImage }) => {
+    const response = fetchImg(newsImage);
     return response;
   });
   const response = await Promise.all(promises);

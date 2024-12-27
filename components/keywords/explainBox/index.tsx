@@ -13,9 +13,11 @@ export default function ExplanationComp({
   id,
   explain,
   category,
+  keywordImage,
   keyword,
 }: {
   id: number;
+  keywordImage: string;
   category: KeywordCategory;
   explain: string;
   keyword: string;
@@ -43,7 +45,7 @@ export default function ExplanationComp({
       <div className="body-wrapper">
         <div className="explanation-list">
           <div className="keyword-img">
-            <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
+            <SuspenseImage src={keywordImage} alt={keyword} fill />
           </div>
           <div className="explanation" dangerouslySetInnerHTML={{ __html: explain }} />
         </div>
