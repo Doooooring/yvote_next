@@ -4,6 +4,7 @@ import { MutableRefObject, useRef, useState } from 'react';
 
 export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
   let page = useRef(0);
+  let limit = useRef(defaultLimit);
   let prevFilter: MutableRefObject<string | null | undefined> = useRef(null);
 
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -12,21 +13,29 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
   const fetchPreviews = async (option?: { filter?: string | null; limit?: number }) => {
     let arr: Preview[] = [];
-    const { filter = null, limit = defaultLimit } = option ?? {};
+    const { filter = null, limit: l = defaultLimit } = option ?? {};
+    console.log('filter : ', filter);
+    console.log('====================');
+
     prevFilter.current = filter;
     page.current = 0;
+    limit.current = l;
 
     try {
       setIsRequesting(true);
       const datas: Array<Preview> = isAdmin
-        ? await NewsRepository.getPreviewsAdmin(page.current, limit, prevFilter.current ?? '')
-        : await NewsRepository.getPreviews(page.current, limit, prevFilter.current);
+        ? await NewsRepository.getPreviewsAdmin(
+            page.current,
+            limit.current,
+            prevFilter.current ?? '',
+          )
+        : await NewsRepository.getPreviews(page.current, limit.current, prevFilter.current);
       if (datas.length === 0) {
         page.current = -1;
         return;
       }
 
-      page.current += limit;
+      page.current += limit.current;
       setPreviews([...arr, ...datas]);
     } catch (e) {
       setIsError(true);
@@ -42,7 +51,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
       setIsRequesting(true);
       const datas: Array<Preview> = await NewsRepository.getPreviews(
         page.current,
-        defaultLimit,
+        limit.current,
         prevFilter.current,
       );
 
@@ -51,7 +60,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         return false;
       }
 
-      page.current += defaultLimit;
+      page.current += limit.current;
       setPreviews([...arr, ...datas]);
       return true;
     } catch (e) {

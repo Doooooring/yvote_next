@@ -41,8 +41,6 @@ export const useSuspense = <t extends {}>(key: string, fetch: () => Promise<t>) 
     const data = promiseCache.getData(key) as { status: Status; data: Promise<t> | t };
     switch (data.status) {
       case Status.success:
-        console.log('======');
-        console.log(data.data);
         return data.data as t;
       default:
         throw data.data as Promise<t>;

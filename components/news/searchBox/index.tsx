@@ -46,7 +46,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
         setSearchWord(relatedWords[curFocusOnWord]);
       }
       // 새로운 검색어로 조회하기에 기존 페이지 초기화
-      fetchPreviews({ filter: searchWord === '' ? null : searchWord, limit: 20 });
+      fetchPreviews({ filter: searchWord === '' ? null : searchWord, limit: 16 });
     },
     [],
   );
