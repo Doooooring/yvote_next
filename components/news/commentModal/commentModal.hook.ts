@@ -1,16 +1,11 @@
 import NewsRepository from '@repositories/news';
-import { commentType } from '@utils/interface/news';
+import { Comment, commentType } from '@utils/interface/news';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
-  const [curComments, setCurComments] = useState<
-    Array<{
-      title: string;
-      comment: string;
-    }>
-  >([]);
+  const [curComments, setCurComments] = useState<Array<Comment>>([]);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
   async function fetchNewsComment(page: number) {
@@ -62,10 +57,10 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
 };
 
 export const useCurComment = () => {
-  const [curComment, setCurComment] = useState<{ title: string; comment: string } | null>(null);
+  const [curComment, setCurComment] = useState<Comment | null>(null);
 
   const showCurComment = useCallback(
-    (comment: { title: string; comment: string }) => {
+    (comment: Comment) => {
       setCurComment(comment);
     },
     [setCurComment],

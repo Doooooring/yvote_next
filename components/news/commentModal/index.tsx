@@ -1,7 +1,6 @@
 import ImageFallback from '@components/common/imageFallback';
 import LoadingCommon from '@components/common/loading';
 import Modal from '@components/common/modal';
-import closeButton from '@images/close_icon.png';
 import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
 import indexStore from '@store/indexStore';
@@ -9,6 +8,7 @@ import indexStore from '@store/indexStore';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
+import { getDotDateForm } from '@utils/tools';
 import { observer } from 'mobx-react';
 import Image from 'next/image';
 import { useCallback } from 'react';
@@ -124,6 +124,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
             <ModalBody>
               <div className="content-wrapper">
                 <p className="content-title">{curComment.title}</p>
+                <p className="content-title">
+                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
+                </p>
                 <div className="content-body">
                   {curComment.comment.split('$').map((comment, idx) => {
                     return (
