@@ -17,6 +17,6 @@ export const KeywordCategoryKoreanName = (c: 'recent' | KeywordCategory) => {
     case 'organization':
       return '기관 / 단체';
     default:
-      return '...';
+      return '';
   }
 };

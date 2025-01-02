@@ -8,7 +8,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // limit of 50 domains values
     domains: [
-      'https://yvote-file.s3.ap-northeast-2.amazonaws.com/',
+      'yvote-file.s3.ap-northeast-2.amazonaws.com',
       's3.ap-northeast-2.amazonaws.com',
       'localhost',
       '3.26.45.94',

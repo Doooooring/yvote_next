@@ -31,7 +31,7 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
       console.log(e);
     }
   };
-
+  if (KeywordCategoryKoreanName(category) == '') return <></>;
   return (
     <Wrapper>
       <div className="header-wrapper">
