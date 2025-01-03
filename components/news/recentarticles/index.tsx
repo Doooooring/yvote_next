@@ -1,12 +1,11 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
+import { CommonLayoutBox } from '@components/common/commonStyles';
+import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
+import { Suspense, useRef } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
-import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
-import { Suspense, useRef } from 'react';
-import { CommonLayoutBox } from '@components/common/commonStyles';
-import { Article } from '@utils/interface/news';
 
 function NewArticles() {
   const numToShow = useRef(5);
@@ -36,7 +35,9 @@ function NewArticles() {
         <RightButton
           curView={curView}
           viewToRight={onSlideRight}
-          lastPage={Math.ceil(recentArticles.length / numToShow.current) - 1}
+          lastPage={
+            recentArticles.length > 0 ? Math.ceil(recentArticles.length / numToShow.current) - 1 : 0
+          }
         />
       </div>
     </Wrapper>
