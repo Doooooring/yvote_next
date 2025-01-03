@@ -33,9 +33,9 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
   const formatDate = (d: Date): string => {
     const date = new Date(d);
     const month = date.getMonth() + 1;
-
+    const year = date.getFullYear();
     const day = date.getDate();
-    return `(${month}/${day})`;
+    return `(${year} / ${month} / ${day})`;
   };
 
   const formattedTitle = `${title} ${formatDate(date)}`;
