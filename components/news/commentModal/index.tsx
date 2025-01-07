@@ -8,7 +8,6 @@ import indexStore from '@store/indexStore';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { getDotDateForm } from '@utils/tools';
 import { observer } from 'mobx-react';
 import Image from 'next/image';
 import { useCallback } from 'react';
@@ -124,9 +123,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
             <ModalBody>
               <div className="content-wrapper">
                 <p className="content-title">{curComment.title}</p>
-                <p className="content-title">
+                {/* <p className="content-title">
                   {curComment?.date ? getDotDateForm(curComment.date) : ''}
-                </p>
+                </p> */}
                 <div className="content-body">
                   {curComment.comment.split('$').map((comment, idx) => {
                     return (
