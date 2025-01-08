@@ -153,7 +153,9 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               return (
                 <div className="timeline">
                   <div className="timeline_sentence">
-                    <p className="timeline_date">{getDotDateForm(timeline.date)}</p>
+                    <p className="timeline_date">
+                      {timeline.date ? getDotDateForm(timeline.date) : ''}
+                    </p>
                     <div className="timeline_body">
                       {timeline.title.split('$').map((title, idx) => {
                         return <p key={idx}>{title}</p>;

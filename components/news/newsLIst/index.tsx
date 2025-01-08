@@ -1,17 +1,16 @@
+import { Center, CommonLayoutBox } from '@components/common/commonStyles';
+import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
+import useLazyLoad from '@utils/hook/useLazyLoad';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
 import { arrBatch } from '@utils/tools';
-import { Suspense, useCallback, useEffect, useRef } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import NewsListFallback from '../newsListFallback';
-import PreviewBox from '../previewBox';
-import { Center, CommonLayoutBox } from '@components/common/commonStyles';
 import NewsBlock from '../newsBlock';
-import IsShow from '@components/common/isShow';
-import useLazyLoad from '@utils/hook/useLazyLoad';
+import NewsListFallback from '../newsListFallback';
 import { useNewsInfiniteScroll } from './newsList.tools';
 
 interface NewsListProps {

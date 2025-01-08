@@ -1,4 +1,5 @@
-import Modal from '@components/home/homemodal';
+import HeadMeta from '@components/common/HeadMeta';
+import HomeModal from '@components/home/homemodal';
 import valuesImage from '@images/eder.png';
 import keywordImage from '@images/keyword.png';
 import logoImage from '@images/logo_image.png';
@@ -7,7 +8,6 @@ import backgroundImage from '@images/voting.png';
 import { StaticImageData } from 'next/image';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import HeadMeta from '@components/common/HeadMeta';
 
 interface Item {
   name: string;
@@ -71,10 +71,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Simulate image loading delay
     const timer = setTimeout(() => {
       setLoaded(true);
-    }, 100); // Adjust the delay as needed
+    }, 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -107,7 +106,7 @@ export default function Home() {
           </List>
         </ListContainer>
       </Content>
-      <Modal show={showModal} onClose={closeModal} content={modalContent} />
+      <HomeModal show={showModal} onClose={closeModal} content={modalContent} />
       <BackgroundImage loaded={loaded} src={backgroundImage.src} />
     </Wrapper>
   );
