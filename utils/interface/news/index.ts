@@ -57,6 +57,7 @@ export interface Comment {
   commentType: commentType;
   title: string;
   comment: string;
+  url?: string;
   date: Date;
 }
 

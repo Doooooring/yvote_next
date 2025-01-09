@@ -18,12 +18,6 @@ const fetchNewsImages = async (previews: Array<Preview>) => {
   return response;
 };
 
-const getImagesIds = (previews: Array<Preview>) => {
-  return previews.reduce((acc, cur) => {
-    return acc + cur._id;
-  }, '');
-};
-
 export default function NewsBlock({ previews, onPreviewClick }: NewsBlockProps) {
   const read = useSuspense(
     'previewImages' + String(previews[0].id),
