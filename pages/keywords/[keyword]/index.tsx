@@ -45,6 +45,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const resolves = await Promise.all([pm1]);
 
   const keyword = resolves[0];
+  console.log('keyword : ', keyword);
 
   const description = getTextContentFromHtmlText(keyword?.explain ?? '')?.split('.')[0] ?? '';
 
@@ -75,7 +76,6 @@ export default function KeyExplanation({ data }: pageProps) {
     description: keyword.explain || '',
     image: keyword.keywordImage,
     url: `https://yvoting.com/keywords/${keyword.id}`,
-
     type: 'article',
   };
 
