@@ -29,10 +29,9 @@ interface pageProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords = await keywordRepository.getKeywordsKeyList();
-  const paths = keywords.map(({ keyword }) => {
-    console.log('path : ', keyword);
+  const paths = keywords.map(({ id }) => {
     return {
-      params: { keyword },
+      params: { id: String(id) },
     };
   });
   return { paths, fallback: 'blocking' };
@@ -41,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const key = context.params!.keyword as string;
   if (!key) throw Error('KEYWORD NOT EXIST');
-  const pm1 = keywordRepository.getKeywordByKey(key);
+  const pm1 = keywordRepository.getKeywordById(Number(key));
 
   const resolves = await Promise.all([pm1]);
 

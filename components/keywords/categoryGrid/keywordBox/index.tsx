@@ -8,7 +8,7 @@ interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword' | 'keywordImage
 
 export default function KeywordBox({ id, keyword, keywordImage }: KeywordBoxProps) {
   return (
-    <LinkWrapper href={`/keywords/${keyword}`}>
+    <LinkWrapper href={`/keywords/${String(id)}`}>
       <div className="wrapper">
         <div className="image-wrapper">
           <ImageFallback

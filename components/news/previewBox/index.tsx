@@ -50,7 +50,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
                   <Keyword
                     key={keyword}
                     onClick={() => {
-                      navigate.push(`/keywords/${keyword}`);
+                      navigate.push(`/keywords/${String(id)}`);
                     }}
                   >
                     {`#${keyword}`}

@@ -91,13 +91,13 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 <div dangerouslySetInnerHTML={{ __html: summary }} />
               </div>
               <div className="keyword-wrapper content">
-                {keywords?.map(({ keyword }) => {
+                {keywords?.map(({ id, keyword }) => {
                   return (
                     <p
                       className="keyword"
                       key={keyword}
                       onClick={() => {
-                        navigate.push(`/keywords/${keyword}`);
+                        navigate.push(`/keywords/${id}`);
                       }}
                     >
                       {`# ${keyword}`}
