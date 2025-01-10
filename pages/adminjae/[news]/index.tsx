@@ -1,5 +1,5 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository, { NewsDetail } from '@repositories/news';
+import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
@@ -9,24 +9,21 @@ import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import LoadingCommon from '@components/common/loading';
 import { useMount } from '@utils/hook/useMount';
+import { NewsInView } from '@utils/interface/news';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
-interface getNewsContentResponse {
-  news: NewsDetail | null;
-}
-
 interface pageProps {
   data: {
-    id: string;
+    id: number;
   };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr: Array<{ _id: string }> = await NewsRepository.getNewsIds();
-  const paths = newsIdArr.map((item: { _id: string }) => {
+  const newsIdArr: Array<{ id: number }> = await NewsRepository.getNewsIds();
+  const paths = newsIdArr.map((item: { id: number }) => {
     return {
-      params: { news: item['_id'] },
+      params: { news: String(item['id']) },
     };
   });
   return {
@@ -49,7 +46,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const [news, setNews] = useState<NewsDetail | null>(null);
+  const [news, setNews] = useState<NewsInView | null>(null);
   const router = useRouter();
   const { id } = data;
 
@@ -58,7 +55,7 @@ export default function NewsDetailPage({ data }: pageProps) {
   }, []);
 
   useMount(async () => {
-    const { news }: getNewsContentResponse = await NewsRepository.getNewsContent(id, null);
+    const news = await NewsRepository.getNewsContent(Number(id), null);
     setNews(news);
   });
 

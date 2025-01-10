@@ -85,42 +85,13 @@ export default function KeyExplanation({ data }: pageProps) {
       <SearchWrapper>
         <SearchBox />
       </SearchWrapper>
-<<<<<<< HEAD
-      <Suspense fallback={<ExplainFallback />}>
-        <KeywordWrapper>
-          <ExplanationComp
-            id={keyword.id!}
-            category={keyword.category!}
-            keywordImage={keyword.keywordImage ?? ''}
-            keyword={keyword?.keyword!}
-            explain={keyword?.explain!}
-          />
-        </KeywordWrapper>
-        <div className="main-contents">
-          <div className="main-contents-body">
-            {newsContent ? (
-              <div className="news-contents-wrapper">
-                <NewsContent
-                  newsContent={newsContent}
-                  voteHistory={voteHistory}
-                  hide={hideNewsContent}
-                />
-              </div>
-            ) : (
-              <NewsList
-                page={page}
-                previews={previews.length == 0 ? initialPreviews : previews}
-                isRequesting={isRequesting}
-                fetchPreviews={fetchNextPreviews}
-                showNewsContent={showNewsContent}
-=======
-
       <KeywordWrapper>
         <ExplanationComp
-          id={data.keyword?._id! ?? ''}
-          category={data.keyword?.category ?? 'etc'}
-          keyword={data.keyword?.keyword! ?? ''}
-          explain={data.keyword?.explain ?? ''}
+          id={keyword.id!}
+          category={keyword.category!}
+          keywordImage={keyword.keywordImage ?? ''}
+          keyword={keyword?.keyword!}
+          explain={keyword?.explain!}
         />
       </KeywordWrapper>
       <div className="main-contents">
@@ -131,13 +102,12 @@ export default function KeyExplanation({ data }: pageProps) {
                 newsContent={newsContent}
                 voteHistory={voteHistory}
                 hide={hideNewsContent}
->>>>>>> master
               />
             </div>
           ) : (
             <NewsList
               page={page}
-              previews={previews.length == 0 ? data.previews : previews}
+              previews={previews.length == 0 ? initialPreviews : previews}
               isRequesting={isRequesting}
               fetchPreviews={fetchNextPreviews}
               showNewsContent={showNewsContent}
