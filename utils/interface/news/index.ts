@@ -49,6 +49,7 @@ export interface Article {
   comment: string;
   date: Date;
   newsId: number;
+  news: News;
 }
 
 export interface Comment {

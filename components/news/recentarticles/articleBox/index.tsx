@@ -6,6 +6,11 @@ import ImageFallback from '@components/common/imageFallback';
 import { HOST_URL } from '@url';
 import { Article, commentType } from '@utils/interface/news';
 import Modal from '@components/common/modal';
+import {
+  typeCheckImg,
+  typeExplain,
+  typeToShow,
+} from '../../../news/commentModal/commentModal.resource';
 import closeButton from '@images/close_icon.png';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 
@@ -19,7 +24,7 @@ interface ArticleBoxProps {
 }
 
 export default function ArticleBox({ article }: ArticleBoxProps) {
-  const { id, commentType, title, comment, date } = article;
+  const { news, id, commentType, title, comment, date } = article;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,7 +40,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
     const day = date.getDate();
-    return `(${year} / ${month} / ${day})`;
+    return `(${month}/${day})`;
   };
 
   const formattedTitle = `${title} ${formatDate(date)}`;
@@ -45,7 +50,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
       <LinkWrapper onClick={openModal}>
         <div className="wrapper">
           <div className="text-wrapper">
-            <p className="title-wrapper">- {title}</p>
+            <p className="title-wrapper">- {formattedTitle}</p>
             <p className="writer-wrapper">{commentType}</p>
           </div>
         </div>
@@ -58,31 +63,44 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
               closeModal();
             }}
           >
-            <Image src={closeButton} width={16} height={16} alt="Close" />
+            &times;
           </div>
-          <div className="modal-header">
-            <div className="image-wrapper">
-              <div className="image-box">
-                <ImageFallback
-                  src={`/assets/img/${commentType}.png`}
-                  alt={commentType}
-                  fill={true}
-                />
+          <HeadBody>
+            <HeadTitle>
+              <CommentImageWrapper>
+                <div className="image-box">
+                  <ImageFallback src={`/assets/img/${commentType}.png`} alt={comment} fill={true} />
+                </div>
+              </CommentImageWrapper>
+              <p className="type-name">{typeToShow(commentType)}</p>
+              <ImageFallback
+                src={typeCheckImg(commentType)}
+                alt="check-img"
+                width="10"
+                height="10"
+              />
+              <a className="news-button" href={`/news/${news.id}`}>
+                뉴스 보기
+              </a>
+            </HeadTitle>
+          </HeadBody>
+          <ModalBody>
+            <div className="content-wrapper">
+              <p className="content-title">{article.title}</p>
+              {/* <p className="content-title">
+                  {article?.date ? getDotDateForm(article.date) : ''}
+                </p> */}
+              <div className="content-body">
+                {article.comment.split('$').map((comment, idx) => {
+                  return (
+                    <p key={idx} className="content_line">
+                      {comment}
+                    </p>
+                  );
+                })}
               </div>
             </div>
-            <div className="head-title">
-              <p className="type-name">{formattedTitle}</p>
-            </div>
-          </div>
-          <div className="content-wrapper">
-            <div className="modal-content">
-              <div className="paragraph">
-                {comment.split('$').map((comment, idx) => (
-                  <p key={comment}>{comment}</p>
-                ))}
-              </div>
-            </div>
-          </div>
+          </ModalBody>
         </ModalWrapper>
       </Modal>
     </>
@@ -147,24 +165,24 @@ const LinkWrapper = styled.div`
   }
 `;
 
-const ModalWrapper = styled.div`
+const ModalWrapper = styled(CommonLayoutBox)`
+  color: black;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  width: 65%;
+  width: 60%;
   min-width: 680px;
-  max-height: 85vh;
+  max-height: 80vh;
   overflow: auto;
   margin-left: auto;
   margin-right: auto;
-  padding: 2rem;
+  padding: 3rem 3rem;
   flex: 0 0 auto;
-  background-color: white;
+  letter-spacing: -0.5px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: left;
   ::-webkit-scrollbar {
     display: none;
   }
@@ -173,74 +191,156 @@ const ModalWrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 90%;
     min-width: 0px;
+    max-height: 70vh;
     padding: 3rem 1rem;
   }
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    cursor: pointer;
-  }
-  .modal-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    @media screen and (max-width: 768px) {
-      display: flex;
-      align-items: center;
-    }
-    div.image-wrapper {
-      display: flex;
-      position: relative;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      width: 100px;
-      height: 100px;
-      flex: 0 0 auto;
-      padding: 1.75rem;
-      background-color: white;
-      box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
-      border-radius: 100px;
+  & {
+    div.close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      text-indent: 0;
       overflow: hidden;
-      box-sizing: border-box;
-      @media screen and (max-width: 768px) {
-        width: 80px;
-        height: 80px;
-        min-width: 0px;
-        float: left;
-        margin-left: 10px;
-      }
-      .image-box {
-        width: 50%;
-        height: 50%;
-        position: absolute;
-      }
+      white-space: nowrap;
+      font-size: 2rem;
     }
-    .head-title {
+    div.modal-head {
+      -webkit-text-size-adjust: none;
+      text-align: left;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      box-sizing: inherit;
+    }
+  }
+`;
+
+const HeadTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  p.type-name {
+    padding-left: 0.5rem;
+    padding-right: 0.4rem;
+    font-weight: 500;
+    font-size: 20px;
+    @media screen and (max-width: 768px) {
+      font-size: 17px;
       font-weight: 600;
-      font-size: 16px;
-      padding: 0 2rem;
-      @media screen and (max-width: 768px) {
-        font-size: 16px;
+    }
+  }
+  .news-button {
+    display: inline-block;
+    text-decoration: none;
+    background-color: transparent;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+`;
+
+const HeadBody = styled.div`
+  @media screen and (max-width: 768px) {
+    padding-left: 0;
+  }
+
+  div.type-explain {
+    color: black;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+    @media screen and (max-width: 768px) {
+      font-size: 15px;
+    }
+  }
+`;
+
+const CommentImageWrapper = styled.div`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  background-color: white;
+  border-radius: 200px;
+  border: 1px solid rgb(225, 225, 225);
+  overflow: hidden;
+  box-sizing: border-box;
+  @media screen and (max-width: 768px) {
+  }
+  .image-box {
+    width: 60%;
+    height: 60%;
+    position: absolute;
+  }
+`;
+
+const ModalBody = styled.div`
+  margin-top: 1rem;
+  border-top: 1.5px solid rgb(225, 225, 225);
+  div.modal-list {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    div.body-block {
+      height: 60px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      cursor: pointer;
+      box-sizing: border-box;
+      border-bottom: 1.5px solid #ddd;
+      span {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 15px;
+        font-weight: 500;
+        color: rgb(50, 50, 50);
       }
     }
   }
+  div.page-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 12px;
+    padding-top: 0.5rem;
+  }
+
   div.content-wrapper {
-    padding: 1.25rem 4%;
-    box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-    color: rgb(102, 102, 102);
-    .modal-content {
-      .paragraph {
-        font-size : 13px;
-        p {
-          margin-bottom: 0.5rem;
-          min-height: 10px;
-        }
-        @media screen and (max-width: 768px) {
-          padding-left: 4%;
-          font-size: 14px;
-        }
+    padding: 1rem 0;
+    color: black;
+    p.content-title {
+      color: black;
+      font-size: 16px;
+      font-weight: 600;
+      padding-bottom: 1.5rem;
+      @media screen and (max-width: 768px) {
+        font-weight: 600;
       }
+    }
+    div.content-body {
+      font-weight: 400;
+      font-size: 15px;
+    }
+
+    p.content_line {
+      color: black;
+      margin-bottom: 0.5rem;
+      min-height: 10px;
+    }
   }
 `;

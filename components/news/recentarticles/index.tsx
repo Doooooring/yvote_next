@@ -62,7 +62,7 @@ const Wrapper = styled(CommonLayoutBox)`
   font: inherit;
   box-sizing: border-box;
   width: 100%;
-  margin: 5px 0 20px;
+  margin: 0 0 20px;
   width: 100%;
 
   .header-wrapper {
