@@ -30,6 +30,7 @@ interface pageProps {
 export const getStaticPaths: GetStaticPaths = async () => {
   const keywords = await keywordRepository.getKeywordsKeyList();
   const paths = keywords.map(({ keyword }) => {
+    console.log('path : ', keyword);
     return {
       params: { keyword },
     };
