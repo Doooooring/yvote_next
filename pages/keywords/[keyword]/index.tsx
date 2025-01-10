@@ -31,14 +31,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const keywords = await keywordRepository.getKeywordsKeyList();
   const paths = keywords.map(({ id }) => {
     return {
-      params: { id: String(id) },
+      params: { keyword: String(id) },
     };
   });
   return { paths, fallback: 'blocking' };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const key = context.params!.id as string;
+  const key = context.params!.keyword as string;
   if (!key) throw Error('KEYWORD NOT EXIST');
   const pm1 = keywordRepository.getKeywordById(Number(key));
 
