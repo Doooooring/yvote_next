@@ -38,7 +38,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const key = context.params!.keyword as string;
+  const key = context.params!.id as string;
   if (!key) throw Error('KEYWORD NOT EXIST');
   const pm1 = keywordRepository.getKeywordById(Number(key));
 
