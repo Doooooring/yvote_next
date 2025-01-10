@@ -64,6 +64,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const { keyword = {}, previews: initialPreviews } = data;
+  console.log(data);
+  console.log('================================');
+  console.log(keyword);
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
@@ -76,7 +79,7 @@ export default function KeyExplanation({ data }: pageProps) {
     title: `키워드 - ${keyword.keyword}`,
     description: keyword.explain || '',
     image: keyword.keywordImage,
-    url: `https://yvoting.com/keywords/${keyword.id}`,
+    url: `https://yvoting.com/keywords/${keyword.keyword}`,
     type: 'article',
   };
 
