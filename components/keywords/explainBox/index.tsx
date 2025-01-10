@@ -47,7 +47,7 @@ export default function ExplanationComp({
         <div className="explanation-list">
           <div className="keyword-img">
             <Suspense fallback={<></>}>
-              <SuspenseImage src={`${HOST_URL}/images/keyword/${id}`} alt={keyword} fill />
+              <SuspenseImage src={keywordImage} alt={keyword} fill />
             </Suspense>
           </div>
           <div className="explanation" dangerouslySetInnerHTML={{ __html: explain }} />

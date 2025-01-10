@@ -39,7 +39,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const key = context.params!.keyword as string;
-  if (!key) throw Error();
+  if (!key) throw Error('KEYWORD NOT EXIST');
   const pm1 = keywordRepository.getKeywordByKey(key);
 
   const resolves = await Promise.all([pm1]);
@@ -61,7 +61,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
-  const { keyword, previews: initialPreviews } = data;
+  const { keyword = {}, previews: initialPreviews } = data;
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
@@ -73,7 +73,7 @@ export default function KeyExplanation({ data }: pageProps) {
   const metaTagsProps = {
     title: `키워드 - ${keyword.keyword}`,
     description: keyword.explain || '',
-    image: `${HOST_URL}/images/keywords/${keyword.id}`,
+    image: keyword.keywordImage,
     url: `https://yvoting.com/keywords/${keyword.id}`,
 
     type: 'article',
