@@ -1,5 +1,5 @@
-import { Preview } from '@utils/interface/news';
 import NewsRepository from '@repositories/news';
+import { Preview } from '@utils/interface/news';
 import { MutableRefObject, useRef, useState } from 'react';
 
 export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
@@ -14,8 +14,6 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
   const fetchPreviews = async (option?: { filter?: string | null; limit?: number }) => {
     let arr: Preview[] = [];
     const { filter = null, limit: l = defaultLimit } = option ?? {};
-    console.log('filter : ', filter);
-    console.log('====================');
 
     prevFilter.current = filter;
     page.current = 0;

@@ -16,7 +16,6 @@ interface pageProps {
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
   const response = await getKeywordsGroupByCategoryAndRecent(20);
-  console.log(response);
   return {
     props: {
       data: response,

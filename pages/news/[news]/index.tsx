@@ -4,11 +4,11 @@ import NewsRepository from '@repositories/news';
 import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
 import { NewsInView } from '@utils/interface/news';
+import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { getTextContentFromHtmlText } from '@utils/tools';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -22,7 +22,6 @@ interface pageProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const newsIdArr = await NewsRepository.getNewsIds();
-  console.log('id arr : ', newsIdArr);
   const paths = newsIdArr.map((item) => {
     return {
       params: { news: String(item['id']) },
@@ -36,7 +35,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news;
-  console.log('id : ', id);
   if (!id) throw Error('static props null');
   const news = await NewsRepository.getNewsContent(Number(id), null);
   const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';

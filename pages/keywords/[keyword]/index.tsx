@@ -1,20 +1,16 @@
+import HeadMeta from '@components/common/HeadMeta';
 import ExplanationComp from '@components/keywords/explainBox';
 import SearchBox from '@components/keywords/searchBox';
 import NewsContent from '@components/news/newsContents';
-import { HOST_URL } from '@public/assets/url';
-import keywordRepository, { getKeywordDetailResponse } from '@repositories/keywords';
-import newsRepository from '@repositories/news';
-import { KeywordOnDetail } from '@utils/interface/keywords';
-import { Preview } from '@utils/interface/news';
-import { Suspense } from 'react';
-import styled from 'styled-components';
-import HeadMeta from '@components/common/HeadMeta';
-import ExplainFallback from '@components/keywords/explainFallback';
 import NewsList from '@components/news/newsLIst';
+import keywordRepository from '@repositories/keywords';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 import { useMount } from '@utils/hook/useMount';
+import { KeywordOnDetail } from '@utils/interface/keywords';
+import { Preview } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import styled from 'styled-components';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { getTextContentFromHtmlText } from '@utils/tools';
@@ -45,7 +41,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const resolves = await Promise.all([pm1]);
 
   const keyword = resolves[0];
-  console.log('keyword : ', keyword);
 
   const description = getTextContentFromHtmlText(keyword?.explain ?? '')?.split('.')[0] ?? '';
 
@@ -63,9 +58,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const { keyword = {}, previews: initialPreviews } = data;
-  console.log(data);
-  console.log('================================');
-  console.log(keyword);
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
