@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
-import { typeCheckImg, typeExplain, typeToShow } from './commentModal.resource';
+import { typeCheckImg, typeExplain } from './commentModal.resource';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -67,7 +67,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
                   <ImageFallback src={`/assets/img/${comment}.png`} alt={comment} fill={true} />
                 </div>
               </CommentImageWrapper>
-              <p className="type-name">{typeToShow(comment)}</p>
+              <p className="type-name">{comment}</p>
               <ImageFallback src={typeCheckImg(comment)} alt="check-img" width="10" height="10" />
             </HeadTitle>
             <div className="head-body">

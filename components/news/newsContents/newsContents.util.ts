@@ -6,11 +6,11 @@ export const getOrder = (comment: commentType) => {
       return 6;
     case commentType.행정부:
       return 5;
-    case commentType.청와대:
+    case commentType.대통령실:
       return 4;
     case commentType.국민의힘:
       return 3;
-    case commentType.민주당:
+    case commentType.더불어민주당:
       return 2;
     case commentType.기타:
       return 1;
