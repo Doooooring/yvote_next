@@ -1,18 +1,10 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import React, { useCallback, useState } from 'react';
-import styled from 'styled-components';
-import ImageFallback from '@components/common/imageFallback';
-import { HOST_URL } from '@url';
-import { Article, commentType } from '@utils/interface/news';
-import Modal from '@components/common/modal';
-import {
-  typeCheckImg,
-  typeExplain,
-  typeToShow,
-} from '../../../news/commentModal/commentModal.resource';
-import closeButton from '@images/close_icon.png';
 import { CommonLayoutBox } from '@components/common/commonStyles';
+import ImageFallback from '@components/common/imageFallback';
+import Modal from '@components/common/modal';
+import { Article, commentType } from '@utils/interface/news';
+import { useCallback, useState } from 'react';
+import styled from 'styled-components';
+import { typeCheckImg } from '../../../news/commentModal/commentModal.resource';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -72,7 +64,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                   <ImageFallback src={`/assets/img/${commentType}.png`} alt={comment} fill={true} />
                 </div>
               </CommentImageWrapper>
-              <p className="type-name">{typeToShow(commentType)}</p>
+              <p className="type-name">{commentType}</p>
               <ImageFallback
                 src={typeCheckImg(commentType)}
                 alt="check-img"
