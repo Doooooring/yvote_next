@@ -239,7 +239,8 @@ const NewsButton = styled(CommonLayoutBox)`
 
   a {
     text-decoration: none !important;
-    color: #666;
+    font-size: 14px;
+    color: black;
     font-weight: 400;
   }
 `;
