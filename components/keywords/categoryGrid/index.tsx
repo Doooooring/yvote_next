@@ -1,10 +1,9 @@
-import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
+import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
 import Image from 'next/image';
-import { useRef } from 'react';
 import styled from 'styled-components';
 import { KeywordCategoryImgUrl, KeywordCategoryKoreanName } from './categoryGrid.tool';
 

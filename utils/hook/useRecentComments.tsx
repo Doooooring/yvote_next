@@ -1,5 +1,5 @@
-import { useSuspense } from './useSuspense';
 import newsRepository from '@repositories/news';
+import { useSuspense } from './useSuspense';
 
 export const useRecentArticles = () => {
   const read = useSuspense('recentArticles', async () => {

@@ -54,7 +54,6 @@ const Wrapper = styled.div`
 
 const ImgWrapper = styled.div`
   display: inline-block;
-  border: 1px solid rgb(230, 230, 230);
   border-radius: 10px;
   width: 100px;
   height: 100px;
@@ -82,7 +81,7 @@ const BodyWrapper = styled.div`
 `;
 
 const HeadWrapper = styled.div`
-  widht: 100%;
+  width: 100%;
   -webkit-text-size-adjust: none;
   text-align: left;
   margin: 0;

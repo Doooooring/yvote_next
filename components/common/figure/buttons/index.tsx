@@ -49,15 +49,12 @@ const ButtonWrapper = styled.div`
   position: absolute;
   border-radius: 50px;
   box-shadow: 0 0 30px -15px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.6);
   z-index: 99;
   cursor: pointer;
   transition: background-color 0.3s ease;
   &:hover {
     background-color: #f0f0f0;
-  }
-  @media screen and (max-width: 768px) {
-    display: none !important;
   }
 `;
 

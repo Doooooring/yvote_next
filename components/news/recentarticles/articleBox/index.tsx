@@ -1,4 +1,4 @@
-import { CommonLayoutBox } from '@components/common/commonStyles';
+import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
 import Modal from '@components/common/modal';
 import { Article, commentType } from '@utils/interface/news';
@@ -71,10 +71,12 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                 width="10"
                 height="10"
               />
-              <a className="news-button" href={`/news/${news.id}`}>
-                뉴스 보기
-              </a>
             </HeadTitle>
+            <div>
+              <NewsButton>
+                <a href={`/news/${news.id}`}>뉴스 보기</a>
+              </NewsButton>
+            </div>
           </HeadBody>
           <ModalBody>
             <div className="content-wrapper">
@@ -213,7 +215,6 @@ const HeadTitle = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 0.5rem;
   p.type-name {
     padding-left: 0.5rem;
     padding-right: 0.4rem;
@@ -224,19 +225,28 @@ const HeadTitle = styled.div`
       font-weight: 600;
     }
   }
-  .news-button {
-    display: inline-block;
-    text-decoration: none;
-    background-color: transparent;
-    color: #333;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 15px;
+`;
+
+const NewsButton = styled(CommonLayoutBox)`
+  flex: 0 1 1;
+  padding: 0.1rem 0.7rem;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #666;
+    font-weight: 400;
   }
 `;
 
-const HeadBody = styled.div`
+const HeadBody = styled(Row)`
+  align-items: center;
+  justify-content: space-between;
   @media screen and (max-width: 768px) {
     padding-left: 0;
   }

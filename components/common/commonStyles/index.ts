@@ -17,6 +17,11 @@ export const Center = styled.div`
   align-items: center;
 `;
 
+export const Expand = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
 export const CommonLayoutBox = styled.div`
   background-color: white;
   border: 1px solid rgba(200, 200, 200, 0.5);
@@ -48,6 +53,5 @@ export const Backdrop = styled.div`
 export const FallbackBox = styled.div`
   background-color: ${({ theme }) => theme.colors.fallback};
 
-  border: 1px solid rgb(230, 230, 230);
   border-radius: 4px;
 `;

@@ -1,11 +1,12 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
 import { CommonLayoutBox } from '@components/common/commonStyles';
-import { LeftButton, RightButton } from '@components/keywords/categoryGrid/buttons';
+import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
 import { Suspense, useRef } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
+import { NewArticlesFallback } from './index.fallback';
 
 function NewArticles() {
   const numToShow = useRef(5);
@@ -14,7 +15,7 @@ function NewArticles() {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
   return (
-    <Wrapper>
+    <>
       <div className="header-wrapper">
         <div className="category-head">
           지난 뉴스 업데이트 ({Math.min(numToShow.current * (curView + 1), recentArticles.length)} /{' '}
@@ -40,15 +41,17 @@ function NewArticles() {
           }
         />
       </div>
-    </Wrapper>
+    </>
   );
 }
 
 export default function SuspenseNewsArticles() {
   return (
-    <Suspense fallback={<></>}>
-      <NewArticles />
-    </Suspense>
+    <Wrapper>
+      <Suspense fallback={<NewArticlesFallback />}>
+        <NewArticles />
+      </Suspense>
+    </Wrapper>
   );
 }
 

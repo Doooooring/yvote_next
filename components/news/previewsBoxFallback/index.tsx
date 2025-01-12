@@ -1,7 +1,7 @@
-import styled, { keyframes } from 'styled-components';
-import PreviewBoxLayout from '../previewBox/previewBox.style';
 import { Backdrop, FallbackBox, Row, backgroundSlide } from '@components/common/commonStyles';
 import { memo } from 'react';
+import styled from 'styled-components';
+import PreviewBoxLayout from '../previewBox/previewBox.style';
 
 function PreviewBoxFallback() {
   return (
@@ -60,7 +60,6 @@ const ContentView = styled.p`
   animation: ${backgroundSlide} 1s ease-in-out infinite;
   height: 16px;
   margin-bottom: 4px;
-  border: 1px solid rgb(230, 230, 230);
   border-radius: 4px;
 `;
 
