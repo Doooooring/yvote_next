@@ -5,6 +5,7 @@ import { Article, commentType } from '@utils/interface/news';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { typeCheckImg } from '../../../news/commentModal/commentModal.resource';
+import Link from 'next/link';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -74,7 +75,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
             </HeadTitle>
             <div>
               <NewsButton>
-                <a href={`/news/${news.id}`}>뉴스 보기</a>
+                <Link href={`/news/${news.id}`}>뉴스보기</Link>
               </NewsButton>
             </div>
           </HeadBody>
