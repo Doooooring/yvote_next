@@ -27,7 +27,6 @@ const Wrapper = styled.div``;
 
 const Body = styled.div`
   width: 100vw;
-  height: 100vh;
   padding-bottom: 50px;
 
   background-color: rgb(242, 242, 242);

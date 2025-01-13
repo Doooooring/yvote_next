@@ -7,11 +7,13 @@ import { useOnScreen } from '@utils/hook/useOnScreen';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
 import { arrBatch } from '@utils/tools';
-import { Suspense, useCallback, useRef } from 'react';
+import { forwardRef, HTMLAttributes, Suspense, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import NewsBlock from '../newsBlock';
 import NewsListFallback from '../newsListFallback';
 import { useNewsInfiniteScroll } from './newsList.tools';
+import { GridComponents, Virtuoso, VirtuosoGrid } from 'react-virtuoso';
+import PreviewBox from '../previewBox';
 
 interface NewsListProps {
   page: number;
@@ -43,7 +45,7 @@ export default function NewsList({
     }
   }, [fetchPreviews, showToastMessage]);
 
-  useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
+  //useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
   const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
 
   const clickFetchButton = useCallback(() => {
@@ -53,13 +55,34 @@ export default function NewsList({
 
   return (
     <>
-      <Wrapper>
-        {arrBatch(previews, 16).map((previews) => (
-          <Suspense fallback={<NewsListFallback length={previews.length} />}>
-            <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
-          </Suspense>
-        ))}
-      </Wrapper>
+      <VirtuosoGrid
+        style={{
+          width: '100%',
+        }}
+        useWindowScroll
+        totalCount={previews.length}
+        data={previews}
+        increaseViewportBy={1000}
+        components={gridComponents}
+        endReached={() => {
+          fetChPreviewsWithVal();
+        }}
+        itemContent={(_, preview) => {
+          return (
+            <PreviewBox
+              key={preview.id}
+              preview={preview}
+              img={preview.newsImage}
+              click={showNewsContent}
+            />
+          );
+          return arrBatch(previews, 16).map((previews) => (
+            <Suspense fallback={<NewsListFallback length={previews.length} />}>
+              <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
+            </Suspense>
+          ));
+        }}
+      />
       <IsShow state={isRequesting}>
         <LoadingWrapper>
           <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
@@ -70,10 +93,47 @@ export default function NewsList({
           <FetchButton onClick={clickFetchButton}>더 보기</FetchButton>
         </Center>
       </IsShow>
-      <LastLine ref={elementRef} />
     </>
   );
 }
+
+const StyledList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const StyledItem = styled.div`
+  box-sizing: border-box;
+  width: calc(50% - 0.25rem);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+export const List = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ style, children, ...props }, ref) => {
+    return (
+      <StyledList ref={ref} {...props} style={style}>
+        {children}
+      </StyledList>
+    );
+  },
+);
+
+export const Item = ({ style, children, ...props }: HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <StyledItem {...props} style={style}>
+      {children}
+    </StyledItem>
+  );
+};
+
+const gridComponents: GridComponents = {
+  List,
+  Item,
+};
 
 const Wrapper = styled.div`
   -webkit-text-size-adjust: none;
