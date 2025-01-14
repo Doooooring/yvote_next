@@ -29,7 +29,7 @@ function NewArticles() {
             {recentArticles
               .slice(curView * numToShow.current, (curView + 1) * numToShow.current)
               .map((article) => {
-                return <ArticleBox article={article} />;
+                return <ArticleBox key={article.id} article={article} />;
               })}
           </GridContainer>
         </div>

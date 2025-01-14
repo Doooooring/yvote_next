@@ -73,5 +73,7 @@ export const commentTypeColor = (type: commentType) => {
       return 'rgb(180, 123, 98)';
     case commentType.와이보트:
       return 'rgb(121, 192, 215)';
+    default:
+      return 'rgb(0,0,0)';
   }
 };

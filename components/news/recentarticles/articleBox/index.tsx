@@ -2,11 +2,11 @@ import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
 import Modal from '@components/common/modal';
 import { Article, commentType } from '@utils/interface/news';
+import { RgbToRgba } from '@utils/tools';
+import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { commentTypeColor, typeCheckImg } from '../../../../utils/interface/news/commen';
-import Link from 'next/link';
-import { RgbToRgba } from '@utils/tools';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -136,6 +136,16 @@ const LinkWrapper = styled.div`
     overflow: hidden;
     width: 100%;
   }
+
+  @keyframes back-blink {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   .text-wrapper {
     justify-content: start;
     align-items: center;
@@ -150,6 +160,7 @@ const LinkWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    animation: back-blink 0.4s ease-in-out forwards;
 
     &:hover {
       color: ${({ theme }) => theme.colors.primary};
@@ -166,6 +177,16 @@ const LinkWrapper = styled.div`
       text-overflow: ellipsis;
       padding-left: 4px;
     }
+
+    @keyframes blink {
+      0% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
     .writer-wrapper {
       width: 110px;
       flex: 0 1 auto;
