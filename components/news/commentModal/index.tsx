@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
-import { typeCheckImg, typeExplain } from './commentModal.resource';
+import { typeCheckImg, typeExplain } from '../../../utils/interface/news/commen';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -329,13 +329,12 @@ interface PageButtonProps {
   $state: boolean;
 }
 
-const PageButton = styled.div<PageButtonProps>`
+const PageButton = styled(CommonLayoutBox)<PageButtonProps>`
   display: ${({ $state }) => ($state ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: center;
   padding: 0.5rem;
   border-radius: 30px;
-  box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
   cursor: pointer;
 
   cursor: pointer;

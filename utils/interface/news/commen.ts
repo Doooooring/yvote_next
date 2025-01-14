@@ -59,7 +59,8 @@ export const typeCheckImg = (type: commentType) => {
   }
 };
 
-export const typeColor = (type: commentType) => {
+export const commentTypeColor = (type: commentType) => {
+  console.log(type);
   switch (type) {
     case commentType.더불어민주당:
       return 'rgb(11, 104, 179)';

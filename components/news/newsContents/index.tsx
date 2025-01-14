@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
-import { typeColor } from '../commentModal/commentModal.resource';
+import { commentTypeColor } from '../../../utils/interface/news/commen';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
@@ -119,7 +119,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                       <div
                         className="comment_box_header"
                         style={{
-                          backgroundColor: typeColor(comment),
+                          backgroundColor: commentTypeColor(comment),
                         }}
                       >
                         <div className="img-wrapper">

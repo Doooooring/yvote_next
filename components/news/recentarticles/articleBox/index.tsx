@@ -4,8 +4,9 @@ import Modal from '@components/common/modal';
 import { Article, commentType } from '@utils/interface/news';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { typeCheckImg } from '../../../news/commentModal/commentModal.resource';
+import { commentTypeColor, typeCheckImg } from '../../../../utils/interface/news/commen';
 import Link from 'next/link';
+import { RgbToRgba } from '@utils/tools';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -43,8 +44,17 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
       <LinkWrapper onClick={openModal}>
         <div className="wrapper">
           <div className="text-wrapper">
-            <p className="title-wrapper">- {formattedTitle}</p>
-            <p className="writer-wrapper">{commentType}</p>
+            <p
+              className="writer-wrapper"
+              style={{
+                color: commentTypeColor(commentType),
+                backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
+                // border: `1px solid ${RgbToRgba(commentTypeColor(commentType) ?? 'rgb(0,0,0)', 1)}`,
+              }}
+            >
+              {commentType}
+            </p>
+            <p className="title-wrapper">{formattedTitle}</p>
           </div>
         </div>
       </LinkWrapper>
@@ -139,6 +149,11 @@ const LinkWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+
+    &:hover {
+      color: ${({ theme }) => theme.colors.primary};
+    }
+
     .title-wrapper {
       text-align: left;
       font-size: 0.9rem;
@@ -148,14 +163,16 @@ const LinkWrapper = styled.div`
       text-overflow: ellipsis;
     }
     .writer-wrapper {
-      text-align: left;
-      font-size: 0.8rem;
+      font-size: 10px;
+      line-height: 1;
       font-weight: 500;
-      margin-left: 10px;
-      width: 80px;
+      margin-right: 10px;
+      padding: 0.3rem 0.4rem;
       flex-shrink: 0;
       flex-grow: 0;
       color: grey;
+      text-align: center;
+      border-radius: 6px;
     }
   }
 `;

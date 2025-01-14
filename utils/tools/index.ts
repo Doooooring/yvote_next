@@ -52,6 +52,17 @@ export const RGB = (hex: string) => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
+export const RgbToRgba = (rgb: string, opacity: number) => {
+  const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+
+  if (!match) {
+    throw new Error("Invalid RGB format. Expected format: 'rgb(r,g,b)'");
+  }
+
+  const [_, r, g, b] = match;
+  return `rgba(${r},${g},${b},${opacity})`;
+};
+
 export const RGBA = (hex: string, opacity: number) => {
   const [r, g, b] = hexToRgb(hex);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
