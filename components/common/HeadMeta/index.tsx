@@ -27,6 +27,15 @@ function HeadMeta({
       <meta property="og:url" content={url} />
       <meta property="og:type" content={type} />
       <meta property="og:article:author" content={'와이보트'} />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1"
+      />
+      <meta content="yes" name="apple-mobile-web-app-capable" />
+      <meta
+        content="minimum-scale=1.0, width=device-width, maximum-scale=1, user-scalable=no"
+        name="viewport"
+      />
       <link
         rel="icon"
         type="image/png"

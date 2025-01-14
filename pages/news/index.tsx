@@ -4,9 +4,7 @@ import NewsList from '@components/news/newsLIst';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
-import NewArticles from '@components/news/recentarticles';
 import SearchBox from '@components/news/searchBox';
-import NewsRepository from '@repositories/news';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -78,7 +76,8 @@ const Wrapper = styled.div`
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
