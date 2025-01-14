@@ -139,7 +139,7 @@ const LinkWrapper = styled.div`
 
   @keyframes back-blink {
     0% {
-      opacity: 0;
+      opacity: 0.4;
     }
     100% {
       opacity: 1;
@@ -176,15 +176,6 @@ const LinkWrapper = styled.div`
       white-space: nowrap;
       text-overflow: ellipsis;
       padding-left: 4px;
-    }
-
-    @keyframes blink {
-      0% {
-        opacity: 0.5;
-      }
-      100% {
-        opacity: 1;
-      }
     }
 
     .writer-wrapper {
