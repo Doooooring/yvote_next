@@ -44,16 +44,17 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
       <LinkWrapper onClick={openModal}>
         <div className="wrapper">
           <div className="text-wrapper">
-            <p
-              className="writer-wrapper"
-              style={{
-                color: commentTypeColor(commentType),
-                backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
-                // border: `1px solid ${RgbToRgba(commentTypeColor(commentType) ?? 'rgb(0,0,0)', 1)}`,
-              }}
-            >
-              {commentType}
-            </p>
+            <div className="writer-wrapper">
+              <p
+                style={{
+                  color: commentTypeColor(commentType),
+                  backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
+                  // border: `1px solid ${RgbToRgba(commentTypeColor(commentType) ?? 'rgb(0,0,0)', 1)}`,
+                }}
+              >
+                {commentType}
+              </p>
+            </div>
             <p className="title-wrapper">{formattedTitle}</p>
           </div>
         </div>
@@ -155,24 +156,37 @@ const LinkWrapper = styled.div`
     }
 
     .title-wrapper {
+      width: 100%;
+      flex: 0 1 auto;
       text-align: left;
       font-size: 0.9rem;
       font-weight: 500;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      padding-left: 4px;
     }
     .writer-wrapper {
-      font-size: 10px;
-      line-height: 1;
-      font-weight: 500;
-      margin-right: 10px;
-      padding: 0.3rem 0.4rem;
-      flex-shrink: 0;
-      flex-grow: 0;
-      color: grey;
-      text-align: center;
-      border-radius: 6px;
+      width: 110px;
+      flex: 0 1 auto;
+      text-align: left;
+      p {
+        width: 70px;
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 500;
+        padding: 0.4rem 0.4rem;
+        flex-shrink: 0;
+        flex-grow: 0;
+        color: grey;
+        text-align: center;
+        border-radius: 6px;
+
+        @media screen and (max-width: 768px) {
+          font-size: 10px;
+          width: 60px;
+        }
+      }
     }
   }
 `;
