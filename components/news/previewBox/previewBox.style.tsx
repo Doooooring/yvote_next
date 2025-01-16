@@ -26,7 +26,7 @@ export default function PreviewBoxLayout({
 
 const Wrapper = styled.div`
   width: 100%;
-  height : 99%;
+  height: 99%;
   box-sizing: border-box;
   -webkit-text-size-adjust: none;
   color: #666;
@@ -64,6 +64,7 @@ const ImgWrapper = styled.div`
   margin: 0;
   padding: 0;
   flex-shrink: 0;
+  align-self: center;
 `;
 
 const BodyWrapper = styled.div`

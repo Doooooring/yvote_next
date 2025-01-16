@@ -28,23 +28,23 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
           <>
-            <Title className="title">{title}</Title>
-            {state && (
+            <Title className="title">
+              {title}
+              <span>07.11</span>
+            </Title>
+            {/* {state && (
               <ImageFallback
                 src="/assets/img/ico_new_2x.png"
                 alt="new_ico"
                 height="16"
                 width="32"
               />
-            )}
+            )} */}
           </>
         }
         contentView={
           <>
-            <SubTitle>
-              <p>{subTitle}</p>
-            </SubTitle>
-            <Date>2024.01.23</Date>
+            <SubTitle>{subTitle}</SubTitle>
             {/* <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (
@@ -73,7 +73,7 @@ export default React.memo(PreviewBox, (prevProps, nextProps) => {
 
 const Wrapper = styled.div`
   filter: saturate(80%);
-  width : 100%;
+  width: 100%;
   font-family: Noto Sans KR, Helvetica, sans-serif;
   transition: filter 0.2s ease;
 
@@ -99,6 +99,7 @@ const Wrapper = styled.div`
 
 const Title = styled.p`
   -webkit-text-size-adjust: none;
+  display: block;
   color: rgb(20, 20, 20);
   text-align: left;
   padding: 0;
@@ -106,16 +107,25 @@ const Title = styled.p`
   border: 0;
   font: inherit;
   vertical-align: baseline;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 500;
-  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+  span {
+    display: inline-block;
+    font-size: 13px;
+    color: rgb(120, 120, 120);
+    margin-left: 5px;
+    white-space: nowrap;
+    font-weight: 400;
+    line-height: 1;
+    align-self: center;
+  }
   @media screen and (max-width: 768px) {
-    font-weight: 550;
+    font-weight: 500;
   }
 `;
 
@@ -128,12 +138,12 @@ const SubTitle = styled.div`
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 0;
-  font-size: 14.5px;
-  line-height: 1.7;
-  height: 3.4em;
+  margin: 5px 0 0 0;
+  font-size: 15px;
+  line-height: 25px;
+  height: 75px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -146,7 +156,7 @@ const SubTitle = styled.div`
   }
   @media screen and (max-width: 768px) {
     color: rgb(100, 100, 100);
-    font-size: 13.5px;
+    font-size: 14px;
   }
 `;
 
@@ -175,28 +185,6 @@ const Keyword = styled.p`
   display: inline;
   text-decoration: none;
   height: 13px;
-  font-size: 12px;
-  font-weight: 400;
-  margin: 0;
-  margin-right: 6px;
-  color: #3a84e5;
-  @media screen and (max-width: 768px) {
-    font-weight: 400;
-  }
-`;
-
-const Date = styled.div`
-  -webkit-text-size-adjust: none;
-  text-align: left;
-  padding: 0;
-  border: 0;
-  font: inherit;
-  vertical-align: baseline;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 400;
   margin: 0;
