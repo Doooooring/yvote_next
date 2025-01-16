@@ -86,8 +86,8 @@ const Wrapper = styled.div`
   box-sizing: inherit;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, calc(50% - 0.25rem));
-  column-gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, calc(50% - 0.05rem));
+  column-gap: 0.1rem;
   justify-items: center;
   border-style: solid;
   border-radius: 10px;

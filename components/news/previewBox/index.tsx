@@ -17,7 +17,7 @@ interface PreviewBoxProps {
 }
 function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const navigate = useRouter();
-  const { id, title, summary, newsImage, keywords, state } = preview;
+  const { id, title, subTitle, summary, newsImage, keywords, state } = preview;
 
   return (
     <Wrapper>
@@ -41,10 +41,11 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         }
         contentView={
           <>
-            <Summary>
-              <p>{summary}</p>
-            </Summary>
-            <Keywords>
+            <SubTitle>
+              <p>{subTitle}</p>
+            </SubTitle>
+            <Date>2024.01.23</Date>
+            {/* <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (
                   <Keyword
@@ -58,7 +59,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
                 );
               })}
               <p className="keyword"></p>
-            </Keywords>
+            </Keywords> */}
           </>
         }
       />
@@ -72,6 +73,7 @@ export default React.memo(PreviewBox, (prevProps, nextProps) => {
 
 const Wrapper = styled.div`
   filter: saturate(80%);
+  width : 100%;
   font-family: Noto Sans KR, Helvetica, sans-serif;
   transition: filter 0.2s ease;
 
@@ -104,20 +106,20 @@ const Title = styled.p`
   border: 0;
   font: inherit;
   vertical-align: baseline;
-  font-size: 15.5px;
+  font-size: 15px;
   font-weight: 500;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
   @media screen and (max-width: 768px) {
-    font-size: 15px;
+    font-weight: 550;
   }
 `;
 
-const Summary = styled.div`
+const SubTitle = styled.div`
   -webkit-text-size-adjust: none;
   text-align: left;
   padding: 0;
@@ -172,8 +174,30 @@ const Keyword = styled.p`
   vertical-align: baseline;
   display: inline;
   text-decoration: none;
-  height: 14px;
-  font-size: 13px;
+  height: 13px;
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+  margin-right: 6px;
+  color: #3a84e5;
+  @media screen and (max-width: 768px) {
+    font-weight: 400;
+  }
+`;
+
+const Date = styled.div`
+  -webkit-text-size-adjust: none;
+  text-align: left;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
   font-weight: 400;
   margin: 0;
   margin-right: 6px;

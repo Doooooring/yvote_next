@@ -34,10 +34,9 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
     const day = date.getDate();
-    return `(${month}/${day})`;
+    return `${month}/${day}`;
   };
 
-  const formattedTitle = `${title} ${formatDate(date)}`;
 
   return (
     <>
@@ -55,7 +54,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                 {commentType}
               </p>
             </div>
-            <p className="title-wrapper">{formattedTitle}</p>
+            <p className="title-wrapper">{title}<span>{formatDate(date)}</span></p>
           </div>
         </div>
       </LinkWrapper>
@@ -176,7 +175,12 @@ const LinkWrapper = styled.div`
       white-space: nowrap;
       text-overflow: ellipsis;
       padding-left: 4px;
-    }
+    } span {
+        font-weight: 400;
+        margin-left: 10px;
+        font-size: 13px;
+        color: rgb(120, 120, 120);
+      }
 
     .writer-wrapper {
       width: 110px;

@@ -94,6 +94,22 @@ const CommentModal = observer(({ id }: { id: number }) => {
                       }}
                     >
                       <span>{comment.title}</span>
+                      {comment.date && (
+                        <span className="date">
+                          {(() => {
+                            const date = new Date(comment.date);
+                            const currentYear = new Date().getFullYear();
+                            const year = date.getFullYear();
+
+                            if (year === currentYear) {
+                              return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+                            } else {
+                              const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+                              return formattedDate;
+                            }
+                          })()}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -122,7 +138,22 @@ const CommentModal = observer(({ id }: { id: number }) => {
           ) : (
             <ModalBody>
               <div className="content-wrapper">
-                <p className="content-title">{curComment.title}</p>
+              <p className="content-title">
+                {curComment.title}
+                {curComment.date && (
+                  ` (${(() => {
+                    const date = new Date(curComment.date);
+                    const currentYear = new Date().getFullYear();
+                    const year = date.getFullYear();
+
+                    if (year === currentYear) {
+                      return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+                    } else {
+                      return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+                    }
+                  })()})`
+                )}
+              </p>
                 {/* <p className="content-title">
                   {curComment?.date ? getDotDateForm(curComment.date) : ''}
                 </p> */}
@@ -289,7 +320,12 @@ const ModalBody = styled.div`
         font-size: 15px;
         font-weight: 500;
         color: rgb(50, 50, 50);
-      }
+      }.date {
+          margin-left: 10px;
+          padding-right: 1rem;
+          font-size: 13px;
+          color: rgb(120, 120, 120);
+        }
     }
   }
   div.page-button-wrapper {

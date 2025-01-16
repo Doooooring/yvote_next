@@ -18,7 +18,7 @@ export default function PreviewBoxLayout({
       <ImgWrapper>{imgView}</ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>
-        {contentView}
+        <ContentWrapper>{contentView}</ContentWrapper>
       </BodyWrapper>
     </Wrapper>
   );
@@ -26,6 +26,7 @@ export default function PreviewBoxLayout({
 
 const Wrapper = styled.div`
   width: 100%;
+  height : 99%;
   box-sizing: border-box;
   -webkit-text-size-adjust: none;
   color: #666;
@@ -55,12 +56,11 @@ const Wrapper = styled.div`
 const ImgWrapper = styled.div`
   display: inline-block;
   border-radius: 10px;
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   overflow: hidden;
   position: relative;
   color: #666;
-  text-align: left;
   margin: 0;
   padding: 0;
   flex-shrink: 0;
@@ -77,7 +77,7 @@ const BodyWrapper = styled.div`
   padding: 0;
   border: 0;
   font: inherit;
-  padding-left: 20px;
+  padding-left: 15px;
 `;
 
 const HeadWrapper = styled.div`
@@ -99,4 +99,6 @@ const HeadWrapper = styled.div`
   }
 `;
 
-const ContentWrapper = styled.div``;
+const ContentWrapper = styled.div`
+  align-self: center;
+`;
