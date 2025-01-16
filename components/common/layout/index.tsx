@@ -6,6 +6,8 @@ import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import { useRouteState } from './layout.tool';
 import LoadingIndicator from './loadingIndicator';
+import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
+import { Column } from '../commonStyles';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const routeState = useRouteState();
@@ -14,8 +16,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
     <ToastMessageProvider>
       <Wrapper>
         <Header />
-        <Body>{children}</Body>
-        <LoadingIndicator state={routeState} />
+        <CommonErrorBoundary>
+          <Body>{children}</Body>
+          <LoadingIndicator state={routeState} />
+        </CommonErrorBoundary>
       </Wrapper>
     </ToastMessageProvider>
   );
@@ -23,11 +27,15 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
 export default Layout;
 
-const Wrapper = styled.div``;
-
-const Body = styled.div`
+const Wrapper = styled(Column)`
   width: 100vw;
   height: 100vh;
+`;
+
+const Body = styled.div`
+  width: 100%;
+  height: 100%;
+
   padding-bottom: 50px;
 
   background-color: rgb(242, 242, 242);

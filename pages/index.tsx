@@ -83,7 +83,7 @@ export default function Home() {
       <Content show={showModal}>
         <Rectangle loaded={loaded}>
           <FlexContainer>
-            <Image loaded={loaded} src={logoImage.src} alt="logo" />
+            <Image className="pear" loaded={loaded} src={logoImage.src} alt="logo" />
             <TextBox loaded={loaded}>
               <TextHeading>Why Vote?</TextHeading>
               <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
