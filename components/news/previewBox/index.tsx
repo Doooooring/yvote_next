@@ -30,7 +30,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
           <>
             <Title className="title">
               {title}
-              <span>07.11</span>
+              <span>12.03</span>
             </Title>
             {/* {state && (
               <ImageFallback

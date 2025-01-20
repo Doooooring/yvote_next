@@ -66,7 +66,7 @@ export interface News {
   id: number;
   order: number;
   title: string;
-  subTitle : string;
+  subTitle: string;
   summary: string;
   keywords: Array<Keyword>;
   newsImage: string;
@@ -89,4 +89,7 @@ export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
 }
 
 export interface Preview
-  extends Pick<News, 'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'keywords' | 'state'> {}
+  extends Pick<
+    News,
+    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'keywords' | 'state'
+  > {}
