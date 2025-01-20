@@ -92,4 +92,6 @@ export interface Preview
   extends Pick<
     News,
     'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'keywords' | 'state'
-  > {}
+  > {
+  timelineDate?: Date;
+}

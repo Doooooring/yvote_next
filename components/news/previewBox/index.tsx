@@ -1,14 +1,11 @@
+import { Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
-import { loadingImg } from '@public/assets/resource';
-import KeywordRepository from '@repositories/keywords';
-import { HOST_URL } from '@url';
 import { Preview } from '@utils/interface/news';
-import dynamic from 'next/dynamic';
+import { getStandardDateForm, getToday } from '@utils/tools';
 import { useRouter } from 'next/router';
-import React, { Suspense, useCallback } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
-import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -17,7 +14,7 @@ interface PreviewBoxProps {
 }
 function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const navigate = useRouter();
-  const { id, title, subTitle, summary, newsImage, keywords, state } = preview;
+  const { id, title, subTitle, summary, timelineDate, newsImage, keywords, state } = preview;
 
   return (
     <Wrapper>
@@ -28,9 +25,8 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
           <>
-            <Title className="title">
-              {title}
-              <span>12.03</span>
+            <Title>
+              <div className="title">{title}</div>
             </Title>
             {/* {state && (
               <ImageFallback
@@ -45,6 +41,8 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         contentView={
           <>
             <SubTitle>{subTitle == '' ? summary : subTitle}</SubTitle>
+            <Date>{getStandardDateForm(timelineDate ?? getToday())}</Date>
+
             {/* <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (
@@ -97,36 +95,43 @@ const Wrapper = styled.div`
   }
 `;
 
-const Title = styled.p`
-  -webkit-text-size-adjust: none;
-  display: block;
-  color: rgb(20, 20, 20);
-  text-align: left;
-  padding: 0;
-  padding-right: 2px;
+const Title = styled(Row)`
   border: 0;
-  font: inherit;
-  vertical-align: baseline;
-  font-size: 16px;
-  font-weight: 500;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
   margin: 0;
-  span {
-    display: inline-block;
-    font-size: 13px;
-    color: rgb(120, 120, 120);
-    margin-left: 5px;
-    white-space: nowrap;
-    font-weight: 400;
-    line-height: 1;
-    align-self: center;
+
+  .title {
+    flex: 0 1 auto;
+    width: 100%;
+
+    color: rgb(20, 20, 20);
+    text-align: left;
+    padding: 0;
+    padding-right: 2px;
+    font-size: 16px;
+    font-weight: 500;
+
+    display: -webkit-box;
+    -webkit-text-size-adjust: none;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+
   @media screen and (max-width: 768px) {
     font-weight: 500;
   }
+`;
+
+const Date = styled.div`
+  flex: 0 1 auto;
+
+  font-size: 13px;
+  color: rgb(120, 120, 120);
+  white-space: nowrap;
+  font-weight: 400;
+  line-height: 1;
+  align-self: center;
 `;
 
 const SubTitle = styled.div`
@@ -138,7 +143,9 @@ const SubTitle = styled.div`
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 2px 0 0 0;
+  margin: 0;
+  margin-top: 2px;
+  margin-bottom: 6px;
   font-size: 15px;
   line-height: 25px;
   height: 75px;

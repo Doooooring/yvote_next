@@ -39,7 +39,6 @@ const Wrapper = styled.div`
   border-radius: 10px;
   border: 1px solid rgba(200, 200, 200, 0.5);
   box-shadow: 0px 0px 35px -30px;
-  margin-bottom: 10px;
   text-align: left;
   padding: 7px 10px;
   position: relative;

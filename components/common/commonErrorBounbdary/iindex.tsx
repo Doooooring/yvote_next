@@ -1,8 +1,8 @@
-import { Component, ReactNode } from 'react';
-import styled from 'styled-components';
-import { Center, Column } from '../commonStyles';
 import logoImage from '@images/logo_image.png';
 import Image from 'next/image';
+import { Component, ReactNode } from 'react';
+import styled from 'styled-components';
+import { Column } from '../commonStyles';
 
 interface CommonErrorBoundaryProps {
   children: ReactNode;
@@ -61,7 +61,7 @@ const Wrapper = styled(Column)`
   background-color: white;
 
   .pear {
-    animation: rotate-fade-out 3s ease-in-out forwards;
+    animation: rotate-fade-out 6s ease-in-out infinite;
   }
 
   @keyframes rotate-fade-out {
@@ -72,7 +72,7 @@ const Wrapper = styled(Column)`
 
     100% {
       opacity: 0;
-      transform: rotateY(360deg);
+      transform: rotateY(1080deg);
     }
   }
 `;

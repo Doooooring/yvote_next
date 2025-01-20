@@ -73,8 +73,13 @@ export const getDotDateForm = (date: Date) => {
   return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
 };
 
+export const getToday = () => {
+  return new Date();
+};
+
 export const getStandardDateForm = (date: Date) => {
-  return date.toISOString().split('T')[0];
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
 };
 
 export const getTextContentFromHtmlText = (html: string) => {

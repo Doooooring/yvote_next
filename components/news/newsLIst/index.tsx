@@ -1,4 +1,4 @@
-import { Center, CommonLayoutBox } from '@components/common/commonStyles';
+import { Center, Column, CommonLayoutBox } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
@@ -75,7 +75,9 @@ export default function NewsList({
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(Column)`
+  gap: 2px;
+
   -webkit-text-size-adjust: none;
   color: #666;
   text-align: center;
@@ -85,10 +87,6 @@ const Wrapper = styled.div`
   font: inherit;
   box-sizing: inherit;
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 100%);
-  column-gap: 0.1rem;
-  justify-items: center;
   border-style: solid;
   border-radius: 10px;
   border-width: 0px;
@@ -96,9 +94,6 @@ const Wrapper = styled.div`
   position: relative;
   animation: 0.5s linear 0s 1 normal none running box-sliding;
   overflow-x: visible;
-  @media screen and (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, 100%);
-  }
 
   div.preview-wrapper {
     width: 100%;
