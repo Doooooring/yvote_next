@@ -44,7 +44,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         }
         contentView={
           <>
-            <SubTitle>{subTitle}</SubTitle>
+            <SubTitle>{subTitle == '' ? summary : subTitle}</SubTitle>
             {/* <Keywords>
               {keywords?.map(({ id, keyword }) => {
                 return (

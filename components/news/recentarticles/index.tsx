@@ -78,7 +78,7 @@ const Wrapper = styled(CommonLayoutBox)`
     margin-bottom: 10px;
     .category-head {
       display: inline;
-      color: rgb(64, 64, 64);
+      color: ${({ theme }) => theme.colors.gray800};
       margin-left: 7px;
       font-weight: 700;
       font-size: 1.1rem;

@@ -8,6 +8,7 @@ import SearchBox from '@components/news/searchBox';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import styled from 'styled-components';
@@ -33,7 +34,7 @@ const metaTagsProps = {
 export default function NewsPage(props: pageProps) {
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16);
-
+  const recentKeywords = useRecentKeywords();
   useMount(() => {
     fetchPreviews({ limit: 16 });
   });
@@ -61,6 +62,24 @@ export default function NewsPage(props: pageProps) {
               showNewsContent={showNewsContent}
             />
           </div>
+          <TagWrapper>
+            <KeywordsWrapper>
+              <KeywordTitle>최신 키워드</KeywordTitle>
+              <KeywordContents>
+                {recentKeywords.map((keyword) => {
+                  return (
+                    <Keyword
+                      onClick={() => {
+                        fetchPreviews({ filter: keyword.keyword, limit: 16 });
+                      }}
+                    >
+                      {keyword.keyword}
+                    </Keyword>
+                  );
+                })}
+              </KeywordContents>
+            </KeywordsWrapper>
+          </TagWrapper>
         </div>
       </Wrapper>
     </>
@@ -85,6 +104,7 @@ const Wrapper = styled.div`
   padding-top: 20px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+
   ::-webkit-scrollbar {
     display: none;
   }
@@ -121,8 +141,12 @@ const Wrapper = styled.div`
   }
 
   .main-contents {
+    display: flex;
+    flex-direction: row;
+
     -webkit-text-size-adjust: none;
     width: 70%;
+    max-width: 1300px;
     min-width: 800px;
     color: #666;
     text-align: center;
@@ -139,11 +163,14 @@ const Wrapper = styled.div`
   }
 
   .main-contents-body {
+    width: 100%;
     color: #666;
     text-align: center;
     margin: 0;
     padding: 0;
+
     border: 0;
+
     font: inherit;
     vertical-align: baseline;
     position: relative;
@@ -153,6 +180,7 @@ const Wrapper = styled.div`
 const ArticlesWrapper = styled.div`
   display: flex;
   width: 70%;
+  max-width: 1000px;
   min-width: 800px;
   position: relative;
   @media screen and (max-width: 768px) {
@@ -178,5 +206,57 @@ const SearchWrapper = styled(CommonLayoutBox)`
   @media screen and (max-width: 768px) {
     width: 60%;
     min-width: 0px;
+  }
+`;
+
+const TagWrapper = styled.div`
+  flex: 1 0 auto;
+
+  width: 300px;
+  height: 100%;
+  padding-left: 10px;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const KeywordsWrapper = styled(CommonLayoutBox)`
+  padding: 1rem;
+  position: sticky;
+  top: 0%;
+`;
+
+const KeywordTitle = styled.div`
+  color: ${({ theme }) => theme.colors.gray800};
+
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: left;
+`;
+
+const KeywordContents = styled.div`
+  padding-top: 10px;
+  text-align: left;
+`;
+
+const Keyword = styled.div`
+  display: inline-block;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(120, 120, 120);
+  margin: 0;
+  margin-left: 3px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background-color: #f1f2f5;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out; /* 부드러운 전환 효과 */
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray400};
   }
 `;
