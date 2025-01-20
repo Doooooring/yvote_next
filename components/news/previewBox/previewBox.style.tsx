@@ -56,8 +56,8 @@ const Wrapper = styled.div`
 const ImgWrapper = styled.div`
   display: inline-block;
   border-radius: 10px;
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   overflow: hidden;
   position: relative;
   color: #666;

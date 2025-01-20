@@ -107,7 +107,7 @@ const Title = styled.p`
   border: 0;
   font: inherit;
   vertical-align: baseline;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -138,7 +138,7 @@ const SubTitle = styled.div`
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 5px 0 0 0;
+  margin: 2px 0 0 0;
   font-size: 15px;
   line-height: 25px;
   height: 75px;
