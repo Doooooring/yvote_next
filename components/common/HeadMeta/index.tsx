@@ -18,10 +18,11 @@ function HeadMeta({
   return (
     <Head>
       <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta name="author" content={'와이보트'} />
       <link rel="canonical" href="https://yvoting.com" />
       <meta name="robots" content="index, follow" />
       <meta property="og:title" content={title} />
-      <meta property="description" content={description} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
       <meta property="og:url" content={url} />
