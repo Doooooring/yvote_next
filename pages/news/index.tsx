@@ -11,6 +11,7 @@ import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 interface pageProps {
@@ -38,8 +39,21 @@ export default function NewsPage(props: pageProps) {
   useMount(() => {
     fetchPreviews({ limit: 16 });
   });
-
+  const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
   const showNewsContent = useNewsNavigate();
+
+  const clickKeyword = useCallback(
+    (keyword: string | null) => {
+      if (keyword == keywordClicked) {
+        setKeywordClicked(null);
+        fetchPreviews({ filter: null, limit: 16 });
+      } else {
+        setKeywordClicked(keyword);
+        fetchPreviews({ filter: keyword, limit: 16 });
+      }
+    },
+    [keywordClicked, setKeywordClicked],
+  );
 
   return (
     <>
@@ -69,8 +83,9 @@ export default function NewsPage(props: pageProps) {
                 {recentKeywords.map((keyword) => {
                   return (
                     <Keyword
+                      $clicked={keywordClicked === keyword.keyword}
                       onClick={() => {
-                        fetchPreviews({ filter: keyword.keyword, limit: 16 });
+                        clickKeyword(keyword.keyword);
                       }}
                     >
                       {keyword.keyword}
@@ -240,21 +255,30 @@ const KeywordContents = styled.div`
   text-align: left;
 `;
 
-const Keyword = styled.div`
+interface KeywordProps {
+  $clicked: boolean;
+}
+
+const Keyword = styled.div<KeywordProps>`
+  box-sizing: border-box;
   display: inline-block;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  color: rgb(120, 120, 120);
+  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
+   rgb(120, 120, 120);
   margin: 0;
   margin-left: 3px;
   margin-right: 6px;
   margin-bottom: 6px;
   padding: 2px 8px;
-  background-color: #f1f2f5;
+  background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
+  border : 1px solid #f1f2f5;
+  border-color: ${({ $clicked, theme }) =>
+    $clicked ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
   border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out; /* 부드러운 전환 효과 */
+  transition: background-color 0.2s ease-in-out;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray400};
