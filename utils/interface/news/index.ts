@@ -68,6 +68,7 @@ export interface News {
   title: string;
   subTitle: string;
   summary: string;
+  date?: Date;
   keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;
@@ -91,7 +92,5 @@ export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
 export interface Preview
   extends Pick<
     News,
-    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'keywords' | 'state'
-  > {
-  timelineDate?: Date;
-}
+    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state'
+  > {}

@@ -1,4 +1,3 @@
-import { HOST_URL } from '@public/assets/url';
 import { useSuspense } from '@utils/hook/useSuspense';
 import { Preview } from '@utils/interface/news';
 import { fetchImg } from '@utils/tools/async';
@@ -20,7 +19,7 @@ const fetchNewsImages = async (previews: Array<Preview>) => {
 
 export default function NewsBlock({ previews, onPreviewClick }: NewsBlockProps) {
   const read = useSuspense(
-    'previewImages' + String(previews[0].id),
+    'previewImages' + previews.reduce((acc, cur) => acc + String(cur.id), ''),
     async () => await fetchNewsImages(previews),
   );
 

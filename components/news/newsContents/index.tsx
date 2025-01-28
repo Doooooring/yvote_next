@@ -9,13 +9,13 @@ import icoNew from '@images/ico_new_2x.png';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
 import { NewsInView } from '@utils/interface/news';
-import { getDotDateForm } from '@utils/tools';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { Suspense, useMemo } from 'react';
 import CommentModal from '../commentModal';
 import { commentTypeColor } from '../../../utils/interface/news/commen';
 import { sortComment } from './newsContents.util';
+import { getDotDateForm } from '@utils/tools/date';
 
 interface NewsContentProps {
   newsContent: NewsInView;
