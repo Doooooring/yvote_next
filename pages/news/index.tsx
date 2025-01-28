@@ -266,14 +266,13 @@ const Keyword = styled.div<KeywordProps>`
   font-size: 14px;
   font-weight: 500;
   color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
-   rgb(120, 120, 120);
   margin: 0;
   margin-left: 3px;
   margin-right: 6px;
   margin-bottom: 6px;
   padding: 2px 8px;
   background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
-  border : 1px solid #f1f2f5;
+  border: 1px solid #f1f2f5;
   border-color: ${({ $clicked, theme }) =>
     $clicked ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
   border-radius: 20px;
