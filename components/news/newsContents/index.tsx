@@ -48,6 +48,8 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
 
+  console.log(summary);
+
   return (
     <Wrapper>
       <TabWrapper state={isLeft} className="fa-flex">
@@ -294,7 +296,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
   .contents-body {
     padding-top: 1rem;
     .main-image-wrapper {
-      width: 92%;
+      width: 95%;
       height: 250px;
       position: relative;
       padding: 0;
@@ -305,7 +307,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
       @media screen and (max-width: 760px) {
         height: 220px;
-        width: 98%;
+        width: 95%;
       }
 
       .img-head {
@@ -350,9 +352,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             margin: 0.1em 0 -0.1em 0;
           }
         }
-        span:hover {
-          cursor: pointer;
-        }
       }
       .content {
         padding: 1rem;
@@ -364,27 +363,42 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         padding-top: 1.5rem;
         padding-right: 2.5em;
         font-size: 16px;
-        line-height: 2;
+        line-height: 1.8;
         color: rgb(30, 30, 30);
         font-weight: 400;
         word-break: break-all;
         @media screen and (max-width: 768px) {
           padding-left: 0.75rem;
           padding-right: 0.75rem;
+          padding-top: 0;
         }
         & {
           p {
-            margin: 0 0 1em 0;
-            min-height: 10px;
+            margin: 16px 0 0 0;
+            min-height: 0px;
             font-family: Noto Sans KR, Helvetica, sans-serif;
-            @media screen and (max-width: 768px) {
-              font-weight: 400;
+            &:has(br:only-child) {
+              margin: 0;
             }
+            &:has(em) {
+              line-height: 1.6;
+              margin-top: 8px;
+              padding: 0 15px;
+            }
+          }
+          ul {
+            margin: 0 0 8px 0;
+            padding-left: 20px;
+            li {
+              margin-top: 28px;
+              text-indent: -5px;
+            }
+          }
+          h3 ~ ul li {
+            margin-top: 16px;
           }
         }
         @media screen and (max-width: 768px) {
-          padding-left: 0.8rem;
-          padding-right: 0.8rem;
           > h1 {
             display: none;
           }
