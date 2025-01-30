@@ -60,12 +60,15 @@ const Wrapper = styled(CommonLayoutBox)`
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
-  padding: 15px 10px;
+  padding: 15px 20px;
   font: inherit;
   box-sizing: border-box;
   width: 100%;
   margin: 0 0 20px;
   width: 100%;
+  @media screen and (max-width: 768px) {
+    padding: 15px 10px;
+  }
 
   .header-wrapper {
     display: flex;

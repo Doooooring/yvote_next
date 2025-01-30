@@ -117,34 +117,14 @@ const Title = styled(Row)`
     text-align: left;
     padding: 0;
     padding-right: 2px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
-
     display: -webkit-box;
     -webkit-text-size-adjust: none;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  @media screen and (max-width: 768px) {
-    font-weight: 500;
-  }
-`;
-
-const Date = styled.div`
-  flex: 0 1 auto;
-
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.gray600};
-  white-space: nowrap;
-  font-weight: 400;
-  line-height: 1;
-  align-self: center;
-
-  .diff {
-    color: ${({ theme }) => theme.colors.yvote02};
   }
 `;
 
@@ -158,26 +138,39 @@ const SubTitle = styled.div`
   vertical-align: baseline;
   color: rgb(80, 80, 80);
   margin: 0;
-  margin-top: 2px;
   margin-bottom: 6px;
   font-size: 15px;
-  line-height: 25px;
-  height: 75px;
+  line-height: 20px;
+  height: 60px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-
   ::after {
     content: '';
     display: block;
-    height: 10px;
+    height: 20px;
     background-color: white;
   }
   @media screen and (max-width: 768px) {
     color: rgb(100, 100, 100);
-    font-size: 14px;
+    font-size: 13.5px;
+  }
+`;
+
+const Date = styled.div`
+  flex: 0 1 auto;
+  margin-bottom: 5px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.gray600};
+  white-space: nowrap;
+  font-weight: 400;
+  line-height: 1;
+  align-self: center;
+
+  .diff {
+    color: ${({ theme }) => theme.colors.yvote02};
   }
 `;
 
