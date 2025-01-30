@@ -18,7 +18,7 @@ function NewArticles() {
     <>
       <div className="header-wrapper">
         <div className="category-head">
-          지난 뉴스 업데이트 ({Math.min(numToShow.current * (curView + 1), recentArticles.length)} /{' '}
+          관련 자료 업데이트 ({Math.min(numToShow.current * (curView + 1), recentArticles.length)} /{' '}
           {recentArticles.length})
         </div>
       </div>
@@ -57,7 +57,6 @@ export default function SuspenseNewsArticles() {
 
 const Wrapper = styled(CommonLayoutBox)`
   background-color: white;
-
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
@@ -79,7 +78,6 @@ const Wrapper = styled(CommonLayoutBox)`
     .category-head {
       display: inline;
       color: ${({ theme }) => theme.colors.gray800};
-      margin-left: 7px;
       font-weight: 700;
       font-size: 1.1rem;
     }
@@ -107,7 +105,7 @@ interface GridContainerProps {
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
   width: 100%;
-  grid-template-rows: repeat(5, 2rem);
+  grid-template-rows: repeat(5, 20px);
   grid-template-columns: repeat(1, 100%);
   grid-auto-flow: column;
   grid-row-gap: 10px;

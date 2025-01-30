@@ -37,7 +37,6 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
     return `${month}/${day}`;
   };
 
-
   return (
     <>
       <LinkWrapper onClick={openModal}>
@@ -54,7 +53,10 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                 {commentType}
               </p>
             </div>
-            <p className="title-wrapper">{title}<span>{formatDate(date)}</span></p>
+            <p className="title-wrapper">
+              {title}
+              <span>{formatDate(date)}</span>
+            </p>
           </div>
         </div>
       </LinkWrapper>
@@ -150,8 +152,6 @@ const LinkWrapper = styled.div`
     align-items: center;
     height: 100%;
     color: rgb(50, 50, 50);
-    padding-top: 0.1rem;
-    padding-left: 10px;
     vertical-align: baseline;
     display: flex;
     -webkit-line-clamp: 1;
@@ -169,21 +169,21 @@ const LinkWrapper = styled.div`
       width: 100%;
       flex: 0 1 auto;
       text-align: left;
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 12.5px;
+      font-weight: 400;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      padding-left: 4px;
-    } span {
+      span {
         font-weight: 400;
         margin-left: 10px;
-        font-size: 13px;
+        font-size: 11px;
         color: rgb(120, 120, 120);
       }
+    }
 
     .writer-wrapper {
-      width: 110px;
+      width: 105px;
       flex: 0 1 auto;
       text-align: left;
       p {

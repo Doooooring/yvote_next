@@ -367,6 +367,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         color: rgb(30, 30, 30);
         font-weight: 400;
         word-break: break-all;
+        font-family: Noto Sans KR, Helvetica, sans-serif;
         @media screen and (max-width: 768px) {
           padding-left: 0.75rem;
           padding-right: 0.75rem;
@@ -374,9 +375,8 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         }
         & {
           p {
-            margin: 16px 0 0 0;
+            margin: 12px 0 0 0;
             min-height: 0px;
-            font-family: Noto Sans KR, Helvetica, sans-serif;
             &:has(br:only-child) {
               margin: 0;
             }
@@ -393,9 +393,14 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
               margin-top: 28px;
               text-indent: -5px;
             }
+            &[data-checked='false'] {
+              font-size: 20px;
+              list-style: none;
+              padding-left: 2px;
+            }
           }
-          h3 ~ ul li {
-            margin-top: 16px;
+          ul[data-checked='false'] + ul li {
+            margin-top: 0;
           }
         }
         @media screen and (max-width: 768px) {
