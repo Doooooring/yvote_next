@@ -169,7 +169,7 @@ const LinkWrapper = styled.div`
       width: 100%;
       flex: 0 1 auto;
       text-align: left;
-      font-size: 12.5px;
+      font-size: 14px;
       font-weight: 400;
       overflow: hidden;
       white-space: nowrap;
@@ -179,6 +179,9 @@ const LinkWrapper = styled.div`
         margin-left: 10px;
         font-size: 11px;
         color: rgb(120, 120, 120);
+      }
+      @media screen and (max-width: 768px) {
+        font-size: 13px;
       }
     }
 

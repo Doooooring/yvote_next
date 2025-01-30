@@ -108,12 +108,13 @@ interface GridContainerProps {
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
   width: 100%;
-  grid-template-rows: repeat(5, 20px);
+  grid-template-rows: repeat(5, 30px);
   grid-template-columns: repeat(1, 100%);
   grid-auto-flow: column;
   grid-row-gap: 10px;
   grid-column-gap: 15px;
   @media screen and (max-width: 768px) {
+    grid-template-rows: repeat(5, 20px);
     overflow-x: scroll;
     overflow-y: hidden;
     ::-webkit-scrollbar {
