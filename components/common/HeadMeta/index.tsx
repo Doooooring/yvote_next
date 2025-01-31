@@ -20,8 +20,11 @@ function HeadMeta({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="author" content={'와이보트'} />
-      <link rel="canonical" href="https://yvoting.com" />
+      <link rel="canonical" href={url} />
       <meta name="robots" content="index, follow" />
+      <meta http-equiv="content-language" content="ko" />
+      <meta name="application-name" content="와이보트" />
+      <meta name="apple-mobile-web-app-title" content={title} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />

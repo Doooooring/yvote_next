@@ -70,7 +70,7 @@ export default function KeyExplanation({ data }: pageProps) {
     title: `키워드 - ${keyword.keyword}`,
     description: keyword.explain || '',
     image: keyword.keywordImage,
-    url: `https://yvoting.com/keywords/${keyword.keyword}`,
+    url: `https://yvoting.com/keywords/${keyword.id}`,
     type: 'article',
   };
 

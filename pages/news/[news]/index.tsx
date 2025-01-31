@@ -62,9 +62,8 @@ export default function NewsDetailPage({ data }: pageProps) {
   const metaTagsProps = useMemo(() => {
     return {
       title: news?.title || '',
-
       description: description,
-      image: `${HOST_URL}/images/news/${news?.id}`,
+      image: news.newsImage,
       url: `https://yvoting.com/news/${id}`,
       type: 'article',
     };
