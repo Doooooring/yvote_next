@@ -1,5 +1,6 @@
 import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
+import { fetchImg } from '@utils/tools/async';
 import { MutableRefObject, useRef, useState } from 'react';
 
 export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
@@ -33,6 +34,13 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         return;
       }
 
+      const promises = await Promise.all(
+        datas.map(async (data) => {
+          const response = await fetchImg(data.newsImage as string);
+          data.newsImage = response;
+        }),
+      );
+
       page.current += limit.current;
       setPreviews([...arr, ...datas]);
     } catch (e) {
@@ -55,6 +63,13 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         page.current = -1;
         return false;
       }
+
+      const promises = await Promise.all(
+        datas.map(async (data) => {
+          const response = await fetchImg(data.newsImage as string);
+          data.newsImage = response;
+        }),
+      );
 
       page.current += limit.current;
       setPreviews([...arr, ...datas]);

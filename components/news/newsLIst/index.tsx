@@ -12,6 +12,8 @@ import styled from 'styled-components';
 import NewsBlock from '../newsBlock';
 import NewsListFallback from '../newsListFallback';
 import { useNewsInfiniteScroll } from './newsList.tools';
+import { Virtuoso } from '@node_modules/react-virtuoso/dist';
+import PreviewBox from '../previewBox';
 
 interface NewsListProps {
   page: number;
@@ -43,7 +45,7 @@ export default function NewsList({
     }
   }, [fetchPreviews, showToastMessage]);
 
-  useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
+  // useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
   const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
 
   const clickFetchButton = useCallback(() => {
@@ -54,11 +56,33 @@ export default function NewsList({
   return (
     <>
       <Wrapper>
-        {arrBatch(previews, 16).map((previews) => (
+        {/* {arrBatch(previews, 16).map((previews) => (
           <Suspense fallback={<NewsListFallback length={previews.length} />}>
             <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
           </Suspense>
-        ))}
+        ))} */}
+        <Virtuoso
+          style={{
+            width: '100%',
+          }}
+          useWindowScroll
+          totalCount={previews.length}
+          data={previews}
+          increaseViewportBy={1000}
+          endReached={() => {
+            fetChPreviewsWithVal();
+          }}
+          itemContent={(_, item) => {
+            return (
+              <PreviewBox
+                key={item.id}
+                preview={item}
+                img={item.newsImage}
+                click={showNewsContent}
+              />
+            );
+          }}
+        />
       </Wrapper>
       <IsShow state={isRequesting}>
         <LoadingWrapper>
@@ -70,7 +94,7 @@ export default function NewsList({
           <FetchButton onClick={clickFetchButton}>더 보기</FetchButton>
         </Center>
       </IsShow>
-      <LastLine ref={elementRef} />
+      {/* <LastLine ref={elementRef} /> */}
     </>
   );
 }
