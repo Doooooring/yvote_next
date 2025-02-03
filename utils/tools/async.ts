@@ -4,6 +4,6 @@ export const fetchImg = async (src: string) => {
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   } catch (e) {
-    return '';
+    throw e;
   }
 };

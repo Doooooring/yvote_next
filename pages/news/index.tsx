@@ -231,6 +231,8 @@ const TagWrapper = styled.div`
   height: 100%;
   padding-left: 10px;
 
+  position: relative;
+
   @media screen and (max-width: 1196px) {
     display: none;
   }
