@@ -19,6 +19,7 @@ interface NewsListProps {
   page: number;
   previews: Preview[];
   isRequesting: boolean;
+  isFetchingImages?: boolean;
   fetchPreviews: () => Promise<boolean>;
   showNewsContent: (id: number) => void;
 }
@@ -27,6 +28,7 @@ export default function NewsList({
   page,
   previews,
   isRequesting,
+  isFetchingImages = false,
   fetchPreviews,
   showNewsContent,
 }: NewsListProps) {
@@ -83,8 +85,11 @@ export default function NewsList({
             );
           }}
         />
+        <IsShow state={isFetchingImages}>
+          <NewsListFallback length={previews.length % 16 == 0 ? 16 : previews.length % 16} />
+        </IsShow>
       </Wrapper>
-      <IsShow state={isRequesting}>
+      <IsShow state={isRequesting && !isFetchingImages}>
         <LoadingWrapper>
           <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
         </LoadingWrapper>

@@ -26,6 +26,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         const datas: Array<Preview> = isAdmin
           ? await NewsRepository.getPreviewsAdmin(fetchPage, fetchLimit, filter)
           : await NewsRepository.getPreviews(fetchPage, fetchLimit, filter);
+
         if (datas.length === 0) {
           page.current = -1;
           return;
@@ -35,8 +36,12 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
         await Promise.all(
           datas.map(async (data) => {
-            const response = await fetchImg(data.newsImage as string);
-            data.newsImage = response;
+            try {
+              const response = await fetchImg(data.newsImage as string);
+              data.newsImage = response;
+            } catch (e) {
+              data.newsImage = '';
+            }
           }),
         );
         page.current += limit.current;
@@ -45,6 +50,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         setIsError(true);
       } finally {
         setIsRequesting(false);
+        setIsFetchingImages(false);
       }
     },
     [setIsRequesting, setIsFetchingImages, setPreviews],
@@ -82,6 +88,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
   return {
     page: page.current,
     isRequesting,
+    isFetchingImages,
     isError,
     previews,
     fetchPreviews: fetchInitialPreviews,

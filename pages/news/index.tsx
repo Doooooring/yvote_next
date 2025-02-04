@@ -33,8 +33,15 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(16);
+  const {
+    page,
+    isRequesting,
+    isFetchingImages,
+    isError,
+    previews,
+    fetchPreviews,
+    fetchNextPreviews,
+  } = useFetchNewsPreviews(16);
   const recentKeywords = useRecentKeywords();
   useMount(() => {
     fetchPreviews({ limit: 16 });
@@ -62,7 +69,6 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-
         <SearchWrapper>
           <SearchBox page={page} fetchPreviews={fetchPreviews} />
         </SearchWrapper>
@@ -72,6 +78,7 @@ export default function NewsPage(props: pageProps) {
               page={page}
               previews={previews.length == 0 ? props.data : previews}
               isRequesting={isRequesting}
+              isFetchingImages={isFetchingImages}
               fetchPreviews={fetchNextPreviews}
               showNewsContent={showNewsContent}
             />
