@@ -1,8 +1,7 @@
-import React, { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import KeywordsRepository from '@repositories/keywords';
-import NewsRepository from '@repositories/news';
 import { Keyword } from '@utils/interface/keywords';
 import { Preview } from '@utils/interface/news';
 import { getConstantVowel } from '@utils/tools';
@@ -13,7 +12,7 @@ interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
 
 interface SearchBoxProps {
   page: number;
-  fetchPreviews: (option: { filter?: string | null; limit?: number }) => Promise<void>;
+  fetchPreviews: (option: { filter?: string | null; limit?: number }) => Promise<boolean>;
 }
 
 export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {

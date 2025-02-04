@@ -2,7 +2,6 @@ import NewsContent from '@components/news/newsContents';
 import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
-import { HOST_URL } from '@public/assets/url';
 import { NewsInView } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -88,8 +87,6 @@ export default function NewsDetailPage({ data }: pageProps) {
 const Wrapper = styled.div`
   font-family: Helvetica, sans-serif;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,7 +111,6 @@ const Wrapper = styled.div`
     position: relative;
     .news-contents-wrapper {
       width: 100%;
-      height: 800px;
       font-size: 13px;
     }
   }

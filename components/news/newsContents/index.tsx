@@ -9,13 +9,13 @@ import icoNew from '@images/ico_new_2x.png';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
 import { NewsInView } from '@utils/interface/news';
+import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { Suspense, useMemo } from 'react';
-import CommentModal from '../commentModal';
 import { commentTypeColor } from '../../../utils/interface/news/commen';
+import CommentModal from '../commentModal';
 import { sortComment } from './newsContents.util';
-import { getDotDateForm } from '@utils/tools/date';
 
 interface NewsContentProps {
   newsContent: NewsInView;
@@ -47,8 +47,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
   }, [newsContent]);
-
-  console.log(summary);
 
   return (
     <Wrapper>
@@ -260,6 +258,8 @@ const TabWrapper = styled.div<TabWrapperProps>`
   }
 `;
 
+const LeftButton = styled(CommonLayoutBox)``;
+
 const Body = styled.div`
   display: flex;
   flex-direction: row;
@@ -281,7 +281,7 @@ interface BodyProps {
 }
 
 const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
-  width: 55%;
+  width: 100%;
   min-height: 1000px;
   position: relative;
   padding-bottom: 80px;
@@ -440,7 +440,8 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
 const BodyRight = styled.div<BodyProps>`
   width: 45%;
-  padding: 0 1.2rem;
+  flex: 1 0 auto;
+  padding-left: 1.2rem;
   max-width: 500px;
   @media screen and (max-width: 768px) {
     display: ${({ state }) => (state ? 'block' : 'none')};

@@ -2,17 +2,14 @@ import { Center, Column, CommonLayoutBox } from '@components/common/commonStyles
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
+import { Virtuoso } from '@node_modules/react-virtuoso/dist';
 import useLazyLoad from '@utils/hook/useLazyLoad';
 import { useOnScreen } from '@utils/hook/useOnScreen';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
-import { arrBatch } from '@utils/tools';
-import { Suspense, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import NewsBlock from '../newsBlock';
 import NewsListFallback from '../newsListFallback';
-import { useNewsInfiniteScroll } from './newsList.tools';
-import { Virtuoso } from '@node_modules/react-virtuoso/dist';
 import PreviewBox from '../previewBox';
 
 interface NewsListProps {

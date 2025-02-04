@@ -1,3 +1,4 @@
+import { CacheContainer } from '@container/cache';
 import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
 import { fetchImg } from '@utils/tools/async';
@@ -29,16 +30,25 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
         if (datas.length === 0) {
           page.current = -1;
-          return;
+          return false;
         }
 
         setIsFetchingImages(true);
 
+        const cacheContainer = CacheContainer.getInstance();
+
         await Promise.all(
           datas.map(async (data) => {
+            const newsImageId = `news-${data.id}-image`;
+
             try {
-              const response = await fetchImg(data.newsImage as string);
-              data.newsImage = response;
+              if (cacheContainer.isKey(newsImageId)) {
+                data.newsImage = cacheContainer.getData(newsImageId);
+              } else {
+                const response = await fetchImg(data.newsImage as string);
+                cacheContainer.addMap(newsImageId, response);
+                data.newsImage = response;
+              }
             } catch (e) {
               data.newsImage = '';
             }
@@ -46,8 +56,10 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
         );
         page.current += limit.current;
         setPreviews([...prevPreviews, ...datas]);
+        return true;
       } catch (e) {
         setIsError(true);
+        return false;
       } finally {
         setIsRequesting(false);
         setIsFetchingImages(false);
@@ -64,7 +76,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     page.current = 0;
     limit.current = l;
 
-    await fetchPreviews(arr, {
+    return await fetchPreviews(arr, {
       page: page.current,
       limit: limit.current,
       filter: prevFilter.current ?? '',
@@ -76,13 +88,12 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     let arr = previews;
     if (page.current === -1) return false;
 
-    await fetchPreviews(arr, {
+    return await fetchPreviews(arr, {
       page: page.current,
       limit: limit.current,
       filter: prevFilter.current ?? '',
       isAdmin,
     });
-    return true;
   };
 
   return {

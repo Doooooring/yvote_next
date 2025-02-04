@@ -1,12 +1,12 @@
-class CustomCache {
-  private static instance: CustomCache;
+export class CacheContainer {
+  private static instance: CacheContainer;
   private cacheMap: Map<string, any>;
   private constructor() {
     this.cacheMap = new Map<string, any>();
   }
 
   static getInstance() {
-    return this.instance ?? (this.instance = new CustomCache());
+    return this.instance ?? (this.instance = new CacheContainer());
   }
 
   addMap(key: string, data: any) {

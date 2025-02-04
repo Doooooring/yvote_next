@@ -4,10 +4,10 @@ import Header from '@components/common/header';
 
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
-import { useRouteState } from './layout.tool';
-import LoadingIndicator from './loadingIndicator';
 import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
 import { Column } from '../commonStyles';
+import { useRouteState } from './layout.tool';
+import LoadingIndicator from './loadingIndicator';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const routeState = useRouteState();
@@ -29,7 +29,6 @@ export default Layout;
 
 const Wrapper = styled(Column)`
   width: 100vw;
-  height: 100vh;
 `;
 
 const Body = styled.div`
@@ -38,6 +37,8 @@ const Body = styled.div`
   padding-bottom: 50px;
 
   background-color: rgb(242, 242, 242);
+
+  flex: 1 0 auto;
 `;
 
 interface ForegroundProps {

@@ -1,10 +1,9 @@
-import Image from 'next/image';
-import ImageFallback from '../imageFallback';
+import { useDevice } from '@utils/hook/useDevice';
 import Link from 'next/link';
-import { useCurRoute } from './header.tool';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import { Device, useDevice } from '@utils/hook/useDevice';
+import ImageFallback from '../imageFallback';
+import { useCurRoute } from './header.tool';
 
 export default function Header() {
   const curRoute = useCurRoute();
@@ -216,8 +215,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   font: inherit;
   font-size: 1rem;
   font-weight: 400;
-  // border-bottom: ${({ $state }) =>
-    $state ? '3px solid rgb(114, 190, 218)' : '3px solid white'};
+
   height: 100%;
   // .image-l {
   //   @media screen and (max-width: 768px) {

@@ -117,8 +117,6 @@ const Wrapper = styled.div`
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -235,7 +233,6 @@ const TagWrapper = styled.div`
   flex: 1 0 auto;
 
   width: 300px;
-  height: 100%;
   padding-left: 10px;
 
   position: relative;
@@ -248,7 +245,7 @@ const TagWrapper = styled.div`
 const KeywordsWrapper = styled(CommonLayoutBox)`
   padding: 1rem;
   position: sticky;
-  top: 0%;
+  top: 100px;
 `;
 
 const KeywordTitle = styled.div`
