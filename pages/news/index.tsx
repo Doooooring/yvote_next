@@ -127,6 +127,8 @@ const Wrapper = styled.div`
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
 
+  overflow-x: hidden;
+
   ::-webkit-scrollbar {
     display: none;
   }
