@@ -109,6 +109,9 @@ export default function NewsPage(props: pageProps) {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+
   -webkit-text-size-adjust: none;
   color: #666;
   margin: 0;
@@ -116,7 +119,6 @@ const Wrapper = styled.div`
   border: 0;
   font-family: Helvetica, sans-serif;
   box-sizing: inherit;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

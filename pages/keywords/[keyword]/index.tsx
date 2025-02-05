@@ -58,8 +58,15 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function KeyExplanation({ data }: pageProps) {
   const { keyword = {}, previews: initialPreviews } = data;
-  const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
-    useFetchNewsPreviews(16);
+  const {
+    page,
+    isRequesting,
+    isFetchingImages,
+    isError,
+    previews,
+    fetchPreviews,
+    fetchNextPreviews,
+  } = useFetchNewsPreviews(16);
   const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
 
   useMount(() => {
@@ -104,6 +111,7 @@ export default function KeyExplanation({ data }: pageProps) {
               page={page}
               previews={previews.length == 0 ? initialPreviews : previews}
               isRequesting={isRequesting}
+              isFetchingImages={isFetchingImages}
               fetchPreviews={fetchNextPreviews}
               showNewsContent={showNewsContent}
             />

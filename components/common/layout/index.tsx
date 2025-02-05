@@ -18,23 +18,21 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Header />
         <CommonErrorBoundary>
           <Body>{children}</Body>
-          <LoadingIndicator state={routeState} />
         </CommonErrorBoundary>
       </Wrapper>
+      <LoadingIndicator state={routeState} />
     </ToastMessageProvider>
   );
 };
 
 export default Layout;
 
-const Wrapper = styled(Column)`
+const Wrapper = styled.div`
   width: 100vw;
 `;
 
 const Body = styled.div`
   width: 100%;
-
-  padding-bottom: 50px;
 
   background-color: rgb(242, 242, 242);
 

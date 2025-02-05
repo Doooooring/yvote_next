@@ -1,4 +1,4 @@
-import { useDevice } from '@utils/hook/useDevice';
+import { Device, useDevice } from '@utils/hook/useDevice';
 import Link from 'next/link';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -19,7 +19,7 @@ export default function Header() {
   };
 
   return (
-    <Wrapper>
+    <Wrapper style={{ height: device === Device.pc ? '65px' : '50px' }}>
       <HeaderBody>
         <LogoImgBox>
           <HomeLink href="/" $state={curRoute === 'home'}>
@@ -141,7 +141,7 @@ const Hamburger = styled.div<HamburgerProps>`
   }
 `;
 
-const Wrapper = styled.header`
+const Wrapper = styled.nav`
   display: flex;
   justify-content: center;
   align-items: center;

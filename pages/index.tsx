@@ -116,16 +116,17 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   position: relative;
-  height: 100vh;
-  overflow-y: hidden;
+  height: calc(100vh - 65px);
   background-color: black; /* Set initial background color to black */
   padding: 3rem 2rem;
+  overflow: hidden;
   &::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
   @media (max-height: 480px) {
     overflow-y: auto;
+    height: calc(100vh - 50px);
   }
 `;
 
