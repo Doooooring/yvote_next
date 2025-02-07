@@ -383,7 +383,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             &:has(em) {
               line-height: 1.6;
               margin-top: 8px;
-              padding: 0 10px;
+              padding: 0 15px;
             }
             &:has(strong) {
               padding: 0 10px;
@@ -393,16 +393,22 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             margin: 0 0 8px 0;
             padding-left: 20px;
             li {
-              margin-top: 40px;
+              margin-top: 28px;
               text-indent: -5px;
             }
             &[data-checked='false'] {
+              font-size: 20px;
               list-style: none;
+              padding-left: 2px;
+
               li {
                 margin-top: 12px;
                 text-indent: -20px;
               }
             }
+          }
+          ul[data-checked='false'] + ul li {
+            margin-top: 0;
           }
         }
         @media screen and (max-width: 768px) {
