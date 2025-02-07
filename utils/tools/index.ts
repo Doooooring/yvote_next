@@ -232,3 +232,12 @@ export function getConstantVowel(wor: string, testWord = false) {
   }
   return result;
 }
+
+export enum RenderingEnvironment {
+  server = 'server',
+  client = 'client',
+}
+
+export const getRenderingEnvironment = () => {
+  return typeof window === 'undefined' ? RenderingEnvironment.server : RenderingEnvironment.client;
+};

@@ -20,7 +20,18 @@
   },
   "rules": {
     "no-unused-vars": "off",
-    "no-restricted-imports": ["error"],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next/router",
+            "importNames": ["useRouter"],
+            "message": "next/router를 사용하면 안됩니다. hooks/useRouter를 사용해주세요."
+          }
+        ]
+      }
+    ],
     "@typescript-eslint/no-empty-interface": "off",
     "import/first": "error",
     "import/newline-after-import": "error",
