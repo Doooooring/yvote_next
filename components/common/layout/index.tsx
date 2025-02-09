@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 import Header from '@components/common/header';
 
+import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
-import { Column } from '../commonStyles';
 import { useRouteState } from './layout.tool';
 import LoadingIndicator from './loadingIndicator';
 
@@ -13,15 +13,17 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const routeState = useRouteState();
 
   return (
-    <ToastMessageProvider>
-      <Wrapper>
-        <Header />
-        <CommonErrorBoundary>
-          <Body>{children}</Body>
-        </CommonErrorBoundary>
-      </Wrapper>
-      <LoadingIndicator state={routeState} />
-    </ToastMessageProvider>
+    <RouterProvider>
+      <ToastMessageProvider>
+        <Wrapper>
+          <Header />
+          <CommonErrorBoundary>
+            <Body>{children}</Body>
+          </CommonErrorBoundary>
+        </Wrapper>
+        <LoadingIndicator state={routeState} />
+      </ToastMessageProvider>
+    </RouterProvider>
   );
 };
 

@@ -2,6 +2,7 @@ import { PropsWithChildren, useCallback, useMemo, useRef } from '@node_modules/@
 
 import { useRouter as useOriginalRouter } from '@node_modules/next/router';
 import { getRenderingEnvironment, RenderingEnvironment } from '@utils/tools';
+import { RouterContext } from './useRouter';
 
 type pageHistory = {
   pageId: number;
@@ -29,6 +30,10 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     pagePointer.current--;
   }, []);
 
+  const getCurrentPageId = useCallback(() => {
+    return pagePointer.current;
+  }, []);
+
   const router = useMemo(() => {
     return new Proxy(originalRouter, {
       get(target, prop, receiver) {
@@ -51,6 +56,14 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     });
   }, [originalRouter]);
 
-  return {router, }
-
+  return (
+    <RouterContext.Provider
+      value={{
+        router: router,
+        getCurrentPageId: getCurrentPageId,
+      }}
+    >
+      {children}
+    </RouterContext.Provider>
+  );
 }
