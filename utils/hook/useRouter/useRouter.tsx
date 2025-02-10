@@ -5,7 +5,9 @@ import { pageHistory } from './router.types';
 export interface RouteContextProp {
   router: NextRouter;
   loading: boolean;
-  getCurrentPageId: () => number;
+  getCurrentPageIndex: () => number;
+  getPageInfoByIndex: (n: number) => pageHistory;
+  getCurrentPageInfo: () => pageHistory;
   getPageInfoById: (id: number) => pageHistory;
 }
 

@@ -2,12 +2,12 @@ import NewsContent from '@components/news/newsContents';
 import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -51,11 +51,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const { router, getCurrentPageId } = useRouter();
+  const { router, getCurrentPageIndex } = useRouter();
   const { id, news, description } = data;
 
   const hideNewsContent = useCallback(() => {
-    if (getCurrentPageId() === 0) {
+    if (getCurrentPageIndex() === 0) {
       router.push('/news');
     } else {
       router.back();

@@ -6,7 +6,6 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import SearchBox from '@components/news/searchBox';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
-import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
@@ -44,10 +43,10 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
   } = useFetchNewsPreviews(16);
   const recentKeywords = useRecentKeywords();
-  const { getCurrentPageId } = useRouter();
+  const { getCurrentPageInfo } = useRouter();
 
   useEffect(() => {
-    const id = getCurrentPageId();
+    const id = getCurrentPageInfo();
     console.log('page id : ', id);
     fetchPreviews({ limit: 16 });
   }, []);
