@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { useCallback } from 'react';
 
 export const useKeywordNavigate = () => {
-  const navigate = useRouter();
+  const { router } = useRouter();
 
   const moveToKeywordDetail = useCallback((id: string) => {
-    navigate.push(`/keywords/${id}`);
+    router.push(`/keywords/${id}`);
   }, []);
 
   return moveToKeywordDetail;

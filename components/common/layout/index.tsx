@@ -6,12 +6,9 @@ import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
-import { useRouteState } from './layout.tool';
 import LoadingIndicator from './loadingIndicator';
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const routeState = useRouteState();
-
   return (
     <RouterProvider>
       <ToastMessageProvider>
@@ -21,7 +18,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <Body>{children}</Body>
           </CommonErrorBoundary>
         </Wrapper>
-        <LoadingIndicator state={routeState} />
+        <LoadingIndicator />
       </ToastMessageProvider>
     </RouterProvider>
   );

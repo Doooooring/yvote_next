@@ -6,7 +6,7 @@ import NewsList from '@components/news/newsLIst';
 import SearchBox from '@components/news/searchBox';
 import NewsRepository from '@repositories/news';
 import { Preview } from '@utils/interface/news';
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -18,7 +18,7 @@ interface pageProps {
 }
 
 export default function NewsPage(props: pageProps) {
-  const navigate = useRouter();
+  const { router } = useRouter();
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16, true);
 
@@ -27,7 +27,7 @@ export default function NewsPage(props: pageProps) {
   });
 
   const showNewsContent = useCallback(async (id: number) => {
-    navigate.push(`/adminjae/${id}`);
+    router.push(`/adminjae/${id}`);
   }, []);
 
   return (

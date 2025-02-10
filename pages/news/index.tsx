@@ -9,9 +9,10 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface pageProps {
@@ -43,9 +44,14 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
   } = useFetchNewsPreviews(16);
   const recentKeywords = useRecentKeywords();
-  useMount(() => {
+  const { getCurrentPageId } = useRouter();
+
+  useEffect(() => {
+    const id = getCurrentPageId();
+    console.log('page id : ', id);
     fetchPreviews({ limit: 16 });
-  });
+  }, []);
+
   const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
   const showNewsContent = useNewsNavigate();
 

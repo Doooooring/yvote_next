@@ -15,7 +15,7 @@ export default function Header() {
   };
 
   const closeMenu = () => {
-    setIsMenuOpen(false); // Ensures the menu closes when navigating
+    setIsMenuOpen(false);
   };
 
   return (
@@ -39,35 +39,35 @@ export default function Header() {
           <div className="line3" />
         </Hamburger>
 
-        {/* Navigation Menu */}
+        {/* router Menu */}
         <NavAnimation isMenuOpen={isMenuOpen}>
           <NavigationBox>
             <NavBox
               link={'/news'}
               comment={'뉴스 모아보기'}
               state={curRoute === 'news'}
-              onNavigate={closeMenu} // Close menu on click
+              onNavigate={closeMenu}
             />
 
             <NavBox
               link={'/keywords'}
               comment={'키워드 모아보기'}
               state={curRoute === 'keywords'}
-              onNavigate={closeMenu} // Close menu on click
+              onNavigate={closeMenu}
             />
 
             <NavBox
               link={'/analyze'}
               comment={'정치 성향 테스트'}
               state={curRoute === 'analyze'}
-              onNavigate={closeMenu} // Close menu on click
+              onNavigate={closeMenu}
             />
 
             <NavBox
               link={'/about'}
               comment={'ABOUT'}
               state={curRoute === 'about'}
-              onNavigate={closeMenu} // Close menu on click
+              onNavigate={closeMenu}
             />
           </NavigationBox>
         </NavAnimation>

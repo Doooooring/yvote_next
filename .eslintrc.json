@@ -20,18 +20,7 @@
   },
   "rules": {
     "no-unused-vars": "off",
-    "no-restricted-imports": [
-      "error",
-      {
-        "paths": [
-          {
-            "name": "next/router",
-            "importNames": ["useRouter"],
-            "message": "next/router를 사용하면 안됩니다. hooks/useRouter를 사용해주세요."
-          }
-        ]
-      }
-    ],
+    "no-restricted-imports": ["error"],
     "@typescript-eslint/no-empty-interface": "off",
     "import/first": "error",
     "import/newline-after-import": "error",
@@ -41,19 +30,12 @@
       "error",
       {
         "groups": [
-          // `react` first, `next` second, then packages starting with a character
           ["^react$", "^next", "^[a-z]"],
-          // Packages starting with `@`
           ["^@"],
-          // Packages starting with `~`
           ["^~"],
-          // Imports starting with `../`
           ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-          // Imports starting with `./`
           ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-          // Style imports
           ["^.+\\.s?css$"],
-          // Side effect imports
           ["^\\u0000"]
         ]
       }

@@ -2,7 +2,7 @@ import { Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
 import { Preview } from '@utils/interface/news';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import React from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
@@ -13,7 +13,7 @@ interface PreviewBoxProps {
   img?: string;
 }
 function PreviewBox({ preview, img, click }: PreviewBoxProps) {
-  const navigate = useRouter();
+  const { router } = useRouter();
   const { id, title, subTitle, summary, date, newsImage, keywords, state } = preview;
 
   return (
@@ -59,7 +59,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
                   <Keyword
                     key={keyword}
                     onClick={() => {
-                      navigate.push(`/keywords/${String(id)}`);
+                      router.push(`/keywords/${String(id)}`);
                     }}
                   >
                     {`#${keyword}`}

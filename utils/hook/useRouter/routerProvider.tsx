@@ -1,6 +1,6 @@
-import { PropsWithChildren, useCallback, useMemo, useRef } from '@node_modules/@types/react';
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRouter as useOriginalRouter } from '@node_modules/next/router';
+import { useRouter as useOriginalRouter } from 'next/router';
 import { getRenderingEnvironment, RenderingEnvironment } from '@utils/tools';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
@@ -10,6 +10,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
 
   const pagePointer = useRef<number>(0);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
+  const [loading, setLoading] = useState(false);
 
   const originalRouter = useOriginalRouter();
 
@@ -33,10 +34,26 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
 
   const getPageInfoById = useCallback(
     (id: number) => {
-      return pageHistoryStack.current.filter((page) => page.pageId == id)[0];
+      return pageHistoryStack.current.filter((page) => page.pageId === id)[0];
     },
     [pageHistoryStack],
   );
+
+  const setRouteStart = useCallback(() => setLoading(true), [setLoading]);
+
+  const setRouteEnd = useCallback(() => setLoading(false), [setLoading]);
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', setRouteStart);
+    router.events.on('routeChangeComplete', setRouteEnd);
+    router.events.on('routeChangeError', setRouteEnd);
+
+    return () => {
+      router.events.off('routeChangeStart', setRouteStart);
+      router.events.off('routeChangeComplete', setRouteEnd);
+      router.events.off('routeChangeError', setRouteEnd);
+    };
+  }, []);
 
   const router = useMemo(() => {
     return new Proxy(originalRouter, {
@@ -64,6 +81,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     <RouterContext.Provider
       value={{
         router: router,
+        loading: loading,
         getCurrentPageId,
         getPageInfoById,
       }}

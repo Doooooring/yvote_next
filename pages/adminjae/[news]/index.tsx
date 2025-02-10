@@ -4,7 +4,7 @@ import NewsRepository from '@repositories/news';
 import HeadMeta from '@components/common/HeadMeta';
 import { HOST_URL } from '@public/assets/url';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import LoadingCommon from '@components/common/loading';
@@ -47,7 +47,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const [news, setNews] = useState<NewsInView | null>(null);
-  const router = useRouter();
+  const { router } = useRouter();
   const { id } = data;
 
   const hideNewsContent = useCallback(() => {

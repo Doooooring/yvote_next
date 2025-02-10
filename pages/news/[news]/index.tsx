@@ -5,9 +5,9 @@ import HeadMeta from '@components/common/HeadMeta';
 import { NewsInView } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -51,12 +51,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const router = useRouter();
+  const { router, getCurrentPageId } = useRouter();
   const { id, news, description } = data;
 
   const hideNewsContent = useCallback(() => {
-    router.push('/news');
-  }, []);
+    if (getCurrentPageId() === 0) {
+      router.push('/news');
+    } else {
+      router.back();
+    }
+  }, [router]);
 
   const metaTagsProps = useMemo(() => {
     return {
