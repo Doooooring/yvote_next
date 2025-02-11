@@ -23,6 +23,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
   const prevPage = useRef<string | null>(null);
   const pagePointer = useRef<number>(0);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
+
   const [loading, setLoading] = useState(false);
 
   const originalRouter = useOriginalRouter();
@@ -103,7 +104,6 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
   }, [setLoading, getCurrentPageInfo]);
 
   const setRouteEnd = useCallback(() => {
-    const state = history.state;
     switch (curRouteState.current) {
       case RouteState.push:
         hydratePageHistory();
@@ -119,8 +119,6 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       case RouteState.replace:
         replacePageHistory(pagePointer.current);
     }
-
-    addPageHistory();
     setLoading(false);
   }, [setLoading]);
 
