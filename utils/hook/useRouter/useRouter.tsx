@@ -8,7 +8,7 @@ export interface RouteContextProp {
   getCurrentPageIndex: () => number;
   getPageInfoByIndex: (n: number) => pageHistory;
   getCurrentPageInfo: () => pageHistory;
-  getPageInfoById: (id: number) => pageHistory;
+  getPageInfoById: (id: string) => pageHistory;
 }
 
 export const RouterContext = createContext<RouteContextProp | null>(null);

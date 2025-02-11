@@ -1,4 +1,4 @@
 export type pageHistory = {
-  pageId: number;
+  pageId: string;
   path: string;
 };

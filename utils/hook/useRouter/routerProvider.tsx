@@ -11,31 +11,52 @@ export interface NextRouterPopState {
   key: string; // 자체 생성 해시값
 }
 
+export enum RouteState {
+  push = 'push',
+  back = 'back',
+  forward = 'forward',
+  replace = 'replace',
+}
+
 export function RouterProvider({ children, ...others }: PropsWithChildren) {
-  const pageId = useRef(0);
+  const curRouteState = useRef<RouteState | null>(null);
+  const prevPage = useRef<string | null>(null);
   const pagePointer = useRef<number>(0);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
   const [loading, setLoading] = useState(false);
 
   const originalRouter = useOriginalRouter();
 
-  const addPageHistoryStack = useCallback((path: string) => {
+  const setCurRouteState = (state: RouteState) => {
+    return (curRouteState.current = state);
+  };
 
+  const addPageHistory = useCallback(() => {
+    const state = history.state;
+    const id = state.key as string;
+    const path = state.as as string;
+    pageHistoryStack.current.push({ pageId: id, path });
+  }, []);
+
+  const replacePageHistory = useCallback((index: number) => {
+    const state = history.state;
+    const id = state.key as string;
+    const path = state.as as string;
+    pageHistoryStack.current[index] = { pageId: id, path };
+  }, []);
+
+  const hydratePageHistory = useCallback(() => {
     while (pagePointer.current < pageHistoryStack.current.length - 1) {
       pageHistoryStack.current.pop();
     }
-    pageHistoryStack.current.push({ pageId: pageId.current, path });
-    pageId.current++;
-    pagePointer.current++;
   }, []);
 
-  const moveForward = useCallback(() => {
-    pagePointer.current++;
-  }, []);
-
-  const moveBack = useCallback(() => {
-    pagePointer.current--;
-  }, []);
+  const log = () => {
+    console.log('========== current route info');
+    console.log('current pointer : ', pagePointer.current);
+    console.log('prev page info : ', prevPage.current);
+    console.log('page stack : ', pageHistoryStack.current);
+  };
 
   const router = useMemo(() => {
     return new Proxy(originalRouter, {
@@ -43,14 +64,11 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         if (getRenderingEnvironment() === RenderingEnvironment.client) {
           const path = originalRouter.pathname;
           switch (prop) {
-            case 'push':
-              addPageHistoryStack(path);
-              break;
-            case 'back':
-              moveBack();
-              break;
-            case 'forward':
-              moveForward();
+            case RouteState.push:
+            case RouteState.back:
+            case RouteState.forward:
+            case RouteState.replace:
+              setCurRouteState(prop);
               break;
           }
         }
@@ -68,30 +86,46 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
   }, []);
 
   const getCurrentPageInfo = useCallback(() => {
-    return pageHistoryStack.current[pagePointer.current];
+    return pageHistoryStack.current[pagePointer.current] ?? null;
   }, []);
 
   const getPageInfoById = useCallback(
-    (id: number) => {
+    (id: string) => {
       return pageHistoryStack.current.filter((page) => page.pageId === id)[0];
     },
     [pageHistoryStack],
   );
 
-  const setRouteStart = useCallback(() => setLoading(true), [setLoading]);
+  const setRouteStart = useCallback(() => {
+    const pageHistory = getCurrentPageInfo();
+    prevPage.current = pageHistory.pageId;
+    setLoading(true);
+  }, [setLoading, getCurrentPageInfo]);
 
   const setRouteEnd = useCallback(() => {
+    const state = history.state;
+    switch (curRouteState.current) {
+      case RouteState.push:
+        hydratePageHistory();
+        pagePointer.current++;
+        addPageHistory();
+        break;
+      case RouteState.forward:
+        pagePointer.current++;
+        break;
+      case RouteState.back:
+        pagePointer.current--;
+        break;
+      case RouteState.replace:
+        replacePageHistory(pagePointer.current);
+    }
+
+    addPageHistory();
     setLoading(false);
-    history.replaceState({ ...history.state, pageId: pageId.current }, '');
   }, [setLoading]);
 
   useEffect(() => {
-    window.addEventListener('popstate', (event) => {
-      const state = event.state as { url: string; as: string; key: string };
-      console.log('pop state : ', event);
-      console.log('state : ', event.state);
-      console.log('==========');
-    });
+    if (getCurrentPageInfo() === null) addPageHistory();
 
     router.events.on('routeChangeStart', setRouteStart);
     router.events.on('routeChangeComplete', setRouteEnd);

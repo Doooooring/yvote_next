@@ -1,9 +1,10 @@
 import { Device, useDevice } from '@utils/hook/useDevice';
 import Link from 'next/link';
-import { useState } from 'react';
+import { MouseEventHandler, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '../imageFallback';
 import { useCurRoute } from './header.tool';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 
 export default function Header() {
   const curRoute = useCurRoute();

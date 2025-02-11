@@ -60,7 +60,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     } else {
       router.back();
     }
-  }, [router]);
+  }, [router, getCurrentPageIndex]);
 
   const metaTagsProps = useMemo(() => {
     return {
