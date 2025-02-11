@@ -393,21 +393,21 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             margin: 0 0 8px 0;
             padding-left: 20px;
             li {
+              font-size: 17px;
               margin-top: 28px;
               text-indent: -5px;
             }
             &[data-checked='false'] {
-              font-size: 20px;
               list-style: none;
               padding-left: 2px;
-
               li {
+                font-size: 16px;
                 margin-top: 12px;
-                text-indent: -20px;
+                text-indent: -5px;
               }
             }
           }
-          ul[data-checked='false'] + ul li {
+          ul[data-checked='false'] + p {
             margin-top: 0;
           }
         }
