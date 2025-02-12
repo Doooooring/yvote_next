@@ -3,7 +3,7 @@ import ImageFallback from '@components/common/imageFallback';
 import Modal from '@components/common/modal';
 import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
-import Link from 'next/link';
+import { Link } from '@utils/hook/useRouter';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { commentTypeColor, typeCheckImg } from '../../../../utils/interface/news/commen';

@@ -1,7 +1,7 @@
 import { Center } from '@components/common/commonStyles';
 import Modal from '@components/common/modal';
 import Image, { StaticImageData } from 'next/image';
-import Link from 'next/link';
+import { Link } from '@utils/hook/useRouter';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 

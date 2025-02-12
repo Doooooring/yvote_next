@@ -119,6 +119,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       case RouteState.replace:
         replacePageHistory(pagePointer.current);
     }
+    log();
     setLoading(false);
   }, [setLoading]);
 

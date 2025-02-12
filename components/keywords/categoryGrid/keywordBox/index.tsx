@@ -1,7 +1,6 @@
 import ImageFallback from '@components/common/imageFallback';
-import { HOST_URL } from '@url';
 import { Keyword } from '@utils/interface/keywords';
-import Link from 'next/link';
+import { Link } from '@utils/hook/useRouter';
 import styled from 'styled-components';
 
 interface KeywordBoxProps extends Pick<Keyword, 'id' | 'keyword' | 'keywordImage'> {}

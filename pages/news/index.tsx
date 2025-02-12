@@ -132,8 +132,6 @@ const Wrapper = styled.div`
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
 
-  overflow-x: hidden;
-
   ::-webkit-scrollbar {
     display: none;
   }
@@ -213,8 +211,9 @@ const ArticlesWrapper = styled.div`
   min-width: 800px;
   position: relative;
   @media screen and (max-width: 768px) {
-    width: 98%;
+    width: 100%;
     min-width: 0px;
+    overflow: hidden;
   }
 `;
 

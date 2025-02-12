@@ -6,6 +6,7 @@ import { useRouter } from '@utils/hook/useRouter/useRouter';
 import React from 'react';
 import styled from 'styled-components';
 import PreviewBoxLayout from './previewBox.style';
+import { Link } from '../../../utils/hook/useRouter';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -17,7 +18,13 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, newsImage, keywords, state } = preview;
 
   return (
-    <Wrapper>
+    <Wrapper
+      href={`/news/${id}`}
+      onClick={(e) => {
+        e.preventDefault();
+        click(id);
+      }}
+    >
       <PreviewBoxLayout
         onClick={() => {
           click(id);
@@ -79,9 +86,10 @@ export default React.memo(PreviewBox, (prevProps, nextProps) => {
   return prevProps.preview.id === nextProps.preview.id && prevProps.click === nextProps.click;
 });
 
-const Wrapper = styled.div`
+const Wrapper = styled(Link)`
   filter: saturate(80%);
   width: 100%;
+  text-decoration: none;
   font-family: Noto Sans KR, Helvetica, sans-serif;
   transition: filter 0.2s ease;
 
