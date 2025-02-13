@@ -1,17 +1,15 @@
-import { Center, Column, CommonLayoutBox } from '@components/common/commonStyles';
+import { Column, CommonLayoutBox } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { Virtuoso } from '@node_modules/react-virtuoso/dist';
-import useLazyLoad from '@utils/hook/useLazyLoad';
-import { useOnScreen } from '@utils/hook/useOnScreen';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import styled from 'styled-components';
+import { useGlobalLoading } from '../../../utils/hook/useGlobalLoading/useGlobalLoading';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
-import { useGlobalLoading } from '../../../utils/hook/useGlobalLoading/useGlobalLoading';
 
 interface NewsListProps {
   page: number;
@@ -62,7 +60,7 @@ export default function NewsList({
           useWindowScroll
           totalCount={previews.length}
           data={previews}
-          increaseViewportBy={1000}
+          increaseViewportBy={800}
           endReached={() => {
             fetChPreviewsWithVal();
           }}

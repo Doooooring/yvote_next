@@ -85,9 +85,10 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     });
   };
 
-  const fetchNextPreviews = async () => {
+  const fetchNextPreviews = async (nextLimit?: number) => {
     let arr = previews;
     if (page.current === -1) return false;
+    if (nextLimit) limit.current = nextLimit;
 
     return await fetchPreviews(false, {
       page: page.current,

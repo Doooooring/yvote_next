@@ -10,6 +10,7 @@ import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
+import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -40,7 +41,6 @@ export default function NewsPage(props: pageProps) {
     page,
     isRequesting,
     isFetchingImages,
-
     previews,
     fetchPreviews,
     fetchNextPreviews,
@@ -53,12 +53,11 @@ export default function NewsPage(props: pageProps) {
       let tmp = 1;
       try {
         setIsLoading(true);
-        await fetchPreviews({ limit, filter: filter ?? '' });
-        while (limit * tmp < page) {
-          await fetchNextPreviews();
-          tmp++;
-        }
-        window.scrollTo({ left: 0, top: scroll, behavior: 'smooth' });
+        await fetchPreviews({ limit: page, filter: filter ?? '' });
+        setTimeout(() => {
+          window.scrollTo({ left: 0, top: scroll });
+        }, 100);
+        fetchNextPreviews(limit);
       } catch (e) {
       } finally {
         setIsLoading(false);
@@ -69,9 +68,9 @@ export default function NewsPage(props: pageProps) {
 
   useEffect(() => {
     const info = getCurrentPageInfo();
-    const item = sessionStorage.getItem(info?.pageId ?? '');
+    const item = getSessionItem(info?.pageId ?? '');
     if (item) {
-      const { page, limit, filter, scroll } = JSON.parse(item) as {
+      const { page, limit, filter, scroll } = item as {
         path: string;
         scroll: number;
         page: number;
@@ -86,14 +85,11 @@ export default function NewsPage(props: pageProps) {
 
     const handleRouteChangeStart = () => {
       const info = getCurrentPageInfo();
-      sessionStorage.setItem(
-        info.pageId,
-        JSON.stringify({
-          path: info.path,
-          scroll: window.scrollY,
-          ...getCurrentMetadata(),
-        }),
-      );
+      saveSessionItem(info.pageId, {
+        path: info.path,
+        scroll: window.scrollY,
+        ...getCurrentMetadata(),
+      });
     };
 
     router.events.on('routeChangeStart', handleRouteChangeStart);

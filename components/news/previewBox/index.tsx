@@ -1,12 +1,12 @@
 import { Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import React from 'react';
 import styled from 'styled-components';
-import PreviewBoxLayout from './previewBox.style';
 import { Link } from '../../../utils/hook/useRouter';
+import PreviewBoxLayout from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -81,7 +81,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
 }
 
 export default React.memo(PreviewBox, (prevProps, nextProps) => {
-  return prevProps.preview.id === nextProps.preview.id && prevProps.click === nextProps.click;
+  return prevProps.preview.id === nextProps.preview.id;
 });
 
 const Wrapper = styled(Link)`

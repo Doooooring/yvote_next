@@ -1,10 +1,10 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { getRenderingEnvironment, RenderingEnvironment } from '@utils/tools';
 import { useRouter as useOriginalRouter } from 'next/router';
+import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
-import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
 
 export interface NextRouterPopState {
   url: string; // Next 코드 상 매칭 path ex) /news/[news]
@@ -149,7 +149,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       case RouteState.replace:
         replacePageHistory(pagePointer.current);
     }
-    console.log('current stack  :', pageHistoryStack.current);
+    log();
     setCurRouteState(null);
   }, []);
 
@@ -161,7 +161,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
 
     if (historyCached) {
       pagePointer.current = historyCached.pagePointer;
-      historyCached.historyStack.forEach((e) => {
+      historyCached.historyStack.forEach((e, i) => {
         pageHistoryStack.current.push(e);
       });
 
@@ -173,7 +173,12 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         const browserHistory = getCurBrowserHistory();
         const cachedHistory = getCurrentPageInfo();
 
-        if (browserHistory.pageId != cachedHistory.pageId) {
+        console.log('==================');
+        console.log('browser history : ', browserHistory);
+        console.log('cached History  : ', cachedHistory);
+
+        if (browserHistory.path != cachedHistory.path) {
+          hydratePageHistory();
           pagePointer.current++;
           addPageHistory();
         }
@@ -186,17 +191,17 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     console.log(pageHistoryStack.current);
 
     window.addEventListener('popstate', handlePopStateEvent);
+    window.addEventListener('beforeunload', () => {
+      saveSessionItem('routeHistory', {
+        pagePointer: pagePointer.current,
+        historyStack: pageHistoryStack.current,
+      });
+    });
     router.events.on('routeChangeStart', setRouteStart);
     router.events.on('routeChangeComplete', setRouteEnd);
     router.events.on('routeChangeError', setRouteEnd);
 
     return () => {
-      alert('un mount');
-      console.log('is unmount');
-      saveSessionItem('routeHistory', {
-        pagePointer: pagePointer.current,
-        historyStack: pageHistoryStack.current,
-      });
       window.removeEventListener('popstate', handlePopStateEvent);
       router.events.off('routeChangeStart', setRouteStart);
       router.events.off('routeChangeComplete', setRouteEnd);
