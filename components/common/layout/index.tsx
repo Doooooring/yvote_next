@@ -7,19 +7,24 @@ import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
 import LoadingIndicator from './loadingIndicator';
+import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
+import RouteLoading from './routeLoading';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <RouterProvider>
-      <ToastMessageProvider>
-        <Wrapper>
-          <Header />
-          <CommonErrorBoundary>
-            <Body>{children}</Body>
-          </CommonErrorBoundary>
-        </Wrapper>
-        <LoadingIndicator />
-      </ToastMessageProvider>
+      <GlobalLoadingProvider>
+        <RouteLoading />
+        <ToastMessageProvider>
+          <Wrapper>
+            <Header />
+            <CommonErrorBoundary>
+              <Body>{children}</Body>
+            </CommonErrorBoundary>
+          </Wrapper>
+          <LoadingIndicator />
+        </ToastMessageProvider>
+      </GlobalLoadingProvider>
     </RouterProvider>
   );
 };

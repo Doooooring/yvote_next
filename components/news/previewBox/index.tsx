@@ -26,9 +26,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
       }}
     >
       <PreviewBoxLayout
-        onClick={() => {
-          click(id);
-        }}
+        onClick={() => {}}
         imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
           <>

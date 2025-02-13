@@ -4,6 +4,7 @@ import { getRenderingEnvironment, RenderingEnvironment } from '@utils/tools';
 import { useRouter as useOriginalRouter } from 'next/router';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
+import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
 
 export interface NextRouterPopState {
   url: string; // Next 코드 상 매칭 path ex) /news/[news]
@@ -24,18 +25,33 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
   const pagePointer = useRef<number>(0);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
 
-  const [loading, setLoading] = useState(false);
-
   const originalRouter = useOriginalRouter();
 
-  const setCurRouteState = (state: RouteState) => {
+  const setCurRouteState = (state: RouteState | null) => {
     return (curRouteState.current = state);
   };
+
+  const getCurBrowserHistory = useCallback(() => {
+    const state = history.state;
+    const id = state.key as string;
+    const path = state.as as string;
+    return {
+      pageId: id,
+      path,
+    };
+  }, []);
 
   const addPageHistory = useCallback(() => {
     const state = history.state;
     const id = state.key as string;
     const path = state.as as string;
+
+    console.log('add page history ...');
+    console.log('state : ', state);
+    console.log('id : ', id);
+    console.log('path  :', path);
+    console.log('+==================');
+
     pageHistoryStack.current.push({ pageId: id, path });
   }, []);
 
@@ -52,9 +68,24 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     }
   }, []);
 
+  const handlePopStateEvent = useCallback((e: PopStateEvent) => {
+    const state = e.state;
+    const id = state.key;
+    const { pageId: prevId } = getPageInfoByIndex(pagePointer.current - 1);
+
+    if (id == prevId) {
+      console.log('isback');
+      setCurRouteState(RouteState.back);
+    } else {
+      console.log('is forward');
+      setCurRouteState(RouteState.forward);
+    }
+  }, []);
+
   const log = () => {
     console.log('========== current route info');
     console.log('current pointer : ', pagePointer.current);
+    console.log('current page info', getCurrentPageInfo());
     console.log('prev page info : ', prevPage.current);
     console.log('page stack : ', pageHistoryStack.current);
   };
@@ -100,8 +131,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
   const setRouteStart = useCallback(() => {
     const pageHistory = getCurrentPageInfo();
     prevPage.current = pageHistory.pageId;
-    setLoading(true);
-  }, [setLoading, getCurrentPageInfo]);
+  }, [getCurrentPageInfo]);
 
   const setRouteEnd = useCallback(() => {
     switch (curRouteState.current) {
@@ -119,18 +149,55 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       case RouteState.replace:
         replacePageHistory(pagePointer.current);
     }
-    log();
-    setLoading(false);
-  }, [setLoading]);
+    console.log('current stack  :', pageHistoryStack.current);
+    setCurRouteState(null);
+  }, []);
 
   useEffect(() => {
-    if (getCurrentPageInfo() === null) addPageHistory();
+    const historyCached = getSessionItem('routeHistory') as {
+      pagePointer: number;
+      historyStack: Array<pageHistory>;
+    } | null;
 
+    if (historyCached) {
+      pagePointer.current = historyCached.pagePointer;
+      historyCached.historyStack.forEach((e) => {
+        pageHistoryStack.current.push(e);
+      });
+
+      const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+      if (entries.length > 0 && entries[0].type === 'reload') {
+        const history = getCurBrowserHistory();
+        pageHistoryStack.current[pagePointer.current] = history;
+      } else {
+        const browserHistory = getCurBrowserHistory();
+        const cachedHistory = getCurrentPageInfo();
+
+        if (browserHistory.pageId != cachedHistory.pageId) {
+          pagePointer.current++;
+          addPageHistory();
+        }
+      }
+      deleteSessionItem('routeHistory');
+    } else {
+      addPageHistory();
+    }
+
+    console.log(pageHistoryStack.current);
+
+    window.addEventListener('popstate', handlePopStateEvent);
     router.events.on('routeChangeStart', setRouteStart);
     router.events.on('routeChangeComplete', setRouteEnd);
     router.events.on('routeChangeError', setRouteEnd);
 
     return () => {
+      alert('un mount');
+      console.log('is unmount');
+      saveSessionItem('routeHistory', {
+        pagePointer: pagePointer.current,
+        historyStack: pageHistoryStack.current,
+      });
+      window.removeEventListener('popstate', handlePopStateEvent);
       router.events.off('routeChangeStart', setRouteStart);
       router.events.off('routeChangeComplete', setRouteEnd);
       router.events.off('routeChangeError', setRouteEnd);
@@ -141,7 +208,6 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     <RouterContext.Provider
       value={{
         router: router,
-        loading: loading,
         getCurrentPageIndex,
         getPageInfoByIndex,
         getCurrentPageInfo,

@@ -1,14 +1,14 @@
 import { Device, useDevice } from '@utils/hook/useDevice';
 import LoadingCommon from '../../loading';
 import Modal from '../../modal';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useGlobalLoading } from '../../../../utils/hook/useGlobalLoading/useGlobalLoading';
 
 export default function LoadingIndicator() {
-  const { loading } = useRouter();
+  const { isLoading } = useGlobalLoading();
   const device = useDevice();
 
   return (
-    <Modal state={loading} backgroundColor={'rgb(255,255,255, 0.3)'}>
+    <Modal state={isLoading} backgroundColor={'rgb(255,255,255, 0.3)'}>
       <LoadingCommon
         comment={''}
         fontColor="black"

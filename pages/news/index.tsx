@@ -13,6 +13,7 @@ import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useGlobalLoading } from '../../utils/hook/useGlobalLoading/useGlobalLoading';
 
 interface pageProps {
   data: Array<Preview>;
@@ -33,22 +34,73 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const { router, getCurrentPageInfo } = useRouter();
+  const { isLoading: isGlobalLoading, setIsLoading } = useGlobalLoading();
   const {
     page,
     isRequesting,
     isFetchingImages,
-    isError,
+
     previews,
     fetchPreviews,
     fetchNextPreviews,
+    getCurrentMetadata,
   } = useFetchNewsPreviews(16);
   const recentKeywords = useRecentKeywords();
-  const { getCurrentPageInfo } = useRouter();
+
+  const setCachedPreviews = useCallback(
+    async (page: number, limit: number, filter: string | null, scroll: number) => {
+      let tmp = 1;
+      try {
+        setIsLoading(true);
+        await fetchPreviews({ limit, filter: filter ?? '' });
+        while (limit * tmp < page) {
+          await fetchNextPreviews();
+          tmp++;
+        }
+        window.scrollTo({ left: 0, top: scroll, behavior: 'smooth' });
+      } catch (e) {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchPreviews, fetchNextPreviews],
+  );
 
   useEffect(() => {
-    const id = getCurrentPageInfo();
-    console.log('page id : ', id);
-    fetchPreviews({ limit: 16 });
+    const info = getCurrentPageInfo();
+    const item = sessionStorage.getItem(info?.pageId ?? '');
+    if (item) {
+      const { page, limit, filter, scroll } = JSON.parse(item) as {
+        path: string;
+        scroll: number;
+        page: number;
+        limit: number;
+        filter: string;
+        isAdmin: boolean;
+      };
+      setCachedPreviews(page, limit, filter, scroll);
+    } else {
+      fetchPreviews({ limit: 16 });
+    }
+
+    const handleRouteChangeStart = () => {
+      const info = getCurrentPageInfo();
+      sessionStorage.setItem(
+        info.pageId,
+        JSON.stringify({
+          path: info.path,
+          scroll: window.scrollY,
+          ...getCurrentMetadata(),
+        }),
+      );
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
   }, []);
 
   const [keywordClicked, setKeywordClicked] = useState<string | null>(null);

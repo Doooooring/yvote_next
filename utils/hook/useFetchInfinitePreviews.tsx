@@ -17,7 +17,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
   const fetchPreviews = useCallback(
     async (
-      prevPreviews: Preview[],
+      isNew: boolean,
       option: { page: number; limit: number; filter: string; isAdmin: boolean },
     ) => {
       const { page: fetchPage, limit: fetchLimit, filter = '', isAdmin = false } = option;
@@ -55,7 +55,8 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
           }),
         );
         page.current += limit.current;
-        setPreviews([...prevPreviews, ...datas]);
+        isNew ? setPreviews(datas) : setPreviews((state) => [...state, ...datas]);
+
         return true;
       } catch (e) {
         setIsError(true);
@@ -76,7 +77,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     page.current = 0;
     limit.current = l;
 
-    return await fetchPreviews(arr, {
+    return await fetchPreviews(true, {
       page: page.current,
       limit: limit.current,
       filter: prevFilter.current ?? '',
@@ -88,13 +89,22 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     let arr = previews;
     if (page.current === -1) return false;
 
-    return await fetchPreviews(arr, {
+    return await fetchPreviews(false, {
       page: page.current,
       limit: limit.current,
       filter: prevFilter.current ?? '',
       isAdmin,
     });
   };
+
+  const getCurrentMetadata = useCallback(() => {
+    return {
+      page: page.current,
+      limit: limit.current,
+      filter: prevFilter.current,
+      isAdmin,
+    };
+  }, []);
 
   return {
     page: page.current,
@@ -104,5 +114,6 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     previews,
     fetchPreviews: fetchInitialPreviews,
     fetchNextPreviews,
+    getCurrentMetadata,
   };
 };

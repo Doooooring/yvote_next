@@ -11,6 +11,7 @@ import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
+import { useGlobalLoading } from '../../../utils/hook/useGlobalLoading/useGlobalLoading';
 
 interface NewsListProps {
   page: number;
@@ -29,9 +30,8 @@ export default function NewsList({
   fetchPreviews,
   showNewsContent,
 }: NewsListProps) {
-  const elementRef = useRef<HTMLDivElement>(null);
+  const { isLoading: isGlobalLoading } = useGlobalLoading();
   const { show: showToastMessage } = useToastMessage();
-  const isOnScreen = useOnScreen(elementRef);
   const fetChPreviewsWithVal = useCallback(async () => {
     const res = await fetchPreviews();
     if (!res) {
@@ -44,22 +44,17 @@ export default function NewsList({
     }
   }, [fetchPreviews, showToastMessage]);
 
-  // useNewsInfiniteScroll(isOnScreen, fetChPreviewsWithVal, page >= 0 && !isRequesting);
-  const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
-
-  const clickFetchButton = useCallback(() => {
-    fetChPreviewsWithVal();
-    closeFetchButton();
-  }, [fetChPreviewsWithVal, closeFetchButton]);
+  // const elementRef = useRef<HTMLDivElement>(null);
+  // const isOnScreen = useOnScreen(elementRef);
+  // const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
+  // const clickFetchButton = useCallback(() => {
+  //   fetChPreviewsWithVal();
+  //   closeFetchButton();
+  // }, [fetChPreviewsWithVal, closeFetchButton]);
 
   return (
     <>
       <Wrapper>
-        {/* {arrBatch(previews, 16).map((previews) => (
-          <Suspense fallback={<NewsListFallback length={previews.length} />}>
-            <NewsBlock previews={previews} onPreviewClick={showNewsContent} />
-          </Suspense>
-        ))} */}
         <Virtuoso
           style={{
             width: '100%',
@@ -86,17 +81,16 @@ export default function NewsList({
           <NewsListFallback length={previews.length % 16 == 0 ? 16 : previews.length % 16} />
         </IsShow>
       </Wrapper>
-      <IsShow state={isRequesting && !isFetchingImages}>
+      <IsShow state={isRequesting && !isFetchingImages && !isGlobalLoading}>
         <LoadingWrapper>
           <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
         </LoadingWrapper>
       </IsShow>
-      <IsShow state={page != -1 && isShowFetchButton}>
+      {/* <IsShow state={page != -1 && isShowFetchButton}>
         <Center style={{ width: '100%' }}>
           <FetchButton onClick={clickFetchButton}>더 보기</FetchButton>
         </Center>
-      </IsShow>
-      {/* <LastLine ref={elementRef} /> */}
+      </IsShow> */}
     </>
   );
 }

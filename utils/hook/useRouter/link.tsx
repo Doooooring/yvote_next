@@ -22,7 +22,7 @@ export function Link({ href, children, onClick, ...others }: LinkProps) {
   );
 
   return (
-    <LinkOrg href={href} onClick={onClick ?? defaultOnClickHandler} {...others}>
+    <LinkOrg href={href} onClick={defaultOnClickHandler} {...others}>
       {children}
     </LinkOrg>
   );
