@@ -86,6 +86,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     console.log('========== current route info');
     console.log('current pointer : ', pagePointer.current);
     console.log('current page info', getCurrentPageInfo());
+    console.log('current broswer info : ', getCurBrowserHistory());
     console.log('prev page info : ', prevPage.current);
     console.log('page stack : ', pageHistoryStack.current);
   };
@@ -176,6 +177,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         console.log('==================');
         console.log('browser history : ', browserHistory);
         console.log('cached History  : ', cachedHistory);
+        console.log('entry : ', entries[0]);
 
         if (browserHistory.path != cachedHistory.path) {
           hydratePageHistory();
