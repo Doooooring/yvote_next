@@ -37,6 +37,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     timeline,
     opinionLeft,
     opinionRight,
+    subTitle,
     votes,
   } = newsContent;
   const { router } = useRouter();
@@ -85,7 +86,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
               <div className="summary content">
                 <h1 className="head">
                   <span>
-                    {title} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
+                    {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
                 <div dangerouslySetInnerHTML={{ __html: summary }} />
@@ -354,24 +355,24 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         }
       }
       .content {
-        padding: 1rem;
         padding-left: 1.5rem;
       }
 
       .summary {
         display: inline-block;
-        padding-top: 1.5rem;
-        padding-right: 2.5em;
+        padding-right: 1.5rem;
+        padding-bottom: 1.5rem;
         font-size: 16px;
         line-height: 1.8;
         color: rgb(30, 30, 30);
         font-weight: 400;
         word-break: break-all;
         font-family: Noto Sans KR, Helvetica, sans-serif;
-        @media screen and (max-width: 768px) {
-          padding-left: 0.75rem;
-          padding-right: 0.75rem;
-          padding-top: 0;
+        h1 > span {
+          margin: 26px 40px -6px 0;
+          font-size: 16px;
+          font-weight: 400;
+          color: rgb(150, 150, 150);
         }
         & {
           p {
@@ -383,18 +384,21 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
             &:has(em) {
               line-height: 1.6;
               margin-top: 8px;
-              padding: 0 15px;
+              padding: 0 10px;
             }
             &:has(strong) {
-              padding: 0 10px;
+              + p {
+                margin-top: 8px;
+              }
             }
           }
           ul {
-            margin: 0 0 8px 0;
+            margin: 0 0 0 0;
             padding-left: 20px;
             li {
               font-size: 17px;
               margin-top: 28px;
+              margin-bottom: -4px;
               text-indent: -5px;
             }
             &[data-checked='false'] {
@@ -402,18 +406,19 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
               padding-left: 2px;
               li {
                 font-size: 16px;
-                margin-top: 12px;
+                margin-top: 16px;
                 text-indent: -5px;
               }
             }
           }
-          ul[data-checked='false'] + p {
-            margin-top: 0;
-          }
         }
-        @media screen and (max-width: 768px) {
-          > h1 {
-            display: none;
+        @media screen and (max-width: 1480px) {
+          padding-left: 1rem;
+          padding-right: 1rem;
+          padding-top: 0;
+          h1 > span {
+            margin: 18px 0 -14px 0;
+            font-size: 15px;
           }
         }
       }
@@ -435,7 +440,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           border-radius: 4px;
           cursor: pointer;
         }
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 1146px) {
           padding-left: 0.8rem;
           padding-right: 0.8rem;
         }
