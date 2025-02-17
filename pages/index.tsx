@@ -312,14 +312,14 @@ const ListItem = styled.li`
     &:not(:last-child)::after {
       display: none;
     }
-    > a {
+    > p {
       width: 80%;
       margin: auto;
       font-size: 0.8rem;
     }
     &:last-child {
       border-bottom: none;
-      > a {
+      > p {
         font-size: 0.7rem;
       }
     }

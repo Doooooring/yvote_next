@@ -1,7 +1,7 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 
-import { getRenderingEnvironment, RenderingEnvironment } from '@utils/tools';
-import { useRouter as useOriginalRouter } from 'next/router';
+import { getShortUUID } from '@utils/tools/uuid';
+import { useRouter } from 'next/router';
 import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
@@ -19,96 +19,32 @@ export enum RouteState {
   replace = 'replace',
 }
 
+export enum navigationState {
+  reload = 'reload',
+  navigate = 'navigate',
+  move = 'move',
+}
+
+export const getNavigationType = () => {
+  const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+
+  if (entries.length > 0) {
+    return entries[0].type;
+  }
+  return null;
+};
+
 export function RouterProvider({ children, ...others }: PropsWithChildren) {
-  const curRouteState = useRef<RouteState | null>(null);
-  const prevPage = useRef<string | null>(null);
-  const pagePointer = useRef<number>(0);
+  const navigateType = useRef<navigationState>(navigationState.move);
+  const router = useRouter();
+  const pagePointer = useRef<number>(-1);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
-
-  const originalRouter = useOriginalRouter();
-
-  const setCurRouteState = (state: RouteState | null) => {
-    return (curRouteState.current = state);
-  };
-
-  const getCurBrowserHistory = useCallback(() => {
-    const state = history.state;
-    const id = state.key as string;
-    const path = state.as as string;
-    return {
-      pageId: id,
-      path,
-    };
-  }, []);
-
-  const addPageHistory = useCallback(() => {
-    const state = history.state;
-    const id = state.key as string;
-    const path = state.as as string;
-
-    console.log('add page history ...');
-    console.log('state : ', state);
-    console.log('id : ', id);
-    console.log('path  :', path);
-    console.log('+==================');
-
-    pageHistoryStack.current.push({ pageId: id, path });
-  }, []);
-
-  const replacePageHistory = useCallback((index: number) => {
-    const state = history.state;
-    const id = state.key as string;
-    const path = state.as as string;
-    pageHistoryStack.current[index] = { pageId: id, path };
-  }, []);
 
   const hydratePageHistory = useCallback(() => {
     while (pagePointer.current < pageHistoryStack.current.length - 1) {
       pageHistoryStack.current.pop();
     }
   }, []);
-
-  const handlePopStateEvent = useCallback((e: PopStateEvent) => {
-    const state = e.state;
-    const id = state.key;
-    const { pageId: prevId } = getPageInfoByIndex(pagePointer.current - 1);
-
-    if (id == prevId) {
-      console.log('isback');
-      setCurRouteState(RouteState.back);
-    } else {
-      console.log('is forward');
-      setCurRouteState(RouteState.forward);
-    }
-  }, []);
-
-  const log = () => {
-    console.log('========== current route info');
-    console.log('current pointer : ', pagePointer.current);
-    console.log('current page info', getCurrentPageInfo());
-    console.log('current broswer info : ', getCurBrowserHistory());
-    console.log('prev page info : ', prevPage.current);
-    console.log('page stack : ', pageHistoryStack.current);
-  };
-
-  const router = useMemo(() => {
-    return new Proxy(originalRouter, {
-      get(target, prop, receiver) {
-        if (getRenderingEnvironment() === RenderingEnvironment.client) {
-          const path = originalRouter.pathname;
-          switch (prop) {
-            case RouteState.push:
-            case RouteState.back:
-            case RouteState.forward:
-            case RouteState.replace:
-              setCurRouteState(prop);
-              break;
-          }
-        }
-        return Reflect.get(target, prop, receiver);
-      },
-    });
-  }, [originalRouter]);
 
   const getCurrentPageIndex = useCallback(() => {
     return pagePointer.current;
@@ -129,46 +65,12 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     [pageHistoryStack],
   );
 
-  const setRouteStart = useCallback(() => {
-    const pageHistory = getCurrentPageInfo();
-    prevPage.current = pageHistory.pageId;
-  }, [getCurrentPageInfo]);
-
-  const setRouteEnd = useCallback(() => {
-    switch (curRouteState.current) {
-      case RouteState.push:
-        hydratePageHistory();
-        pagePointer.current++;
-        addPageHistory();
-        break;
-      case RouteState.forward:
-        pagePointer.current++;
-        break;
-      case RouteState.back:
-        pagePointer.current--;
-        break;
-      case RouteState.replace:
-        replacePageHistory(pagePointer.current);
-    }
-    log();
-
-    setCurRouteState(null);
-  }, []);
-
   useEffect(() => {
     const currentUrl = new URL(window.location.href);
+
     const searchParams = currentUrl.searchParams;
+    const navigationType = getNavigationType();
 
-    if (!searchParams.has('pageId')) {
-      searchParams.set('pageId', crypto.randomUUID());
-
-      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
-        shallow: true,
-      });
-    }
-  }, [router.asPath]);
-
-  useEffect(() => {
     const historyCached = getSessionItem('routeHistory') as {
       pagePointer: number;
       historyStack: Array<pageHistory>;
@@ -180,50 +82,73 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         pageHistoryStack.current.push(e);
       });
 
-      const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-      if (entries.length > 0 && entries[0].type === 'reload') {
-        const history = getCurBrowserHistory();
-        pageHistoryStack.current[pagePointer.current] = history;
-      } else {
-        const browserHistory = getCurBrowserHistory();
-        const cachedHistory = getCurrentPageInfo();
-
-        console.log('==================');
-        console.log('browser history : ', browserHistory);
-        console.log('cached History  : ', cachedHistory);
-        console.log('entry : ', entries[0]);
-
-        if (browserHistory.path != cachedHistory.path) {
-          hydratePageHistory();
-          pagePointer.current++;
-          addPageHistory();
-        }
-      }
       deleteSessionItem('routeHistory');
-    } else {
-      addPageHistory();
     }
 
-    console.log(pageHistoryStack.current);
-
-    window.addEventListener('popstate', handlePopStateEvent);
     window.addEventListener('beforeunload', () => {
       saveSessionItem('routeHistory', {
         pagePointer: pagePointer.current,
         historyStack: pageHistoryStack.current,
       });
     });
-    router.events.on('routeChangeStart', setRouteStart);
-    router.events.on('routeChangeComplete', setRouteEnd);
-    router.events.on('routeChangeError', setRouteEnd);
 
-    return () => {
-      window.removeEventListener('popstate', handlePopStateEvent);
-      router.events.off('routeChangeStart', setRouteStart);
-      router.events.off('routeChangeComplete', setRouteEnd);
-      router.events.off('routeChangeError', setRouteEnd);
-    };
+    if (navigationType === 'navigate' && searchParams.has('pageId')) {
+      searchParams.delete('pageId');
+      navigateType.current = navigationState.navigate;
+    } else if (navigationType === 'reload') {
+      navigateType.current = navigationState.reload;
+    }
   }, []);
+
+  useEffect(() => {
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+
+    if (!searchParams.get('pageId')) {
+      const curId = pageHistoryStack.current[pagePointer.current];
+      if (curId) {
+        const pointer = pageHistoryStack.current?.reduce((res: number | null, cur, i) => {
+          if (!res && cur.pageId === curId.pageId) {
+            res = i;
+          }
+          return res;
+        }, null);
+
+        if (pointer) {
+          hydratePageHistory();
+          pagePointer.current = pointer;
+        }
+      }
+
+      searchParams.set('pageId', getShortUUID(4));
+      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
+        shallow: true,
+      });
+      const pageId = searchParams.get('pageId')!;
+
+      pagePointer.current++;
+      pageHistoryStack.current.push({ pageId: pageId, path: router.asPath });
+    } else if (navigateType.current == navigationState.reload) {
+      const pageId = getShortUUID(4);
+      pageHistoryStack.current[pagePointer.current].pageId = pageId;
+      searchParams.set('pageId', pageId);
+      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
+        shallow: true,
+      });
+    } else {
+      const pageId = searchParams.get('pageId')!;
+      const pointer = pageHistoryStack.current?.reduce((res: number | null, cur, i) => {
+        if (!res && cur.pageId === pageId) {
+          res = i;
+        }
+        return res;
+      }, null);
+
+      pagePointer.current = pointer!;
+    }
+
+    navigateType.current = navigationState.move;
+  }, [router.pathname]);
 
   return (
     <RouterContext.Provider

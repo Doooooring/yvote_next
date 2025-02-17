@@ -70,7 +70,6 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
   );
 
   const fetchInitialPreviews = async (option?: { filter?: string | null; limit?: number }) => {
-    let arr: Preview[] = [];
     const { filter = null, limit: l = defaultLimit } = option ?? {};
 
     prevFilter.current = filter;

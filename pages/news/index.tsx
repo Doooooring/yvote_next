@@ -50,14 +50,13 @@ export default function NewsPage(props: pageProps) {
 
   const setCachedPreviews = useCallback(
     async (page: number, limit: number, filter: string | null, scroll: number) => {
-      let tmp = 1;
       try {
         setIsLoading(true);
         await fetchPreviews({ limit: page, filter: filter ?? '' });
         setTimeout(() => {
           window.scrollTo({ left: 0, top: scroll });
         }, 100);
-        fetchNextPreviews(limit);
+        await fetchNextPreviews(limit);
       } catch (e) {
       } finally {
         setIsLoading(false);
@@ -65,39 +64,6 @@ export default function NewsPage(props: pageProps) {
     },
     [fetchPreviews, fetchNextPreviews],
   );
-
-  useEffect(() => {
-    const info = getCurrentPageInfo();
-    const item = getSessionItem(info?.pageId ?? '');
-    if (item) {
-      const { page, limit, filter, scroll } = item as {
-        path: string;
-        scroll: number;
-        page: number;
-        limit: number;
-        filter: string;
-        isAdmin: boolean;
-      };
-      setCachedPreviews(page, limit, filter, scroll);
-    } else {
-      fetchPreviews({ limit: 16 });
-    }
-
-    const handleRouteChangeStart = () => {
-      const info = getCurrentPageInfo();
-      saveSessionItem(info.pageId, {
-        path: info.path,
-        scroll: window.scrollY,
-        ...getCurrentMetadata(),
-      });
-    };
-
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-    };
-  }, []);
 
   const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
   const showNewsContent = useNewsNavigate();
@@ -114,6 +80,41 @@ export default function NewsPage(props: pageProps) {
     },
     [keywordClicked, setKeywordClicked],
   );
+
+  useEffect(() => {
+    const info = router.query.pageId as string;
+    if (!info) return;
+    const item = getSessionItem(info ?? '');
+    if (item) {
+      const { page, limit, filter, scroll } = item as {
+        path: string;
+        scroll: number;
+        page: number;
+        limit: number;
+        filter: string;
+        isAdmin: boolean;
+      };
+      setCachedPreviews(page, limit, filter, scroll);
+    } else {
+      fetchPreviews({ limit: 16 });
+    }
+
+    const handleRouteChangeStart = () => {
+      const info = getCurrentPageInfo();
+      if (info) {
+        saveSessionItem(info.pageId, {
+          path: info.path,
+          scroll: window.scrollY,
+          ...getCurrentMetadata(),
+        });
+      }
+    };
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [router.query.pageId]);
 
   return (
     <>
