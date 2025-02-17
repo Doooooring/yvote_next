@@ -369,7 +369,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         word-break: break-all;
         font-family: Noto Sans KR, Helvetica, sans-serif;
         h1 > span {
-          margin: 26px 40px -6px 0;
+          margin: 18px 40px -12px 0;
           font-size: 16px;
           font-weight: 400;
           color: rgb(150, 150, 150);

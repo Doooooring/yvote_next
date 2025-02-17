@@ -92,8 +92,9 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
     align-items: center;
     gap: 8px;
     h1 {
+      color: black;
       font-weight: 500;
-      font-size: 18px;
+      font-size: 17px;
       margin: 0;
       padding: 0;
     }
@@ -118,19 +119,20 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
           height: 90px;
         }
       }
-    }
-    .explanation {
-      text-align: left;
-      margin-bottom: 20px;
-      font-size: 15px;
-      line-height: 2;
-      color: black;
-      font-weight: 400;
-      word-break: keep-all;
-      min-height: 10px;
-      font-family: 'Noto Sans KR', Helvetica, sans-serif;
-      @media screen and (max-width: 768px) {
-        font-size: 14px;
+      .explanation {
+        text-align: left;
+        font-size: 15px;
+        line-height: 1.8;
+        color: black;
+        font-weight: 400;
+        min-height: 10px;
+        font-family: 'Noto Sans KR', Helvetica, sans-serif;
+        > p {
+          margin-top: 12px;
+        }
+        > p:first-of-type {
+          margin-top: 0;
+        }
       }
     }
   }
