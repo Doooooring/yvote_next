@@ -151,8 +151,22 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         replacePageHistory(pagePointer.current);
     }
     log();
+
     setCurRouteState(null);
   }, []);
+
+  useEffect(() => {
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+
+    if (!searchParams.has('pageId')) {
+      searchParams.set('pageId', crypto.randomUUID());
+
+      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
+        shallow: true,
+      });
+    }
+  }, [router.asPath]);
 
   useEffect(() => {
     const historyCached = getSessionItem('routeHistory') as {
