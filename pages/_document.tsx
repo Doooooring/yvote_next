@@ -5,7 +5,6 @@ export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
-    console.log('is here');
 
     try {
       ctx.renderPage = () =>

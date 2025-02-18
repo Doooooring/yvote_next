@@ -1,10 +1,11 @@
-import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { getShortUUID } from '@utils/tools/uuid';
 import { useRouter } from 'next/router';
 import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
+import { getRenderingEnvironment, RenderingEnvironment } from '../../tools';
 
 export interface NextRouterPopState {
   url: string; // Next 코드 상 매칭 path ex) /news/[news]
@@ -36,9 +37,33 @@ export const getNavigationType = () => {
 
 export function RouterProvider({ children, ...others }: PropsWithChildren) {
   const navigateType = useRef<navigationState>(navigationState.move);
-  const router = useRouter();
+  const originalRouter = useRouter();
   const pagePointer = useRef<number>(-1);
   const pageHistoryStack = useRef<Array<pageHistory>>([]);
+
+  const router = useMemo(() => {
+    return new Proxy(originalRouter, {
+      get(target, prop, receiver) {
+        if (getRenderingEnvironment() === RenderingEnvironment.client) {
+          const path = originalRouter.pathname;
+          switch (prop) {
+            case RouteState.push:
+              return (url: string, as?: string, options?: any) => {
+                const currentPath = target.pathname;
+                const nextPath = url;
+
+                if (currentPath === nextPath) {
+                  window.location.reload();
+                } else {
+                  return target.push(url, as, options);
+                }
+              };
+          }
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
+  }, [originalRouter]);
 
   const hydratePageHistory = useCallback(() => {
     while (pagePointer.current < pageHistoryStack.current.length - 1) {
@@ -92,8 +117,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       });
     });
 
-    if (navigationType === 'navigate' && searchParams.has('pageId')) {
-      searchParams.delete('pageId');
+    if (navigationType === 'navigate') {
       navigateType.current = navigationState.navigate;
     } else if (navigationType === 'reload') {
       navigateType.current = navigationState.reload;
@@ -104,7 +128,22 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     const currentUrl = new URL(window.location.href);
     const searchParams = currentUrl.searchParams;
 
-    if (!searchParams.get('pageId')) {
+    if (navigateType.current === navigationState.navigate) {
+      const pageId = getShortUUID(4);
+      pageHistoryStack.current.push({ pageId: pageId, path: router.asPath });
+      pagePointer.current++;
+      searchParams.set('pageId', pageId);
+      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
+        shallow: true,
+      });
+    } else if (navigateType.current === navigationState.reload) {
+      const pageId = getShortUUID(4);
+      pageHistoryStack.current[pagePointer.current].pageId = pageId;
+      searchParams.set('pageId', pageId);
+      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
+        shallow: true,
+      });
+    } else if (!searchParams.get('pageId')) {
       const curId = pageHistoryStack.current[pagePointer.current];
       if (curId) {
         const pointer = pageHistoryStack.current?.reduce((res: number | null, cur, i) => {
@@ -128,13 +167,6 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
 
       pagePointer.current++;
       pageHistoryStack.current.push({ pageId: pageId, path: router.asPath });
-    } else if (navigateType.current == navigationState.reload) {
-      const pageId = getShortUUID(4);
-      pageHistoryStack.current[pagePointer.current].pageId = pageId;
-      searchParams.set('pageId', pageId);
-      router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
-        shallow: true,
-      });
     } else {
       const pageId = searchParams.get('pageId')!;
       const pointer = pageHistoryStack.current?.reduce((res: number | null, cur, i) => {

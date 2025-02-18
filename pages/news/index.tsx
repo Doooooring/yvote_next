@@ -9,12 +9,12 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { Preview } from '@utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useGlobalLoading } from '../../utils/hook/useGlobalLoading/useGlobalLoading';
 
 interface pageProps {
   data: Array<Preview>;
@@ -22,7 +22,6 @@ interface pageProps {
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
   //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
-  console.log('is get static props');
   return {
     props: { data: [] },
     revalidate: 300,
