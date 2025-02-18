@@ -3,6 +3,6 @@ export const getLongUUID = () => {
 };
 
 export const getShortUUID = (length: number) => {
-  const uuid = crypto.randomUUID().replace(/-/g, '');
-  return uuid.substring(0, length);
+  const randomNumber = Math.floor(Math.random() * 10 ** length);
+  return String(randomNumber).padStart(length, '0');
 };

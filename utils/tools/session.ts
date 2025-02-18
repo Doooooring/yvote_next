@@ -1,8 +1,10 @@
+import { getRandomNumString } from './crypto';
+
 export const getTabId = () => {
   let currentTabId = sessionStorage.getItem('tabId');
 
   if (!currentTabId) {
-    currentTabId = crypto.randomUUID();
+    currentTabId = getRandomNumString(6);
     sessionStorage.setItem('tabId', currentTabId);
   }
   return currentTabId;

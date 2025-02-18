@@ -1,11 +1,11 @@
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { getShortUUID } from '@utils/tools/uuid';
+import { getRandomNumString } from '@utils/tools/crypto';
 import { useRouter } from 'next/router';
-import { deleteSessionItem, getSessionItem, saveSessionItem } from '../../tools/session';
+import { getRenderingEnvironment, RenderingEnvironment } from '../../tools';
+import { getSessionItem, saveSessionItem } from '../../tools/session';
 import { pageHistory } from './router.types';
 import { RouterContext } from './useRouter';
-import { getRenderingEnvironment, RenderingEnvironment } from '../../tools';
 
 export interface NextRouterPopState {
   url: string; // Next 코드 상 매칭 path ex) /news/[news]
@@ -106,16 +106,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       historyCached.historyStack.forEach((e, i) => {
         pageHistoryStack.current.push(e);
       });
-
-      deleteSessionItem('routeHistory');
     }
-
-    window.addEventListener('beforeunload', () => {
-      saveSessionItem('routeHistory', {
-        pagePointer: pagePointer.current,
-        historyStack: pageHistoryStack.current,
-      });
-    });
 
     if (navigationType === 'navigate') {
       navigateType.current = navigationState.navigate;
@@ -129,7 +120,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     const searchParams = currentUrl.searchParams;
 
     if (navigateType.current === navigationState.navigate) {
-      const pageId = getShortUUID(4);
+      const pageId = getRandomNumString(6);
       pageHistoryStack.current.push({ pageId: pageId, path: router.asPath });
       pagePointer.current++;
       searchParams.set('pageId', pageId);
@@ -137,7 +128,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
         shallow: true,
       });
     } else if (navigateType.current === navigationState.reload) {
-      const pageId = getShortUUID(4);
+      const pageId = getRandomNumString(6);
       pageHistoryStack.current[pagePointer.current].pageId = pageId;
       searchParams.set('pageId', pageId);
       router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
@@ -158,12 +149,12 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
           pagePointer.current = pointer;
         }
       }
+      const pageId = getRandomNumString(6);
 
-      searchParams.set('pageId', getShortUUID(4));
+      searchParams.set('pageId', pageId);
       router.replace(`${currentUrl.pathname}?${searchParams.toString()}`, undefined, {
         shallow: true,
       });
-      const pageId = searchParams.get('pageId')!;
 
       pagePointer.current++;
       pageHistoryStack.current.push({ pageId: pageId, path: router.asPath });
@@ -178,6 +169,10 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
 
       pagePointer.current = pointer!;
     }
+    saveSessionItem('routeHistory', {
+      pagePointer: pagePointer.current,
+      historyStack: pageHistoryStack.current,
+    });
 
     navigateType.current = navigationState.move;
   }, [router.pathname]);
