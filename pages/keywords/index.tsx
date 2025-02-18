@@ -3,6 +3,7 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 import CategoryGrid from '@components/keywords/categoryGrid';
 import SearchBox from '@components/keywords/searchBox';
 import { getKeywordsGroupByCategoryAndRecent } from '@controller';
+import { INF } from '@public/assets/resource';
 import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
@@ -15,7 +16,7 @@ interface pageProps {
 }
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async () => {
-  const response = await getKeywordsGroupByCategoryAndRecent(20);
+  const response = await getKeywordsGroupByCategoryAndRecent(INF);
   return {
     props: {
       data: response,
