@@ -84,9 +84,9 @@ export default function KeyExplanation({ data }: pageProps) {
   return (
     <Wrapper>
       <HeadMeta {...metaTagsProps} />
-      <SearchWrapper>
+      {/* <SearchWrapper>
         <SearchBox />
-      </SearchWrapper>
+      </SearchWrapper> */}
       <KeywordWrapper>
         <ExplanationComp
           id={keyword.id!}
@@ -184,7 +184,7 @@ const Wrapper = styled.div`
 const KeywordWrapper = styled.div`
   width: 70%;
   min-width: 800px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   @media screen and (max-width: 768px) {
     width: 98%;
     min-width: 0px;
