@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 
 import styled from 'styled-components';
 
@@ -13,7 +13,7 @@ import { PositiveMessageBox } from '@components/common/messageBox';
 interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
 
 export default function SearchBox() {
-  const navigate = useRouter();
+  const { router } = useRouter();
   const { show } = useToastMessage();
   const [searchWord, setSearchWord] = useState<string>('');
   const [relatedWords, setRelatedWords] = useState<string[]>([
@@ -97,7 +97,7 @@ export default function SearchBox() {
         return;
       }
 
-      navigate.push(`/keywords/${searchWord}`);
+      router.push(`/keywords/${searchWord}`);
     } else if (
       e.key === 'ArrowUp' ||
       e.key === 'ArrowDown' ||

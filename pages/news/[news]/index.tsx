@@ -2,10 +2,10 @@ import NewsContent from '@components/news/newsContents';
 import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -51,12 +51,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const router = useRouter();
+  const { router, getCurrentPageIndex } = useRouter();
   const { id, news, description } = data;
 
   const hideNewsContent = useCallback(() => {
-    router.push('/news');
-  }, []);
+    if (getCurrentPageIndex() === 0) {
+      router.push('/news');
+    } else {
+      router.back();
+    }
+  }, [router, getCurrentPageIndex]);
 
   const metaTagsProps = useMemo(() => {
     return {

@@ -6,12 +6,14 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import SearchBox from '@components/news/searchBox';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
-import { useMount } from '@utils/hook/useMount';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { Preview } from '@utils/interface/news';
+import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface pageProps {
@@ -20,7 +22,6 @@ interface pageProps {
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
   //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
-  console.log('is get static props');
   return {
     props: { data: [] },
     revalidate: 300,
@@ -33,19 +34,36 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const { router, getCurrentPageInfo } = useRouter();
+  const { isLoading: isGlobalLoading, setIsLoading } = useGlobalLoading();
   const {
     page,
     isRequesting,
     isFetchingImages,
-    isError,
     previews,
     fetchPreviews,
     fetchNextPreviews,
+    getCurrentMetadata,
   } = useFetchNewsPreviews(16);
   const recentKeywords = useRecentKeywords();
-  useMount(() => {
-    fetchPreviews({ limit: 16 });
-  });
+
+  const setCachedPreviews = useCallback(
+    async (page: number, limit: number, filter: string | null, scroll: number) => {
+      try {
+        setIsLoading(true);
+        await fetchPreviews({ limit: page, filter: filter ?? '' });
+        setTimeout(() => {
+          window.scrollTo({ left: 0, top: scroll });
+        }, 100);
+        await fetchNextPreviews(limit);
+      } catch (e) {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchPreviews, fetchNextPreviews],
+  );
+
   const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
   const showNewsContent = useNewsNavigate();
 
@@ -61,6 +79,41 @@ export default function NewsPage(props: pageProps) {
     },
     [keywordClicked, setKeywordClicked],
   );
+
+  useEffect(() => {
+    const info = router.query.pageId as string;
+    if (!info) return;
+    const item = getSessionItem(info ?? '');
+    if (item) {
+      const { page, limit, filter, scroll } = item as {
+        path: string;
+        scroll: number;
+        page: number;
+        limit: number;
+        filter: string;
+        isAdmin: boolean;
+      };
+      setCachedPreviews(page, limit, filter, scroll);
+    } else {
+      fetchPreviews({ limit: 16 });
+    }
+
+    const handleRouteChangeStart = () => {
+      const info = getCurrentPageInfo();
+      if (info) {
+        saveSessionItem(info.pageId, {
+          path: info.path,
+          scroll: window.scrollY,
+          ...getCurrentMetadata(),
+        });
+      }
+    };
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [router.query.pageId]);
 
   return (
     <>
@@ -126,8 +179,6 @@ const Wrapper = styled.div`
   padding-top: 20px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
-
-  overflow-x: hidden;
 
   ::-webkit-scrollbar {
     display: none;
@@ -208,8 +259,9 @@ const ArticlesWrapper = styled.div`
   min-width: 800px;
   position: relative;
   @media screen and (max-width: 768px) {
-    width: 98%;
+    width: 100%;
     min-width: 0px;
+    overflow: hidden;
   }
 `;
 

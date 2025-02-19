@@ -11,8 +11,8 @@ export function NewArticlesFallback() {
       </div>
       <div className="body-wrapper">
         <div className="grid-wrapper">
-          {new Array(5).fill(null).map((_) => {
-            return <Fallback />;
+          {new Array(5).fill(null).map((_, i) => {
+            return <Fallback key={i} />;
           })}
         </div>
       </div>

@@ -100,7 +100,7 @@ export default function Home() {
           <List>
             {items.map((item) => (
               <ListItem onClick={() => handleItemClick(item)}>
-                <a>{item.name}</a>
+                <p>{item.name}</p>
               </ListItem>
             ))}
           </List>
@@ -287,7 +287,7 @@ const ListItem = styled.li`
     background-color: white;
   }
 
-  > a {
+  > p {
     display: block;
     min-width: 4.5rem;
     height: 2.3rem;
@@ -312,14 +312,14 @@ const ListItem = styled.li`
     &:not(:last-child)::after {
       display: none;
     }
-    > a {
+    > p {
       width: 80%;
       margin: auto;
       font-size: 0.8rem;
     }
     &:last-child {
       border-bottom: none;
-      > a {
+      > p {
         font-size: 0.7rem;
       }
     }

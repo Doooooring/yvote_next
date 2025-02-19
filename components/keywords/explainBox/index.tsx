@@ -4,7 +4,7 @@ import { HOST_URL } from '@public/assets/url';
 import { KeywordCategory } from '@utils/interface/keywords';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Suspense } from 'react';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ export default function ExplanationComp({
   explain: string;
   keyword: string;
 }) {
-  const navigation = useRouter();
+  const { router } = useRouter();
 
   return (
     <ExplanationWrapper>
@@ -33,7 +33,7 @@ export default function ExplanationComp({
           style={{ display: 'none' }}
           id="close-button"
           onClick={() => {
-            navigation.back();
+            router.back();
           }}
         ></input>
         <label className="close-button" htmlFor="close-button">

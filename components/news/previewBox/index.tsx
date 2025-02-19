@@ -1,10 +1,11 @@
 import { Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from '../../../utils/hook/useRouter';
 import PreviewBoxLayout from './previewBox.style';
 
 interface PreviewBoxProps {
@@ -13,15 +14,19 @@ interface PreviewBoxProps {
   img?: string;
 }
 function PreviewBox({ preview, img, click }: PreviewBoxProps) {
-  const navigate = useRouter();
+  const { router } = useRouter();
   const { id, title, subTitle, summary, date, newsImage, keywords, state } = preview;
 
   return (
-    <Wrapper>
+    <Wrapper
+      href={`/news/${id}`}
+      onClick={(e) => {
+        e.preventDefault();
+        click(id);
+      }}
+    >
       <PreviewBoxLayout
-        onClick={() => {
-          click(id);
-        }}
+        onClick={() => {}}
         imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
           <>
@@ -59,7 +64,7 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
                   <Keyword
                     key={keyword}
                     onClick={() => {
-                      navigate.push(`/keywords/${String(id)}`);
+                      router.push(`/keywords/${String(id)}`);
                     }}
                   >
                     {`#${keyword}`}
@@ -76,12 +81,13 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
 }
 
 export default React.memo(PreviewBox, (prevProps, nextProps) => {
-  return prevProps.preview.id === nextProps.preview.id && prevProps.click === nextProps.click;
+  return prevProps.preview.id === nextProps.preview.id;
 });
 
-const Wrapper = styled.div`
+const Wrapper = styled(Link)`
   filter: saturate(80%);
   width: 100%;
+  text-decoration: none;
   font-family: Noto Sans KR, Helvetica, sans-serif;
   transition: filter 0.2s ease;
 

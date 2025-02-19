@@ -1,11 +1,13 @@
 import { Device, useDevice } from '@utils/hook/useDevice';
-import Link from 'next/link';
-import { useState } from 'react';
+import { Link, useRouter } from '@utils/hook/useRouter';
+
+import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '../imageFallback';
 import { useCurRoute } from './header.tool';
 
 export default function Header() {
+  const { router } = useRouter();
   const curRoute = useCurRoute();
   const device = useDevice();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,9 +16,16 @@ export default function Header() {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const closeMenu = () => {
-    setIsMenuOpen(false); // Ensures the menu closes when navigating
-  };
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, [setIsMenuOpen]);
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', closeMenu);
+    return () => {
+      router.events.off('routeChangeComplete', closeMenu);
+    };
+  }, [router, closeMenu]);
 
   return (
     <Wrapper style={{ height: device === Device.pc ? '65px' : '50px' }}>
@@ -39,36 +48,20 @@ export default function Header() {
           <div className="line3" />
         </Hamburger>
 
-        {/* Navigation Menu */}
+        {/* router Menu */}
         <NavAnimation isMenuOpen={isMenuOpen}>
           <NavigationBox>
-            <NavBox
-              link={'/news'}
-              comment={'뉴스 모아보기'}
-              state={curRoute === 'news'}
-              onNavigate={closeMenu} // Close menu on click
-            />
+            <NavBox link={'/news'} comment={'뉴스 모아보기'} state={curRoute === 'news'} />
 
             <NavBox
               link={'/keywords'}
               comment={'키워드 모아보기'}
               state={curRoute === 'keywords'}
-              onNavigate={closeMenu} // Close menu on click
             />
 
-            <NavBox
-              link={'/analyze'}
-              comment={'정치 성향 테스트'}
-              state={curRoute === 'analyze'}
-              onNavigate={closeMenu} // Close menu on click
-            />
+            <NavBox link={'/analyze'} comment={'정치 성향 테스트'} state={curRoute === 'analyze'} />
 
-            <NavBox
-              link={'/about'}
-              comment={'ABOUT'}
-              state={curRoute === 'about'}
-              onNavigate={closeMenu} // Close menu on click
-            />
+            <NavBox link={'/about'} comment={'ABOUT'} state={curRoute === 'about'} />
           </NavigationBox>
         </NavAnimation>
       </HeaderBody>
@@ -80,12 +73,11 @@ interface NavBoxProps {
   link: string;
   comment: string;
   state: boolean;
-  onNavigate: () => void;
 }
 
-function NavBox({ link, comment, state, onNavigate }: NavBoxProps) {
+function NavBox({ link, comment, state }: NavBoxProps) {
   return (
-    <HomeLink href={`${link}`} $state={state} onClick={onNavigate}>
+    <HomeLink href={`${link}`} $state={state}>
       {comment}
     </HomeLink>
   );

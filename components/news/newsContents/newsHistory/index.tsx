@@ -1,6 +1,6 @@
 // import styled from 'styled-components';
 
-// import Link from 'next/link';
+// import { Link } from '@utils/hook/useRouter';;
 
 // import { BrickBar } from '@components/common/figure';
 // import { News } from '@utils/interface/news';

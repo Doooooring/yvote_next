@@ -11,7 +11,7 @@ import { useBool } from '@utils/hook/useBool';
 import { NewsInView } from '@utils/interface/news';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Suspense, useMemo } from 'react';
 import { commentTypeColor } from '../../../utils/interface/news/commen';
 import CommentModal from '../commentModal';
@@ -40,7 +40,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     subTitle,
     votes,
   } = newsContent;
-  const navigate = useRouter();
+  const { router } = useRouter();
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
@@ -98,7 +98,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                       className="keyword"
                       key={keyword}
                       onClick={() => {
-                        navigate.push(`/keywords/${id}`);
+                        router.push(`/keywords/${id}`);
                       }}
                     >
                       {`# ${keyword}`}

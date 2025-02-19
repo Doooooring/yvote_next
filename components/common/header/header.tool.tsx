@@ -1,21 +1,19 @@
-import { useDevice } from '@utils/hook/useDevice';
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 
 export const useCurRoute = () => {
-  const navigation = useRouter();
+  const { router } = useRouter();
 
-  if (navigation.pathname === '/error') {
+  if (router.pathname === '/error') {
     console.log("it's error");
     return '';
   }
-  if (navigation.pathname.includes('news')) {
+  if (router.pathname.includes('news')) {
     return 'news';
-  } else if (navigation.pathname.includes('keywords')) {
+  } else if (router.pathname.includes('keywords')) {
     return 'keywords';
-  } else if (navigation.pathname.includes('analyze')) {
+  } else if (router.pathname.includes('analyze')) {
     return 'analyze';
-  } else if (navigation.pathname.includes('about')) {
+  } else if (router.pathname.includes('about')) {
     return 'about';
   } else {
     return 'home';
