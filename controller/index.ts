@@ -17,6 +17,7 @@ export const getKeywordsGroupByCategoryAndRecent = async (batchSize: number) => 
     };
   })();
 
-  const response = await Promise.all([recentPromise, ...promises]);
+  const response = await Promise.all([...promises]);
+  // const response = await Promise.all([recentPromise, ...promises]); hide recent keywords
   return response;
 };
