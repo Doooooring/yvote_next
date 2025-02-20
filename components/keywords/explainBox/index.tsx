@@ -66,7 +66,7 @@ const ExplanationWrapper = styled(CommonLayoutBox)`
   position: relative;
   box-sizing: border-box;
   @media screen and (max-width: 768px) {
-    padding: 2rem 1.5rem;
+    padding: 1.4rem 1.4rem;
   }
   .news-box-close {
     padding-top: 5px;
