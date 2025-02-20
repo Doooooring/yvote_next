@@ -129,10 +129,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete }) => {
         </div>
       ))}
       <button onClick={handlePrev} disabled={currentBatchStartIndex === 0}>
-        Previous
+        이전
       </button>
       <button onClick={handleNext} disabled={!areAllAnswered()}>
-        {currentBatchStartIndex + batchSize >= questions.length ? 'Finish' : 'Next'}
+        {currentBatchStartIndex + batchSize >= questions.length ? '종료' : '다음'}
       </button>
     </Wrapper>
   );
@@ -142,15 +142,15 @@ export default Questionnaire;
 
 const Wrapper = styled.div`
   padding-bottom: 200px;
-  font-size : 15px;
+  font-size: 15px;
 
   .font-lg {
-    font-size : 15px;
+    font-size: 15px;
     @media screen and (max-width: 768px) {
-      font-size : 12px;
+      font-size: 12px;
     }
     @media screen and (max-width: 400px) {
-      font-size : 10px;
+      font-size: 10px;
     }
   }
 
@@ -220,12 +220,12 @@ const Wrapper = styled.div`
     }
 
     @media screen and (max-width: 768px) {
-      padding : 6px 12px;
-      margin : 3px;
+      padding: 6px 12px;
+      margin: 3px;
     }
     @media screen and (max-width: 434px) {
-      padding : 4px 8px;
-      margin : 2px;
+      padding: 4px 8px;
+      margin: 2px;
     }
   }
 `;

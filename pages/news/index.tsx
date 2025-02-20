@@ -111,7 +111,6 @@ export default function NewsPage(props: pageProps) {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-
   -webkit-text-size-adjust: none;
   color: #666;
   margin: 0;
@@ -123,10 +122,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
-
   overflow-x: hidden;
 
   ::-webkit-scrollbar {
@@ -215,21 +213,22 @@ const ArticlesWrapper = styled.div`
 
 const SearchWrapper = styled(CommonLayoutBox)`
   display: flex;
-  width: 10%;
-  min-width: 800px;
+  width: 40%;
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
   text-align: center;
-  margin: 0 0 20px 0;
+  margin: 0 0 4px 0;
   padding: 0;
   font: inherit;
   box-sizing: inherit;
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 60%;
+    width: 130px;
     min-width: 0px;
+    margin-right: auto;
+    margin-left: 4px;
   }
 `;
 

@@ -143,7 +143,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
         <input
           className="input-box"
           type="text"
-          placeholder="키워드로 뉴스 검색"
+          placeholder="키워드 태그 검색"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);
@@ -152,7 +152,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
             handleArrowKey(e, searchWord);
           }}
         />
-        <div className="related-box">
+        {/* <div className="related-box">
           {relatedWords.map((word) => (
             <RelatedWord
               className={'word'}
@@ -163,7 +163,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
               {`# ${word}`}
             </RelatedWord>
           ))}
-        </div>
+        </div> */}
       </div>
     </Wrapper>
   );
@@ -173,14 +173,15 @@ const Wrapper = styled.form`
   position: relative;
   display: inline-flex;
   width: 300px;
-  height: 45px;
-  font-weight: bold;
+  height: 30px;
+  border-radius: 0px;
+  font-weight: 400;
   text-align: center;
   align-items: center;
   .input-wrapper {
     position: absolute;
     width: 100%;
-    height: 90%;
+    height: 100%;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -188,27 +189,28 @@ const Wrapper = styled.form`
       overflow: visible;
     }
     .input-box {
+      background-color: transparent;
       display: inline-flex;
       border: 0;
-      border-radius: 3px;
+      border-radius: 9px;
       width: 100%;
-      height: auto;
+      height: 100%;
       color: rgb(170, 170, 170);
-      font-weight: 500;
+      font-weight: 400;
       padding: 0;
       margin: 0;
       font: inherit;
-      font-size: 14px;
+      font-size: 12px;
       text-align: center;
-
       &::placeholder {
         color: rgb(170, 170, 170);
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 12px;
+        font-weight: 400;
       }
       &:focus {
-        outline: 1px solid rgb(133, 200, 224);
-        font-size: 14px;
+        outline: 1.4px solid rgb(133, 200, 224);
+        font-size: 12px;
+        font-weight: 400;
       }
     }
     .related-box {
