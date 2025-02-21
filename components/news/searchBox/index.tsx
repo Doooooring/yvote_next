@@ -143,7 +143,7 @@ export default function SearchBox({ page, fetchPreviews }: SearchBoxProps) {
         <input
           className="input-box"
           type="text"
-          placeholder="키워드 태그 검색"
+          placeholder="키워드로 검색"
           value={searchWord}
           onChange={(e) => {
             handleSearchBoxChange(e);

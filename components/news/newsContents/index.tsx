@@ -376,19 +376,19 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         }
         & {
           p {
-            margin: 12px 0 0 0;
+            margin: 14px 0 0 0;
             min-height: 0px;
             &:has(br:only-child) {
               margin: 0;
             }
             &:has(em) {
-              line-height: 1.6;
-              margin-top: 8px;
-              padding: 0 10px;
+              line-height: 1.7;
+              margin-top: 9px;
+              padding: 0 4px;
             }
             &:has(strong) {
               + p {
-                margin-top: 8px;
+                margin-top: 6px;
               }
             }
           }
