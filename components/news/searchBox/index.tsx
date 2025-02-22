@@ -208,7 +208,7 @@ const Wrapper = styled.form`
         font-weight: 400;
       }
       &:focus {
-        outline: 1.4px solid rgb(133, 200, 224);
+        outline: 0px solid rgb(133, 200, 224);
         font-size: 12px;
         font-weight: 400;
       }

@@ -218,7 +218,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
   -webkit-text-size-adjust: none;
   color: #666;
   text-align: center;
-  margin: 0 0 4px 0;
+  margin: 0 0 10px 0;
   padding: 0;
   font: inherit;
   box-sizing: inherit;
@@ -229,6 +229,7 @@ const SearchWrapper = styled(CommonLayoutBox)`
     min-width: 0px;
     margin-right: auto;
     margin-left: 4px;
+    margin-bottom: 4px;
   }
 `;
 
@@ -253,7 +254,6 @@ const KeywordsWrapper = styled(CommonLayoutBox)`
 
 const KeywordTitle = styled.div`
   color: ${({ theme }) => theme.colors.gray800};
-
   font-weight: 700;
   font-size: 1.1rem;
   text-align: left;
