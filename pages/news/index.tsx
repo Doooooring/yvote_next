@@ -6,10 +6,10 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import SearchBox from '@components/news/searchBox';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
+import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { Preview } from '@utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
@@ -164,7 +164,6 @@ export default function NewsPage(props: pageProps) {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-
   -webkit-text-size-adjust: none;
   color: #666;
   margin: 0;
@@ -176,7 +175,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
 
@@ -267,21 +266,23 @@ const ArticlesWrapper = styled.div`
 
 const SearchWrapper = styled(CommonLayoutBox)`
   display: flex;
-  width: 10%;
-  min-width: 800px;
+  width: 40%;
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
   text-align: center;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
   padding: 0;
   font: inherit;
   box-sizing: inherit;
   justify-content: center;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 60%;
+    width: 130px;
     min-width: 0px;
+    margin-right: auto;
+    margin-left: 4px;
+    margin-bottom: 4px;
   }
 `;
 
@@ -306,7 +307,6 @@ const KeywordsWrapper = styled(CommonLayoutBox)`
 
 const KeywordTitle = styled.div`
   color: ${({ theme }) => theme.colors.gray800};
-
   font-weight: 700;
   font-size: 1.1rem;
   text-align: left;

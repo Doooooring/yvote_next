@@ -33,9 +33,9 @@ export default function KeywordsPage({ data }: pageProps) {
   return (
     <Wrapper>
       <HeadMeta {...metaTagsProps} />
-      <SearchWrapper>
+      {/* <SearchWrapper>
         <SearchBox />
-      </SearchWrapper>
+      </SearchWrapper> */}
       <GridContainer>
         {data.map(({ category, data }) => {
           return <CategoryGrid category={category} keywords={data} />;
@@ -60,6 +60,7 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 20px;
   background-color: rgb(242, 242, 242);
+  overflow-x: hidden;
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -94,7 +95,7 @@ const GridContainer = styled.div`
   align-items: center;
   width: 70%;
   height: auto;
-  margin-bottom: 150px;
+  margin-bottom: 80px;
   min-width: 800px;
   @media screen and (max-width: 768px) {
     width: 98%;

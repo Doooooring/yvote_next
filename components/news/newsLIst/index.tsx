@@ -56,6 +56,7 @@ export default function NewsList({
         <Virtuoso
           style={{
             width: '100%',
+            marginBottom: '10px',
           }}
           useWindowScroll
           totalCount={previews.length}
@@ -95,11 +96,11 @@ export default function NewsList({
 
 const Wrapper = styled(Column)`
   gap: 2px;
-
   -webkit-text-size-adjust: none;
   color: #666;
   text-align: center;
   margin: 0;
+  margin-bottom: 2px;
   padding: 0;
   border: 0;
   font: inherit;
@@ -112,14 +113,13 @@ const Wrapper = styled(Column)`
   position: relative;
   animation: 0.5s linear 0s 1 normal none running box-sliding;
   overflow-x: visible;
-
   div.preview-wrapper {
     width: 100%;
     box-sizing: border-box;
     -webkit-text-size-adjust: none;
     color: #666;
     text-align: center;
-    margin: 0;
+    margin: 20px;
     padding: 0;
     border: 0;
     font: inherit;

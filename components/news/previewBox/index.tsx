@@ -90,7 +90,7 @@ const Wrapper = styled(Link)`
   text-decoration: none;
   font-family: Noto Sans KR, Helvetica, sans-serif;
   transition: filter 0.2s ease;
-
+  margin-bottom: 1px;
   img {
     transition: transform 0.3s ease-in-out;
   }

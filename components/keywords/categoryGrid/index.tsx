@@ -32,7 +32,7 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
   };
   if (KeywordCategoryKoreanName(category) == '') return <></>;
   return (
-    <Wrapper>
+    <Wrapper hideButtonsOnMobile={true}>
       <div className="header-wrapper">
         <div className="image-wrapper">
           <Image src={KeywordCategoryImgUrl(category)} alt="" fill />
@@ -70,7 +70,7 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ hideButtonsOnMobile: boolean }>`
   width: 100%;
   margin-top: 20px;
   margin-bottom: 10px;
@@ -78,7 +78,7 @@ const Wrapper = styled.div`
   min-width: 868px;
   font-family: 'Noto Sans KR', Helvetica, sans-serif;
   @media screen and (max-width: 768px) {
-    overflow-x: scroll;
+    overflow-x: hidden;
     min-width: 0;
     ::-webkit-scrollbar {
       display: none;
@@ -126,6 +126,15 @@ const Wrapper = styled.div`
       border: 0px solid black;
       overflow: hidden;
     }
+    ${({ hideButtonsOnMobile }) =>
+      hideButtonsOnMobile &&
+      `
+      @media screen and (max-width: 768px) {
+        & > div:not(.grid-wrapper) {
+          display: none;
+        }
+      }
+    `}
   }
 `;
 

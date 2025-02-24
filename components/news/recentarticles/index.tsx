@@ -64,7 +64,7 @@ const Wrapper = styled(CommonLayoutBox)`
   font: inherit;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 0 20px;
+  margin: 0 0 10px;
   width: 100%;
   @media screen and (max-width: 768px) {
     width: 98%;

@@ -42,7 +42,7 @@ const Wrapper = styled.div<WrapperProps>`
   flex-direction: ${({ $isRow }) => ($isRow ? 'row' : 'column')};
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
   height: 100%;
   font-size: ${({ fontSize }) => fontSize};
