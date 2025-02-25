@@ -1,7 +1,8 @@
-import { Device, useDevice } from '@utils/hook/useDevice';
+import { useDevice } from '@utils/hook/useDevice';
 import LoadingCommon from '../../loading';
 import Modal from '../../modal';
 import { useGlobalLoading } from '../../../../utils/hook/useGlobalLoading/useGlobalLoading';
+import { Device } from '../../../../utils/interface/common';
 
 export default function LoadingIndicator() {
   const { isLoading } = useGlobalLoading();

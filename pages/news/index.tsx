@@ -1,5 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
-import { CommonLayoutBox } from '@components/common/commonStyles';
+import { CommonLayoutBox, CommonTagBox } from '@components/common/commonStyles';
 import NewsList from '@components/news/newsLIst';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
@@ -34,6 +34,8 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
+  const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
   const { isLoading: isGlobalLoading, setIsLoading } = useGlobalLoading();
   const {
@@ -63,9 +65,6 @@ export default function NewsPage(props: pageProps) {
     },
     [fetchPreviews, fetchNextPreviews],
   );
-
-  const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
-  const showNewsContent = useNewsNavigate();
 
   const clickKeyword = useCallback(
     (keyword: string | null) => {
@@ -321,23 +320,14 @@ interface KeywordProps {
   $clicked: boolean;
 }
 
-const Keyword = styled.div<KeywordProps>`
-  box-sizing: border-box;
-  display: inline-block;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
-  margin: 0;
+const Keyword = styled(CommonTagBox)<KeywordProps>`
   margin-left: 3px;
   margin-right: 6px;
   margin-bottom: 6px;
-  padding: 2px 8px;
+  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
   background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
-  border: 1px solid #f1f2f5;
   border-color: ${({ $clicked, theme }) =>
     $clicked ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
-  border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 

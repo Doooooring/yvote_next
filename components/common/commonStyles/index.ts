@@ -29,6 +29,22 @@ export const CommonLayoutBox = styled.div`
   box-shadow: 0 0 35px -30px;
 `;
 
+export const CommonTagBox = styled.div`
+  box-sizing: border-box;
+  display: inline-block;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: 'rgb(120, 120, 120)';
+  margin: 0;
+  padding: 2px 8px;
+  background-color: '#f1f2f5'
+  border: 1px solid #f1f2f5;
+  border-color: '#f1f2f5';
+  border-radius: 20px;
+
+`;
+
 export const backgroundSlide = keyframes`
   0% {
     background-position : -10% 0%;
