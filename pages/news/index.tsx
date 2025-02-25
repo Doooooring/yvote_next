@@ -5,6 +5,7 @@ import NewsList from '@components/news/newsLIst';
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import SearchBox from '@components/news/searchBox';
+import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -45,6 +46,7 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
     getCurrentMetadata,
   } = useFetchNewsPreviews(16);
+  const {} = useNewsKeywordFilter();
   const recentKeywords = useRecentKeywords();
 
   const setCachedPreviews = useCallback(
