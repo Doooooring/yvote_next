@@ -1,10 +1,12 @@
-import { Device, useDevice } from '@utils/hook/useDevice';
+import { useDevice } from '@utils/hook/useDevice';
 import { Link, useRouter } from '@utils/hook/useRouter';
 
 import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ImageFallback from '../imageFallback';
 import { useCurRoute } from './header.tool';
+import { Device } from '../../../utils/interface/common';
+import { HeaderHeight } from '../../../utils/layout';
 
 export default function Header() {
   const { router } = useRouter();
@@ -28,7 +30,7 @@ export default function Header() {
   }, [router, closeMenu]);
 
   return (
-    <Wrapper style={{ height: device === Device.pc ? '65px' : '50px' }}>
+    <Wrapper style={{ height: HeaderHeight(device) }}>
       <HeaderBody>
         <LogoImgBox>
           <HomeLink href="/" $state={curRoute === 'home'}>

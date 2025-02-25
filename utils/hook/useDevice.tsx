@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-
-export enum Device {
-  pc = 'pc',
-  mobile = 'mobile',
-}
+import { Device } from '../interface/common';
 
 export const useDevice = () => {
   const [device, setDevice] = useState<Device>(Device.pc);
@@ -13,6 +9,8 @@ export const useDevice = () => {
       const screenWidth = window.innerWidth;
       if (screenWidth < 480) {
         setDevice(Device.mobile);
+      } else if (screenWidth < 768) {
+        setDevice(Device.tablet);
       } else {
         setDevice(Device.pc);
       }
