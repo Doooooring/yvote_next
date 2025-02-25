@@ -9,13 +9,24 @@ export default function useNewsKeywordFilter() {
   const [randomKeywords, setRandomKeywords] = useState<KeyTitle[]>([]);
   const [totalKeywords, setTotalKeywords] = useState<KeyTitle[]>([]);
 
+  const getRandomKeywords = useCallback((keywords: KeyTitle[], length: number) => {
+    const arr = [] as KeyTitle[];
+    const maxLen = Math.min(arr.length, length);
+    for (let tmp = 0; tmp < maxLen; tmp++) {
+      const rand = Math.floor(Math.random() * arr.length);
+      arr.push(totalKeywords[rand]);
+    }
+    return arr;
+  }, []);
+
   useEffect(() => {
     async function async() {
       const response: KeyTitle[] = await KeywordsRepository.getKeywordsKeyList();
       setTotalKeywords(response);
+      setRandomKeywords(getRandomKeywords(response, 10));
     }
     async();
-  }, [setTotalKeywords]);
+  }, [getRandomKeywords, setRandomKeywords, setTotalKeywords]);
 
   const reload = useCallback(() => {
     const maxLen = totalKeywords.length;

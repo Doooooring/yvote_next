@@ -1,8 +1,7 @@
 import { KeywordToView } from '@utils/interface/keywords';
+import { useCallback, useMemo, useState } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { useDevice } from '../../../utils/hook/useDevice';
-import css from 'styled-jsx/css';
-import { useCallback, useMemo, useState } from 'react';
 import { HeaderHeight } from '../../../utils/layout';
 import { CommonTagBox } from '../../common/commonStyles';
 
@@ -21,9 +20,11 @@ export default function KeywordHeadTab({
 }: KeywordHeadTabProps) {
   const [keywordClicked, setKeywordClicked] = useState<KeywordToView | null>(null);
   const device = useDevice();
+
   const stickyTopPosition = useMemo(() => {
     return HeaderHeight(device);
   }, [device]);
+
   const clickKeyword = useCallback(
     (keyword: KeywordToView) => {
       if (keywordClicked?.id == keyword.id) {

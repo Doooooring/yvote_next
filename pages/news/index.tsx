@@ -48,7 +48,11 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
     getCurrentMetadata,
   } = useFetchNewsPreviews(16);
-  const {} = useNewsKeywordFilter();
+  const {
+    keywordsSelected,
+    reloadRandomKeywords,
+    totalKeywords,
+  } = useNewsKeywordFilter();
   const recentKeywords = useRecentKeywords();
 
   const setCachedPreviews = useCallback(
