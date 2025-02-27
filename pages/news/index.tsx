@@ -16,6 +16,8 @@ import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import KeywordHeadTab from '../../components/news/keywordHeadTab';
+import { KeyTitle } from '../../utils/interface/keywords';
 
 interface pageProps {
   data: Array<Preview>;
@@ -35,10 +37,9 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const [keywordClicked, setKeywordClicked] = useState<string | null>(null);
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
-  const { isLoading: isGlobalLoading, setIsLoading } = useGlobalLoading();
+  const { isLoading: isGlobalLoading, setIsLoading: setIsGlobalLoading } = useGlobalLoading();
   const {
     page,
     isRequesting,
@@ -49,16 +50,17 @@ export default function NewsPage(props: pageProps) {
     getCurrentMetadata,
   } = useFetchNewsPreviews(16);
   const {
-    keywordsSelected,
+    keywordsToShow,
+    keywordSelected,
+    setKeywordSelected,
     reloadRandomKeywords,
     totalKeywords,
   } = useNewsKeywordFilter();
-  const recentKeywords = useRecentKeywords();
 
   const setCachedPreviews = useCallback(
     async (page: number, limit: number, filter: string | null, scroll: number) => {
       try {
-        setIsLoading(true);
+        setIsGlobalLoading(true);
         await fetchPreviews({ limit: page, filter: filter ?? '' });
         setTimeout(() => {
           window.scrollTo({ left: 0, top: scroll });
@@ -66,24 +68,39 @@ export default function NewsPage(props: pageProps) {
         await fetchNextPreviews(limit);
       } catch (e) {
       } finally {
-        setIsLoading(false);
+        setIsGlobalLoading(false);
       }
     },
     [fetchPreviews, fetchNextPreviews],
   );
 
   const clickKeyword = useCallback(
-    (keyword: string | null) => {
-      if (keyword == keywordClicked) {
-        setKeywordClicked(null);
-        fetchPreviews({ filter: null, limit: 16 });
-      } else {
-        setKeywordClicked(keyword);
-        fetchPreviews({ filter: keyword, limit: 16 });
+    async (keyword: KeyTitle) => {
+      setIsGlobalLoading(true);
+      try {
+        if (keyword.id == keywordSelected?.id) {
+          setKeywordSelected(null);
+          await fetchPreviews({ filter: null, limit: 16 });
+        } else {
+          setKeywordSelected(keyword);
+          await fetchPreviews({ filter: keyword.keyword, limit: 16 });
+        }
+      } catch (e) {
+      } finally {
+        setIsGlobalLoading(false);
       }
     },
-    [keywordClicked, setKeywordClicked],
+    [setKeywordSelected, fetchPreviews, keywordSelected],
   );
+
+  const refreshKeywordFilters = useCallback(() => {
+    reloadRandomKeywords();
+    if (keywordSelected) {
+      setKeywordSelected(null);
+    }
+    reloadRandomKeywords();
+    fetchPreviews({ filter: null, limit: 16 });
+  }, [reloadRandomKeywords, setKeywordSelected, fetchPreviews, keywordSelected]);
 
   useEffect(() => {
     const info = router.query.pageId as string;
@@ -127,9 +144,16 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-        <SearchWrapper>
+        {/* <SearchWrapper>
           <SearchBox page={page} fetchPreviews={fetchPreviews} />
-        </SearchWrapper>
+        </SearchWrapper> */}
+        <KeywordHeadTab
+          keywords={keywordsToShow}
+          keywordSelected={keywordSelected}
+          reload={refreshKeywordFilters}
+          totalKeywords={totalKeywords}
+          clickKeyword={clickKeyword}
+        />
         <div className="main-contents">
           <div className="main-contents-body">
             <NewsList
@@ -145,12 +169,12 @@ export default function NewsPage(props: pageProps) {
             <KeywordsWrapper>
               <KeywordTitle>최신 키워드</KeywordTitle>
               <KeywordContents>
-                {recentKeywords.map((keyword) => {
+                {keywordsToShow.map((keyword) => {
                   return (
                     <Keyword
-                      $clicked={keywordClicked === keyword.keyword}
+                      $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
                       onClick={() => {
-                        clickKeyword(keyword.keyword);
+                        clickKeyword(keyword);
                       }}
                     >
                       {keyword.keyword}

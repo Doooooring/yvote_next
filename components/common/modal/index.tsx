@@ -1,11 +1,13 @@
 import { ReactNode } from 'react';
-import styled from 'styled-components';
+import { createPortal } from 'react-dom';
+import styled, { CSSProp, CSSProperties } from 'styled-components';
 
 interface ModalProps {
   children: ReactNode;
   state: boolean;
   outClickAction?: () => any;
   backgroundColor?: string;
+  style?: CSSProperties;
 }
 
 export default function Modal({
@@ -13,10 +15,11 @@ export default function Modal({
   state,
   outClickAction,
   backgroundColor = 'rgba(0,0,0,0.5)',
+  style = {},
 }: ModalProps) {
   if (!state) return <></>;
 
-  return (
+  return createPortal(
     <Wrapper
       onClick={(e) => {
         if (e.target === e.currentTarget && outClickAction) {
@@ -24,11 +27,13 @@ export default function Modal({
         }
       }}
       style={{
+        ...style,
         backgroundColor: backgroundColor,
       }}
     >
       {children}
-    </Wrapper>
+    </Wrapper>,
+    document.getElementById('portal-root') as HTMLElement,
   );
 }
 

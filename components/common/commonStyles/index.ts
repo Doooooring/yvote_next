@@ -45,6 +45,23 @@ export const CommonTagBox = styled.div`
 
 `;
 
+export const CommonIconButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px;
+
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray400};
+  }
+`;
+
 export const backgroundSlide = keyframes`
   0% {
     background-position : -10% 0%;

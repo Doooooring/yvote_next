@@ -25,4 +25,5 @@ const Wrapper = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+  cursor: grab;
 `;

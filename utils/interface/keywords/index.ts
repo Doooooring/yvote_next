@@ -17,6 +17,8 @@ export interface Keyword {
   keywordImage: string;
 }
 
+export interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
+
 export interface KeywordToView
   extends Pick<Keyword, 'id' | 'keyword' | 'category' | 'recent' | 'keywordImage'> {}
 

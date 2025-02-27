@@ -1,21 +1,38 @@
-import { useCallback, useEffect, useState } from '@node_modules/@types/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeywordsRepository from '@repositories/keywords';
-import { Keyword } from '@utils/interface/keywords';
-interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
+import { KeyTitle, Keyword } from '@utils/interface/keywords';
 
 export default function useNewsKeywordFilter() {
-  const [keywordsSelected, setKeywordSelected] = useState<KeyTitle | null>(null);
+  const [keywordSelected, setKeywordSelected] = useState<KeyTitle | null>(null);
   const [customKeywords, setCustomKeywords] = useState<KeyTitle[]>([]);
   const [randomKeywords, setRandomKeywords] = useState<KeyTitle[]>([]);
   const [totalKeywords, setTotalKeywords] = useState<KeyTitle[]>([]);
 
+  const keywordsToShow = useMemo(() => {
+    console.log('is rendered');
+    const addSelectedToArr = (arr: KeyTitle[]) => {
+      if (keywordSelected && arr.filter((v) => v.id === keywordSelected.id).length == 0) {
+        arr.unshift(keywordSelected);
+      }
+      return arr;
+    };
+
+    if (customKeywords.length > 0) {
+      return addSelectedToArr(customKeywords);
+    } else {
+      return addSelectedToArr(randomKeywords);
+    }
+  }, [keywordSelected, customKeywords, randomKeywords]);
+
   const getRandomKeywords = useCallback((keywords: KeyTitle[], length: number) => {
     const arr = [] as KeyTitle[];
-    const maxLen = Math.min(arr.length, length);
+    const maxLen = Math.min(keywords.length, length);
     for (let tmp = 0; tmp < maxLen; tmp++) {
-      const rand = Math.floor(Math.random() * arr.length);
-      arr.push(totalKeywords[rand]);
+      const rand = Math.floor(Math.random() * keywords.length);
+      arr.push(keywords[rand]);
     }
+    console.log('===============');
+    console.log(arr);
     return arr;
   }, []);
 
@@ -38,7 +55,7 @@ export default function useNewsKeywordFilter() {
       arr.push(totalKeywords[rand]);
     }
     setRandomKeywords(arr);
-  }, [keywordsSelected, totalKeywords, setRandomKeywords]);
+  }, [keywordSelected, totalKeywords, setRandomKeywords]);
 
   //   const getRelatedKeywords = useCallback((input : string) => {
   //     const arr = [];
@@ -52,7 +69,8 @@ export default function useNewsKeywordFilter() {
   //   }, [totalKeywords])
 
   return {
-    keywordsSelected,
+    keywordsToShow,
+    keywordSelected,
     setKeywordSelected,
     customKeywords,
     setCustomKeywords,
