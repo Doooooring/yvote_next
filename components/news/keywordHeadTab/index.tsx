@@ -1,18 +1,19 @@
-import { KeyTitle, KeywordToView } from '@utils/interface/keywords';
-import { use, useCallback, useMemo, useRef, useState } from 'react';
+import menuImage from '@assets/img/menu_icon.svg';
+import reloadImage from '@assets/img/reload_icon.svg';
+import { KeyTitle } from '@utils/interface/keywords';
+import Image from 'next/image';
+import { useCallback, useMemo, useRef } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { useDevice } from '../../../utils/hook/useDevice';
+import { useScrollInfo } from '../../../utils/hook/useScrollInfo';
 import { HeaderHeight } from '../../../utils/layout';
 import { CommonIconButton, CommonLayoutBox, CommonTagBox, Row } from '../../common/commonStyles';
-import { useScrollInfo } from '../../../utils/hook/useScrollInfo';
 import HorizontalScroll from '../../common/horizontalScroll/horizontalScroll';
-import Image from 'next/image';
-import reloadImage from '@assets/img/reload_icon.svg';
-import menuImage from '@assets/img/menu_icon.svg';
-import Modal from '../../common/modal';
 
 interface KeywordHeadTabProps {
   keywords: Array<KeyTitle>;
+  setKeywords: (keywords: KeyTitle[]) => void;
+  openEditKeywordsTopSheet: () => void;
   totalKeywords: Array<KeyTitle>;
   keywordSelected: KeyTitle | null;
   reload: () => void;
@@ -25,12 +26,9 @@ export default function KeywordHeadTab({
   keywordSelected,
   reload,
   clickKeyword,
-  totalKeywords,
+  openEditKeywordsTopSheet,
   style = {},
 }: KeywordHeadTabProps) {
-  const [isOpenTopSheet, setIsOpenTopSheet] = useState(false);
-  const [isTopSheetDown, setIsTopSheetDown] = useState(false);
-
   const { scrollDirection, scrollY } = useScrollInfo();
   const headRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -60,20 +58,6 @@ export default function KeywordHeadTab({
     [clickKeyword],
   );
 
-  const openTopSheet = useCallback(() => {
-    setIsOpenTopSheet(true);
-    setTimeout(() => {
-      setIsTopSheetDown(true);
-    }, 0);
-  }, []);
-
-  const closeTopSheet = useCallback(() => {
-    setIsTopSheetDown(false);
-    setTimeout(() => {
-      setIsOpenTopSheet(false);
-    }, 100);
-  }, []);
-
   return (
     <>
       <Head ref={headRef}>와이보트 아티클</Head>
@@ -88,7 +72,7 @@ export default function KeywordHeadTab({
               alt="filter-menu"
               width={16}
               height={16}
-              onClick={openTopSheet}
+              onClick={openEditKeywordsTopSheet}
             />
           </ReloadButton>
         </ButtonsWrapper>
@@ -187,32 +171,3 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
     background-color: ${({ theme }) => theme.colors.gray400};
   }
 `;
-
-interface TopSheetProps {
-  isOpen: boolean;
-}
-
-const TopSheet = styled(CommonLayoutBox)<TopSheetProps>`
-  @media screen and (max-width: 768px) {
-    position: absolute;
-    top: ${({ isOpen }) => (isOpen ? '0px' : '-500px')};
-    left: 0;
-    width: 100%;
-    height: 500px;
-    background-color: white;
-
-    transition: top 0.2s ease-in-out;
-  }
-`;
-
-const TopSheetHead = styled(Row)`
-  padding: 6px;
-`;
-
-const SearchWrapper = styled.div``;
-
-const TopSheetHeadKeywords = styled.div``;
-
-const TopSheetBody = styled.div``;
-
-const TopSheetKeywordWrapper = styled.div``;

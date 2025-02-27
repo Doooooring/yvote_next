@@ -4,12 +4,11 @@ import NewsList from '@components/news/newsLIst';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
-import SearchBox from '@components/news/searchBox';
+import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { useRecentKeywords } from '@utils/hook/useRecentKeywords';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@utils/tools/session';
@@ -37,6 +36,7 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
   const { isLoading: isGlobalLoading, setIsLoading: setIsGlobalLoading } = useGlobalLoading();
@@ -52,7 +52,9 @@ export default function NewsPage(props: pageProps) {
   const {
     keywordsToShow,
     keywordSelected,
+    customKeywords,
     setKeywordSelected,
+    setCustomKeywords,
     reloadRandomKeywords,
     totalKeywords,
   } = useNewsKeywordFilter();
@@ -149,6 +151,8 @@ export default function NewsPage(props: pageProps) {
         </SearchWrapper> */}
         <KeywordHeadTab
           keywords={keywordsToShow}
+          setKeywords={setCustomKeywords}
+          openEditKeywordsTopSheet={() => setIsKeywordTopSheetOpen(true)}
           keywordSelected={keywordSelected}
           reload={refreshKeywordFilters}
           totalKeywords={totalKeywords}
@@ -186,6 +190,13 @@ export default function NewsPage(props: pageProps) {
           </TagWrapper>
         </div>
       </Wrapper>
+      <EditKeywordFiltersTopSheet
+        state={isKeywordTopSheetOpen}
+        close={() => setIsKeywordTopSheetOpen(false)}
+        keywordsToEdit={customKeywords}
+        totalKeywords={totalKeywords}
+        saveKeywordFilteres={setCustomKeywords}
+      />
     </>
   );
 }
