@@ -376,30 +376,37 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         }
         & {
           p {
-            margin: 14px 0 0 0;
+            margin: 12px 0 0 0;
             min-height: 0px;
             &:has(br:only-child) {
               margin: 0;
             }
+            em {
+              font-style: normal;
+              color: rgb(100, 100, 100) !important;
+            }
             &:has(em) {
-              line-height: 1.7;
-              margin-top: 9px;
-              padding: 0 4px;
+              line-height: 1.6;
+              padding: 0 8px;
             }
             &:has(strong) {
+              margin-top: 16px;
               + p {
-                margin-top: 6px;
+                margin-top: 8px;
               }
             }
           }
           ul {
             margin: 0 0 0 0;
-            padding-left: 20px;
+            padding-left: 16px;
+            + p {
+              margin-top: 12px;
+            }
             li {
               font-size: 17px;
-              margin-top: 28px;
+              margin-top: 50px;
               margin-bottom: -4px;
-              text-indent: -5px;
+              text-indent: -2px;
             }
             &[data-checked='false'] {
               list-style: none;
@@ -417,7 +424,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           padding-right: 1rem;
           padding-top: 0;
           h1 > span {
-            margin: 18px 0 -14px 0;
+            margin: 14px 0 0 0;
             font-size: 15px;
           }
         }
