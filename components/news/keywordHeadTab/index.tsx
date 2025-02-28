@@ -48,8 +48,6 @@ export default function KeywordHeadTab({
     async (keyword: KeyTitle) => {
       await clickKeyword(keyword);
       if (headRef.current && window) {
-        console.log('==========');
-        console.log(headRef.current.offsetTop);
         setTimeout(() => {
           window.scrollTo({ left: 0, top: headRef.current!.offsetTop - 160, behavior: 'smooth' });
         }, 100);
@@ -126,7 +124,7 @@ const Layout = styled(Row)`
 `;
 
 const ButtonsWrapper = styled(Row)`
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   align-items: center;
   gap: 10px;
   padding-right: 10px;
