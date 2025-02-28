@@ -58,7 +58,7 @@ export default function KeywordHeadTab({
 
   return (
     <>
-      <Head ref={headRef}>와이보트 아티클</Head>
+      <Head ref={headRef}></Head>
       <Wrapper ref={bodyRef} style={{ ...style, ...stickyStyle, top: stickyTopPosition }}>
         <ButtonsWrapper>
           <ReloadButton>
@@ -76,10 +76,10 @@ export default function KeywordHeadTab({
         </ButtonsWrapper>
         <KeywordWrapper>
           <KeywordScrollWrapper>
-            {keywords.map((keyword) => {
+            {keywords.map((keyword, idx) => {
               return (
                 <Keyword
-                  key={keyword.keyword}
+                  key={keyword.keyword + idx}
                   $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
                   onClick={() => {
                     clickKeywordWithScroll(keyword);
@@ -99,16 +99,20 @@ export default function KeywordHeadTab({
 const Head = styled.p``;
 
 const Wrapper = styled(CommonLayoutBox)`
+  @media screen and (min-width: 1196px) {
+    display: none;
+  }
+
   box-sizing: border-box;
 
   display: flex;
   flex-direction: row;
 
   width: 70%;
-  max-width: 1000px;
   min-width: 800px;
+
   position: sticky;
-  z-index: 9999;
+  z-index: 999;
   background-color: white;
   @media screen and (max-width: 768px) {
     width: 98%;
@@ -132,7 +136,7 @@ const ButtonsWrapper = styled(Row)`
 `;
 
 const ReloadButton = styled(CommonIconButton)`
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   width: 24px;
   height: 24px;
 `;
@@ -164,6 +168,16 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+
+  animation: back-blink 0.4s ease-in-out forwards;
+  @keyframes back-blink {
+    0% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray400};

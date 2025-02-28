@@ -1,8 +1,14 @@
 import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 import { ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 
-export default function HorizontalScroll({ children }: { children: ReactNode }) {
+export default function HorizontalScroll({
+  children,
+  style = {},
+}: {
+  children: ReactNode;
+  style?: CSSProperties;
+}) {
   const { scrollRef, onMouseDown, onMouseUp, onDragMove } = useHorizontalScroll();
 
   return (
@@ -12,6 +18,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
       onMouseMove={onDragMove}
+      style={style}
     >
       {children}
     </Wrapper>

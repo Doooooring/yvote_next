@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeywordsRepository from '@repositories/keywords';
-import { KeyTitle, Keyword } from '@utils/interface/keywords';
+import { KeyTitle } from '@utils/interface/keywords';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function useNewsKeywordFilter() {
   const [keywordSelected, setKeywordSelected] = useState<KeyTitle | null>(null);
@@ -9,7 +9,6 @@ export default function useNewsKeywordFilter() {
   const [totalKeywords, setTotalKeywords] = useState<KeyTitle[]>([]);
 
   const keywordsToShow = useMemo(() => {
-    console.log('is rendered');
     const addSelectedToArr = (arr: KeyTitle[]) => {
       if (keywordSelected && arr.filter((v) => v.id === keywordSelected.id).length == 0) {
         arr.unshift(keywordSelected);
@@ -26,13 +25,18 @@ export default function useNewsKeywordFilter() {
 
   const getRandomKeywords = useCallback((keywords: KeyTitle[], length: number) => {
     const arr = [] as KeyTitle[];
+    const mem = new Set();
+
     const maxLen = Math.min(keywords.length, length);
     for (let tmp = 0; tmp < maxLen; tmp++) {
       const rand = Math.floor(Math.random() * keywords.length);
-      arr.push(keywords[rand]);
+      const target = keywords[rand];
+      if (!mem.has(target)) {
+        arr.push(target);
+        mem.add(target);
+      }
     }
-    console.log('===============');
-    console.log(arr);
+
     return arr;
   }, []);
 
@@ -48,14 +52,11 @@ export default function useNewsKeywordFilter() {
   const reload = useCallback(() => {
     const maxLen = totalKeywords.length;
 
-    const arr = [] as KeyTitle[];
-
-    for (let tmp = 0; tmp < 10; tmp++) {
-      const rand = Math.floor(Math.random() * maxLen);
-      arr.push(totalKeywords[rand]);
-    }
+    const arr = getRandomKeywords(totalKeywords, 20);
+    setKeywordSelected(null);
+    setCustomKeywords([]);
     setRandomKeywords(arr);
-  }, [keywordSelected, totalKeywords, setRandomKeywords]);
+  }, [keywordSelected, totalKeywords, getRandomKeywords, setRandomKeywords]);
 
   //   const getRelatedKeywords = useCallback((input : string) => {
   //     const arr = [];

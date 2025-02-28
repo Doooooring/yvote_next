@@ -1,11 +1,19 @@
 import HeadMeta from '@components/common/HeadMeta';
-import { CommonLayoutBox, CommonTagBox } from '@components/common/commonStyles';
+import {
+  CommonIconButton,
+  CommonLayoutBox,
+  CommonTagBox,
+  Row,
+} from '@components/common/commonStyles';
 import NewsList from '@components/news/newsLIst';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
+import menuImage from '@assets/img/menu_icon.svg';
+import reloadImage from '@assets/img/reload_icon.svg';
 import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
+import { useDevice } from '@utils/hook/useDevice';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -13,6 +21,7 @@ import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
+import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import KeywordHeadTab from '../../components/news/keywordHeadTab';
@@ -36,6 +45,7 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const device = useDevice();
   const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
@@ -53,6 +63,7 @@ export default function NewsPage(props: pageProps) {
     keywordsToShow,
     keywordSelected,
     customKeywords,
+    randomKeywords,
     setKeywordSelected,
     setCustomKeywords,
     reloadRandomKeywords,
@@ -95,13 +106,18 @@ export default function NewsPage(props: pageProps) {
     [setKeywordSelected, fetchPreviews, keywordSelected],
   );
 
-  const refreshKeywordFilters = useCallback(() => {
+  const refreshKeywordFilters = useCallback(async () => {
+    const prevSelected = keywordSelected?.keyword;
     reloadRandomKeywords();
-    if (keywordSelected) {
-      setKeywordSelected(null);
+    if (prevSelected) {
+      try {
+        setIsGlobalLoading(true);
+        await fetchPreviews({ filter: '', limit: 16 });
+      } catch (e) {
+      } finally {
+        setIsGlobalLoading(false);
+      }
     }
-    reloadRandomKeywords();
-    fetchPreviews({ filter: null, limit: 16 });
   }, [reloadRandomKeywords, setKeywordSelected, fetchPreviews, keywordSelected]);
 
   useEffect(() => {
@@ -171,11 +187,36 @@ export default function NewsPage(props: pageProps) {
           </div>
           <TagWrapper>
             <KeywordsWrapper>
-              <KeywordTitle>최신 키워드</KeywordTitle>
+              <Row
+                style={{
+                  gap: '10px',
+                }}
+              >
+                <KeywordTitle>키워드로 골라보기</KeywordTitle>
+                <ReloadButton>
+                  <Image
+                    src={reloadImage}
+                    alt="reload"
+                    width={16}
+                    height={16}
+                    onClick={refreshKeywordFilters}
+                  />
+                </ReloadButton>
+                <ReloadButton>
+                  <Image
+                    src={menuImage}
+                    alt="filter-menu"
+                    width={16}
+                    height={16}
+                    onClick={() => setIsKeywordTopSheetOpen(true)}
+                  />
+                </ReloadButton>
+              </Row>
               <KeywordContents>
                 {keywordsToShow.map((keyword) => {
                   return (
                     <Keyword
+                      key={keyword.keyword}
                       $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
                       onClick={() => {
                         clickKeyword(keyword);
@@ -195,6 +236,7 @@ export default function NewsPage(props: pageProps) {
         close={() => setIsKeywordTopSheetOpen(false)}
         keywordsToEdit={customKeywords}
         totalKeywords={totalKeywords}
+        randomKeywords={randomKeywords}
         saveKeywordFilteres={setCustomKeywords}
       />
     </>
@@ -371,8 +413,23 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
     $clicked ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  animation: back-blink 0.4s ease-in-out forwards;
+  @keyframes back-blink {
+    0% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray400};
   }
+`;
+
+const ReloadButton = styled(CommonIconButton)`
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
 `;

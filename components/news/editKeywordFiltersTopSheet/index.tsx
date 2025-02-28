@@ -1,15 +1,23 @@
-import { CommonLayoutBox, CommonTagBox, Row } from '@components/common/commonStyles';
+import closeImage from '@assets/img/ico_close@2x.png';
+import {
+  CommonIconButton,
+  CommonLayoutBox,
+  CommonTagBox,
+  Row,
+} from '@components/common/commonStyles';
+import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 import Modal from '@components/common/modal';
 import { KeyTitle } from '@utils/interface/keywords';
+import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getConstantVowel } from '../../../utils/tools';
-import HorizontalScroll from '../../common/horizontalScroll/horizontalScroll';
 
 interface EditKeywordFiltersTopSheetProps {
   state: boolean;
   close: () => void;
   keywordsToEdit: KeyTitle[];
+  randomKeywords: KeyTitle[];
   totalKeywords: KeyTitle[];
   saveKeywordFilteres: (keywords: KeyTitle[]) => void;
 }
@@ -30,6 +38,7 @@ export default function EditKeywordFiltersTopSheet({
   state,
   close,
   keywordsToEdit,
+  randomKeywords,
   totalKeywords,
   saveKeywordFilteres,
 }: EditKeywordFiltersTopSheetProps) {
@@ -37,6 +46,7 @@ export default function EditKeywordFiltersTopSheet({
   const [searchWord, setSearchWord] = useState<string>('');
   const [curKeywords, setCurKeywords] = useState<KeyTitle[]>([]);
   const [relatedKeywords, setRelatedWords] = useState<KeyTitle[]>([]);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (state) {
@@ -56,7 +66,6 @@ export default function EditKeywordFiltersTopSheet({
   const addKeyword = useCallback(
     (keyword: KeyTitle) => {
       setCurKeywords([...curKeywords, keyword]);
-      setRelatedWords([...relatedKeywords.filter((r) => r.id !== keyword.id)]);
     },
     [curKeywords, relatedKeywords, setCurKeywords],
   );
@@ -64,12 +73,17 @@ export default function EditKeywordFiltersTopSheet({
   const dropKeyword = useCallback(
     (keyword: KeyTitle) => {
       setCurKeywords(curKeywords.filter((c) => c.id !== keyword.id));
-      if (isCharIncluded(searchWord, keyword.keyword)) {
-        setRelatedWords([...relatedKeywords, keyword].sort((a, b) => a.id - b.id));
-      }
     },
     [curKeywords, setCurKeywords, setRelatedWords],
   );
+
+  const saveKeywords = useCallback(() => {
+    saveKeywordFilteres(curKeywords);
+    setIsSaved(true);
+    setTimeout(() => {
+      setIsSaved(false);
+    }, 1000);
+  }, [curKeywords]);
 
   const handleSearchBoxChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +100,7 @@ export default function EditKeywordFiltersTopSheet({
           findRelatedWords.push(key);
         }
 
-        if (findRelatedWords.length === 10) {
+        if (findRelatedWords.length === 50) {
           break;
         }
       }
@@ -99,10 +113,19 @@ export default function EditKeywordFiltersTopSheet({
     [totalKeywords],
   );
 
+  const excludeSelectedKeywords = useCallback(
+    (keywords: KeyTitle[]) => {
+      return keywords.filter((keyword) => {
+        return curKeywords.filter((c) => c.id === keyword.id).length === 0;
+      });
+    },
+    [curKeywords],
+  );
+
   return (
-    <Modal state={state} backgroundColor="rgba(0,0,0,0)" outClickAction={closeTopSheet}>
+    <Modal state={state} backgroundColor="rgba(0,0,0,0.1)" outClickAction={closeTopSheet}>
       <TopSheet $isOpen={isTopSheetDown}>
-        <Title>관심있는 키워드를 클릭해주세요!</Title>
+        <Title>관심있는 키워드를 클릭해주세요.</Title>
         <SubTitle>키워드를 기반으로 뉴스를 골라볼 수 있어요!</SubTitle>
         <TopSheetHead>
           <SearchWrapper>
@@ -117,41 +140,82 @@ export default function EditKeywordFiltersTopSheet({
               />
             </InputWrapper>
           </SearchWrapper>
-          <KeywordWrapper>
-            <KeywordScrollWrapper>
-              {curKeywords.map((keyword, index) => {
-                return (
-                  <Keyword
-                    key={keyword.id}
-                    $state={true}
-                    onClick={() => {
-                      dropKeyword(keyword);
-                    }}
-                  >
-                    {keyword.keyword}
-                  </Keyword>
-                );
-              })}
-            </KeywordScrollWrapper>
-          </KeywordWrapper>
         </TopSheetHead>
         <TopSheetBody>
+          <KeywordSelectedWrapper>
+            <HorizontalScroll
+              style={{
+                width: '100%',
+              }}
+            >
+              <KeywordScrollWrapper>
+                {curKeywords.map((keyword, index) => {
+                  return (
+                    <Keyword
+                      key={keyword.id}
+                      $state={true}
+                      onClick={() => {
+                        dropKeyword(keyword);
+                      }}
+                    >
+                      {keyword.keyword}
+                    </Keyword>
+                  );
+                })}
+              </KeywordScrollWrapper>
+            </HorizontalScroll>
+          </KeywordSelectedWrapper>
           <TopSheetKeywordWrapper>
-            {relatedKeywords.map((keyword, index) => {
-              return (
-                <Keyword
-                  key={keyword.id}
-                  $state={false}
-                  onClick={() => {
-                    addKeyword(keyword);
-                  }}
-                >
-                  {keyword.keyword}
-                </Keyword>
-              );
-            })}
+            <>
+              {excludeSelectedKeywords(searchWord != '' ? relatedKeywords : totalKeywords).map(
+                (keyword, index) => {
+                  return (
+                    <Keyword
+                      key={keyword.id + `${index}`}
+                      $state={false}
+                      onClick={() => {
+                        addKeyword(keyword);
+                      }}
+                    >
+                      {keyword.keyword}
+                    </Keyword>
+                  );
+                },
+              )}
+            </>
+            {searchWord != '' && relatedKeywords.length === 0 && (
+              <>
+                <Text>이런 키워드는 어때요?</Text>
+                {excludeSelectedKeywords(randomKeywords).map((keyword, index) => {
+                  return (
+                    <Keyword
+                      key={keyword.id + `${index}`}
+                      $state={false}
+                      onClick={() => {
+                        addKeyword(keyword);
+                      }}
+                    >
+                      {keyword.keyword}
+                    </Keyword>
+                  );
+                })}
+              </>
+            )}
           </TopSheetKeywordWrapper>
         </TopSheetBody>
+        <TopSheetFooter>
+          <SaveButton
+            onClick={() => {
+              saveKeywords();
+            }}
+          >
+            저장하기
+          </SaveButton>
+          <SaveMessage $state={isSaved}>{'저장되었습니다.'}</SaveMessage>
+        </TopSheetFooter>
+        <CloseButton>
+          <Image src={closeImage} alt="close" onClick={closeTopSheet} width={24} />
+        </CloseButton>
       </TopSheet>
     </Modal>
   );
@@ -162,38 +226,62 @@ interface TopSheetProps {
 }
 
 const TopSheet = styled(CommonLayoutBox)<TopSheetProps>`
+  box-sizing: border-box;
+  border-top: 24px solid ${({ theme }) => theme.colors.yvote02};
+  padding: 0.6rem;
+  background-color: white;
+  width: 1000px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0.5)};
+  transition: opacity 0.2s ease-in-out;
+
   @media screen and (max-width: 768px) {
-    position: absolute;
-    top: ${({ $isOpen }) => ($isOpen ? '0px' : '-500px')};
-    left: 0;
-    width: 100%;
-    height: 500px;
+    opacity: 1;
+    transform: translate(-50%, 0);
 
-    padding: 0.6rem;
-
-    background-color: white;
-
+    top: ${({ $isOpen }) => ($isOpen ? '0px' : '-450px')};
     transition: top 0.2s ease-in-out;
+
+    width: 100%;
+    height: 450px;
+
+    box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.2);
+    border-radius: '0 0 30px 30px';
   }
 `;
 
-const Title = styled.p`
+const Text = styled.p`
   color: ${({ theme }) => theme.colors.gray800};
   font-weight: 700;
   font-size: 1.1rem;
 `;
 
-const SubTitle = styled.p`
+const SubText = styled.p`
+  color: ${({ theme }) => theme.colors.gray600};
+  font-weight: 700;
+  font-size: 0.9rem;
+`;
+
+const Title = styled(Text)``;
+
+const SubTitle = styled(SubText)`
   color: ${({ theme }) => theme.colors.gray600};
   font-weight: 700;
   font-size: 0.9rem;
 `;
 
 const TopSheetHead = styled(Row)`
-  padding: 6px;
+  padding: 6px 0;
+  gap: 10px;
 `;
 
-const SearchWrapper = styled.div``;
+const SearchWrapper = styled(CommonLayoutBox)`
+  flex: 0 0 auto;
+  width: 135px;
+`;
 
 const InputWrapper = styled.div`
   width: 100%;
@@ -210,20 +298,21 @@ const SearchInput = styled.input`
   background-color: transparent;
   display: inline-flex;
   border: 0;
-  border-radius: 9px;
+  border-radius: 4px;
   width: 100%;
   height: 100%;
-  color: rgb(170, 170, 170);
+  color: rgb(30, 30, 30);
   font-weight: 400;
-  padding: 0;
+  padding: 0.3rem 0.5rem;
   margin: 0;
   font: inherit;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
   &::placeholder {
     color: rgb(170, 170, 170);
     font-size: 12px;
     font-weight: 400;
+    text-align: center;
   }
   &:focus {
     outline: 0px solid rgb(133, 200, 224);
@@ -232,33 +321,40 @@ const SearchInput = styled.input`
   }
 `;
 
-const KeywordScrollWrapper = styled(Row)`
-  flex: 0 1 auto;
-`;
-
-const KeywordWrapper = styled(HorizontalScroll)`
-  flex: 0 1 auto;
+const KeywordSelectedWrapper = styled(CommonLayoutBox)`
+  box-sizing: border-box;
   width: 100%;
-  padding: 0 10px;
+  padding: 0.5rem;
+  margin-bottom: 10px;
 `;
 
-const TopSheetBody = styled.div``;
+const KeywordScrollWrapper = styled(Row)`
+  width: 100%;
+  height: 40px;
+  padding-left: 4px;
+`;
 
-const TopSheetKeywordWrapper = styled.div`
-  height: 100%;
+const TopSheetBody = styled.div`
+  margin-bottom: 20px;
+`;
+
+const TopSheetKeywordWrapper = styled(CommonLayoutBox)`
+  height: 150px;
   overflow-y: scroll;
+  padding: 0.5rem;
 `;
 
-const TopSheetFotter = styled(Row)``;
 interface KeywordProps {
   $state: boolean;
 }
 
 const Keyword = styled(CommonTagBox)<KeywordProps>`
-  flex: 1 0 auto;
+  flex: 0 0 auto;
 
   margin-left: 3px;
   margin-right: 6px;
+  margin-top: 3px;
+  margin-bottom: 3px;
   color: ${({ $state, theme }) => ($state ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
   background-color: ${({ $state }) => ($state ? 'white !important' : '#f1f2f5')};
   border: 1px solid #f1f2f5;
@@ -266,9 +362,52 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
     $state ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
   border-radius: 20px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
   transition: background-color 0.2s ease-in-out;
+  animation: back-blink 0.4s ease-in-out forwards;
+  @keyframes back-blink {
+    0% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray400};
   }
+`;
+
+const TopSheetFooter = styled(Row)`
+  align-items: center;
+  gap: 10px;
+`;
+
+const SaveButton = styled.button`
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.yvote02};
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote01};
+  }
+`;
+
+const SaveMessage = styled(Text)<{ $state: boolean }>`
+  font-size: 0.8rem;
+  ${({ $state }) => ($state ? 'opacity: 0.6;' : 'opacity: 0;')}
+  transition: opacity 0.4s ease-in-out;
+`;
+
+const CloseButton = styled(CommonIconButton)`
+  position: absolute;
+  top: calc(100% + 30px);
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
