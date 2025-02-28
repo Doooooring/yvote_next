@@ -60,7 +60,7 @@ export default function EditKeywordFiltersTopSheet({
     setIsTopSheetDown(false);
     setTimeout(() => {
       close();
-    }, 100);
+    }, 200);
   }, []);
 
   const addKeyword = useCallback(

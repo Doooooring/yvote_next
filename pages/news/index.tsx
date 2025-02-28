@@ -46,10 +46,12 @@ const metaTagsProps = {
 
 export default function NewsPage(props: pageProps) {
   const device = useDevice();
+
   const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
   const { isLoading: isGlobalLoading, setIsLoading: setIsGlobalLoading } = useGlobalLoading();
+  const [keyCached, setKeyCached] = useState<string | null>(null);
   const {
     page,
     isRequesting,
@@ -133,6 +135,7 @@ export default function NewsPage(props: pageProps) {
         filter: string;
         isAdmin: boolean;
       };
+      if (filter) setKeyCached(filter);
       setCachedPreviews(page, limit, filter, scroll);
     } else {
       fetchPreviews({ limit: 16 });
@@ -154,6 +157,16 @@ export default function NewsPage(props: pageProps) {
       router.events.off('routeChangeStart', handleRouteChangeStart);
     };
   }, [router.query.pageId]);
+
+  useEffect(() => {
+    if (keyCached && totalKeywords.length > 0) {
+      const keyword = totalKeywords.filter((v) => v.keyword === keyCached)[0];
+      if (keyword) {
+        setKeywordSelected(keyword);
+      }
+      setKeyCached(null);
+    }
+  }, [keyCached, totalKeywords]);
 
   return (
     <>

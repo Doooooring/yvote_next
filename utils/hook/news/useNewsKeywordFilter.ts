@@ -50,24 +50,11 @@ export default function useNewsKeywordFilter() {
   }, [getRandomKeywords, setRandomKeywords, setTotalKeywords]);
 
   const reload = useCallback(() => {
-    const maxLen = totalKeywords.length;
-
     const arr = getRandomKeywords(totalKeywords, 20);
     setKeywordSelected(null);
     setCustomKeywords([]);
     setRandomKeywords(arr);
   }, [keywordSelected, totalKeywords, getRandomKeywords, setRandomKeywords]);
-
-  //   const getRelatedKeywords = useCallback((input : string) => {
-  //     const arr = [];
-  //     const inputToChars = getConstantVowel(input, true) as string[];
-  //     totalKeywords.forEach((keyword) => {
-  //         if (inputToChars.length == 10) return;
-  //         const keyToChar = getConstantVowel(keyword.keyword, false) as string;
-  //         inputToChars.
-  //     })
-
-  //   }, [totalKeywords])
 
   return {
     keywordsToShow,
