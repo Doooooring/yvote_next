@@ -369,7 +369,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         word-break: break-all;
         font-family: Noto Sans KR, Helvetica, sans-serif;
         h1 > span {
-          margin: 4px 0 0 0;
+          margin: 10px 0 0 0;
           font-size: 16px;
           font-weight: 400;
           color: rgb(150, 150, 150);
@@ -383,13 +383,13 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
                 margin: 0;
               }
               &:has(strong) {
-                margin-top: 30px;
+                margin-top: 26px;
                 + p {
                   margin-top: 8px;
                 }
               }
               &:first-child {
-                margin-top: 10px;
+                margin-top: 20px;
               }
               em {
                 font-style: normal;
@@ -406,7 +406,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
               margin-top: 50px;
               padding-left: 16px;
               &:first-child {
-                margin-top: 10px;
+                margin-top: 20px;
               }
               + p {
                 margin-top: 12px;
@@ -424,7 +424,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
                 }
               }
               + ul[data-checked='false'] {
-                margin-top: 10px;
+                margin-top: 20px;
               }
             }
           }
