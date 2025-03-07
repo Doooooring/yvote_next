@@ -5,7 +5,7 @@ import arrowLeft from '@images/grey_arrow_left.png';
 import arrowRight from '@images/grey_arrow_right.png';
 import indexStore from '@store/indexStore';
 
-import { CommonLayoutBox } from '@components/common/commonStyles';
+import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { observer } from 'mobx-react';
@@ -14,6 +14,9 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain } from '../../../utils/interface/news/commen';
+
+import IsShow from '../../common/isShow';
+import { getDateHidingCurrentYear } from '../../../utils/tools/date';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -50,7 +53,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
         close();
       }}
     >
-      {comment ? (
+      <IsShow state={comment != null}>
         <Wrapper>
           <div
             className="close-button"
@@ -64,124 +67,100 @@ const CommentModal = observer(({ id }: { id: number }) => {
             <HeadTitle>
               <CommentImageWrapper>
                 <div className="image-box">
-                  <ImageFallback src={`/assets/img/${comment}.png`} alt={comment} fill={true} />
+                  <ImageFallback src={`/assets/img/${comment}.png`} alt={comment!} fill={true} />
                 </div>
               </CommentImageWrapper>
               <p className="type-name">{comment}</p>
-              <ImageFallback src={typeCheckImg(comment)} alt="check-img" width="10" height="10" />
+              <ImageFallback src={typeCheckImg(comment!)} alt="check-img" width="10" height="10" />
             </HeadTitle>
             <div className="head-body">
-              <div className="type-explain">{typeExplain[comment]}</div>
+              <div className="type-explain">{typeExplain[comment!]}</div>
             </div>
           </HeadBody>
-          {curComment === null ? (
-            <ModalBody>
-              <div className="modal-list">
-                {isRequesting ? (
-                  <LoadingWrapper>
-                    <LoadingCommon comment="" fontColor="black" />
-                  </LoadingWrapper>
-                ) : (
-                  <></>
-                )}
-                {curComments.map((comment, idx) => {
-                  return (
-                    <div
-                      key={comment.comment + idx}
-                      className="body-block"
-                      onClick={() => {
-                        showCurComment(comment);
-                      }}
-                    >
-                      <span>{comment.title}</span>
-                      {comment.date && (
-                        <span className="date">
-                          {(() => {
-                            const date = new Date(comment.date);
-                            const currentYear = new Date().getFullYear();
-                            const year = date.getFullYear();
-
-                            if (year === currentYear) {
-                              return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
-                            } else {
-                              const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-                              return formattedDate;
-                            }
-                          })()}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="page-button-wrapper">
-                <PageButton
-                  className="button-left"
-                  $state={page != 0}
-                  onClick={async () => {
-                    await getPageBefore();
-                  }}
-                >
-                  <Image src={arrowLeft} width={16} height={16} alt="" />
-                </PageButton>
-                <PageButton
-                  className="button-right"
-                  $state={true}
-                  onClick={async () => {
-                    await getPageAfterWithMessage();
-                  }}
-                >
-                  <Image src={arrowRight} width={16} height={16} alt="" />
-                </PageButton>
-              </div>
-            </ModalBody>
-          ) : (
-            <ModalBody>
-              <div className="content-wrapper">
-              <p className="content-title">
-                {curComment.title}
-                {curComment.date && (
-                  ` (${(() => {
-                    const date = new Date(curComment.date);
-                    const currentYear = new Date().getFullYear();
-                    const year = date.getFullYear();
-
-                    if (year === currentYear) {
-                      return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
-                    } else {
-                      return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-                    }
-                  })()})`
-                )}
-              </p>
-                {/* <p className="content-title">
-                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
-                </p> */}
-                <div className="content-body">
-                  {curComment.comment.split('$').map((comment, idx) => {
+          <ModalBody>
+            {curComment === null ? (
+              <>
+                <div className="modal-list">
+                  {curComments.map((comment, idx) => {
                     return (
-                      <p key={idx} className="content_line">
-                        {comment}
-                      </p>
+                      <div
+                        key={comment.comment + idx}
+                        className="body-block"
+                        onClick={() => {
+                          showCurComment(comment);
+                        }}
+                      >
+                        <span>{comment.title}</span>
+                        <IsShow state={comment.date != null}>
+                          <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
+                        </IsShow>
+                      </div>
                     );
                   })}
+                  <IsShow state={isRequesting}>
+                    <LoadingWrapper>
+                      <LoadingCommon comment="" fontColor="black" />
+                    </LoadingWrapper>
+                  </IsShow>
                 </div>
-              </div>
-              <BackButtonWrapper>
-                <BackButton
-                  onClick={() => {
-                    closeCurComment();
-                  }}
-                >
-                  목록으로
-                </BackButton>
-              </BackButtonWrapper>
-            </ModalBody>
+              </>
+            ) : (
+              <>
+                <div className="content-wrapper">
+                  <p className="content-title">
+                    {curComment.title}
+                    {curComment.date && getDateHidingCurrentYear(curComment.date)}
+                  </p>
+                  {/* <p className="content-title">
+                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
+                </p> */}
+                  <div className="content-body">
+                    {curComment.comment.split('$').map((comment, idx) => {
+                      return (
+                        <p key={idx} className="content_line">
+                          {comment}
+                        </p>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+          </ModalBody>
+          {curComment === null ? (
+            <PageButtonWrapper>
+              <PageButton
+                className="button-left"
+                $state={page != 0}
+                onClick={async () => {
+                  await getPageBefore();
+                }}
+              >
+                <Image src={arrowLeft} width={16} height={16} alt="" />
+              </PageButton>
+              <PageButton
+                className="button-right"
+                $state={true}
+                onClick={async () => {
+                  await getPageAfterWithMessage();
+                }}
+              >
+                <Image src={arrowRight} width={16} height={16} alt="" />
+              </PageButton>
+            </PageButtonWrapper>
+          ) : (
+            <BackButtonWrapper>
+              <BackButton
+                onClick={() => {
+                  closeCurComment();
+                }}
+              >
+                목록으로
+              </BackButton>
+            </BackButtonWrapper>
           )}
         </Wrapper>
-      ) : (
-        <></>
-      )}
+      </IsShow>
     </Modal>
   );
 });
@@ -297,6 +276,9 @@ const CommentImageWrapper = styled.div`
 const ModalBody = styled.div`
   margin-top: 1rem;
   border-top: 1.5px solid rgb(225, 225, 225);
+  height: 700px;
+  overflow-y: scroll;
+
   div.modal-list {
     display: flex;
     flex-direction: column;
@@ -320,20 +302,14 @@ const ModalBody = styled.div`
         font-size: 15px;
         font-weight: 500;
         color: rgb(50, 50, 50);
-      }.date {
-          margin-left: 10px;
-          padding-right: 1rem;
-          font-size: 13px;
-          color: rgb(120, 120, 120);
-        }
+      }
+      .date {
+        margin-left: 10px;
+        padding-right: 1rem;
+        font-size: 13px;
+        color: rgb(120, 120, 120);
+      }
     }
-  }
-  div.page-button-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    gap: 12px;
-    padding-top: 0.5rem;
   }
 
   div.content-wrapper {
@@ -359,6 +335,12 @@ const ModalBody = styled.div`
       min-height: 10px;
     }
   }
+`;
+
+const PageButtonWrapper = styled(Row)`
+  justify-content: end;
+  gap: 12px;
+  padding-top: 0.5rem;
 `;
 
 interface PageButtonProps {

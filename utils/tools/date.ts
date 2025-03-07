@@ -65,3 +65,16 @@ export const getKoreanTimeDifference = (baseDate: Date, targetDate: Date) => {
 export const getTimeDiffBeforeToday = (date: Date) => {
   return getKoreanTimeDifference(new Date(), date);
 };
+
+export const getDateHidingCurrentYear = (d: Date) => {
+  const date = new Date(d);
+
+  const currentYear = new Date().getFullYear();
+  const year = date.getFullYear();
+
+  return date.toLocaleDateString('en-US', {
+    year: year !== currentYear ? '2-digit' : undefined,
+    month: '2-digit',
+    day: '2-digit',
+  });
+};
