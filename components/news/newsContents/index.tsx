@@ -400,11 +400,16 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
                 padding: 0 8px;
                 margin-top: 12px;
               }
+              u {
+                text-decoration-thickness: 0.8px;
+                text-underline-offset: 4px;
+                font-weight: 500;
+              }
             }
             ul {
               margin: 0 0 0 0;
               margin-top: 50px;
-              padding-left: 16px;
+              padding-left: 14px;
               &:first-child {
                 margin-top: 20px;
               }
@@ -413,7 +418,9 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
               }
               li {
                 margin-bottom: -4px;
-                text-indent: -2px;
+                ::marker {
+                  font-size: 12px;
+                }
               }
               &[data-checked='false'] {
                 margin-top: 30px;
