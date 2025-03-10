@@ -12,11 +12,11 @@ import { observer } from 'mobx-react';
 import Image from 'next/image';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 import { typeCheckImg, typeExplain } from '../../../utils/interface/news/commen';
+import { useCurComment, useFetchNewsComment } from './commentModal.hook';
 
-import IsShow from '../../common/isShow';
 import { getDateHidingCurrentYear } from '../../../utils/tools/date';
+import IsShow from '../../common/isShow';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -63,7 +63,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
           >
             &times;
           </div>
-          <HeadBody>
+          <ModalHead>
             <HeadTitle>
               <CommentImageWrapper>
                 <div className="image-box">
@@ -73,10 +73,10 @@ const CommentModal = observer(({ id }: { id: number }) => {
               <p className="type-name">{comment}</p>
               <ImageFallback src={typeCheckImg(comment!)} alt="check-img" width="10" height="10" />
             </HeadTitle>
-            <div className="head-body">
+            <HeadBody>
               <div className="type-explain">{typeExplain[comment!]}</div>
-            </div>
-          </HeadBody>
+            </HeadBody>
+          </ModalHead>
           <ModalBody>
             {curComment === null ? (
               <>
@@ -97,12 +97,12 @@ const CommentModal = observer(({ id }: { id: number }) => {
                       </div>
                     );
                   })}
-                  <IsShow state={isRequesting}>
-                    <LoadingWrapper>
-                      <LoadingCommon comment="" fontColor="black" />
-                    </LoadingWrapper>
-                  </IsShow>
                 </div>
+                <IsShow state={isRequesting}>
+                  <LoadingWrapper>
+                    <LoadingCommon comment="" fontColor="black" />
+                  </LoadingWrapper>
+                </IsShow>
               </>
             ) : (
               <>
@@ -234,7 +234,7 @@ const HeadTitle = styled.div`
   }
 `;
 
-const HeadBody = styled.div`
+const ModalHead = styled.div`
   @media screen and (max-width: 768px) {
     padding-left: 0;
   }
@@ -249,6 +249,8 @@ const HeadBody = styled.div`
     }
   }
 `;
+
+const HeadBody = styled.div``;
 
 const CommentImageWrapper = styled.div`
   display: flex;
@@ -276,13 +278,14 @@ const CommentImageWrapper = styled.div`
 const ModalBody = styled.div`
   margin-top: 1rem;
   border-top: 1.5px solid rgb(225, 225, 225);
+  border-bottom: 1.5px solid rgb(225, 225, 225);
   height: 700px;
   overflow-y: scroll;
+  position: relative;
 
   div.modal-list {
     display: flex;
     flex-direction: column;
-    position: relative;
     div.body-block {
       height: 60px;
       padding-left: 1rem;
