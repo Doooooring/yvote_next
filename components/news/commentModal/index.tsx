@@ -77,7 +77,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
               <div className="type-explain">{typeExplain[comment!]}</div>
             </div>
           </HeadBody>
-          <ModalBody>
+          <ModalBody className="common-scroll-style">
             {curComment === null ? (
               <>
                 <div className="modal-list">
