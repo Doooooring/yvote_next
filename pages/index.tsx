@@ -270,6 +270,7 @@ const ListItem = styled.li`
   position: relative;
   color: white;
   display: flex;
+  justify-content: center;
   cursor: pointer;
 
   transition: background-color 0.3s ease;
@@ -289,10 +290,7 @@ const ListItem = styled.li`
 
   > p {
     display: block;
-    min-width: 4.5rem;
-    height: 2.3rem;
     line-height: 2.5rem;
-    padding: 0 1rem 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.15rem;
     font-size: 0.8rem;

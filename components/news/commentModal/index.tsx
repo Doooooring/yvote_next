@@ -10,21 +10,26 @@ import { observer } from 'mobx-react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { typeCheckImg } from '../../../utils/interface/news/commen';
-import { useCurComment, useFetchNewsComment } from './commentModal.hook';
+import { useCurComment, useFetchNewsComment, useListScrollheight } from './commentModal.hook';
 
+import { Comment } from '@utils/interface/news';
 import { getDateHidingCurrentYear } from '../../../utils/tools/date';
 import IsShow from '../../common/isShow';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
-  // 코멘트 모달 상태 전역으로 관리
   const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;
-  // 현재 보여지고 있는 평론들 ()
   const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
     comment,
   );
   const { curComment, showCurComment, closeCurComment } = useCurComment();
+  const {
+    target: targetRef,
+    saveScrollHeight,
+    moveToScrollHeight,
+    reloadScrollHeight,
+  } = useListScrollheight();
 
   const getPageAfterWithMessage = useCallback(async () => {
     const response = await getPageAfter();
@@ -37,6 +42,20 @@ const CommentModal = observer(({ id }: { id: number }) => {
       );
     }
   }, [getPageAfter]);
+
+  const clickComment = useCallback(
+    (comment: Comment) => {
+      saveScrollHeight();
+      showCurComment(comment);
+      moveToScrollHeight(0);
+    },
+    [saveScrollHeight, showCurComment, moveToScrollHeight],
+  );
+
+  const clickToListButton = useCallback(() => {
+    closeCurComment();
+    reloadScrollHeight();
+  }, [closeCurComment, reloadScrollHeight]);
 
   const close = useCallback(() => {
     closeCurComment();
@@ -71,89 +90,75 @@ const CommentModal = observer(({ id }: { id: number }) => {
               <ImageFallback src={typeCheckImg(comment!)} alt="check-img" width="10" height="10" />
             </HeadTitle>
           </ModalHead>
-          <ModalBody className="common-scroll-style">
-            {curComment === null ? (
-              <>
-                <div className="modal-list">
-                  {curComments.map((comment, idx) => {
-                    return (
-                      <div
-                        key={comment.comment + idx}
-                        className="body-block"
-                        onClick={() => {
-                          showCurComment(comment);
-                        }}
-                      >
-                        <span>{comment.title}</span>
-                        <IsShow state={comment.date != null}>
-                          <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
-                        </IsShow>
-                      </div>
-                    );
-                  })}
-                </div>
-                <IsShow state={isRequesting}>
-                  <LoadingWrapper>
-                    <LoadingCommon comment="" fontColor="black" />
-                  </LoadingWrapper>
-                </IsShow>
-              </>
-            ) : (
-              <>
-                <div className="content-wrapper">
-                  <p className="content-title">
-                    {curComment.title}
-                    {curComment.date && getDateHidingCurrentYear(curComment.date)}
-                  </p>
-                  {/* <p className="content-title">
-                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
-                </p> */}
-                  <div className="content-body">
-                    {curComment.comment.split('$').map((comment, idx) => {
+          <ModalBody>
+            <ScrollWrapper ref={targetRef} className="common-scroll-style">
+              {curComment === null ? (
+                <>
+                  <div className="modal-list">
+                    {curComments.map((comment, idx) => {
                       return (
-                        <p key={idx} className="content_line">
-                          {comment}
-                        </p>
+                        <div
+                          key={comment.comment + idx}
+                          className="body-block"
+                          onClick={() => {
+                            clickComment(comment);
+                          }}
+                        >
+                          <span>{comment.title}</span>
+                          <IsShow state={comment.date != null}>
+                            <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
+                          </IsShow>
+                        </div>
                       );
                     })}
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <div className="content-wrapper">
+                    <p className="content-title">
+                      {curComment.title}
+                      {curComment.date && getDateHidingCurrentYear(curComment.date)}
+                    </p>
+                    {/* <p className="content-title">
+                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
+                  </p> */}
+                    <div className="content-body">
+                      {curComment.comment.split('$').map((comment, idx) => {
+                        return (
+                          <p key={idx} className="content_line">
+                            {comment}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </ScrollWrapper>
+            <IsShow state={isRequesting}>
+              <LoadingWrapper>
+                <LoadingCommon comment="" fontColor="black" />
+              </LoadingWrapper>
+            </IsShow>
           </ModalBody>
           {curComment === null ? (
             <PageButtonWrapper>
-              {/* <PageButton
-                className="button-left"
-                $state={page != 0}
-                onClick={async () => {
-                  await getPageBefore();
-                }}
-              >
-                <Image src={arrowLeft} width={16} height={16} alt="" />
-              </PageButton>
-              <PageButton
-                className="button-right"
-                $state={true}
-                onClick={async () => {
-                  await getPageAfterWithMessage();
-                }}
-              >
-                <Image src={arrowRight} width={16} height={16} alt="" />
-              </PageButton> */}
-              <BackButton onClick={getPageBefore}>이전</BackButton>
-              <BackButton onClick={getPageAfterWithMessage}>다음</BackButton>
+              <IsShow state={page != 0}>
+                <TextButton onClick={getPageBefore}>이전</TextButton>
+              </IsShow>
+              <TextButton onClick={getPageAfterWithMessage}>다음</TextButton>
             </PageButtonWrapper>
           ) : (
-            <BackButtonWrapper>
-              <BackButton
+            <TextButtonWrapper>
+              <TextButton
                 onClick={() => {
-                  closeCurComment();
+                  clickToListButton();
                 }}
               >
                 목록으로
-              </BackButton>
-            </BackButtonWrapper>
+              </TextButton>
+            </TextButtonWrapper>
           )}
         </Wrapper>
       </IsShow>
@@ -168,11 +173,9 @@ const Wrapper = styled(CommonLayoutBox)`
   flex-direction: column;
   width: 60%;
   min-width: 680px;
-  max-height: 80vh;
-  overflow: auto;
   margin-left: auto;
   margin-right: auto;
-  padding: 3rem 3rem;
+  padding: 1rem 2rem;
   flex: 0 0 auto;
   letter-spacing: -0.5px;
   position: fixed;
@@ -187,7 +190,6 @@ const Wrapper = styled(CommonLayoutBox)`
   @media screen and (max-width: 768px) {
     width: 99%;
     min-width: 0px;
-    max-height: 85vh;
     padding: 1.5rem 1rem;
   }
   & {
@@ -277,17 +279,18 @@ const CommentImageWrapper = styled.div`
 `;
 
 const ModalBody = styled.div`
+  flex: 0 1 auto;
+
+  height: 500px;
   margin-top: 0.5rem;
   border-top: 1.5px solid rgb(225, 225, 225);
-
-  height: 700px;
-
-  overflow-y: scroll;
-  position: relative;
+  border-bottom: 1.5px solid #ddd;
 
   @media screen and (max-width: 768px) {
-    height: 900px;
+    height: 530px;
   }
+
+  position: relative;
 
   div.modal-list {
     display: flex;
@@ -346,29 +349,16 @@ const ModalBody = styled.div`
   }
 `;
 
+const ScrollWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+`;
+
 const PageButtonWrapper = styled(Row)`
   justify-content: end;
   gap: 12px;
   padding-top: 0.5rem;
-`;
-
-interface PageButtonProps {
-  $state: boolean;
-}
-
-const PageButton = styled(CommonLayoutBox)<PageButtonProps>`
-  display: ${({ $state }) => ($state ? 'flex' : 'none')};
-  flex-direction: row;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 30px;
-  cursor: pointer;
-
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #f0f0f0;
-  }
 `;
 
 const LoadingWrapper = styled.div`
@@ -380,16 +370,13 @@ const LoadingWrapper = styled.div`
   backdrop-filter: blur(3px);
 `;
 
-const BackButtonWrapper = styled.div`
-  padding-top: 1rem;
-  display: flex;
-  flex-direction: row;
+const TextButtonWrapper = styled(Row)`
+  padding-top: 0.5rem;
   justify-content: end;
-  border-top: 1.5px solid rgb(225, 225, 225);
   font-size: 14px;
 `;
 
-const BackButton = styled(CommonLayoutBox)`
+const TextButton = styled(CommonLayoutBox)`
   padding: 0.4rem 1.2rem;
   font-weight: 400;
   cursor: pointer;
