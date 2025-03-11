@@ -89,7 +89,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
-                <div dangerouslySetInnerHTML={{ __html: summary }} />
+                <div className="writer" dangerouslySetInnerHTML={{ __html: summary }} />
               </div>
               <div className="keyword-wrapper content">
                 {keywords?.map(({ id, keyword }) => {
@@ -369,52 +369,69 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         word-break: break-all;
         font-family: Noto Sans KR, Helvetica, sans-serif;
         h1 > span {
-          margin: 18px 40px -12px 0;
+          margin: 10px 0 0 0;
           font-size: 16px;
           font-weight: 400;
           color: rgb(150, 150, 150);
         }
-        & {
-          p {
-            margin: 12px 0 0 0;
-            min-height: 0px;
-            &:has(br:only-child) {
-              margin: 0;
-            }
-            em {
-              font-style: normal;
-              color: rgb(100, 100, 100) !important;
-            }
-            &:has(em) {
-              line-height: 1.6;
-              padding: 0 8px;
-            }
-            &:has(strong) {
-              margin-top: 16px;
-              + p {
-                margin-top: 8px;
+        .writer {
+          & {
+            p {
+              margin: 16px 0 0 0;
+              min-height: 0px;
+              &:has(br:only-child) {
+                margin: 0;
+              }
+              &:has(strong) {
+                margin-top: 26px;
+                + p {
+                  margin-top: 8px;
+                }
+              }
+              &:first-child {
+                margin-top: 20px;
+              }
+              em {
+                font-style: normal;
+                color: rgb(100, 100, 100) !important;
+              }
+              &:has(em) {
+                line-height: 1.7;
+                padding: 0 8px;
+                margin-top: 12px;
+              }
+              u {
+                text-decoration-thickness: 0.8px;
+                text-underline-offset: 4px;
+                font-weight: 500;
               }
             }
-          }
-          ul {
-            margin: 0 0 0 0;
-            padding-left: 16px;
-            + p {
-              margin-top: 12px;
-            }
-            li {
-              font-size: 17px;
+            ul {
+              margin: 0 0 0 0;
               margin-top: 50px;
-              margin-bottom: -4px;
-              text-indent: -2px;
-            }
-            &[data-checked='false'] {
-              list-style: none;
-              padding-left: 2px;
+              padding-left: 14px;
+              &:first-child {
+                margin-top: 20px;
+              }
+              + p {
+                margin-top: 12px;
+              }
               li {
-                font-size: 16px;
-                margin-top: 16px;
-                text-indent: -5px;
+                margin-bottom: -4px;
+                ::marker {
+                  font-size: 12px;
+                }
+              }
+              &[data-checked='false'] {
+                margin-top: 30px;
+                list-style: none;
+                padding-left: 2px;
+                li {
+                  text-indent: -5px;
+                }
+              }
+              + ul[data-checked='false'] {
+                margin-top: 20px;
               }
             }
           }
@@ -422,9 +439,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         @media screen and (max-width: 1480px) {
           padding-left: 1rem;
           padding-right: 1rem;
-          padding-top: 0;
           h1 > span {
-            margin: 14px 0 0 0;
             font-size: 15px;
           }
         }
