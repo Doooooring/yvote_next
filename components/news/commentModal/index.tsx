@@ -73,9 +73,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
               <p className="type-name">{comment}</p>
               <ImageFallback src={typeCheckImg(comment!)} alt="check-img" width="10" height="10" />
             </HeadTitle>
-            <div className="head-body">
+            {/* <div className="head-body">
               <div className="type-explain">{typeExplain[comment!]}</div>
-            </div>
+            </div> */}
           </HeadBody>
           <ModalBody className="common-scroll-style">
             {curComment === null ? (
@@ -129,7 +129,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
           </ModalBody>
           {curComment === null ? (
             <PageButtonWrapper>
-              <PageButton
+              {/* <PageButton
                 className="button-left"
                 $state={page != 0}
                 onClick={async () => {
@@ -146,7 +146,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
                 }}
               >
                 <Image src={arrowRight} width={16} height={16} alt="" />
-              </PageButton>
+              </PageButton> */}
+              <BackButton onClick={getPageBefore}>이전</BackButton>
+              <BackButton onClick={getPageAfterWithMessage}>다음</BackButton>
             </PageButtonWrapper>
           ) : (
             <BackButtonWrapper>
@@ -189,10 +191,10 @@ const Wrapper = styled(CommonLayoutBox)`
   -ms-overflow-style: none;
   scrollbar-width: none;
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 99%;
     min-width: 0px;
-    max-height: 70vh;
-    padding: 3rem 1rem;
+    max-height: 85vh;
+    padding: 1.5rem 1rem;
   }
   & {
     div.close-button {
@@ -204,6 +206,9 @@ const Wrapper = styled(CommonLayoutBox)`
       overflow: hidden;
       white-space: nowrap;
       font-size: 2rem;
+      @media screen and (max-width: 768px) {
+        font-size: 1.4rem;
+      }
     }
     div.modal-head {
       -webkit-text-size-adjust: none;
@@ -245,7 +250,7 @@ const HeadBody = styled.div`
     font-size: 16px;
     line-height: 1.7;
     @media screen and (max-width: 768px) {
-      font-size: 15px;
+      font-size: 13px;
     }
   }
 `;
@@ -264,8 +269,10 @@ const CommentImageWrapper = styled.div`
   border: 1px solid rgb(225, 225, 225);
   overflow: hidden;
   box-sizing: border-box;
+
   @media screen and (max-width: 768px) {
   }
+
   .image-box {
     width: 60%;
     height: 60%;
@@ -274,10 +281,14 @@ const CommentImageWrapper = styled.div`
 `;
 
 const ModalBody = styled.div`
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   border-top: 1.5px solid rgb(225, 225, 225);
-  height: 700px;
+  height: 600px;
   overflow-y: scroll;
+
+  @media screen and (max-width: 768px) {
+    height: 900px;
+  }
 
   div.modal-list {
     display: flex;
@@ -381,7 +392,7 @@ const BackButtonWrapper = styled.div`
 `;
 
 const BackButton = styled(CommonLayoutBox)`
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.2rem;
   font-weight: 400;
   cursor: pointer;
   transition: background-color 0.3s ease;

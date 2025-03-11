@@ -72,17 +72,7 @@ body {
   overflow-y: scroll;
 }
 
-dl,
-ol,
-ul {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
 
-ol,
-ul {
-  padding-left: 2rem;
-}
 
 blockquote,
 q {
