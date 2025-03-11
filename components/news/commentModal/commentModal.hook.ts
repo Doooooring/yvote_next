@@ -1,7 +1,7 @@
 import NewsRepository from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
@@ -75,4 +75,30 @@ export const useCurComment = () => {
     showCurComment,
     closeCurComment,
   };
+};
+
+export const useListScrollheight = () => {
+  const targetRef = useRef<HTMLElement>();
+  const [scrollHeight, setScrollHeight] = useState<number>(0);
+
+  const target = useMemo(() => {
+    return targetRef.current!;
+  }, []);
+
+  const saveScrollHeight = useCallback(() => {
+    setScrollHeight(target.scrollHeight);
+  }, [target, setScrollHeight]);
+
+  const moveToScrollHeight = useCallback(
+    (height: number) => {
+      target.scrollTop = height;
+    },
+    [target],
+  );
+
+  const reloadScrollHeight = useCallback(() => {
+    target.scrollTop = scrollHeight!;
+  }, [target, scrollHeight, setScrollHeight]);
+
+  return new Proxy};
 };
