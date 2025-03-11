@@ -40,7 +40,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
         </PositiveMessageBox>,
         2000,
       );
+      return false;
     }
+    return true;
   }, [getPageAfter]);
 
   const clickComment = useCallback(
@@ -51,6 +53,16 @@ const CommentModal = observer(({ id }: { id: number }) => {
     },
     [saveScrollHeight, showCurComment, moveToScrollHeight],
   );
+
+  const clickLeftButton = useCallback(async () => {
+    await getPageBefore();
+    moveToScrollHeight(0);
+  }, [getPageBefore, moveToScrollHeight]);
+
+  const clickRightButton = useCallback(async () => {
+    const state = await getPageAfterWithMessage();
+    if (state) moveToScrollHeight(0);
+  }, [getPageAfterWithMessage, moveToScrollHeight]);
 
   const clickToListButton = useCallback(() => {
     closeCurComment();
@@ -93,47 +105,40 @@ const CommentModal = observer(({ id }: { id: number }) => {
           <ModalBody>
             <ScrollWrapper ref={targetRef} className="common-scroll-style">
               {curComment === null ? (
-                <>
-                  <div className="modal-list">
-                    {curComments.map((comment, idx) => {
+                <div className="modal-list">
+                  {curComments.map((comment, idx) => {
+                    return (
+                      <div
+                        key={comment.comment + idx}
+                        className="body-block"
+                        onClick={() => {
+                          clickComment(comment);
+                        }}
+                      >
+                        <span>{comment.title}</span>
+                        <IsShow state={comment.date != null}>
+                          <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
+                        </IsShow>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="content-wrapper">
+                  <p className="content-title">
+                    {curComment.title}
+                    {curComment.date && getDateHidingCurrentYear(curComment.date)}
+                  </p>
+                  <div className="content-body">
+                    {curComment.comment.split('$').map((comment, idx) => {
                       return (
-                        <div
-                          key={comment.comment + idx}
-                          className="body-block"
-                          onClick={() => {
-                            clickComment(comment);
-                          }}
-                        >
-                          <span>{comment.title}</span>
-                          <IsShow state={comment.date != null}>
-                            <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
-                          </IsShow>
-                        </div>
+                        <p key={idx} className="content_line">
+                          {comment}
+                        </p>
                       );
                     })}
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="content-wrapper">
-                    <p className="content-title">
-                      {curComment.title}
-                      {curComment.date && getDateHidingCurrentYear(curComment.date)}
-                    </p>
-                    {/* <p className="content-title">
-                  {curComment?.date ? getDotDateForm(curComment.date) : ''}
-                  </p> */}
-                    <div className="content-body">
-                      {curComment.comment.split('$').map((comment, idx) => {
-                        return (
-                          <p key={idx} className="content_line">
-                            {comment}
-                          </p>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
+                </div>
               )}
             </ScrollWrapper>
             <IsShow state={isRequesting}>
@@ -142,15 +147,18 @@ const CommentModal = observer(({ id }: { id: number }) => {
               </LoadingWrapper>
             </IsShow>
           </ModalBody>
-          {curComment === null ? (
-            <PageButtonWrapper>
-              <IsShow state={page != 0}>
-                <TextButton onClick={getPageBefore}>이전</TextButton>
-              </IsShow>
-              <TextButton onClick={getPageAfterWithMessage}>다음</TextButton>
-            </PageButtonWrapper>
-          ) : (
-            <TextButtonWrapper>
+          <PageButtonWrapper>
+            {curComment === null ? (
+              <>
+                <TextButton
+                  style={{ display: page != 0 ? 'block' : 'none' }}
+                  onClick={clickLeftButton}
+                >
+                  이전
+                </TextButton>
+                <TextButton onClick={clickRightButton}>다음</TextButton>
+              </>
+            ) : (
               <TextButton
                 onClick={() => {
                   clickToListButton();
@@ -158,8 +166,8 @@ const CommentModal = observer(({ id }: { id: number }) => {
               >
                 목록으로
               </TextButton>
-            </TextButtonWrapper>
-          )}
+            )}
+          </PageButtonWrapper>
         </Wrapper>
       </IsShow>
     </Modal>
