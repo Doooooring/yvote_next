@@ -290,7 +290,7 @@ const ModalBody = styled.div`
   border-bottom: 1.5px solid #ddd;
 
   @media screen and (max-width: 768px) {
-    height: calc(0.72 * 100vh);
+    height: calc(0.7 * 100vh);
   }
 
   position: relative;
