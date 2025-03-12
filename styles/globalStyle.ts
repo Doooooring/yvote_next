@@ -113,6 +113,11 @@ h6 {
   line-height: 1.5em;
 }
 
+a {
+  text-decoration : none;
+  color : black;
+}
+
 
 `;
 

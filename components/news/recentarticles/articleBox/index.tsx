@@ -47,16 +47,15 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                 style={{
                   color: commentTypeColor(commentType),
                   backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
-                  // border: `1px solid ${RgbToRgba(commentTypeColor(commentType) ?? 'rgb(0,0,0)', 1)}`,
                 }}
               >
                 {commentType}
               </p>
             </div>
-            <p className="title-wrapper">
-              {title}
-              <span>{formatDate(date)}</span>
-            </p>
+            <LinkTitleWrapper>
+              <p className="title">{title}</p>
+              <p className="date">{formatDate(date)}</p>
+            </LinkTitleWrapper>
           </div>
         </div>
       </LinkWrapper>
@@ -85,29 +84,28 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
                 height="10"
               />
             </HeadTitle>
-            <div>
-              <NewsButton>
-                <Link href={`/news/${news.id}`}>뉴스보기</Link>
-              </NewsButton>
-            </div>
           </HeadBody>
           <ModalBody>
-            <div className="content-wrapper">
-              <p className="content-title">{article.title}</p>
-              {/* <p className="content-title">
-                  {article?.date ? getDotDateForm(article.date) : ''}
-                </p> */}
-              <div className="content-body">
-                {article.comment.split('$').map((comment, idx) => {
-                  return (
-                    <p key={idx} className="content_line">
-                      {comment}
-                    </p>
-                  );
-                })}
+            <ScrollWrapper className="common-scroll-style">
+              <div className="content-wrapper">
+                <p className="content-title">{article.title}</p>
+                <div className="content-body">
+                  {article.comment.split('$').map((comment, idx) => {
+                    return (
+                      <p key={idx} className="content_line">
+                        {comment}
+                      </p>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            </ScrollWrapper>
           </ModalBody>
+          <PageButtonWrapper>
+            <Link href={`/news/${news.id}`}>
+              <TextButton>뉴스보기</TextButton>
+            </Link>
+          </PageButtonWrapper>
         </ModalWrapper>
       </Modal>
     </>
@@ -134,8 +132,8 @@ const LinkWrapper = styled.div`
     display: flex;
     align-items: center;
     height: 100%;
-    overflow: hidden;
     width: 100%;
+    overflow: hidden;
   }
 
   @keyframes back-blink {
@@ -148,9 +146,11 @@ const LinkWrapper = styled.div`
   }
 
   .text-wrapper {
+    width: 100%;
+    height: 100%;
+
     justify-content: start;
     align-items: center;
-    height: 100%;
     color: rgb(50, 50, 50);
     vertical-align: baseline;
     display: flex;
@@ -158,43 +158,21 @@ const LinkWrapper = styled.div`
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
     animation: back-blink 0.4s ease-in-out forwards;
 
     &:hover {
       color: ${({ theme }) => theme.colors.primary};
     }
-
-    .title-wrapper {
-      width: 100%;
-      flex: 0 1 auto;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 400;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      span {
-        font-weight: 400;
-        margin-left: 10px;
-        font-size: 11px;
-        color: rgb(120, 120, 120);
-      }
-      @media screen and (max-width: 768px) {
-        font-size: 13px;
-      }
-    }
-
     .writer-wrapper {
-      width: 105px;
-      flex: 0 1 auto;
+      width: 85px;
+      flex-shrink: 0;
       text-align: left;
       p {
-        width: 70px;
+        width: 72px;
         font-size: 11px;
         line-height: 1;
         font-weight: 500;
-        padding: 0.4rem 0.4rem;
+        padding: 0.4rem 0rem;
         flex-shrink: 0;
         flex-grow: 0;
         color: grey;
@@ -203,10 +181,44 @@ const LinkWrapper = styled.div`
 
         @media screen and (max-width: 768px) {
           font-size: 10px;
-          width: 60px;
+          width: 65px;
         }
       }
     }
+  }
+`;
+
+const LinkTitleWrapper = styled(Row)`
+  width: 100%;
+  flex-shrink: 1;
+  overflow: hidden;
+  gap: 8px;
+
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+
+  font-size: 14px;
+  color: rgb(120, 120, 120);
+
+  @media screen and (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  .title {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .date {
+    flex: 0 0 30px;
+    font-weight: 400;
+    font-size: 11px;
+    color: rgb(120, 120, 120);
   }
 `;
 
@@ -217,27 +229,20 @@ const ModalWrapper = styled(CommonLayoutBox)`
   flex-direction: column;
   width: 60%;
   min-width: 680px;
-  max-height: 80vh;
-  overflow: auto;
   margin-left: auto;
   margin-right: auto;
-  padding: 3rem 3rem;
+  padding: 1rem 2rem;
   flex: 0 0 auto;
   letter-spacing: -0.5px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 99%;
     min-width: 0px;
-    max-height: 70vh;
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
   & {
     div.close-button {
@@ -249,6 +254,9 @@ const ModalWrapper = styled(CommonLayoutBox)`
       overflow: hidden;
       white-space: nowrap;
       font-size: 2rem;
+      @media screen and (max-width: 768px) {
+        font-size: 1.4rem;
+      }
     }
     div.modal-head {
       -webkit-text-size-adjust: none;
@@ -266,6 +274,8 @@ const HeadTitle = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-bottom: 0.5rem;
+
   p.type-name {
     padding-left: 0.5rem;
     padding-right: 0.4rem;
@@ -275,24 +285,6 @@ const HeadTitle = styled.div`
       font-size: 17px;
       font-weight: 600;
     }
-  }
-`;
-
-const NewsButton = styled(CommonLayoutBox)`
-  flex: 0 1 1;
-  padding: 0.1rem 0.7rem;
-
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #f0f0f0;
-  }
-
-  a {
-    text-decoration: none !important;
-    font-size: 14px;
-    color: black;
-    font-weight: 400;
   }
 `;
 
@@ -338,40 +330,16 @@ const CommentImageWrapper = styled.div`
 `;
 
 const ModalBody = styled.div`
-  margin-top: 1rem;
+  flex: 0 1 auto;
+
+  height: 500px;
+  margin-top: 0.5rem;
   border-top: 1.5px solid rgb(225, 225, 225);
-  div.modal-list {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    div.body-block {
-      height: 60px;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      cursor: pointer;
-      box-sizing: border-box;
-      border-bottom: 1.5px solid #ddd;
-      span {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 15px;
-        font-weight: 500;
-        color: rgb(50, 50, 50);
-      }
-    }
-  }
-  div.page-button-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    gap: 12px;
-    padding-top: 0.5rem;
+
+  border-bottom: 1.5px solid #ddd;
+
+  @media screen and (max-width: 768px) {
+    height: calc(0.72 * 100vh);
   }
 
   div.content-wrapper {
@@ -396,5 +364,29 @@ const ModalBody = styled.div`
       margin-bottom: 0.5rem;
       min-height: 10px;
     }
+  }
+`;
+
+const ScrollWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  overflow-y: scroll;
+`;
+
+const PageButtonWrapper = styled(Row)`
+  justify-content: end;
+  gap: 12px;
+  padding-top: 0.5rem;
+`;
+
+const TextButton = styled(CommonLayoutBox)`
+  padding: 0.4rem 1.2rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #f0f0f0;
   }
 `;

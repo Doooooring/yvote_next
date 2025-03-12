@@ -190,11 +190,7 @@ const Wrapper = styled(CommonLayoutBox)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
   @media screen and (max-width: 768px) {
     width: 99%;
     min-width: 0px;
@@ -231,6 +227,7 @@ const HeadTitle = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 0.5rem;
+
   p.type-name {
     padding-left: 0.5rem;
     padding-right: 0.4rem;
@@ -258,8 +255,6 @@ const ModalHead = styled.div`
     }
   }
 `;
-
-const HeadBody = styled.div``;
 
 const CommentImageWrapper = styled.div`
   display: flex;
@@ -295,7 +290,7 @@ const ModalBody = styled.div`
   border-bottom: 1.5px solid #ddd;
 
   @media screen and (max-width: 768px) {
-    height: 530px;
+    height: calc(0.72 * 100vh);
   }
 
   position: relative;
@@ -360,6 +355,8 @@ const ModalBody = styled.div`
 const ScrollWrapper = styled.div`
   width: 100%;
   height: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   overflow-y: scroll;
 `;
 
