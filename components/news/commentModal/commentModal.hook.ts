@@ -1,7 +1,7 @@
 import NewsRepository from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
@@ -77,14 +77,13 @@ export const useCurComment = () => {
   };
 };
 
-export const useListScrollheight = () => {
-  const target = useRef<HTMLDivElement>(null);
+export const useListScrollheight = (ref?: RefObject<HTMLDivElement>) => {
+  let target = useRef<HTMLDivElement>(null);
+  if (ref) target = ref;
   const [scrollHeight, setScrollHeight] = useState<number>(0);
 
   const saveScrollHeight = useCallback(() => {
     if (!target.current) return;
-    console.log('save : ', target.current.scrollTop);
-
     setScrollHeight(target.current.scrollTop);
   }, [setScrollHeight]);
 
@@ -105,5 +104,42 @@ export const useListScrollheight = () => {
     saveScrollHeight,
     moveToScrollHeight,
     reloadScrollHeight,
+  };
+};
+
+export const useScrollInfo = (ref?: RefObject<HTMLDivElement>) => {
+  let target = useRef<HTMLDivElement>(null);
+  if (ref) target = ref;
+
+  const [scrollHeight, setScrollHeight] = useState<number>(0);
+
+  const maxScrollHeight = useMemo(() => {
+    if (!target.current) return 0;
+    const { scrollHeight, clientHeight, scrollTop } = target.current;
+    console.log('<<<<<<<<<<<');
+    console.log(scrollHeight - clientHeight);
+    return scrollHeight - clientHeight;
+  }, [target.current]);
+
+  useEffect(() => {
+    const scrollContainer = target.current;
+    if (!scrollContainer) return;
+    console.log('is re useEffect?');
+    const handleScroll = () => {
+      console.log('is called');
+      const { scrollHeight } = scrollContainer;
+      setScrollHeight(scrollHeight);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, [target.current, setScrollHeight]);
+
+  return {
+    target,
+    scrollHeight,
+    maxScrollHeight,
   };
 };

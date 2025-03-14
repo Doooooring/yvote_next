@@ -10,11 +10,17 @@ import { observer } from 'mobx-react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { typeCheckImg } from '../../../utils/interface/news/commen';
-import { useCurComment, useFetchNewsComment, useListScrollheight } from './commentModal.hook';
+import {
+  useCurComment,
+  useFetchNewsComment,
+  useListScrollheight,
+  useScrollInfo,
+} from './commentModal.hook';
 
 import { Comment } from '@utils/interface/news';
 import { getDateHidingCurrentYear } from '../../../utils/tools/date';
 import IsShow from '../../common/isShow';
+import CommentProgressBar from './progressBar';
 
 const CommentModal = observer(({ id }: { id: number }) => {
   const { show: showCommentEndMessage } = useToastMessage();
@@ -31,19 +37,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
     reloadScrollHeight,
   } = useListScrollheight();
 
-  const getPageAfterWithMessage = useCallback(async () => {
-    const response = await getPageAfter();
-    if (!response) {
-      showCommentEndMessage(
-        <PositiveMessageBox>
-          <p>준비된 평론들을 모두 확인했어요</p>
-        </PositiveMessageBox>,
-        2000,
-      );
-      return false;
-    }
-    return true;
-  }, [getPageAfter]);
+  const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
 
   const clickComment = useCallback(
     (comment: Comment) => {
@@ -58,6 +52,20 @@ const CommentModal = observer(({ id }: { id: number }) => {
     await getPageBefore();
     moveToScrollHeight(0);
   }, [getPageBefore, moveToScrollHeight]);
+
+  const getPageAfterWithMessage = useCallback(async () => {
+    const response = await getPageAfter();
+    if (!response) {
+      showCommentEndMessage(
+        <PositiveMessageBox>
+          <p>준비된 평론들을 모두 확인했어요</p>
+        </PositiveMessageBox>,
+        2000,
+      );
+      return false;
+    }
+    return true;
+  }, [getPageAfter]);
 
   const clickRightButton = useCallback(async () => {
     const state = await getPageAfterWithMessage();
@@ -103,6 +111,11 @@ const CommentModal = observer(({ id }: { id: number }) => {
             </HeadTitle>
           </ModalHead>
           <ModalBody>
+            <CommentProgressBar
+              scrollHeight={scrollHeight}
+              maxScrollHeight={maxScrollHeight}
+              moveToScrollHeight={moveToScrollHeight}
+            />
             <ScrollWrapper ref={targetRef} className="common-scroll-style">
               {curComment === null ? (
                 <div className="modal-list">
