@@ -15,7 +15,8 @@ export default function CommentProgressBar({
   style = {},
 }: ProgressBarProps) {
   const progressWidth = useMemo(() => {
-    return (scrollHeight / maxScrollHeight) * 100 + '%';
+    const rate = Math.min((scrollHeight / maxScrollHeight) * 100, 100);
+    return rate + '%';
   }, [scrollHeight, maxScrollHeight]);
 
   return (
