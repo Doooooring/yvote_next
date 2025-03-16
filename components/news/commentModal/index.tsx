@@ -111,11 +111,6 @@ const CommentModal = observer(({ id }: { id: number }) => {
             </HeadTitle>
           </ModalHead>
           <ModalBody>
-            <CommentProgressBar
-              scrollHeight={scrollHeight}
-              maxScrollHeight={maxScrollHeight}
-              moveToScrollHeight={moveToScrollHeight}
-            />
             <ScrollWrapper ref={targetRef} className="common-scroll-style">
               {curComment === null ? (
                 <div className="modal-list">
@@ -137,21 +132,28 @@ const CommentModal = observer(({ id }: { id: number }) => {
                   })}
                 </div>
               ) : (
-                <div className="content-wrapper">
-                  <p className="content-title">
-                    {curComment.title}
-                    {curComment.date && getDateHidingCurrentYear(curComment.date)}
-                  </p>
-                  <div className="content-body">
-                    {curComment.comment.split('$').map((comment, idx) => {
-                      return (
-                        <p key={idx} className="content_line">
-                          {comment}
-                        </p>
-                      );
-                    })}
+                <>
+                  <CommentProgressBar
+                    scrollHeight={scrollHeight}
+                    maxScrollHeight={maxScrollHeight === 0 ? 1 : maxScrollHeight}
+                    moveToScrollHeight={moveToScrollHeight}
+                  />
+                  <div className="content-wrapper">
+                    <p className="content-title">
+                      {curComment.title}
+                      {curComment.date && getDateHidingCurrentYear(curComment.date)}
+                    </p>
+                    <div className="content-body">
+                      {curComment.comment.split('$').map((comment, idx) => {
+                        return (
+                          <p key={idx} className="content_line">
+                            {comment}
+                          </p>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </ScrollWrapper>
             <IsShow state={isRequesting}>
@@ -299,22 +301,22 @@ const ModalBody = styled.div`
 
   height: 500px;
   margin-top: 0.5rem;
+  padding-top: 0.5rem;
   border-top: 1.5px solid rgb(225, 225, 225);
   border-bottom: 1.5px solid #ddd;
+  position: relative;
 
   @media screen and (max-width: 768px) {
-    height: calc(0.7 * 100vh);
+    height: calc(0.63 * 100vh);
   }
-
-  position: relative;
 
   div.modal-list {
     display: flex;
     flex-direction: column;
     div.body-block {
       height: 60px;
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -332,8 +334,8 @@ const ModalBody = styled.div`
         color: rgb(50, 50, 50);
       }
       .date {
-        margin-left: 10px;
-        padding-right: 1rem;
+        flex: 0 0 auto;
+        margin-left: 8px;
         font-size: 13px;
         color: rgb(120, 120, 120);
       }

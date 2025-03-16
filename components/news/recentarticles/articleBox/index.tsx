@@ -1,9 +1,9 @@
 import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
 import Modal from '@components/common/modal';
+import { Link } from '@utils/hook/useRouter';
 import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
-import { Link } from '@utils/hook/useRouter';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { commentTypeColor, typeCheckImg } from '../../../../utils/interface/news/commen';
@@ -164,7 +164,7 @@ const LinkWrapper = styled.div`
       color: ${({ theme }) => theme.colors.primary};
     }
     .writer-wrapper {
-      width: 85px;
+      width: 90px;
       flex-shrink: 0;
       text-align: left;
       p {
@@ -197,8 +197,6 @@ const LinkTitleWrapper = styled(Row)`
   text-align: left;
   font-size: 14px;
   font-weight: 400;
-
-  font-size: 14px;
   color: rgb(120, 120, 120);
 
   @media screen and (max-width: 768px) {

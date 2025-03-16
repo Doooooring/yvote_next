@@ -128,8 +128,10 @@ const Layout = styled(Row)`
 `;
 
 const ButtonsWrapper = styled(Row)`
+  height: 32.4px;
   flex: 0 0 auto;
   align-items: center;
+
   gap: 10px;
   padding-right: 10px;
   border-right: 1px solid #f1f2f5;

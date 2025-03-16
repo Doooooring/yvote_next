@@ -15,7 +15,6 @@ export default function CommentProgressBar({
   style = {},
 }: ProgressBarProps) {
   const progressWidth = useMemo(() => {
-    console.log((scrollHeight / maxScrollHeight) * 100 + '%');
     return (scrollHeight / maxScrollHeight) * 100 + '%';
   }, [scrollHeight, maxScrollHeight]);
 
@@ -34,8 +33,11 @@ export default function CommentProgressBar({
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 8px;
+  height: 4px;
   border-radius: 8px;
+  position: absolute;
+  top: 0px;
+  left: 0;
 `;
 
 const ProgressWrapper = styled.div`
@@ -48,7 +50,7 @@ const ProgressWrapper = styled.div`
 const ProgressBar = styled.div`
   border-radius: 8px;
   height: 100%;
-  background-color: red;
+  background-color: ${({ theme }) => theme.colors.yvote02};
 
-  transition: width 0.3s ease;
+  transition: width 0.3s;
 `;

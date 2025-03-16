@@ -175,9 +175,6 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-        {/* <SearchWrapper>
-          <SearchBox page={page} fetchPreviews={fetchPreviews} />
-        </SearchWrapper> */}
         <KeywordHeadTab
           keywords={keywordsToShow}
           setKeywords={setCustomKeywords}

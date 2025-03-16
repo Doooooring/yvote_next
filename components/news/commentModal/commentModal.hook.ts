@@ -1,5 +1,6 @@
 import NewsRepository from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
+import { throttle } from '@utils/tools/lodash';
 
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -114,22 +115,17 @@ export const useScrollInfo = (ref?: RefObject<HTMLDivElement>) => {
   const [scrollHeight, setScrollHeight] = useState<number>(0);
 
   const maxScrollHeight = useMemo(() => {
-    if (!target.current) return 0;
-    const { scrollHeight, clientHeight, scrollTop } = target.current;
-    console.log('<<<<<<<<<<<');
-    console.log(scrollHeight - clientHeight);
-    return scrollHeight - clientHeight;
-  }, [target.current]);
+    return (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0);
+  }, [(target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0)]);
 
   useEffect(() => {
     const scrollContainer = target.current;
     if (!scrollContainer) return;
-    console.log('is re useEffect?');
-    const handleScroll = () => {
-      console.log('is called');
-      const { scrollHeight } = scrollContainer;
-      setScrollHeight(scrollHeight);
-    };
+
+    const handleScroll = throttle((e: Event) => {
+      const { scrollTop } = scrollContainer;
+      setScrollHeight(scrollTop);
+    }, 50);
 
     scrollContainer.addEventListener('scroll', handleScroll);
     return () => {

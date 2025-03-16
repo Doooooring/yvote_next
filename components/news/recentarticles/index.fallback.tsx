@@ -23,11 +23,12 @@ export function NewArticlesFallback() {
 
 const HeadFallback = styled(FallbackBox)`
   min-width: 200px;
-  height: 20px;
+  height: 30px;
+  margin-bottom: 10px;
 `;
 
 const Fallback = styled(FallbackBox)`
   width: 90%;
-  height: 20px;
-  margin-bottom: 10px;
+  height: 25px;
+  margin-bottom: 14px;
 `;
