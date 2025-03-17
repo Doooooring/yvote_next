@@ -15,6 +15,10 @@ export default function CommentProgressBar({
   style = {},
 }: ProgressBarProps) {
   const progressWidth = useMemo(() => {
+    console.log('sc h : ', scrollHeight);
+    console.log('max sc h : ', maxScrollHeight);
+
+    if (maxScrollHeight === 0) return '100%';
     const rate = Math.min((scrollHeight / maxScrollHeight) * 100, 100);
     return rate + '%';
   }, [scrollHeight, maxScrollHeight]);

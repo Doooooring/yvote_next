@@ -1,13 +1,20 @@
-import styled from 'styled-components';
-import { CommonLayoutBox } from '../../common/commonStyles';
 import { HTMLAttributes, ReactNode } from 'react';
+import styled from 'styled-components';
+import { CommonLayoutBox, Row } from '../../common/commonStyles';
 
 interface ModalBodyLayoutProps extends HTMLAttributes<HTMLDivElement> {
   headView: ReactNode;
   bodyView: ReactNode;
+  footerView: ReactNode;
+  close: () => void;
 }
 
-export default function ModalBodyLayout({ headView, bodyView }: ModalBodyLayoutProps) {
+export default function ModalLayout({
+  close,
+  headView,
+  bodyView,
+  footerView,
+}: ModalBodyLayoutProps) {
   return (
     <Wrapper>
       <div
@@ -20,6 +27,7 @@ export default function ModalBodyLayout({ headView, bodyView }: ModalBodyLayoutP
       </div>
       <ModalHead>{headView}</ModalHead>
       <ModalBody>{bodyView}</ModalBody>
+      <ModalFooter>{footerView}</ModalFooter>
     </Wrapper>
   );
 }
@@ -44,6 +52,20 @@ const Wrapper = styled(CommonLayoutBox)`
     min-width: 0px;
     padding: 1.5rem 1rem;
   }
+
+  div.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    text-indent: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 2rem;
+    @media screen and (max-width: 768px) {
+      font-size: 1.4rem;
+    }
+  }
 `;
 
 const ModalHead = styled.div`
@@ -65,4 +87,10 @@ const ModalBody = styled.div`
   @media screen and (max-width: 768px) {
     height: calc(0.63 * 100vh);
   }
+`;
+
+const ModalFooter = styled(Row)`
+  justify-content: end;
+  gap: 12px;
+  padding-top: 0.5rem;
 `;

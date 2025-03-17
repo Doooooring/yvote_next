@@ -1,12 +1,11 @@
 import { CommonLayoutBox, Row } from '@components/common/commonStyles';
-import ImageFallback from '@components/common/imageFallback';
-import Modal from '@components/common/modal';
-import { Link } from '@utils/hook/useRouter';
+import IsShow from '@components/common/isShow';
+import CommentModal from '@components/news/commentModal/modal_newspage';
 import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { commentTypeColor, typeCheckImg } from '../../../../utils/interface/news/commen';
+import { commentTypeColor } from '../../../../utils/interface/news/commen';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -59,55 +58,16 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
           </div>
         </div>
       </LinkWrapper>
-      <Modal state={isModalOpen} outClickAction={closeModal}>
-        <ModalWrapper>
-          <div
-            className="close-button"
-            onClick={() => {
-              closeModal();
-            }}
-          >
-            &times;
-          </div>
-          <HeadBody>
-            <HeadTitle>
-              <CommentImageWrapper>
-                <div className="image-box">
-                  <ImageFallback src={`/assets/img/${commentType}.png`} alt={comment} fill={true} />
-                </div>
-              </CommentImageWrapper>
-              <p className="type-name">{commentType}</p>
-              <ImageFallback
-                src={typeCheckImg(commentType)}
-                alt="check-img"
-                width="10"
-                height="10"
-              />
-            </HeadTitle>
-          </HeadBody>
-          <ModalBody>
-            <ScrollWrapper className="common-scroll-style">
-              <div className="content-wrapper">
-                <p className="content-title">{article.title}</p>
-                <div className="content-body">
-                  {article.comment.split('$').map((comment, idx) => {
-                    return (
-                      <p key={idx} className="content_line">
-                        {comment}
-                      </p>
-                    );
-                  })}
-                </div>
-              </div>
-            </ScrollWrapper>
-          </ModalBody>
-          <PageButtonWrapper>
-            <Link href={`/news/${news.id}`}>
-              <TextButton>뉴스보기</TextButton>
-            </Link>
-          </PageButtonWrapper>
-        </ModalWrapper>
-      </Modal>
+      <IsShow state={isModalOpen}>
+        <CommentModal
+          state={isModalOpen}
+          close={closeModal}
+          newsId={news.id}
+          commentType={commentType}
+          title={title}
+          comment={comment}
+        />
+      </IsShow>
     </>
   );
 }

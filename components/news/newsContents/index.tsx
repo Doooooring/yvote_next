@@ -8,13 +8,13 @@ import VoteBox from '@components/news/newsContents/voteBox';
 import icoNew from '@images/ico_new_2x.png';
 import currentStore from '@store/currentStore';
 import { useBool } from '@utils/hook/useBool';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Suspense, useMemo } from 'react';
 import { commentTypeColor } from '../../../utils/interface/news/commen';
-import CommentModal from '../commentModal';
+import CommentModal from '../commentModal/modal_newsDetailPage';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {

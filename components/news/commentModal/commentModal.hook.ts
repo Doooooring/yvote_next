@@ -2,7 +2,7 @@ import NewsRepository from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 import { throttle } from '@utils/tools/lodash';
 
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
@@ -113,12 +113,18 @@ export const useScrollInfo = (ref?: RefObject<HTMLDivElement>) => {
   if (ref) target = ref;
 
   const [scrollHeight, setScrollHeight] = useState<number>(0);
-
-  const maxScrollHeight = useMemo(() => {
-    return (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0);
-  }, [(target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0)]);
+  const [maxScrollHeight, setMaxScrollHeight] = useState<number>(0);
 
   useEffect(() => {
+    console.log(
+      'ttt : ',
+      (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0),
+    );
+    setMaxScrollHeight((target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0));
+  }, [target.current, (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0)]);
+
+  useEffect(() => {
+    console.log('is reclaed');
     const scrollContainer = target.current;
     if (!scrollContainer) return;
 
