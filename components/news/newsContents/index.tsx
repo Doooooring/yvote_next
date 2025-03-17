@@ -305,12 +305,10 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       margin-right: auto;
       border: 1px solid rgb(230, 230, 230);
       border-radius: 10px;
-
       @media screen and (max-width: 760px) {
-        height: 220px;
+        height: 160px;
         width: 95%;
       }
-
       .img-head {
         display: flex;
         flex-direction: row;
@@ -318,7 +316,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         align-items: center;
         width: 100%;
         height: 100%;
-        backdrop-filter: brightness(0.5);
+        backdrop-filter: brightness(0.3);
         font-size: 24px !important;
         font-weight: 600;
         color: rgb(220, 220, 220);
