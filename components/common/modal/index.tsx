@@ -45,6 +45,9 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: hidden;
   z-index: 9999;
+  overscroll-behavior: none;
+  overscroll-behavior: contain;
+
   /* display: flex;
   flex-direction: row;
   justify-content: center; */

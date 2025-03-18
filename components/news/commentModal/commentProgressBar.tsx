@@ -16,8 +16,8 @@ export default function CommentProgressBar({
 }: ProgressBarProps) {
   const progressWidth = useMemo(() => {
     if (maxScrollHeight === 0) return '100%';
-
-    const rate = Math.min((scrollHeight / maxScrollHeight) * 100, 100);
+    let sh = Math.max(scrollHeight, 0);
+    const rate = Math.min((sh / maxScrollHeight) * 100, 100);
     const rateFixed = rate >= 99 ? 100 : rate;
     return rateFixed + '%';
   }, [scrollHeight, maxScrollHeight]);
@@ -40,7 +40,7 @@ const Wrapper = styled.div`
   height: 4px;
   border-radius: 8px;
   position: absolute;
-  top: 0px;
+  top: -2px;
   left: 0;
 `;
 
@@ -48,7 +48,7 @@ const ProgressWrapper = styled.div`
   border-radius: 8px;
   width: 100%;
   height: 100%;
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.gray400};
 `;
 
 const ProgressBar = styled.div`
