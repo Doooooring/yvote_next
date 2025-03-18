@@ -29,19 +29,9 @@ function PreviewBox({ preview, img, click }: PreviewBoxProps) {
         onClick={() => {}}
         imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
         headView={
-          <>
-            <Title>
-              <div className="title">{title}</div>
-            </Title>
-            {/* {state && (
-              <ImageFallback
-                src="/assets/img/ico_new_2x.png"
-                alt="new_ico"
-                height="16"
-                width="32"
-              />
-            )} */}
-          </>
+          <Title>
+            <div className="title">{title}</div>
+          </Title>
         }
         contentView={
           <>

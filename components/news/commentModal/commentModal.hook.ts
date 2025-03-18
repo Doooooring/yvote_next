@@ -116,17 +116,20 @@ export const useScrollInfo = (ref?: RefObject<HTMLDivElement>) => {
   const [maxScrollHeight, setMaxScrollHeight] = useState<number>(0);
 
   useEffect(() => {
-    console.log(
-      'ttt : ',
-      (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0),
-    );
-    setMaxScrollHeight((target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0));
-  }, [target.current, (target.current?.scrollHeight ?? 0) - (target.current?.clientHeight ?? 0)]);
-
-  useEffect(() => {
-    console.log('is reclaed');
     const scrollContainer = target.current;
     if (!scrollContainer) return;
+
+    const observer = new MutationObserver((mutations) => {
+      setScrollHeight(scrollContainer.scrollTop);
+      setMaxScrollHeight(scrollContainer.scrollHeight - scrollContainer.clientHeight);
+    });
+
+    observer.observe(scrollContainer, {
+      childList: true,
+      subtree: true,
+    });
+
+    setMaxScrollHeight(scrollContainer.scrollHeight - scrollContainer.clientHeight);
 
     const handleScroll = throttle((e: Event) => {
       const { scrollTop } = scrollContainer;
@@ -135,6 +138,7 @@ export const useScrollInfo = (ref?: RefObject<HTMLDivElement>) => {
 
     scrollContainer.addEventListener('scroll', handleScroll);
     return () => {
+      observer.disconnect();
       scrollContainer.removeEventListener('scroll', handleScroll);
     };
   }, [target.current, setScrollHeight]);

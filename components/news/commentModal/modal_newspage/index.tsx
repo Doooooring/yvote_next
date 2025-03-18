@@ -42,9 +42,7 @@ export default function CommentModal({
           <ScrollWrapper ref={targetRef} className="common-scroll-style">
             <CommentProgressBar
               scrollHeight={scrollHeight}
-              maxScrollHeight={
-                (targetRef.current?.scrollHeight ?? 0) - (targetRef.current?.clientHeight ?? 0)
-              }
+              maxScrollHeight={maxScrollHeight}
               moveToScrollHeight={moveToScrollHeight}
             />
             <CommentBodyExplain title={title} explain={comment} />
