@@ -11,11 +11,7 @@ export default function CommentBodyExplain({ title, explain }: CommentBodyExplai
       <ContentTitle>{title}</ContentTitle>
       <ContentBody>
         {explain.split('$').map((li, idx) => {
-          return (
-            <p key={idx} className="content_line">
-              {li}
-            </p>
-          );
+          return <ContentLine key={idx}>{li}</ContentLine>;
         })}
       </ContentBody>
     </Wrapper>
