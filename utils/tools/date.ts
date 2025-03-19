@@ -78,3 +78,11 @@ export const getDateHidingCurrentYear = (d: Date) => {
     day: '2-digit',
   });
 };
+
+export const useKoreanDateFormat = (date: Date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  return `${year}년 ${month}월 ${day}일`;
+};

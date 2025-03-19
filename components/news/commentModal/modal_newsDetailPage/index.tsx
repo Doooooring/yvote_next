@@ -105,7 +105,11 @@ const CommentModal = observer(({ id }: { id: number }) => {
                       maxScrollHeight={maxScrollHeight}
                       moveToScrollHeight={moveToScrollHeight}
                     />
-                    <CommentBodyExplain title={curComment.title} explain={curComment.comment} />
+                    <CommentBodyExplain
+                      title={curComment.title}
+                      explain={curComment.comment}
+                      date={curComment.date}
+                    />
                   </>
                 )}
               </ScrollWrapper>

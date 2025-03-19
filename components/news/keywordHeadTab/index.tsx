@@ -132,8 +132,8 @@ const ButtonsWrapper = styled(Row)`
   flex: 0 0 auto;
   align-items: center;
 
-  gap: 10px;
-  padding-right: 10px;
+  gap: 8px;
+  padding-right: 8px;
   border-right: 1px solid #f1f2f5;
 `;
 
@@ -151,6 +151,7 @@ const KeywordWrapper = styled(HorizontalScroll)`
 
 const KeywordScrollWrapper = styled(Row)`
   flex: 0 1 auto;
+  margin-left: 8px;
 `;
 
 interface KeywordProps {
@@ -160,8 +161,8 @@ interface KeywordProps {
 const Keyword = styled(CommonTagBox)<KeywordProps>`
   flex: 1 0 auto;
 
-  margin-left: 3px;
-  margin-right: 6px;
+  margin-left: 0px;
+  margin-right: 8px;
   color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
   background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
   border: 1px solid #f1f2f5;
