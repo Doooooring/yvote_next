@@ -47,7 +47,7 @@ export default function CommentModal({
               maxScrollHeight={maxScrollHeight}
               moveToScrollHeight={moveToScrollHeight}
             />
-            <CommentBodyExplain title={title} explain={comment} date={date} />
+            <CommentBodyExplain id={newsId} title={title} explain={comment} date={date} />
           </ScrollWrapper>
         }
         footerView={

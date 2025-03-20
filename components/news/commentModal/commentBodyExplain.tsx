@@ -1,56 +1,31 @@
 import IsShow from '@components/common/isShow';
+import newsRepository from '@repositories/news';
 import { useKoreanDateFormat } from '@utils/tools/date';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useState } from 'react';
-import OpenAI from 'openai';
-
-const client = new OpenAI({
-  apiKey: 'rho',
-  baseURL: 'https://api.x.ai/v1',
-});
 
 interface CommentBodyExplainProps {
+  id: number;
   title: string;
   explain: string;
   date: Date;
 }
 
-export default function CommentBodyExplain({ title, explain, date }: CommentBodyExplainProps) {
-  const [summary, setSummary] = useState<string | null>(null); // State to store the summary
-  const [loading, setLoading] = useState(false); // State to handle loading status
+export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {
+  const [summary, setSummary] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchSummary = async () => {
-    setLoading(true);
-    console.log('Button clicked, fetching for:', explain);
+  const fetchSummary = useCallback(async () => {
     try {
-      const completion = await client.chat.completions.create({
-        model: 'grok-2', // Ensure this is a valid model for xAI
-        messages: [
-          {
-            role: 'system',
-            content:
-              '글에서 뉴스 독자들이 읽을만한 부분을 쉽고 짧게 요약해 줘. 내용과 관계 없는 쓸데 없는 말은 빼고.',
-          },
-          { role: 'user', content: explain },
-        ],
-      });
-      console.log('Full response:', completion); // Log the response
-      // Safely access the summary
-      const ContentLine =
-        completion.choices?.[0]?.message?.content ||
-        completion.message ||
-        completion.content ||
-        'No summary in response';
-      console.log('Setting summary to:', ContentLine);
-      setSummary(ContentLine);
-    } catch (error) {
-      console.error('Error:', error);
-      setSummary('Failed to fetch summary.');
-      console.log('Summary state after error:', 'Failed to fetch summary.');
+      setIsLoading(true);
+      const response = await newsRepository.getNewsCommentSummary(id);
+      setSummary(response);
+    } catch (e) {
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  };
+  }, [id, isLoading, setIsLoading, setSummary]);
+
   return (
     <Wrapper>
       <ContentTitle>
@@ -59,17 +34,15 @@ export default function CommentBodyExplain({ title, explain, date }: CommentBody
           <IsShow state={date != null}>
             <DateText>{useKoreanDateFormat(date)}</DateText>
           </IsShow>
-          <GrokButton onClick={fetchSummary} disabled={loading}>
-            {loading ? 'Loading...' : 'grok2'}
+          <GrokButton onClick={fetchSummary} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'grok2'}
           </GrokButton>
         </DateButtonWrapper>
       </ContentTitle>
       <ContentBody>
         {summary === null
-          ? // Show the original explain content if no summary yet
-            explain.split('$').map((li, idx) => <ContentLine key={idx}>{li}</ContentLine>)
-          : // Show the summary (or error message) if summary is set
-            summary
+          ? explain.split('$').map((li, idx) => <ContentLine key={idx}>{li}</ContentLine>)
+          : summary
               .split('\n')
               .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>)}
       </ContentBody>
