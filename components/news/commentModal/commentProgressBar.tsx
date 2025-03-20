@@ -25,7 +25,6 @@ export default function CommentProgressBar({
     const ratio = offsetX / rect.width;
     const clampedRatio = Math.max(0, Math.min(1, ratio));
     const newScroll = clampedRatio * maxScrollHeight;
-    // 상위에서 내려받은 함수로 스크롤 이동
     moveToScrollHeight(newScroll);
   };
 
@@ -48,7 +47,7 @@ export default function CommentProgressBar({
             width: progressWidth,
           }}
         >
-          <IconButton>
+          <IconButton $state={progressWidth == '100%'}>
             <Image className="pear" src={logoImage} alt="logo" width="12" height="12" />
           </IconButton>
         </ProgressBar>
@@ -59,7 +58,7 @@ export default function CommentProgressBar({
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 8px;
+  height: 4px;
   border-radius: 8px;
   position: absolute;
   top: -2px;
@@ -83,13 +82,19 @@ const ProgressBar = styled.div`
   transition: width 0.3s;
 `;
 
-const IconButton = styled(CommonIconButton)`
+interface IconButtonProps {
+  $state: boolean;
+}
+
+const IconButton = styled(CommonIconButton)<IconButtonProps>`
   position: absolute;
   right: 0;
   top: 50%;
   transform: translate(50%, -50%);
+  cursor: none;
+  border-width: ${({ $state }) => ($state ? '2px' : '1px')};
+  border-color: ${({ theme, $state }) => ($state ? theme.colors.yvote01 : theme.colors.gray300)};
   &:hover {
-    border-color: ${({ theme }) => theme.colors.yvote01};
     background-color: white;
   }
 `;
