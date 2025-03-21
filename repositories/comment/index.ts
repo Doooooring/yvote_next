@@ -14,3 +14,5 @@ class CommentRepository {
     return response.data.result;
   }
 }
+
+export default new CommentRepository();

@@ -1,5 +1,6 @@
 import IsShow from '@components/common/isShow';
-import newsRepository from '@repositories/news';
+import commentRepository from '@repositories/comment';
+import openAIRepository from '@repositories/openai';
 import { useKoreanDateFormat } from '@utils/tools/date';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
@@ -18,7 +19,14 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
   const fetchSummary = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await newsRepository.getNewsCommentSummary(id);
+      const response = await openAIRepository.getAIResult([
+        {
+          role: 'system',
+          content:
+            '글에서 뉴스 독자들이 읽을만한 부분을 쉽고 짧게 요약해 줘. 내용과 관계 없는 쓸데 없는 말은 빼고.',
+        },
+        { role: 'user', content: explain },
+      ]);
       setSummary(response);
     } catch (e) {
     } finally {
