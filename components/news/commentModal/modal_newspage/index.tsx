@@ -27,12 +27,7 @@ export default function CommentModal({
   comment,
   date,
 }: CommentModalProps) {
-  const {
-    target: targetRef,
-    saveScrollHeight,
-    moveToScrollHeight,
-    reloadScrollHeight,
-  } = useListScrollheight();
+  const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
 
   return (
