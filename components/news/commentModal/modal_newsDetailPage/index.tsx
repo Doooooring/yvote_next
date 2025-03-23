@@ -108,6 +108,7 @@ const CommentModal = observer(({ id }: { id: number }) => {
                       moveToScrollHeight={moveToScrollHeight}
                     />
                     <CommentBodyExplain
+                      id={id}
                       title={curComment.title}
                       explain={curComment.comment}
                       date={curComment.date}
