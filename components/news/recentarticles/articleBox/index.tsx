@@ -65,6 +65,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
           newsId={news.id}
           commentType={commentType}
           title={title}
+          date={date}
           comment={comment}
         />
       </IsShow>

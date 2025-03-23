@@ -15,6 +15,7 @@ interface CommentModalProps {
   commentType: commentType;
   title: string;
   comment: string;
+  date: Date;
 }
 
 export default function CommentModal({
@@ -24,6 +25,7 @@ export default function CommentModal({
   commentType,
   title,
   comment,
+  date,
 }: CommentModalProps) {
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
@@ -40,7 +42,7 @@ export default function CommentModal({
               maxScrollHeight={maxScrollHeight}
               moveToScrollHeight={moveToScrollHeight}
             />
-            <CommentBodyExplain title={title} explain={comment} />
+            <CommentBodyExplain title={title} explain={comment} date={date} />
           </ScrollWrapper>
         }
         footerView={
