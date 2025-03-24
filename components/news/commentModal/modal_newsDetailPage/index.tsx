@@ -29,7 +29,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
     id,
     comment,
   );
+
   const { curComment, showCurComment, closeCurComment } = useCurComment();
+
   const {
     target: targetRef,
     saveScrollHeight,
