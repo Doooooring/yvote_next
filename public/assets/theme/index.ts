@@ -3,9 +3,15 @@ export const customTheme = {
     primary: '#0070f3',
     secondary: '#ff6c00',
     text: '#333333',
-    yvote01: '#a2ddf2',
-    yvote02: '#72beda',
-    yvote03: '#2b9fc2',
+    yvote01: '#d8eef8', // Brightest
+    yvote02: '#ccebfc',
+    yvote03: '#a2ddf2', // Original yvote01
+    yvote04: '#88cce8',
+    yvote05: '#72beda', // Original yvote02
+    yvote06: '#56b3d1',
+    yvote07: '#2b9fc2', // Original yvote03
+    yvote08: '#1d7ea2',
+    yvote09: '#0d5b7d', // Darkest
     gray100: '#f8f9fa',
     gray200: '#e9ecef',
     gray300: '#dee2e6',

@@ -227,7 +227,7 @@ interface TopSheetProps {
 
 const TopSheet = styled(CommonLayoutBox)<TopSheetProps>`
   box-sizing: border-box;
-  border-top: 24px solid ${({ theme }) => theme.colors.yvote02};
+  border-top: 24px solid ${({ theme }) => theme.colors.yvote05};
   padding: 0.6rem;
   background-color: white;
   width: 1000px;
@@ -355,11 +355,11 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
   margin-right: 6px;
   margin-top: 3px;
   margin-bottom: 3px;
-  color: ${({ $state, theme }) => ($state ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
+  color: ${({ $state, theme }) => ($state ? theme.colors.yvote05 : 'rgb(120, 120, 120)')};
   background-color: ${({ $state }) => ($state ? 'white !important' : '#f1f2f5')};
   border: 1px solid #f1f2f5;
   border-color: ${({ $state, theme }) =>
-    $state ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
+    $state ? theme.colors.yvote03 + ' !important' : '#f1f2f5'};
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -388,14 +388,14 @@ const SaveButton = styled.button`
   flex: 0 0 auto;
   padding: 0.5rem 1rem;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.yvote02};
+  background-color: ${({ theme }) => theme.colors.yvote05};
   color: white;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.yvote01};
+    background-color: ${({ theme }) => theme.colors.yvote03};
   }
 `;
 

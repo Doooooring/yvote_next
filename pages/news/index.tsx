@@ -417,10 +417,10 @@ const Keyword = styled(CommonTagBox)<KeywordProps>`
   margin-left: 3px;
   margin-right: 6px;
   margin-bottom: 6px;
-  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote02 : 'rgb(120, 120, 120)')};
+  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote05 : 'rgb(120, 120, 120)')};
   background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
   border-color: ${({ $clicked, theme }) =>
-    $clicked ? theme.colors.yvote01 + ' !important' : '#f1f2f5'};
+    $clicked ? theme.colors.yvote03 + ' !important' : '#f1f2f5'};
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
   animation: back-blink 0.4s ease-in-out forwards;

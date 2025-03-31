@@ -77,7 +77,7 @@ const ProgressBar = styled.div`
 
   border-radius: 8px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.yvote02};
+  background-color: ${({ theme }) => theme.colors.yvote05};
 
   transition: width 0.3s;
 `;
@@ -93,7 +93,7 @@ const IconButton = styled(CommonIconButton)<IconButtonProps>`
   transform: translate(50%, -50%);
   cursor: none;
   border-width: ${({ $state }) => ($state ? '2px' : '1px')};
-  border-color: ${({ theme, $state }) => ($state ? theme.colors.yvote01 : theme.colors.gray300)};
+  border-color: ${({ theme, $state }) => ($state ? theme.colors.yvote03 : theme.colors.gray300)};
   &:hover {
     background-color: white;
   }

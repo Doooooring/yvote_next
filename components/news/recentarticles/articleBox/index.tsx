@@ -124,7 +124,7 @@ const LinkWrapper = styled.div`
       color: ${({ theme }) => theme.colors.primary};
     }
     .writer-wrapper {
-      width: 90px;
+      width: 85px;
       flex-shrink: 0;
       text-align: left;
       p {
@@ -138,8 +138,10 @@ const LinkWrapper = styled.div`
         color: grey;
         text-align: center;
         border-radius: 6px;
-
-        @media screen and (max-width: 768px) {
+      }
+      @media screen and (max-width: 768px) {
+        width: 75px;
+        p {
           font-size: 10px;
           width: 65px;
         }
