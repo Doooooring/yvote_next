@@ -3,6 +3,7 @@ import { commentType } from '@utils/interface/news';
 import { typeCheckImg } from '@utils/interface/news/commen';
 import styled from 'styled-components';
 
+
 interface HeadTitleProps {
   comment: commentType;
 }
