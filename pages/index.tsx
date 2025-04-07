@@ -5,7 +5,7 @@ import keywordImage from '@images/keyword.png';
 import logoImage from '@images/logo_image.png';
 import newsImage from '@images/news.png';
 import backgroundImage from '@images/voting.png';
-import { StaticImageData } from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -83,7 +83,7 @@ export default function Home() {
       <Content show={showModal}>
         <Rectangle loaded={loaded}>
           <FlexContainer>
-            <Image className="pear" loaded={loaded} src={logoImage.src} alt="logo" />
+            <LogoImage className="pear" loaded={loaded} src={logoImage.src} alt="logo" />
             <TextBox loaded={loaded}>
               <TextHeading>Why Vote?</TextHeading>
               <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
@@ -108,9 +108,18 @@ export default function Home() {
       </Content>
       <HomeModal show={showModal} onClose={closeModal} content={modalContent} />
       <BackgroundImage loaded={loaded} src={backgroundImage.src} />
+      <PreLoaded>
+        {items.map((item) => {
+          return <Image src={item.imageUrl} alt={item.name} />;
+        })}
+      </PreLoaded>
     </Wrapper>
   );
 }
+
+const PreLoaded = styled.div`
+  display: none;
+`;
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -164,7 +173,7 @@ const FlexContainer = styled.div`
   align-items: center;
 `;
 
-const Image = styled.img<{ loaded: boolean }>`
+const LogoImage = styled.img<{ loaded: boolean }>`
   width: 4.5rem;
   height: auto;
   max-height: 40rem;
