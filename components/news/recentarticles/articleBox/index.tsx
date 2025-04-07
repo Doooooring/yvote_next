@@ -83,7 +83,7 @@ const LinkWrapper = styled.div`
   }
 
   &:hover {
-    .text {
+    .title {
       color: ${({ theme }) => theme.colors.primary} !important;
     }
   }
