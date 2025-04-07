@@ -19,7 +19,8 @@ import {
   useScrollInfo,
 } from '../commentModal.hook';
 import CommentProgressBar from '../commentProgressBar';
-import { ScrollWrapper, TextButton } from '../figure';
+import { ScrollWrapper } from '../figure';
+import { TextButton } from '../../../common/commonStyles';
 import ModalLayout from '../modal.layout';
 
 const CommentModal = observer(({ id }: { id: number }) => {
@@ -29,7 +30,9 @@ const CommentModal = observer(({ id }: { id: number }) => {
     id,
     comment,
   );
+
   const { curComment, showCurComment, closeCurComment } = useCurComment();
+
   const {
     target: targetRef,
     saveScrollHeight,

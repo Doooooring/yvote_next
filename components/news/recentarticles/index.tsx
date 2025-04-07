@@ -16,12 +16,9 @@ function NewArticles() {
 
   return (
     <>
-      <div className="header-wrapper">
-        <div className="category-head">
-          관련 자료 업데이트 ({Math.min(numToShow.current * (curView + 1), recentArticles.length)} /{' '}
-          {recentArticles.length})
-        </div>
-      </div>
+      <Header>
+        <h2 className="category-head">관련 자료 업데이트</h2>
+      </Header>
       <div className="body-wrapper">
         <LeftButton curView={curView} viewToLeft={onSlideLeft} />
         <div className="grid-wrapper">
@@ -75,22 +72,6 @@ const Wrapper = styled(CommonLayoutBox)`
     margin-right: auto;
   }
 
-  .header-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    height: 30px;
-    text-align: left;
-    margin-bottom: 10px;
-    .category-head {
-      display: inline;
-      color: ${({ theme }) => theme.colors.gray800};
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-  }
-
   .body-wrapper {
     display: flex;
     flex-direction: column;
@@ -103,6 +84,22 @@ const Wrapper = styled(CommonLayoutBox)`
       border: 0px solid black;
       overflow: hidden;
     }
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 30px;
+  text-align: left;
+  margin-bottom: 10px;
+  .category-head {
+    display: inline;
+    color: ${({ theme }) => theme.colors.gray800};
+    font-weight: 700;
+    font-size: 1.1rem;
   }
 `;
 

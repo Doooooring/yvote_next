@@ -166,7 +166,7 @@ const Date = styled.div`
   align-self: center;
 
   .diff {
-    color: ${({ theme }) => theme.colors.yvote02};
+    color: ${({ theme }) => theme.colors.yvote05};
   }
 `;
 

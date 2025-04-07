@@ -5,8 +5,9 @@ import { useState } from 'react';
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: 'rho',
+  apiKey: 'xai-sYSzFtJmqRSFJtDrLyMzdMTdVMpqaM8gOlhlzvFMjLdEr9311J91yzUcIQ8b3zd7h26FdyvIIBtGSMrK',
   baseURL: 'https://api.x.ai/v1',
+  dangerouslyAllowBrowser: true,
 });
 
 interface CommentBodyExplainProps {
@@ -29,17 +30,15 @@ export default function CommentBodyExplain({ title, explain, date }: CommentBody
           {
             role: 'system',
             content:
-              '글에서 뉴스 독자들이 읽을만한 부분을 쉽고 짧게 요약해 줘. 내용과 관계 없는 쓸데 없는 말은 빼고.',
+              '너는 내가 주는 글의 내용을 쉽고 가능한 짧게, ~요 체의 글로 정리해주는 중립적인 기자야.',
           },
-          { role: 'user', content: explain },
+          { role: 'user', content: title + explain },
         ],
       });
       console.log('Full response:', completion); // Log the response
       // Safely access the summary
       const ContentLine =
-        completion.choices?.[0]?.message?.content ||
-        completion.message ||
-        completion.content ||
+        completion.choices?.[0]?.message?.content
         'No summary in response';
       console.log('Setting summary to:', ContentLine);
       setSummary(ContentLine);

@@ -47,14 +47,14 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  border-radius: 50px;
+  border-radius: 0;
   box-shadow: 0 0 30px -15px;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0);
   z-index: 99;
   cursor: pointer;
   transition: background-color 0.3s ease;
   &:hover {
-    background-color: #f0f0f0;
+    background-color: ${({ theme }) => theme.colors.gray100};
   }
 `;
 

@@ -61,6 +61,16 @@ export const CommonIconButton = styled.button`
   }
 `;
 
+export const TextButton = styled(CommonLayoutBox)`
+  padding: 0.4rem 1.2rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
 export const backgroundSlide = keyframes`
   0% {
     background-position : -10% 0%;

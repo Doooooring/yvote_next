@@ -5,7 +5,8 @@ import CommentBodyExplain from '../commentBodyExplain';
 import CommentHead from '../commentHead';
 import { useListScrollheight, useScrollInfo } from '../commentModal.hook';
 import CommentProgressBar from '../commentProgressBar';
-import { ScrollWrapper, TextButton } from '../figure';
+import { TextButton } from '../../../common/commonStyles';
+import { ScrollWrapper } from '../figure';
 import ModalLayout from '../modal.layout';
 
 interface CommentModalProps {
@@ -27,12 +28,7 @@ export default function CommentModal({
   comment,
   date,
 }: CommentModalProps) {
-  const {
-    target: targetRef,
-    saveScrollHeight,
-    moveToScrollHeight,
-    reloadScrollHeight,
-  } = useListScrollheight();
+  const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
 
   return (
