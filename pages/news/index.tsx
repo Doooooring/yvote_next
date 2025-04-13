@@ -175,6 +175,7 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
+
         <KeywordHeadTab
           keywords={keywordsToShow}
           setKeywords={setCustomKeywords}
@@ -343,6 +344,26 @@ const Wrapper = styled.div`
   }
 `;
 
+const Header = styled(CommonLayoutBox)`
+  flex-shrink: 0;
+  text-align: center;
+  padding: 12px 10px;
+
+  .head {
+    display: inline;
+    color: ${({ theme }) => theme.colors.gray800};
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .sub-head {
+    display: inline;
+    color: ${({ theme }) => theme.colors.gray600};
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+`;
+
 const ArticlesWrapper = styled.div`
   display: flex;
   width: 70%;
@@ -353,28 +374,6 @@ const ArticlesWrapper = styled.div`
     width: 100%;
     min-width: 0px;
     overflow: hidden;
-  }
-`;
-
-const SearchWrapper = styled(CommonLayoutBox)`
-  display: flex;
-  width: 40%;
-  position: relative;
-  -webkit-text-size-adjust: none;
-  color: #666;
-  text-align: center;
-  margin: 0 0 10px 0;
-  padding: 0;
-  font: inherit;
-  box-sizing: inherit;
-  justify-content: center;
-  align-items: center;
-  @media screen and (max-width: 768px) {
-    width: 130px;
-    min-width: 0px;
-    margin-right: auto;
-    margin-left: 4px;
-    margin-bottom: 4px;
   }
 `;
 

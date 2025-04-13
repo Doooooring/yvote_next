@@ -103,14 +103,6 @@ export default function NewsList({
     }
   }, [fetchPreviews, showToastMessage]);
 
-  // const elementRef = useRef<HTMLDivElement>(null);
-  // const isOnScreen = useOnScreen(elementRef);
-  // const { isShow: isShowFetchButton, close: closeFetchButton } = useLazyLoad(isOnScreen, 3000);
-  // const clickFetchButton = useCallback(() => {
-  //   fetChPreviewsWithVal();
-  //   closeFetchButton();
-  // }, [fetChPreviewsWithVal, closeFetchButton]);
-
   return (
     <>
       <Wrapper>

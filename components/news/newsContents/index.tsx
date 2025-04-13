@@ -12,7 +12,7 @@ import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { commentTypeColor } from '../../../utils/interface/news/commen';
 import CommentModal from '../commentModal/modal_newsDetailPage';
 import { sortComment } from './newsContents.util';
@@ -44,6 +44,23 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
+  const [activeSummary, setActiveSummary] = useState(0);
+  const dummySummaries = [
+    summary,
+    "summary[1]",
+    "summary[2]",
+    "summary[3]",
+    "summary[4]",
+    "summary[5]",
+  ];
+  const dummybuttonImages = [
+    '/assets/img/와이보트.png',
+    '/assets/img/국민의힘.png',
+    '/assets/img/더불어민주당.png',
+    '/assets/img/대통령실.png',
+    '/assets/img/행정부.png',
+    '/assets/img/헌법재판소.png',
+  ]; // 순서는 기존 논평 순서, 자료 'or' 본문 있는 것만
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -89,7 +106,19 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
-                <div className="writer" dangerouslySetInnerHTML={{ __html: summary }} />
+                <SummaryButtons>
+                  {dummySummaries.map((_, index) => (
+                    <SummaryButton
+                      key={index}
+                      active={index === activeSummary}
+                      image={dummybuttonImages[index]}
+                      onClick={() => setActiveSummary(index)}
+                    />
+                  ))}
+                </SummaryButtons>
+                <div className="writer"
+                  dangerouslySetInnerHTML={{ __html: dummySummaries[activeSummary] }}
+                />
               </div>
               <div className="keyword-wrapper content">
                 {keywords?.map(({ id, keyword }) => {
@@ -613,4 +642,24 @@ const TimelineWrapper = styled(CommonLayoutBox)`
       gap: 8px;
     }
   }
+`;
+
+const SummaryButtons = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const SummaryButton = styled.button<{ active: boolean; image: string }>`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: ${({ active, theme }) => (active ? `2px solid ${theme.colors.yvote04}` : `2px solid ${theme.colors.gray400}`)};
+  background-color: transparent;
+  background-image: url(${({ image }) => image});
+  background-size: 24px 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
 `;
