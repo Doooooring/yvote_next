@@ -95,8 +95,8 @@ class NewsRepository {
         authorization: token,
       },
     });
-    const data = response.data;
-    return data.result;
+
+    return response.data.result;
   }
 
   /**
@@ -115,6 +115,7 @@ class NewsRepository {
       return [] as Comment[];
     }
   }
+
 
   /**
    * 해당 뉴스에 투표 API

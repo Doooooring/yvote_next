@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { useGlobalLoading } from '../../../utils/hook/useGlobalLoading/useGlobalLoading';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
+import PreviewBox2 from '../previewBox2';
 
 interface NewsListProps {
   page: number;
@@ -19,6 +20,54 @@ interface NewsListProps {
   fetchPreviews: () => Promise<boolean>;
   showNewsContent: (id: number) => void;
 }
+
+const dummyPreview3: Preview = {
+  id: 999,
+  order: 1,
+  title: '추가경정예산안 (논의 중)',
+  subTitle: 'Dummy Subtitle',
+  summary: 'This is a dummy news summary for testing purposes.',
+  date: new Date('2025-03-31'),
+  keywords: [],
+  newsImage: '',
+  state: true,
+};
+
+const dummyPreview: Preview = {
+  id: 999,
+  order: 1,
+  title: '최상목 탄핵소추안 (발의 완료)',
+  subTitle: 'Dummy Subtitle',
+  summary: 'This is a dummy news summary for testing purposes.',
+  date: new Date('2025-03-31'),
+  keywords: [],
+  newsImage: '',
+  state: true,
+};
+
+const dummyPreview2: Preview = {
+  id: 999,
+  order: 1,
+  title: '반도체특별법 ( [예시] 법제사법위원회 계류 중)',
+  subTitle: 'Dummy Subtitle',
+  summary: 'This is a dummy news summary for testing purposes.',
+  date: new Date('2025-03-31'),
+  keywords: [],
+  newsImage: '',
+  state: true,
+};
+
+const dummyPreview4: Preview = {
+  id: 999,
+  order: 1,
+  title: '고발사주 검사(손준성) 탄핵소추안 (헌법재판소 심리 중)',
+  subTitle: 'Dummy Subtitle',
+  summary: 'This is a dummy news summary for testing purposes.',
+  date: new Date('2025-03-31'),
+  keywords: [],
+  newsImage: '',
+  state: true,
+};
 
 export default function NewsList({
   page,
@@ -45,6 +94,10 @@ export default function NewsList({
   return (
     <>
       <Wrapper>
+        <PreviewBox2 preview={dummyPreview3}></PreviewBox2>
+        <PreviewBox2 preview={dummyPreview}></PreviewBox2>
+        <PreviewBox2 preview={dummyPreview2}></PreviewBox2>
+        <PreviewBox2 preview={dummyPreview4}></PreviewBox2>
         <Virtuoso
           style={{
             width: '100%',
