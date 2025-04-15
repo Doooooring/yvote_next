@@ -12,6 +12,10 @@ import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getConstantVowel } from '../../../utils/tools';
+import { formatWord, searchWordIncluded } from '../../../utils/tools/korean';
+import useSearchKeyword from './useSearchKeyword.';
+import useKeywordsSelected from './useKeywordsSelected';
+import IsShow from '../../common/isShow';
 
 interface EditKeywordFiltersTopSheetProps {
   state: boolean;
@@ -22,18 +26,6 @@ interface EditKeywordFiltersTopSheetProps {
   saveKeywordFilteres: (keywords: KeyTitle[]) => void;
 }
 
-const isCharIncluded = (target: string, cur: string) => {
-  const curToChar = getConstantVowel(cur, false) as string;
-  const targetTochar = getConstantVowel(target, true) as string[];
-  let result = false;
-  targetTochar.forEach((char) => {
-    if (curToChar.includes(char)) {
-      result = true;
-    }
-  });
-  return result;
-};
-
 export default function EditKeywordFiltersTopSheet({
   state,
   close,
@@ -42,19 +34,10 @@ export default function EditKeywordFiltersTopSheet({
   totalKeywords,
   saveKeywordFilteres,
 }: EditKeywordFiltersTopSheetProps) {
-  const [isTopSheetDown, setIsTopSheetDown] = useState(false);
-  const [searchWord, setSearchWord] = useState<string>('');
-  const [curKeywords, setCurKeywords] = useState<KeyTitle[]>([]);
-  const [relatedKeywords, setRelatedWords] = useState<KeyTitle[]>([]);
   const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    if (state) {
-      setIsTopSheetDown(true);
-      setCurKeywords(keywordsToEdit);
-    } else {
-    }
-  }, [state, keywordsToEdit]);
+  const { searchWord, relatedKeywords, handleSearchBoxChange } = useSearchKeyword(totalKeywords);
+  const { curKeywords, addKeyword, dropKeyword } = useKeywordsSelected(keywordsToEdit);
+  const [isTopSheetDown, setIsTopSheetDown] = useState(false);
 
   const closeTopSheet = useCallback(() => {
     setIsTopSheetDown(false);
@@ -62,20 +45,6 @@ export default function EditKeywordFiltersTopSheet({
       close();
     }, 200);
   }, []);
-
-  const addKeyword = useCallback(
-    (keyword: KeyTitle) => {
-      setCurKeywords([...curKeywords, keyword]);
-    },
-    [curKeywords, relatedKeywords, setCurKeywords],
-  );
-
-  const dropKeyword = useCallback(
-    (keyword: KeyTitle) => {
-      setCurKeywords(curKeywords.filter((c) => c.id !== keyword.id));
-    },
-    [curKeywords, setCurKeywords, setRelatedWords],
-  );
 
   const saveKeywords = useCallback(() => {
     saveKeywordFilteres(curKeywords);
@@ -85,34 +54,6 @@ export default function EditKeywordFiltersTopSheet({
     }, 1000);
   }, [curKeywords]);
 
-  const handleSearchBoxChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.preventDefault();
-      const v = e.currentTarget.value;
-      setSearchWord(v);
-      const findRelatedWords: KeyTitle[] = [];
-
-      for (const key of totalKeywords) {
-        if (
-          isCharIncluded(v, key.keyword) &&
-          curKeywords.filter((c) => c.id === key.id).length === 0
-        ) {
-          findRelatedWords.push(key);
-        }
-
-        if (findRelatedWords.length === 50) {
-          break;
-        }
-      }
-      if (findRelatedWords.length === 0) {
-        setRelatedWords([]);
-      } else {
-        setRelatedWords(findRelatedWords);
-      }
-    },
-    [totalKeywords],
-  );
-
   const excludeSelectedKeywords = useCallback(
     (keywords: KeyTitle[]) => {
       return keywords.filter((keyword) => {
@@ -121,6 +62,12 @@ export default function EditKeywordFiltersTopSheet({
     },
     [curKeywords],
   );
+
+  useEffect(() => {
+    if (state) {
+      setIsTopSheetDown(true);
+    }
+  }, [state]);
 
   return (
     <Modal state={state} backgroundColor="rgba(0,0,0,0.1)" outClickAction={closeTopSheet}>
@@ -166,24 +113,22 @@ export default function EditKeywordFiltersTopSheet({
             </HorizontalScroll>
           </KeywordSelectedWrapper>
           <TopSheetKeywordWrapper>
-            <>
-              {excludeSelectedKeywords(searchWord != '' ? relatedKeywords : totalKeywords).map(
-                (keyword, index) => {
-                  return (
-                    <Keyword
-                      key={keyword.id + `${index}`}
-                      $state={false}
-                      onClick={() => {
-                        addKeyword(keyword);
-                      }}
-                    >
-                      {keyword.keyword}
-                    </Keyword>
-                  );
-                },
-              )}
-            </>
-            {searchWord != '' && relatedKeywords.length === 0 && (
+            {excludeSelectedKeywords(searchWord != '' ? relatedKeywords : totalKeywords).map(
+              (keyword, index) => {
+                return (
+                  <Keyword
+                    key={keyword.id + `${index}`}
+                    $state={false}
+                    onClick={() => {
+                      addKeyword(keyword);
+                    }}
+                  >
+                    {keyword.keyword}
+                  </Keyword>
+                );
+              },
+            )}
+            <IsShow state={searchWord != '' && relatedKeywords.length === 0}>
               <>
                 <Text>이런 키워드는 어때요?</Text>
                 {excludeSelectedKeywords(randomKeywords).map((keyword, index) => {
@@ -200,7 +145,7 @@ export default function EditKeywordFiltersTopSheet({
                   );
                 })}
               </>
-            )}
+            </IsShow>
           </TopSheetKeywordWrapper>
         </TopSheetBody>
         <TopSheetFooter>

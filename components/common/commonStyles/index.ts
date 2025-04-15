@@ -38,7 +38,7 @@ export const CommonTagBox = styled.div`
   color: 'rgb(120, 120, 120)';
   margin: 0;
   padding: 2px 8px;
-  background-color: '#f1f2f5';
+  background-color: #f1f2f5;
   border: 1px solid #f1f2f5;
   border-color: '#f1f2f5';
   border-radius: 20px;
