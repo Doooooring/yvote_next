@@ -20,7 +20,7 @@ export default function useKeywordsSelected(keywordsSelected: KeyTitle[]) {
 
   useEffect(() => {
     setCurKeywords(keywordsSelected);
-  }, [keywordsSelected]);
+  }, [keywordsSelected, setCurKeywords]);
 
   return {
     curKeywords,

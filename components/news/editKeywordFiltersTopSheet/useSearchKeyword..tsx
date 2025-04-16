@@ -9,8 +9,9 @@ export default function useSearchKeyword(totalKeywords: KeyTitle[]) {
   const totalsFormatted = useMemo(() => {
     const wordMap = {} as { [key: string]: KeyTitle };
     const keywordFormatted = totalKeywords.map((keyword) => {
-      wordMap[keyword.keyword] = keyword;
-      return formatWord(keyword.keyword);
+      const formatted = formatWord(keyword.keyword);
+      wordMap[formatted] = keyword;
+      return formatted;
     });
 
     return {
@@ -41,7 +42,7 @@ export default function useSearchKeyword(totalKeywords: KeyTitle[]) {
         setRelatedWords(findRelatedWords);
       }
     },
-    [totalsFormatted, totalKeywords],
+    [totalsFormatted],
   );
 
   return {

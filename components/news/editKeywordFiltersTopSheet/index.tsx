@@ -11,11 +11,9 @@ import { KeyTitle } from '@utils/interface/keywords';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getConstantVowel } from '../../../utils/tools';
-import { formatWord, searchWordIncluded } from '../../../utils/tools/korean';
-import useSearchKeyword from './useSearchKeyword.';
-import useKeywordsSelected from './useKeywordsSelected';
 import IsShow from '../../common/isShow';
+import useKeywordsSelected from './useKeywordsSelected';
+import useSearchKeyword from './useSearchKeyword.';
 
 interface EditKeywordFiltersTopSheetProps {
   state: boolean;
@@ -35,9 +33,9 @@ export default function EditKeywordFiltersTopSheet({
   saveKeywordFilteres,
 }: EditKeywordFiltersTopSheetProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const [isTopSheetDown, setIsTopSheetDown] = useState(false);
   const { searchWord, relatedKeywords, handleSearchBoxChange } = useSearchKeyword(totalKeywords);
   const { curKeywords, addKeyword, dropKeyword } = useKeywordsSelected(keywordsToEdit);
-  const [isTopSheetDown, setIsTopSheetDown] = useState(false);
 
   const closeTopSheet = useCallback(() => {
     setIsTopSheetDown(false);
