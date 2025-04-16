@@ -61,7 +61,7 @@ const dummyPreview3: Preview = {
 const dummyPreview4: Preview = {
   id: 999,
   order: 1,
-  title: '고발사주 검사(손준성) 탄핵소추안 (헌법재판소 심리 중)',
+  title: '고발사주 검사(손준성) 탄핵소추안(헌법재판소 심리 중)',
   subTitle: 'Dummy Subtitle',
   summary: 'This is a dummy news summary for testing purposes.',
   date: new Date('2025-03-31'),
