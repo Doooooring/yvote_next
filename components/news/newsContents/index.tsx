@@ -52,6 +52,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     "summary[3]",
     "summary[4]",
     "summary[5]",
+    "summary[6]",
   ];
   const dummybuttonImages = [
     '/assets/img/와이보트.png',
@@ -60,6 +61,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     '/assets/img/대통령실.png',
     '/assets/img/행정부.png',
     '/assets/img/헌법재판소.png',
+    '/assets/img/기타.png',
   ]; // 순서는 기존 논평 순서, 자료 'or' 본문 있는 것만
 
   const commentToShow = useMemo(() => {
@@ -68,7 +70,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
 
   return (
     <Wrapper>
-      <TabWrapper state={isLeft} className="fa-flex">
+      {/* <TabWrapper state={isLeft} className="fa-flex">
         <span
           onClick={(e) => {
             isLeft ? hide() : showLeft();
@@ -79,7 +81,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
         <span onClick={showRight} className="show-next">
           다음
         </span>
-      </TabWrapper>
+      </TabWrapper> */}
       <Body>
         <BodyLeft state={isLeft}>
           <div className="contents-body">
@@ -106,6 +108,25 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
+                <TimelineWrapper className="timeline_wrapper">
+                  <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
+                  {timeline.map((timeline, idx) => {
+                    return (
+                      <div className="timeline">
+                        <div className="timeline_sentence">
+                          <p className="timeline_date">
+                            {timeline.date ? getDotDateForm(timeline.date) : ''}
+                          </p>
+                          <div className="timeline_body">
+                            {timeline.title.split('$').map((title, idx) => {
+                              return <p key={idx}>{title}</p>;
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </TimelineWrapper>
                 <SummaryButtons>
                   {dummySummaries.map((_, index) => (
                     <SummaryButton
@@ -119,26 +140,33 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 <div className="writer"
                   dangerouslySetInnerHTML={{ __html: dummySummaries[activeSummary] }}
                 />
-              </div>
-              <div className="keyword-wrapper content">
-                {keywords?.map(({ id, keyword }) => {
-                  return (
-                    <p
-                      className="keyword"
-                      key={keyword}
-                      onClick={() => {
-                        router.push(`/keywords/${id}`);
-                      }}
-                    >
-                      {`# ${keyword}`}
-                    </p>
-                  );
-                })}
+                <div className="keyword-wrapper content">
+                  {keywords?.map(({ id, keyword }) => {
+                    return (
+                      <p
+                        className="keyword"
+                        key={keyword}
+                        onClick={() => {
+                          router.push(`/keywords/${id}`);
+                        }}
+                      >
+                        {`# ${keyword}`}
+                      </p>
+                    );
+                  })}
+                </div>
+                <VoteBox
+                  id={id}
+                  state={state}
+                  opinions={{ left: opinionLeft, right: opinionRight }}
+                  votes={votes}
+                  voteHistory={voteHistory}
+                />  
               </div>
             </div>
           </div>
         </BodyLeft>
-        <BodyRight state={!isLeft}>
+        {/* <BodyRight state={!isLeft}>
           <CommentWrapper>
             <CommentHeader>관련 자료 체크하기</CommentHeader>
             <CommentBody>
@@ -203,7 +231,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
             votes={votes}
             voteHistory={voteHistory}
           />
-        </BodyRight>
+        </BodyRight> */}
       </Body>
       <CommentModal id={id} />
     </Wrapper>
@@ -474,6 +502,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
       .keyword-wrapper {
         line-height: 1;
+        padding : 20px 0 40px;
         .keyword {
           display: inline-block;
           text-decoration: none;
@@ -488,10 +517,6 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           background-color: #f1f2f5;
           border-radius: 4px;
           cursor: pointer;
-        }
-        @media screen and (max-width: 1146px) {
-          padding-left: 0.8rem;
-          padding-right: 0.8rem;
         }
       }
     }
@@ -632,31 +657,31 @@ const TimelineWrapper = styled(CommonLayoutBox)`
     font-weight: 400;
     align-items: start;
 
-    .timeline_date {
-      color: black;
-    }
-
     div.timeline_sentence {
       display: flex;
       flex-direction: row;
       gap: 8px;
+    .timeline_date {
+      color: black;
+      flex-shrink: 0;
+    }
     }
   }
 `;
 
 const SummaryButtons = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 8px;
 `;
 
 const SummaryButton = styled.button<{ active: boolean; image: string }>`
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: ${({ active, theme }) => (active ? `2px solid ${theme.colors.yvote04}` : `2px solid ${theme.colors.gray400}`)};
+  border: ${({ active, theme }) => (active ? `2px solid ${theme.colors.gray700}` : `2px solid ${theme.colors.gray400}`)};
   background-color: transparent;
   background-image: url(${({ image }) => image});
-  background-size: 24px 24px;
+  background-size: 20px 20px;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
