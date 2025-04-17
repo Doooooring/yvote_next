@@ -44,7 +44,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const { openCommentModal } = currentStore;
 
   const [isLeft, showLeft, showRight] = useBool(true);
-  const [activeSummary, setActiveSummary] = useState(0);
+  const [activeWriter, setActiveWriter] = useState(0);
   const dummySummaries = [
     summary,
     'summary[1]',
@@ -132,9 +132,9 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   {commentToShow?.map((comment, index) => (
                     <SummaryButton
                       key={index}
-                      active={index === activeSummary}
+                      active={index === activeWriter}
                       image={`/assets/img/${comment}.png`}
-                      onClick={() => setActiveSummary(index)}
+                      onClick={() => setActiveWriter(index)}
                     />
                   ))}
                 </SummaryButtons>
@@ -144,7 +144,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     <div
                       className="comment_box_footer_text"
                       onClick={() => {
-                        openCommentModal(commentToShow[activeSummary]);
+                        openCommentModal(commentToShow[activeWriter]);
                       }}
                     >
                       자료 보기
@@ -153,7 +153,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 </CommentBox>
                 <div
                   className="writer"
-                  dangerouslySetInnerHTML={{ __html: dummySummaries[activeSummary] }}
+                  dangerouslySetInnerHTML={{ __html: dummySummaries[activeWriter] }}
                 />
                 <div className="keyword-wrapper content">
                   {keywords?.map(({ id, keyword }) => {
