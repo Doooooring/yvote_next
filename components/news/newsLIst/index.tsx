@@ -45,7 +45,6 @@ const dummyPreview2: Preview = {
   state: true,
 };
 
-
 const dummyPreview3: Preview = {
   id: 999,
   order: 1,
@@ -94,6 +93,18 @@ const dummyPreview6: Preview = {
   state: true,
 };
 
+const dummyPreview7: Preview = {
+  id: 999,
+  order: 1,
+  title: '조지호 경찰청장 탄핵소추안',
+  subTitle: 'Dummy Subtitle',
+  summary: 'This is a dummy news summary for testing purposes.',
+  date: new Date('2025-03-31'),
+  keywords: [],
+  newsImage: '',
+  state: true,
+};
+
 export default function NewsList({
   page,
   previews,
@@ -125,6 +136,7 @@ export default function NewsList({
         <PreviewBox2 preview={dummyPreview4}></PreviewBox2>
         <PreviewBox2 preview={dummyPreview5}></PreviewBox2>
         <PreviewBox2 preview={dummyPreview6}></PreviewBox2>
+        <PreviewBox2 preview={dummyPreview7}></PreviewBox2>
         <Virtuoso
           style={{
             width: '100%',

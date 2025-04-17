@@ -47,12 +47,12 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const [activeSummary, setActiveSummary] = useState(0);
   const dummySummaries = [
     summary,
-    "summary[1]",
-    "summary[2]",
-    "summary[3]",
-    "summary[4]",
-    "summary[5]",
-    "summary[6]",
+    'summary[1]',
+    'summary[2]',
+    'summary[3]',
+    'summary[4]',
+    'summary[5]',
+    'summary[6]',
   ];
   const dummybuttonImages = [
     '/assets/img/와이보트.png',
@@ -108,6 +108,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
                   </span>
                 </h1>
+
                 <TimelineWrapper className="timeline_wrapper">
                   <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
                   {timeline.map((timeline, idx) => {
@@ -128,16 +129,30 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   })}
                 </TimelineWrapper>
                 <SummaryButtons>
-                  {dummySummaries.map((_, index) => (
+                  {commentToShow?.map((comment, index) => (
                     <SummaryButton
                       key={index}
                       active={index === activeSummary}
-                      image={dummybuttonImages[index]}
+                      image={`/assets/img/${comment}.png`}
                       onClick={() => setActiveSummary(index)}
                     />
                   ))}
                 </SummaryButtons>
-                <div className="writer"
+
+                <CommentBox>
+                  <div className="comment_box_footer">
+                    <div
+                      className="comment_box_footer_text"
+                      onClick={() => {
+                        openCommentModal(commentToShow[activeSummary]);
+                      }}
+                    >
+                      자료 보기
+                    </div>
+                  </div>
+                </CommentBox>
+                <div
+                  className="writer"
                   dangerouslySetInnerHTML={{ __html: dummySummaries[activeSummary] }}
                 />
                 <div className="keyword-wrapper content">
@@ -161,7 +176,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                   opinions={{ left: opinionLeft, right: opinionRight }}
                   votes={votes}
                   voteHistory={voteHistory}
-                />  
+                />
               </div>
             </div>
           </div>
@@ -502,7 +517,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
 
       .keyword-wrapper {
         line-height: 1;
-        padding : 20px 0 40px;
+        padding: 20px 0 40px;
         .keyword {
           display: inline-block;
           text-decoration: none;
@@ -616,9 +631,7 @@ const CommentBox = styled.div`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-
     background-color: white;
-
     padding: 0.5rem;
 
     .comment_box_footer_text {
@@ -661,10 +674,10 @@ const TimelineWrapper = styled(CommonLayoutBox)`
       display: flex;
       flex-direction: row;
       gap: 8px;
-    .timeline_date {
-      color: black;
-      flex-shrink: 0;
-    }
+      .timeline_date {
+        color: black;
+        flex-shrink: 0;
+      }
     }
   }
 `;
@@ -678,7 +691,8 @@ const SummaryButton = styled.button<{ active: boolean; image: string }>`
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: ${({ active, theme }) => (active ? `2px solid ${theme.colors.gray700}` : `2px solid ${theme.colors.gray400}`)};
+  border: ${({ active, theme }) =>
+    active ? `2px solid ${theme.colors.gray700}` : `2px solid ${theme.colors.gray400}`};
   background-color: transparent;
   background-image: url(${({ image }) => image});
   background-size: 20px 20px;
