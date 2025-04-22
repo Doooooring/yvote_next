@@ -313,7 +313,7 @@ const Wrapper = styled.div`
 
     -webkit-text-size-adjust: none;
     width: 70%;
-    max-width: 1300px;
+    max-width: 1000px;
     min-width: 800px;
     color: #666;
     text-align: center;
