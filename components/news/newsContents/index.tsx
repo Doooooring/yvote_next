@@ -432,6 +432,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         display: inline-block;
         padding-right: 1.5rem;
         padding-bottom: 1.5rem;
+        width: 100%;
         font-size: 16px;
         line-height: 1.8;
         color: rgb(30, 30, 30);
@@ -601,7 +602,7 @@ const CommentBox = styled.div`
 
   display: flex;
   flex-direction: column;
-
+  margin-top: 16px;
   border: 1.5px solid rgb(240, 240, 240);
   border-radius: 12px;
   overflow: hidden;
@@ -661,7 +662,6 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   padding: 1rem;
   margin-bottom: 1rem;
   color: #717171;
-
   .timeline {
     display: flex;
     padding-bottom: 0.4rem;
