@@ -1,8 +1,14 @@
 import KeywordsRepository from '@repositories/keywords';
 import { KeyTitle } from '@utils/interface/keywords';
+import { getRenderingEnvironment } from '@utils/tools';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from '../useRouter';
+
+const CUSTOM_KEYWORDS_KEY = 'CUSTOM_KEYWORDS';
 
 export default function useNewsKeywordFilter() {
+  const { router } = useRouter();
+
   const [keywordSelected, setKeywordSelected] = useState<KeyTitle | null>(null);
   const [customKeywords, setCustomKeywords] = useState<KeyTitle[]>([]);
   const [randomKeywords, setRandomKeywords] = useState<KeyTitle[]>([]);
@@ -48,6 +54,39 @@ export default function useNewsKeywordFilter() {
     }
     async();
   }, [getRandomKeywords, setRandomKeywords, setTotalKeywords]);
+
+  useEffect(() => {
+    if (getRenderingEnvironment() === 'server') return;
+
+    console.log('================');
+    console.log(localStorage);
+    console.log(window);
+
+    const saveCustomKeywords = () => {
+      if (customKeywords.length > 0) {
+        window.localStorage.setItem(CUSTOM_KEYWORDS_KEY, JSON.stringify(customKeywords));
+      } else {
+        window.localStorage.removeItem(CUSTOM_KEYWORDS_KEY);
+      }
+    };
+
+    router.events.on('routeChangeStart', saveCustomKeywords);
+
+    return () => {
+      router.events.off('routeChangeStart', saveCustomKeywords);
+    };
+  }, [customKeywords, setCustomKeywords]);
+
+  useEffect(() => {
+    const getCustomKeywords = () => {
+      const keywords = window.localStorage.getItem(CUSTOM_KEYWORDS_KEY);
+      if (keywords) {
+        setCustomKeywords(JSON.parse(keywords));
+      }
+    };
+
+    getCustomKeywords();
+  }, [setCustomKeywords]);
 
   const reload = useCallback(() => {
     const arr = getRandomKeywords(totalKeywords, 20);
