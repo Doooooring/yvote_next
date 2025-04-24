@@ -52,8 +52,8 @@ class CommonErrorBoundary extends Component<CommonErrorBoundaryProps, CommonErro
 export default CommonErrorBoundary;
 
 const Wrapper = styled(Column)`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 
   justify-content: center;
   align-items: center;

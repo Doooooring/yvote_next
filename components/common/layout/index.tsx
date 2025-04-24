@@ -5,9 +5,9 @@ import Header from '@components/common/header';
 import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
-import CommonErrorBoundary from '../commonErrorBounbdary/iindex';
-import LoadingIndicator from './loadingIndicator';
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
+import CommonErrorBoundary from '../commonErrorBounbdary/index';
+import LoadingIndicator from './loadingIndicator';
 import RouteLoading from './routeLoading';
 
 const Layout = ({ children }: { children: ReactNode }) => {
