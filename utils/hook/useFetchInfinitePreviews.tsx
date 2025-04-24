@@ -69,33 +69,39 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
     [setIsRequesting, setIsFetchingImages, setPreviews],
   );
 
-  const fetchInitialPreviews = async (option?: { filter?: string | null; limit?: number }) => {
-    const { filter = null, limit: l = defaultLimit } = option ?? {};
+  const fetchInitialPreviews = useCallback(
+    async (option?: { filter?: string | null; limit?: number }) => {
+      const { filter = null, limit: l = defaultLimit } = option ?? {};
 
-    prevFilter.current = filter;
-    page.current = 0;
-    limit.current = l;
+      prevFilter.current = filter;
+      page.current = 0;
+      limit.current = l;
 
-    return await fetchPreviews(true, {
-      page: page.current,
-      limit: limit.current,
-      filter: prevFilter.current ?? '',
-      isAdmin,
-    });
-  };
+      return await fetchPreviews(true, {
+        page: page.current,
+        limit: limit.current,
+        filter: prevFilter.current ?? '',
+        isAdmin,
+      });
+    },
+    [fetchPreviews],
+  );
 
-  const fetchNextPreviews = async (nextLimit?: number) => {
-    let arr = previews;
-    if (page.current === -1) return false;
-    if (nextLimit) limit.current = nextLimit;
+  const fetchNextPreviews = useCallback(
+    async (nextLimit?: number) => {
+      let arr = previews;
+      if (page.current === -1) return false;
+      if (nextLimit) limit.current = nextLimit;
 
-    return await fetchPreviews(false, {
-      page: page.current,
-      limit: limit.current,
-      filter: prevFilter.current ?? '',
-      isAdmin,
-    });
-  };
+      return await fetchPreviews(false, {
+        page: page.current,
+        limit: limit.current,
+        filter: prevFilter.current ?? '',
+        isAdmin,
+      });
+    },
+    [fetchPreviews],
+  );
 
   const getCurrentMetadata = useCallback(() => {
     return {
