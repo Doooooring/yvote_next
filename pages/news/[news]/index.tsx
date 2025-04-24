@@ -103,8 +103,8 @@ const Wrapper = styled.div`
   -ms-overflow-style: none;
   scrollbar-width: none;
   .main-contents {
-    width: 70%;
-    min-width: 800px;
+    width: 50%;
+    min-width: 600px;
     @media screen and (max-width: 768px) {
       width: 98%;
       min-width: 0px;
