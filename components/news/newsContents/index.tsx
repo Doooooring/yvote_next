@@ -128,29 +128,33 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     );
                   })}
                 </TimelineWrapper>
-                <SummaryButtons>
-                  {commentToShow?.map((comment, index) => (
-                    <SummaryButton
-                      key={index}
-                      active={index === activeWriter}
-                      image={`/assets/img/${comment}.png`}
-                      onClick={() => setActiveWriter(index)}
-                    />
-                  ))}
-                </SummaryButtons>
-
-                <CommentBox>
-                  <div className="comment_box_footer">
-                    <div
-                      className="comment_box_footer_text"
-                      onClick={() => {
-                        openCommentModal(commentToShow[activeWriter]);
-                      }}
-                    >
-                      자료 보기
+                <SelectionContainer>
+                  <SummaryButtons>
+                    {commentToShow?.map((comment, index) => (
+                      <SummaryButton
+                        key={index}
+                        active={index === activeWriter}
+                        image={`/assets/img/${comment}.png`}
+                        onClick={() => setActiveWriter(index)}
+                      />
+                    ))}
+                  </SummaryButtons>
+                  <CommentBox>
+                    <div className="comment_box_footer">
+                      <div className="selected_comment">
+                        <small>{commentToShow[activeWriter]}</small>
+                      </div>
+                      <div
+                        className="comment_box_footer_text"
+                        onClick={() => {
+                          openCommentModal(commentToShow[activeWriter]);
+                        }}
+                      >
+                        자료 보기
+                      </div>
                     </div>
-                  </div>
-                </CommentBox>
+                  </CommentBox>
+                </SelectionContainer>
                 <div
                   className="writer"
                   dangerouslySetInnerHTML={{ __html: dummySummaries[activeWriter] }}
@@ -598,57 +602,37 @@ const CommentBody = styled(HorizontalScroll)``;
 
 const CommentBox = styled.div`
   flex: 0 0 auto;
-
   display: flex;
-  flex-direction: column;
-
-  border: 1.5px solid rgb(240, 240, 240);
-  border-radius: 12px;
+  margin-top: 10px;
+  border: 1px solid rgb(240, 240, 240);
+  border-radius: 8px;
   overflow: hidden;
-
-  .comment_box_header {
-    width: 100%;
-    padding: 1rem 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 1px solid rgb(225, 225, 225);
-  }
-
-  .img-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 60px;
-    height: 60px;
-    background-color: white;
-    border-radius: 40px;
-  }
 
   .comment_box_footer {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    background-color: white;
-    padding: 0.5rem;
+    width: 100%;
+    padding: 10px 12px;
+
+    .selected_comment {
+      font-size: 14px;
+      color: rgb(80, 80, 80);
+    }
 
     .comment_box_footer_text {
       font-size: 12px;
       font-weight: 500;
       color: rgb(30, 30, 30);
-      padding: 0.25rem 1.5rem;
+      padding: 6px 12px;
       border: 1px solid rgb(225, 225, 225);
       border-radius: 6px;
+      background-color: white;
       cursor: pointer;
       transition: background-color 0.3s ease;
       &:hover {
         background-color: #f0f0f0;
-      }
-
-      &:hover {
-        color: rgb(50, 50, 50);
       }
     }
   }
@@ -701,4 +685,11 @@ const SummaryButton = styled.button<{ active: boolean; image: string }>`
   cursor: pointer;
   outline: none;
   box-sizing: border-box;
+`;
+
+const SelectionContainer = styled.div`
+  background-color: ${({ theme }) => theme.colors.gray50 || '#f9f9f9'};
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 20px;
 `;
