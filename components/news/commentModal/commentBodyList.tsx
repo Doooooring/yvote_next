@@ -44,29 +44,39 @@ const ModalList = styled.div`
 `;
 
 const BodyBlock = styled.div`
-  height: 60px;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  height: 64px;
+  padding-left: 8px;
+  padding-right: 8px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
   cursor: pointer;
   box-sizing: border-box;
   border-bottom: 1.5px solid #ddd;
-  span {
+  justify-content: space-between;
+  
+span:first-child {
+    flex: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 500;
     color: rgb(50, 50, 50);
+    line-height: 1.5;
+    margin-right: 10px;
+    align-self: center;
   }
+  
   .date {
     flex: 0 0 auto;
-    margin-left: 8px;
     font-size: 13px;
+    font-weight: 400;
     color: rgb(120, 120, 120);
+    align-self: center;
   }
 `;

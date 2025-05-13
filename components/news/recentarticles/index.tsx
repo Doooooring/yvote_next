@@ -3,39 +3,74 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
-import { Suspense, useRef } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
+const categories = ['전체', '행정부', '대통령실', '국민의힘', '더불어민주당', '헌법재판소', '기타'];
+
+interface SlideContentProps {
+  filteredArticles: any[];
+  numToShow: number;
+}
+
+function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
+  const [curView, onSlideLeft, onSlideRight] = useSlide();
+  
+  return (
+    <>
+      <LeftButton curView={curView} viewToLeft={onSlideLeft} />
+      <div className="grid-wrapper">
+        <GridContainer curView={curView}>
+          {filteredArticles
+            .slice(curView * numToShow, (curView + 1) * numToShow)
+            .map((article) => {
+              return <ArticleBox key={article.id} article={article} />;
+            })}
+        </GridContainer>
+      </div>
+      <RightButton
+        curView={curView}
+        viewToRight={onSlideRight}
+        lastPage={
+          filteredArticles.length > 0 ? Math.ceil(filteredArticles.length / numToShow) - 1 : 0
+        }
+      />
+    </>
+  );
+}
+
 function NewArticles() {
   const numToShow = useRef(5);
   const recentArticles = useRecentArticles();
+  const [activeCategory, setActiveCategory] = useState('전체');
 
-  const [curView, onSlideLeft, onSlideRight] = useSlide();
+  const filteredArticles = activeCategory === '전체' 
+  ? recentArticles 
+  : recentArticles.filter(article => article.commentType === activeCategory);
+
 
   return (
     <>
       <Header>
-        <h2 className="category-head">관련 자료 업데이트</h2>
-      </Header>
+        <CategoryNavigation>
+          {categories.map(category => (
+            <CategoryItem 
+              key={category} 
+              isActive={category === activeCategory}
+              onClick={() => setActiveCategory(category)}
+            >
+              {category}
+            </CategoryItem>
+          ))}
+        </CategoryNavigation>
+        </Header>
       <div className="body-wrapper">
-        <LeftButton curView={curView} viewToLeft={onSlideLeft} />
-        <div className="grid-wrapper">
-          <GridContainer curView={curView}>
-            {recentArticles
-              .slice(curView * numToShow.current, (curView + 1) * numToShow.current)
-              .map((article) => {
-                return <ArticleBox key={article.id} article={article} />;
-              })}
-          </GridContainer>
-        </div>
-        <RightButton
-          curView={curView}
-          viewToRight={onSlideRight}
-          lastPage={
-            recentArticles.length > 0 ? Math.ceil(recentArticles.length / numToShow.current) - 1 : 0
-          }
+        <SlideContent 
+          key={activeCategory}
+          filteredArticles={filteredArticles} 
+          numToShow={numToShow.current} 
         />
       </div>
     </>
@@ -57,19 +92,20 @@ const Wrapper = styled(CommonLayoutBox)`
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
-  padding: 15px 20px;
+  padding: 24px 30px;
   font: inherit;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 0 10px;
-  width: 100%;
-  height: 270px;
+  margin: 0 0 16px;
+  height: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  
   @media screen and (max-width: 768px) {
     width: 98%;
-    height: 220px;
-    padding: 15px 10px;
-    margin-left: auto;
-    margin-right: auto;
+    height: auto;
+    padding: 16px 16px;
+    margin: 0 auto 12px;
   }
 
   .body-wrapper {
@@ -79,10 +115,12 @@ const Wrapper = styled(CommonLayoutBox)`
     align-items: center;
     position: relative;
     width: 100%;
+    margin-top: 8px;
+    
     .grid-wrapper {
       width: 100%;
-      border: 0px solid black;
       overflow: hidden;
+      padding: 4px 0;
     }
   }
 `;
@@ -95,11 +133,42 @@ const Header = styled.div`
   height: 30px;
   text-align: left;
   margin-bottom: 10px;
-  .category-head {
-    display: inline;
-    color: ${({ theme }) => theme.colors.gray800};
-    font-weight: 700;
-    font-size: 1.1rem;
+`;
+
+const CategoryNavigation = styled.div`
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media screen and (max-width: 768px) {
+    gap: 12px;
+  }
+`;
+
+interface CategoryItemProps {
+  isActive: boolean;
+}
+
+const CategoryItem = styled.div<CategoryItemProps>`
+  cursor: pointer;
+  font-weight: ${props => props.isActive ? '600' : '400'};
+  color: ${props => props.isActive 
+    ? ({ theme }) => theme.colors.gray800 
+    : ({ theme }) => theme.colors.gray500};
+  font-size: 16px;
+  white-space: nowrap;
+  border-bottom: ${props => props.isActive ? '2px solid currentColor' : 'none'};
+  padding-bottom: 5px;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+  &:hover {
+    color: ${({ theme }) => theme.colors.gray700};
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 15px;
   }
 `;
 
