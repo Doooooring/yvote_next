@@ -3,18 +3,16 @@ import styled from 'styled-components';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
-import ImageFallback from '@components/common/imageFallback';
 import VoteBox from '@components/news/newsContents/voteBox';
 import icoNew from '@images/ico_new_2x.png';
-import currentStore from '@store/currentStore';
+import { useCommentModal } from '@utils/hook/news/useCommentModal';
 import { useBool } from '@utils/hook/useBool';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
+import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
 import { Suspense, useMemo, useState } from 'react';
-import { commentTypeColor } from '../../../utils/interface/news/commen';
-import CommentModal from '../commentModal/modal_newsDetailPage';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
@@ -31,6 +29,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     title,
     order,
     summary,
+    summaries,
     newsImage,
     keywords,
     state,
@@ -41,28 +40,10 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     votes,
   } = newsContent;
   const { router } = useRouter();
-  const { openCommentModal } = currentStore;
+  const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);
   const [activeWriter, setActiveWriter] = useState(0);
-  const dummySummaries = [
-    summary,
-    'summary[1]',
-    'summary[2]',
-    'summary[3]',
-    'summary[4]',
-    'summary[5]',
-    'summary[6]',
-  ];
-  const dummybuttonImages = [
-    '/assets/img/와이보트.png',
-    '/assets/img/국민의힘.png',
-    '/assets/img/더불어민주당.png',
-    '/assets/img/대통령실.png',
-    '/assets/img/행정부.png',
-    '/assets/img/헌법재판소.png',
-    '/assets/img/기타.png',
-  ]; // 순서는 기존 논평 순서, 자료 'or' 본문 있는 것만
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -70,18 +51,6 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
 
   return (
     <Wrapper>
-      {/* <TabWrapper state={isLeft} className="fa-flex">
-        <span
-          onClick={(e) => {
-            isLeft ? hide() : showLeft();
-          }}
-        >
-          뒤로
-        </span>
-        <span onClick={showRight} className="show-next">
-          다음
-        </span>
-      </TabWrapper> */}
       <Body>
         <BodyLeft state={isLeft}>
           <div className="contents-body">
@@ -130,11 +99,11 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 </TimelineWrapper>
                 <SelectionContainer>
                   <SummaryButtons>
-                    {commentToShow?.map((comment, index) => (
+                    {summaries.map((summary, index) => (
                       <SummaryButton
                         key={index}
                         active={index === activeWriter}
-                        image={`/assets/img/${comment}.png`}
+                        image={commentTypeImg(summary.commentType)}
                         onClick={() => setActiveWriter(index)}
                       />
                     ))}
@@ -147,7 +116,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                       <div
                         className="comment_box_footer_text"
                         onClick={() => {
-                          openCommentModal(commentToShow[activeWriter]);
+                          showCommentModal(id, commentToShow[activeWriter]);
                         }}
                       >
                         자료 보기
@@ -157,7 +126,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 </SelectionContainer>
                 <div
                   className="writer"
-                  dangerouslySetInnerHTML={{ __html: dummySummaries[activeWriter] }}
+                  dangerouslySetInnerHTML={{ __html: summaries[activeWriter].summary }}
                 />
                 <div className="keyword-wrapper content">
                   {keywords?.map(({ id, keyword }) => {
@@ -185,74 +154,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
             </div>
           </div>
         </BodyLeft>
-        {/* <BodyRight state={!isLeft}>
-          <CommentWrapper>
-            <CommentHeader>관련 자료 체크하기</CommentHeader>
-            <CommentBody>
-              <div className="comment_scroll_wrapper">
-                {commentToShow!.map((comment) => {
-                  return (
-                    <CommentBox>
-                      <div
-                        className="comment_box_header"
-                        style={{
-                          backgroundColor: commentTypeColor(comment),
-                        }}
-                      >
-                        <div className="img-wrapper">
-                          <ImageFallback
-                            src={`/assets/img/${comment}.png`}
-                            alt={comment}
-                            width={'30'}
-                            height={'30'}
-                          />
-                        </div>
-                      </div>
-                      <div className="comment_box_footer">
-                        <div
-                          className="comment_box_footer_text"
-                          onClick={() => {
-                            openCommentModal(comment);
-                          }}
-                        >
-                          자료 보기
-                        </div>
-                      </div>
-                    </CommentBox>
-                  );
-                })}
-              </div>
-            </CommentBody>
-          </CommentWrapper>
-          <TimelineWrapper className="timeline_wrapper">
-            <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
-            {timeline.map((timeline, idx) => {
-              return (
-                <div className="timeline">
-                  <div className="timeline_sentence">
-                    <p className="timeline_date">
-                      {timeline.date ? getDotDateForm(timeline.date) : ''}
-                    </p>
-                    <div className="timeline_body">
-                      {timeline.title.split('$').map((title, idx) => {
-                        return <p key={idx}>{title}</p>;
-                      })}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </TimelineWrapper>
-          <VoteBox
-            id={id}
-            state={state}
-            opinions={{ left: opinionLeft, right: opinionRight }}
-            votes={votes}
-            voteHistory={voteHistory}
-          />
-        </BodyRight> */}
       </Body>
-      <CommentModal id={id} />
     </Wrapper>
   );
 }

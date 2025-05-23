@@ -1,6 +1,6 @@
 import { CacheContainer } from '@container/cache';
 import NewsRepository from '@repositories/news';
-import { Preview } from '@utils/interface/news';
+import { NewsState, Preview } from '@utils/interface/news';
 import { fetchImg } from '@utils/tools/async';
 import { MutableRefObject, useCallback, useRef, useState } from 'react';
 
@@ -26,7 +26,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
         const datas: Array<Preview> = isAdmin
           ? await NewsRepository.getPreviewsAdmin(fetchPage, fetchLimit, filter)
-          : await NewsRepository.getPreviews(fetchPage, fetchLimit, filter);
+          : await NewsRepository.getPreviews(fetchPage, fetchLimit, filter, NewsState.Published);
 
         if (datas.length === 0) {
           page.current = -1;

@@ -1,24 +1,38 @@
 import { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
-interface PreviewBoxLayoutProps extends HTMLAttributes<HTMLDivElement> {
+interface PreviewBoxLayout_PublishedProps extends HTMLAttributes<HTMLDivElement> {
   imgView: ReactNode;
   headView: ReactNode;
   contentView: ReactNode;
 }
 
-export default function PreviewBoxLayout({
+export function PreviewBoxLayout_Published({
   imgView,
   headView,
   contentView,
   ...rest
-}: PreviewBoxLayoutProps) {
+}: PreviewBoxLayout_PublishedProps) {
   return (
     <Wrapper {...rest}>
       <ImgWrapper>{imgView}</ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>
         <ContentWrapper>{contentView}</ContentWrapper>
+      </BodyWrapper>
+    </Wrapper>
+  );
+}
+
+interface PreviewBoxLayout_PendingProps extends HTMLAttributes<HTMLDivElement> {
+  bodyView: ReactNode;
+}
+
+export function PreviewBoxLayout_Pending({ bodyView, ...rest }: PreviewBoxLayout_PendingProps) {
+  return (
+    <Wrapper {...rest}>
+      <BodyWrapper>
+        <HeadWrapper>{bodyView}</HeadWrapper>
       </BodyWrapper>
     </Wrapper>
   );

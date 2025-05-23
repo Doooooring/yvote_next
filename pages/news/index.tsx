@@ -12,6 +12,7 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
+import SuspensePreNewsList from '@components/news/preNewsList';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
 import { useDevice } from '@utils/hook/useDevice';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
@@ -82,6 +83,7 @@ export default function NewsPage(props: pageProps) {
         }, 100);
         await fetchNextPreviews(limit);
       } catch (e) {
+        console.log(e);
       } finally {
         setIsGlobalLoading(false);
       }
@@ -144,6 +146,7 @@ export default function NewsPage(props: pageProps) {
       if (filter) setKeyCached(filter);
       setCachedPreviews(page, limit, filter, scroll);
     } else {
+      console.log('is here');
       fetchPreviews({ limit: 16 });
     }
 
@@ -181,7 +184,6 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-
         <KeywordHeadTab
           keywords={keywordsToShow}
           setKeywords={setCustomKeywords}
@@ -193,6 +195,7 @@ export default function NewsPage(props: pageProps) {
         />
         <div className="main-contents">
           <div className="main-contents-body">
+            <SuspensePreNewsList />
             <NewsList
               page={page}
               previews={previews.length == 0 ? props.data : previews}
@@ -341,9 +344,7 @@ const Wrapper = styled.div`
     text-align: center;
     margin: 0;
     padding: 0;
-
     border: 0;
-
     font: inherit;
     vertical-align: baseline;
     position: relative;

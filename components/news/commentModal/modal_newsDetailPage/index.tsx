@@ -1,14 +1,12 @@
 import LoadingCommon from '@components/common/loading';
-import Modal from '@components/common/modal';
-import indexStore from '@store/indexStore';
 
 import IsShow from '@components/common/isShow';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { Comment } from '@utils/interface/news';
-import { observer } from 'mobx-react';
-import { useCallback } from 'react';
+import { Comment, commentType } from '@utils/interface/news';
+import { ReactNode, useCallback } from 'react';
 import styled from 'styled-components';
+import { CommonModalBackground, TextButton } from '../../../common/commonStyles';
 import CommentBodyExplain from '../commentBodyExplain';
 import CommentBodyList from '../commentBodyList';
 import CommentHead from '../commentHead';
@@ -20,15 +18,21 @@ import {
 } from '../commentModal.hook';
 import CommentProgressBar from '../commentProgressBar';
 import { ScrollWrapper } from '../figure';
-import { TextButton } from '../../../common/commonStyles';
 import ModalLayout from '../modal.layout';
 
-const CommentModal = observer(({ id }: { id: number }) => {
+export function CommentModal({
+  id,
+  commentType,
+  close,
+}: {
+  id: number;
+  commentType: commentType;
+  close: () => void;
+}) {
   const { show: showCommentEndMessage } = useToastMessage();
-  const { isCommentModalUp, curComment: comment, closeCommentModal } = indexStore.currentStore;
   const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
-    comment,
+    commentType,
   );
 
   const { curComment, showCurComment, closeCurComment } = useCurComment();
@@ -80,78 +84,83 @@ const CommentModal = observer(({ id }: { id: number }) => {
     reloadScrollHeight();
   }, [closeCurComment, reloadScrollHeight]);
 
-  const close = useCallback(() => {
+  const onClose = useCallback(() => {
     closeCurComment();
-    closeCommentModal();
-  }, [closeCommentModal, closeCurComment]);
+    close();
+  }, [close, closeCurComment]);
 
   return (
-    <Modal
-      state={isCommentModalUp}
-      outClickAction={() => {
-        close();
+    <_ModalWrapper close={onClose}>
+      <ModalLayout
+        close={close}
+        headView={<CommentHead comment={commentType} />}
+        bodyView={
+          <>
+            <ScrollWrapper ref={targetRef} className="common-scroll-style">
+              {curComment === null ? (
+                <CommentBodyList comments={curComments} clickComment={clickComment} />
+              ) : (
+                <>
+                  <CommentProgressBar
+                    scrollHeight={scrollHeight}
+                    maxScrollHeight={maxScrollHeight}
+                    moveToScrollHeight={moveToScrollHeight}
+                  />
+                  <CommentBodyExplain
+                    id={id}
+                    title={curComment.title}
+                    explain={curComment.comment}
+                    date={curComment.date}
+                  />
+                </>
+              )}
+            </ScrollWrapper>
+            <IsShow state={isRequesting}>
+              <LoadingWrapper>
+                <LoadingCommon comment="" fontColor="black" />
+              </LoadingWrapper>
+            </IsShow>
+          </>
+        }
+        footerView={
+          curComment === null ? (
+            <>
+              <TextButton
+                style={{ display: page != 0 ? 'block' : 'none' }}
+                onClick={clickLeftButton}
+              >
+                이전
+              </TextButton>
+              <TextButton onClick={clickRightButton}>다음</TextButton>
+            </>
+          ) : (
+            <TextButton
+              onClick={() => {
+                clickToListButton();
+              }}
+            >
+              목록으로
+            </TextButton>
+          )
+        }
+      />
+    </_ModalWrapper>
+  );
+}
+
+const _ModalWrapper = ({ close, children }: { close: () => void; children: ReactNode }) => {
+  return (
+    <CommonModalBackground
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          close();
+        }
       }}
     >
-      <IsShow state={comment != null}>
-        <ModalLayout
-          close={close}
-          headView={<CommentHead comment={comment!} />}
-          bodyView={
-            <>
-              <ScrollWrapper ref={targetRef} className="common-scroll-style">
-                {curComment === null ? (
-                  <CommentBodyList comments={curComments} clickComment={clickComment} />
-                ) : (
-                  <>
-                    <CommentProgressBar
-                      scrollHeight={scrollHeight}
-                      maxScrollHeight={maxScrollHeight}
-                      moveToScrollHeight={moveToScrollHeight}
-                    />
-                    <CommentBodyExplain
-                      id={id}
-                      title={curComment.title}
-                      explain={curComment.comment}
-                      date={curComment.date}
-                    />
-                  </>
-                )}
-              </ScrollWrapper>
-              <IsShow state={isRequesting}>
-                <LoadingWrapper>
-                  <LoadingCommon comment="" fontColor="black" />
-                </LoadingWrapper>
-              </IsShow>
-            </>
-          }
-          footerView={
-            curComment === null ? (
-              <>
-                <TextButton
-                  style={{ display: page != 0 ? 'block' : 'none' }}
-                  onClick={clickLeftButton}
-                >
-                  이전
-                </TextButton>
-                <TextButton onClick={clickRightButton}>다음</TextButton>
-              </>
-            ) : (
-              <TextButton
-                onClick={() => {
-                  clickToListButton();
-                }}
-              >
-                목록으로
-              </TextButton>
-            )
-          }
-        />
-      </IsShow>
-    </Modal>
+      {children}
+    </CommonModalBackground>
   );
-});
-
-export default CommentModal;
+};
 
 const LoadingWrapper = styled.div`
   width: 100%;
