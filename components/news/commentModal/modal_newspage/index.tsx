@@ -1,12 +1,12 @@
 import Modal from '@components/common/modal';
 import { Link } from '@utils/hook/useRouter';
 import { commentType } from '@utils/interface/news';
+import { TextButton } from '../../../common/commonStyles';
 import CommentBodyExplain from '../commentBodyExplain';
 import CommentHead from '../commentHead';
 import { useListScrollheight, useScrollInfo } from '../commentModal.hook';
 import CommentProgressBar from '../commentProgressBar';
-import { TextButton } from '../../../common/commonStyles';
-import { ScrollWrapper } from '../figure';
+import { ModalBodyWrapper, ScrollWrapper } from '../figure';
 import ModalLayout from '../modal.layout';
 
 interface CommentModalProps {
@@ -33,25 +33,27 @@ export default function CommentModal({
 
   return (
     <Modal state={state} outClickAction={close}>
-      <ModalLayout
-        close={close}
-        headView={<CommentHead comment={commentType} />}
-        bodyView={
-          <ScrollWrapper ref={targetRef} className="common-scroll-style">
-            <CommentProgressBar
-              scrollHeight={scrollHeight}
-              maxScrollHeight={maxScrollHeight}
-              moveToScrollHeight={moveToScrollHeight}
-            />
-            <CommentBodyExplain id={newsId} title={title} explain={comment} date={date} />
-          </ScrollWrapper>
-        }
-        footerView={
-          <Link href={`/news/${newsId}`}>
-            <TextButton>뉴스보기</TextButton>
-          </Link>
-        }
-      />
+      <ModalBodyWrapper>
+        <ModalLayout
+          close={close}
+          headView={<CommentHead comment={commentType} />}
+          bodyView={
+            <ScrollWrapper ref={targetRef} className="common-scroll-style">
+              <CommentProgressBar
+                scrollHeight={scrollHeight}
+                maxScrollHeight={maxScrollHeight}
+                moveToScrollHeight={moveToScrollHeight}
+              />
+              <CommentBodyExplain id={newsId} title={title} explain={comment} date={date} />
+            </ScrollWrapper>
+          }
+          footerView={
+            <Link href={`/news/${newsId}`}>
+              <TextButton>뉴스보기</TextButton>
+            </Link>
+          }
+        />
+      </ModalBodyWrapper>
     </Modal>
   );
 }

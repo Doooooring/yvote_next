@@ -1,24 +1,9 @@
-import LoadingCommon from '@components/common/loading';
-
-import IsShow from '@components/common/isShow';
-import { PositiveMessageBox } from '@components/common/messageBox';
-import { useToastMessage } from '@utils/hook/useToastMessage';
-import { Comment, commentType } from '@utils/interface/news';
-import { ReactNode, useCallback } from 'react';
+import { commentType } from '@utils/interface/news';
+import { ReactNode } from 'react';
 import styled from 'styled-components';
-import { CommonModalBackground, TextButton } from '../../../common/commonStyles';
-import CommentBodyExplain from '../commentBodyExplain';
-import CommentBodyList from '../commentBodyList';
-import CommentHead from '../commentHead';
-import {
-  useCurComment,
-  useFetchNewsComment,
-  useListScrollheight,
-  useScrollInfo,
-} from '../commentModal.hook';
-import CommentProgressBar from '../commentProgressBar';
-import { ScrollWrapper } from '../figure';
-import ModalLayout from '../modal.layout';
+import { CommonModalBackground } from '../../../common/commonStyles';
+import CommentBodyCommon from '../commentBodyCommon';
+import { ModalBodyWrapper } from '../figure';
 
 export function CommentModal({
   id,
@@ -29,121 +14,11 @@ export function CommentModal({
   commentType: commentType;
   close: () => void;
 }) {
-  const { show: showCommentEndMessage } = useToastMessage();
-  const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
-    id,
-    commentType,
-  );
-
-  const { curComment, showCurComment, closeCurComment } = useCurComment();
-
-  const {
-    target: targetRef,
-    saveScrollHeight,
-    moveToScrollHeight,
-    reloadScrollHeight,
-  } = useListScrollheight();
-
-  const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
-
-  const clickComment = useCallback(
-    (comment: Comment) => {
-      saveScrollHeight();
-      showCurComment(comment);
-      moveToScrollHeight(0);
-    },
-    [saveScrollHeight, showCurComment, moveToScrollHeight],
-  );
-
-  const clickLeftButton = useCallback(async () => {
-    await getPageBefore();
-    moveToScrollHeight(0);
-  }, [getPageBefore, moveToScrollHeight]);
-
-  const getPageAfterWithMessage = useCallback(async () => {
-    const response = await getPageAfter();
-    if (!response) {
-      showCommentEndMessage(
-        <PositiveMessageBox>
-          <p>준비된 평론들을 모두 확인했어요</p>
-        </PositiveMessageBox>,
-        2000,
-      );
-      return false;
-    }
-    return true;
-  }, [getPageAfter]);
-
-  const clickRightButton = useCallback(async () => {
-    const state = await getPageAfterWithMessage();
-    if (state) moveToScrollHeight(0);
-  }, [getPageAfterWithMessage, moveToScrollHeight]);
-
-  const clickToListButton = useCallback(() => {
-    closeCurComment();
-    reloadScrollHeight();
-  }, [closeCurComment, reloadScrollHeight]);
-
-  const onClose = useCallback(() => {
-    closeCurComment();
-    close();
-  }, [close, closeCurComment]);
-
   return (
-    <_ModalWrapper close={onClose}>
-      <ModalLayout
-        close={close}
-        headView={<CommentHead comment={commentType} />}
-        bodyView={
-          <>
-            <ScrollWrapper ref={targetRef} className="common-scroll-style">
-              {curComment === null ? (
-                <CommentBodyList comments={curComments} clickComment={clickComment} />
-              ) : (
-                <>
-                  <CommentProgressBar
-                    scrollHeight={scrollHeight}
-                    maxScrollHeight={maxScrollHeight}
-                    moveToScrollHeight={moveToScrollHeight}
-                  />
-                  <CommentBodyExplain
-                    id={id}
-                    title={curComment.title}
-                    explain={curComment.comment}
-                    date={curComment.date}
-                  />
-                </>
-              )}
-            </ScrollWrapper>
-            <IsShow state={isRequesting}>
-              <LoadingWrapper>
-                <LoadingCommon comment="" fontColor="black" />
-              </LoadingWrapper>
-            </IsShow>
-          </>
-        }
-        footerView={
-          curComment === null ? (
-            <>
-              <TextButton
-                style={{ display: page != 0 ? 'block' : 'none' }}
-                onClick={clickLeftButton}
-              >
-                이전
-              </TextButton>
-              <TextButton onClick={clickRightButton}>다음</TextButton>
-            </>
-          ) : (
-            <TextButton
-              onClick={() => {
-                clickToListButton();
-              }}
-            >
-              목록으로
-            </TextButton>
-          )
-        }
-      />
+    <_ModalWrapper close={close}>
+      <ModalBodyWrapper>
+        <CommentBodyCommon id={id} commentType={commentType} close={close} />
+      </ModalBodyWrapper>
     </_ModalWrapper>
   );
 }
@@ -162,11 +37,18 @@ const _ModalWrapper = ({ close, children }: { close: () => void; children: React
   );
 };
 
-const LoadingWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  backdrop-filter: blur(3px);
+const _ModalBodyWrapper = styled.div`
+  width: 60%;
+  min-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  @media screen and (max-width: 768px) {
+    width: 99%;
+    min-width: 0px;
+  }
 `;

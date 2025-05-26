@@ -12,7 +12,7 @@ export function Link({ href, children, onClick, ...others }: LinkProps) {
   const defaultOnClickHandler = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      
+
       if (onClick) {
         onClick(e);
         return;

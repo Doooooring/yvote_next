@@ -31,9 +31,7 @@ interface PreviewBoxLayout_PendingProps extends HTMLAttributes<HTMLDivElement> {
 export function PreviewBoxLayout_Pending({ bodyView, ...rest }: PreviewBoxLayout_PendingProps) {
   return (
     <Wrapper {...rest}>
-      <BodyWrapper>
-        <HeadWrapper>{bodyView}</HeadWrapper>
-      </BodyWrapper>
+      <HeadWrapper>{bodyView}</HeadWrapper>
     </Wrapper>
   );
 }

@@ -64,7 +64,6 @@ export default function NewsList({
                 preview={item}
                 img={item.newsImage}
                 click={showNewsContent}
-                openComments={(newsId, commentType) => {}}
               />
             );
           }}

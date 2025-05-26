@@ -1,15 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import styled from 'styled-components';
 
-import { SpeechBubble } from '@components/common/figure';
 import NewsList from '@components/news/newsLIst';
-import SearchBox from '@components/news/searchBox';
-import NewsRepository from '@repositories/news';
-import { Preview } from '@utils/interface/news';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
-import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { Preview } from '@utils/interface/news';
 
 type curPreviewsList = Preview[];
 
@@ -32,13 +28,9 @@ export default function NewsPage(props: pageProps) {
 
   return (
     <Wrapper>
-      <div className="search-wrapper">
-        <SearchBox page={page} fetchPreviews={fetchPreviews} />
-        {/* <SpeechBubble /> */}
-      </div>
       <div className="main-contents">
-        <div className="main-header-wrapper"></div>
         <div className="main-contents-body">
+          {/* <SuspensePreNewsList /> */}
           <NewsList
             page={page}
             previews={previews}
@@ -53,15 +45,27 @@ export default function NewsPage(props: pageProps) {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  -webkit-text-size-adjust: none;
+  color: #666;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Helvetica, sans-serif;
+  box-sizing: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   .search-wrapper {
     width: 70%;
     min-width: 800px;

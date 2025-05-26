@@ -8,7 +8,7 @@ import icoNew from '@images/ico_new_2x.png';
 import { useCommentModal } from '@utils/hook/news/useCommentModal';
 import { useBool } from '@utils/hook/useBool';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { NewsInView } from '@utils/interface/news';
+import { commentType, NewsInView } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
@@ -43,7 +43,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
   const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);
-  const [activeWriter, setActiveWriter] = useState(0);
+  const [activeWriter, setActiveWriter] = useState<commentType>(summaries[0].commentType);
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -102,21 +102,23 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                     {summaries.map((summary, index) => (
                       <SummaryButton
                         key={index}
-                        active={index === activeWriter}
+                        active={summary.commentType === activeWriter}
                         image={commentTypeImg(summary.commentType)}
-                        onClick={() => setActiveWriter(index)}
+                        onClick={() => {
+                          setActiveWriter(summary.commentType);
+                        }}
                       />
                     ))}
                   </SummaryButtons>
                   <CommentBox>
                     <div className="comment_box_footer">
                       <div className="selected_comment">
-                        <small>{commentToShow[activeWriter]}</small>
+                        <small>{activeWriter}</small>
                       </div>
                       <div
                         className="comment_box_footer_text"
                         onClick={() => {
-                          showCommentModal(id, commentToShow[activeWriter]);
+                          showCommentModal(id, activeWriter);
                         }}
                       >
                         자료 보기
@@ -126,7 +128,9 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 </SelectionContainer>
                 <div
                   className="writer"
-                  dangerouslySetInnerHTML={{ __html: summaries[activeWriter].summary }}
+                  dangerouslySetInnerHTML={{
+                    __html: summaries.filter((s) => s.commentType === activeWriter)[0].summary,
+                  }}
                 />
                 <div className="keyword-wrapper content">
                   {keywords?.map(({ id, keyword }) => {
@@ -579,7 +583,7 @@ const SummaryButton = styled.button<{ active: boolean; image: string }>`
   height: 34px;
   border-radius: 50%;
   border: ${({ active, theme }) =>
-    active ? `2px solid ${theme.colors.gray700}` : `2px solid ${theme.colors.gray400}`};
+    active ? `2px solid ${theme.colors.yvote02}` : `2px solid ${theme.colors.gray400}`};
   background-color: transparent;
   background-image: url(${({ image }) => image});
   background-size: 20px 20px;
