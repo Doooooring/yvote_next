@@ -42,9 +42,9 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
           <IsShow state={date != null}>
             <DateText>{useKoreanDateFormat(date)}</DateText>
           </IsShow>
-          <GrokButton onClick={fetchSummary} disabled={isLoading}>
+          {/* <GrokButton onClick={fetchSummary} disabled={isLoading}>
             {isLoading ? 'Loading...' : 'grok2'}
-          </GrokButton>
+          </GrokButton> */}
         </DateButtonWrapper>
       </ContentTitle>
       <ContentBody>

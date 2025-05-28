@@ -65,7 +65,6 @@ function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
           <PreviewBoxLayout_Pending
             bodyView={
               <>
-                <PendingHead>?</PendingHead>
                 <_NewsTitle title={title} />
                 <_CommentButtons
                   comments={comments}
@@ -138,7 +137,9 @@ const _CommentButtons = ({
           }}
         />
       ))}
-      <span style={{ fontSize: '12px' }}>{comments.length > 3 && `+${comments.length - 3}`}</span>
+      <span style={{ fontSize: '12px', marginLeft: '4px' }}>
+        {comments.length > 3 && `+${comments.length - 3}`}
+      </span>
     </SummaryButtons>
   );
 };

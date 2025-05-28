@@ -40,12 +40,14 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   };
 
   useEffect(() => {
-    if (comment === null) {
-      setCurComments([]);
+    setCurComments([]);
+
+    if (comment !== null) {
+      curPage.current = 0;
+      fetchNewsComment(0);
+
       return;
     }
-    curPage.current = 0;
-    fetchNewsComment(0);
   }, [comment]);
 
   return {
