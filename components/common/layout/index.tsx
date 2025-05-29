@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import Header from '@components/common/header';
 
+import { ModalProvider } from '@utils/hook/useModal';
 import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
@@ -16,13 +17,15 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <GlobalLoadingProvider>
         <RouteLoading />
         <ToastMessageProvider>
-          <Wrapper>
-            <Header />
-            <CommonErrorBoundary>
-              <Body>{children}</Body>
-            </CommonErrorBoundary>
-          </Wrapper>
-          <LoadingIndicator />
+          <ModalProvider>
+            <Wrapper>
+              <Header />
+              <CommonErrorBoundary>
+                <Body>{children}</Body>
+              </CommonErrorBoundary>
+            </Wrapper>
+            <LoadingIndicator />
+          </ModalProvider>
         </ToastMessageProvider>
       </GlobalLoadingProvider>
     </RouterProvider>

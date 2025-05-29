@@ -52,6 +52,30 @@ export interface Article {
   news: News;
 }
 
+export interface NewsSummary {
+  id?: number | null;
+  summary: string;
+  commentType: commentType;
+  newsId: number;
+}
+
+export enum NewsState {
+  Published = '0',
+  Pending = '1',
+  NotPublished = '2',
+}
+
+export const NewsStateKor = (state: NewsState) => {
+  switch (state) {
+    case NewsState.Published:
+      return '발행 완료';
+    case NewsState.Pending:
+      return '발행 대기';
+    case NewsState.NotPublished:
+      return '발행 전';
+  }
+};
+
 export interface Comment {
   id: number;
   order: number;
@@ -68,11 +92,12 @@ export interface News {
   title: string;
   subTitle: string;
   summary: string;
+  summaries: Array<NewsSummary>;
   date?: Date;
   keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;
-  state: boolean;
+  state: NewsState;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
@@ -93,4 +118,6 @@ export interface Preview
   extends Pick<
     News,
     'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state'
-  > {}
+  > {
+  comments: Array<commentType>;
+}

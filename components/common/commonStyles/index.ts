@@ -29,6 +29,19 @@ export const CommonLayoutBox = styled.div`
   box-shadow: 0 0 35px -30px;
 `;
 
+export const CommonModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 9999;
+  overscroll-behavior: none;
+  overscroll-behavior: contain;
+`;
+
 export const CommonTagBox = styled.div`
   box-sizing: border-box;
   display: inline-block;

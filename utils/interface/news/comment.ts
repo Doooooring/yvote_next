@@ -77,3 +77,24 @@ export const commentTypeColor = (type: commentType) => {
       return 'rgb(0,0,0)';
   }
 };
+
+export const commentTypeImg = (type: commentType) => {
+  switch (type) {
+    case commentType.더불어민주당:
+      return '/assets/img/더불어민주당.png';
+    case commentType.국민의힘:
+      return '/assets/img/국민의힘.png';
+    case commentType.대통령실:
+      return '/assets/img/대통령실.png';
+    case commentType.행정부:
+      return '/assets/img/행정부.png';
+    case commentType.헌법재판소:
+      return '/assets/img/헌법재판소.png';
+    case commentType.와이보트:
+      return '/assets/img/와이보트.png';
+    case commentType.기타:
+      return '/assets/img/기타.png';
+    default:
+      return '';
+  }
+};

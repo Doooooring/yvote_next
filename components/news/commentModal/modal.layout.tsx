@@ -35,21 +35,13 @@ export default function ModalLayout({
 const Wrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
-  width: 60%;
-  min-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
   padding: 1rem 2rem;
   flex: 0 0 auto;
   letter-spacing: -0.5px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  
 
   @media screen and (max-width: 768px) {
-    width: 99%;
-    min-width: 0px;
     padding: 1.5rem 1rem;
   }
 

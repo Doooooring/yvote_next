@@ -1,5 +1,13 @@
 import { HOST_URL } from '@url';
-import { Article, Comment, News, NewsInView, Preview, commentType } from '@utils/interface/news';
+import {
+  Article,
+  Comment,
+  News,
+  NewsInView,
+  NewsState,
+  Preview,
+  commentType,
+} from '@utils/interface/news';
 
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
 import axios from 'axios';
@@ -37,10 +45,16 @@ class NewsRepository {
     curNum: number,
     limit: number,
     keyword: string | null = '',
+    state: NewsState,
   ): Promise<Array<Preview>> {
-    const response: Response<Array<Preview>> = await axios.get(
-      `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${keyword ?? ''}`,
-    );
+    const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
+      params: {
+        offset: curNum,
+        limit: limit,
+        keyword: keyword ?? '',
+        state: state,
+      },
+    });
     const data = response.data;
     return data.result.map((news) => {
       const preview = clone(news);
@@ -63,7 +77,7 @@ class NewsRepository {
     const response: Response<Array<Preview>> = await axios.get(
       `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${
         keyword ?? ''
-      }&isAdmin=${true}`,
+      }&isAdmin==${true}`,
     );
     const data = response.data;
     return data.result.map((news) => {
@@ -115,7 +129,6 @@ class NewsRepository {
       return [] as Comment[];
     }
   }
-
 
   /**
    * 해당 뉴스에 투표 API
