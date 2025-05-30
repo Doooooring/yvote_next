@@ -3,11 +3,15 @@ import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { NewsInView } from '@utils/interface/news';
+import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import {
+  CommonErrorView,
+  ErrorHead,
+} from '../../../components/common/commonErrorBounbdary/commonErrorView';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -75,15 +79,21 @@ export default function NewsDetailPage({ data }: pageProps) {
   return (
     <>
       <HeadMeta {...metaTagsProps} />
-      <Wrapper>
-        <div className="main-contents">
-          <div className="main-contents-body">
-            <div className="news-contents-wrapper">
-              <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+      {news.state === NewsState.Published ? (
+        <Wrapper>
+          <div className="main-contents">
+            <div className="main-contents-body">
+              <div className="news-contents-wrapper">
+                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+              </div>
             </div>
           </div>
-        </div>
-      </Wrapper>
+        </Wrapper>
+      ) : (
+        <CommonErrorView>
+          <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
+        </CommonErrorView>
+      )}
     </>
   );
 }

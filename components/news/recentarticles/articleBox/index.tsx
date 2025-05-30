@@ -24,6 +24,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
   const openModal = useCallback(() => {
     setIsModalOpen(true);
   }, [setIsModalOpen]);
+
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, [setIsModalOpen]);

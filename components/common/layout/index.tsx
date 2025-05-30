@@ -7,9 +7,10 @@ import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
-import CommonErrorBoundary from '../commonErrorBounbdary/index';
+import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
 import LoadingIndicator from './loadingIndicator';
 import RouteLoading from './routeLoading';
+import { HeaderHeight } from '../../../utils/layout';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -20,9 +21,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
           <ModalProvider>
             <Wrapper>
               <Header />
-              <CommonErrorBoundary>
+              <GlobalErrorBoundary>
                 <Body>{children}</Body>
-              </CommonErrorBoundary>
+              </GlobalErrorBoundary>
             </Wrapper>
             <LoadingIndicator />
           </ModalProvider>
@@ -36,10 +37,12 @@ export default Layout;
 
 const Wrapper = styled.div`
   width: 100vw;
+  height: 100vh;
 `;
 
 const Body = styled.div`
   width: 100%;
+  height: calc(100% - ${HeaderHeight()})
 
   background-color: rgb(242, 242, 242);
 
