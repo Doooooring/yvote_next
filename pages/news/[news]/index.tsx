@@ -10,8 +10,10 @@ import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import {
   CommonErrorView,
+  ErrorComment,
   ErrorHead,
 } from '../../../components/common/commonErrorBounbdary/commonErrorView';
+import { Row, TextButton } from '../../../components/common/commonStyles';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -92,6 +94,23 @@ export default function NewsDetailPage({ data }: pageProps) {
       ) : (
         <CommonErrorView>
           <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
+          <ErrorComment>정확한 사실과 함꼐 돌아오겠습니다.</ErrorComment>
+          <Row style={{ gap: '8px' }}>
+            <TextButton
+              onClick={() => {
+                router.back();
+              }}
+            >
+              뒤로가기
+            </TextButton>
+            <TextButton
+              onClick={() => {
+                router.push('/news');
+              }}
+            >
+              뉴스목록
+            </TextButton>
+          </Row>
         </CommonErrorView>
       )}
     </>

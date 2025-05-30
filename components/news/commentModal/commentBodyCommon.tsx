@@ -3,7 +3,7 @@ import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { Comment, commentType } from '@utils/interface/news';
+import { Comment, commentType, NewsState } from '@utils/interface/news';
 import { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import CommentBodyExplain from './commentBodyExplain';

@@ -10,7 +10,6 @@ import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/glob
 import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
 import LoadingIndicator from './loadingIndicator';
 import RouteLoading from './routeLoading';
-import { HeaderHeight } from '../../../utils/layout';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -42,7 +41,7 @@ const Wrapper = styled.div`
 
 const Body = styled.div`
   width: 100%;
-  height: calc(100% - ${HeaderHeight()})
+  height: 100%;
 
   background-color: rgb(242, 242, 242);
 
