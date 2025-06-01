@@ -380,7 +380,6 @@ const ArticlesWrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 100%;
     min-width: 0px;
-    overflow: hidden;
   }
 `;
 

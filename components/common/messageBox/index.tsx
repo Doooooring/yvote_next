@@ -1,4 +1,4 @@
-import { RGBA } from '@utils/tools';
+import { RGB, RGBA } from '@utils/tools';
 import { CSSProperties, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { CommonLayoutBox } from '../commonStyles';
@@ -63,8 +63,9 @@ const Wrapper = styled(CommonLayoutBox)`
 
 const CommonWrapper = styled(Wrapper)`
   background-color: white;
-  border: 1px solid ${({ theme }) => RGBA(theme.colors.gray700, 0.8)};
   color: ${({ theme }) => theme.colors.yvote07};
+  border: 0;
+  box-shadow: 0px 0px 10px -5px ${({ theme }) => RGB(theme.colors.gray700)};
 `;
 
 const PositiveWrapper = styled(Wrapper)`

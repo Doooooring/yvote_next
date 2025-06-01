@@ -117,7 +117,6 @@ const Wrapper = styled(CommonLayoutBox)`
   @media screen and (max-width: 768px) {
     width: 98%;
     min-width: 0px;
-    overflow: hidden;
   }
   padding: 8px 8px;
   margin-bottom: 10px;
