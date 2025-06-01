@@ -94,7 +94,7 @@ export default function NewsDetailPage({ data }: pageProps) {
       ) : (
         <CommonErrorView>
           <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
-          <ErrorComment>정확한 사실과 함꼐 돌아오겠습니다.</ErrorComment>
+          <ErrorComment>정확한 사실만을 전달하고자 노력하겠습니다.</ErrorComment>
           <Row style={{ gap: '8px' }}>
             <TextButton
               onClick={() => {

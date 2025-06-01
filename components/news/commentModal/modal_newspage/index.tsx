@@ -1,16 +1,16 @@
 import Modal from '@components/common/modal';
 import { Link, useRouter } from '@utils/hook/useRouter';
 import { commentType, News, NewsState } from '@utils/interface/news';
+import { MouseEvent, useCallback } from 'react';
+import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
+import { CommonMessageBox } from '../../../common/messageBox';
 import CommentBodyExplain from '../commentBodyExplain';
 import CommentHead from '../commentHead';
 import { useListScrollheight, useScrollInfo } from '../commentModal.hook';
 import CommentProgressBar from '../commentProgressBar';
 import { ModalBodyWrapper, ScrollWrapper } from '../figure';
 import ModalLayout from '../modal.layout';
-import { useToastMessage } from '../../../../utils/hook/useToastMessage';
-import { useCallback } from 'react';
-import { PositiveMessageBox } from '../../../common/messageBox';
 
 interface CommentModalProps {
   state: boolean;
@@ -35,12 +35,22 @@ export default function CommentModal({
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
   const { router } = useRouter();
-  const onRouteNews = useCallback(() => {
-    if (news.state !== NewsState.Published) {
-      show(<PositiveMessageBox>준비 중인 뉴스입니다.</PositiveMessageBox>, 2000);
-      return;
-    }
-  }, []);
+  const onRouteNews = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (news.state !== NewsState.Published) {
+        show(<CommonMessageBox>준비 중인 뉴스입니다.</CommonMessageBox>, 2000);
+        return;
+      }
+      if (e.altKey) {
+        window.open(`/news/${news.id}`, '_blank');
+        return;
+      } else {
+        router.push(`/news/${news.id}`);
+      }
+    },
+    [router],
+  );
 
   return (
     <Modal state={state} outClickAction={close}>
@@ -59,9 +69,14 @@ export default function CommentModal({
             </ScrollWrapper>
           }
           footerView={
-            <Link href={`/news/${news.id}`}>
-              <TextButton>뉴스보기</TextButton>
-            </Link>
+            <>
+              <a href={`/news/${news.id}`} onClick={onRouteNews}>
+                <TextButton>뉴스보기</TextButton>
+              </a>
+              <Link href={`/news/${news.id}`}>
+                <></>
+              </Link>
+            </>
           }
         />
       </ModalBodyWrapper>

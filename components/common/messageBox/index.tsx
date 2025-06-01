@@ -7,6 +7,18 @@ interface MessageBoxProps extends PropsWithChildren {
   style?: CSSProperties;
 }
 
+export function CommonMessageBox({ children, style = {} }: MessageBoxProps) {
+  return (
+    <CommonWrapper
+      style={{
+        ...style,
+      }}
+    >
+      <p>{children}</p>
+    </CommonWrapper>
+  );
+}
+
 export function PositiveMessageBox({ children, style = {} }: MessageBoxProps) {
   return (
     <PositiveWrapper
@@ -47,6 +59,12 @@ const Wrapper = styled(CommonLayoutBox)`
 
   position: relative;
   z-index: 1;
+`;
+
+const CommonWrapper = styled(Wrapper)`
+  background-color: white;
+  border: 1px solid ${({ theme }) => RGBA(theme.colors.gray700, 0.8)};
+  color: ${({ theme }) => theme.colors.yvote07};
 `;
 
 const PositiveWrapper = styled(Wrapper)`
