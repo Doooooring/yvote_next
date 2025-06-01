@@ -1,5 +1,5 @@
 import { CommonIconButton, CommonModalBackground } from '@components/common/commonStyles';
-import { commentType, NewsState } from '@utils/interface/news';
+import { commentType } from '@utils/interface/news';
 import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
 import { ReactNode, useState } from 'react';
@@ -10,16 +10,10 @@ import { ModalBodyWrapper } from '../figure';
 interface Modal_NewsPreviewProp {
   id: number;
   commentTypes: Array<commentType>;
-  newsState: NewsState;
   close: () => void;
 }
 
-export function CommentModal_NewsPreview({
-  id,
-  commentTypes,
-  close,
-  newsState,
-}: Modal_NewsPreviewProp) {
+export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_NewsPreviewProp) {
   const [commentSelected, setCommentSelected] = useState<commentType>(commentTypes[0]);
 
   return (
