@@ -280,6 +280,7 @@ const Wrapper = styled.div`
   padding-top: 10px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+  overflow: clip visible;
 
   ::-webkit-scrollbar {
     display: none;
@@ -372,7 +373,6 @@ const Header = styled(CommonLayoutBox)`
 `;
 
 const ArticlesWrapper = styled.div`
-  display: flex;
   width: 70%;
   max-width: 1000px;
   min-width: 800px;
