@@ -12,6 +12,7 @@ class OpenAIRepository {
   async getAIResult(message: any) {
     const response: Response<string> = await axios.post(`${HOST_URL}/openai`, {
       message,
+      model : 'grok-2'
     });
     return response.data.result;
   }
