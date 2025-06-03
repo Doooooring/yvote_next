@@ -1,6 +1,6 @@
 import { CommonIconButton, CommonModalBackground } from '@components/common/commonStyles';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg } from '@utils/interface/news/comment';
+import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
 import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
@@ -24,7 +24,7 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
         ) : (
           <>
             <CommentButtons>
-              {commentTypes.map((commentType) => {
+              {sortComment(commentTypes).map((commentType) => {
                 return (
                   <CommentButton
                     key={commentType}

@@ -1,10 +1,22 @@
-import { RGBA } from '@utils/tools';
+import { RGB, RGBA } from '@utils/tools';
 import { CSSProperties, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { CommonLayoutBox } from '../commonStyles';
 
 interface MessageBoxProps extends PropsWithChildren {
   style?: CSSProperties;
+}
+
+export function CommonMessageBox({ children, style = {} }: MessageBoxProps) {
+  return (
+    <CommonWrapper
+      style={{
+        ...style,
+      }}
+    >
+      <p>{children}</p>
+    </CommonWrapper>
+  );
 }
 
 export function PositiveMessageBox({ children, style = {} }: MessageBoxProps) {
@@ -47,6 +59,13 @@ const Wrapper = styled(CommonLayoutBox)`
 
   position: relative;
   z-index: 1;
+`;
+
+const CommonWrapper = styled(Wrapper)`
+  background-color: white;
+  color: ${({ theme }) => theme.colors.yvote07};
+  border: 0;
+  box-shadow: 0px 0px 10px -5px ${({ theme }) => RGB(theme.colors.gray700)};
 `;
 
 const PositiveWrapper = styled(Wrapper)`

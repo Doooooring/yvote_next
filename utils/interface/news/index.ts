@@ -42,16 +42,6 @@ export interface Timeline {
   title: string;
 }
 
-export interface Article {
-  id: number;
-  commentType: commentType;
-  title: string;
-  comment: string;
-  date: Date;
-  newsId: number;
-  news: News;
-}
-
 export interface NewsSummary {
   id?: number | null;
   summary: string;
@@ -84,6 +74,15 @@ export interface Comment {
   comment: string;
   url?: string;
   date: Date;
+  news: Partial<News>;
+}
+
+export interface Article
+  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'comment' | 'date'> {
+  news: {
+    id: number;
+    state: NewsState;
+  };
 }
 
 export interface News {

@@ -1,5 +1,4 @@
 import IsShow from '@components/common/isShow';
-import commentRepository from '@repositories/comment';
 import openAIRepository from '@repositories/openai';
 import { useKoreanDateFormat } from '@utils/tools/date';
 import { useCallback, useState } from 'react';
@@ -43,7 +42,7 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
             <DateText>{useKoreanDateFormat(date)}</DateText>
           </IsShow>
           <GrokButton onClick={fetchSummary} disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'grok2'}
+            {isLoading ? 'Loading...' : 'AI 요약'}
           </GrokButton>
         </DateButtonWrapper>
       </ContentTitle>

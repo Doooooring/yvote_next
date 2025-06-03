@@ -9,7 +9,7 @@ import { useCommentModal } from '@utils/hook/news/useCommentModal';
 import { useBool } from '@utils/hook/useBool';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { commentType, NewsInView } from '@utils/interface/news';
-import { commentTypeImg } from '@utils/interface/news/comment';
+import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
 import { Suspense, useMemo, useState } from 'react';
@@ -99,16 +99,23 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
                 </TimelineWrapper>
                 <SelectionContainer>
                   <SummaryButtons>
-                    {summaries.map((summary, index) => (
-                      <SummaryButton
-                        key={index}
-                        active={summary.commentType === activeWriter}
-                        image={commentTypeImg(summary.commentType)}
-                        onClick={() => {
-                          setActiveWriter(summary.commentType);
-                        }}
-                      />
-                    ))}
+                    {summaries
+                      .sort((summary1, summary2) => {
+                        return (
+                          getCommentTypeRank(summary2.commentType) -
+                          getCommentTypeRank(summary1.commentType)
+                        );
+                      })
+                      .map((summary, index) => (
+                        <SummaryButton
+                          key={index}
+                          active={summary.commentType === activeWriter}
+                          image={commentTypeImg(summary.commentType)}
+                          onClick={() => {
+                            setActiveWriter(summary.commentType);
+                          }}
+                        />
+                      ))}
                   </SummaryButtons>
                   <CommentBox>
                     <div className="comment_box_footer">

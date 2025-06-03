@@ -4,14 +4,14 @@ import { Link } from '@utils/hook/useRouter';
 import { commentType, NewsState, Preview } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import React, { ReactNode, useCallback, useState } from 'react';
+import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useCommentModal_Preview } from './previewBox.hook';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
-  click?: (id: number) => void;
+  click?: (id: number, e?: MouseEvent) => void;
   img?: string;
 }
 function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
@@ -28,8 +28,8 @@ function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
       return (
         <PreviewWrapper
           href={`/news/${id}`}
-          onClick={() => {
-            click(id);
+          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+            click(id, e);
             return;
           }}
         >
@@ -153,15 +153,15 @@ const PreviewWrapper = ({
   children,
 }: {
   href: string;
-  onClick: () => void;
+  onClick: (e?: MouseEvent<HTMLDivElement>) => void;
   children: ReactNode;
 }) => {
   return (
     <>
       <Wrapper
-        onClick={(e) => {
+        onClick={(e: MouseEvent<HTMLDivElement>) => {
           e.preventDefault();
-          onClick();
+          onClick(e);
         }}
       >
         {children}

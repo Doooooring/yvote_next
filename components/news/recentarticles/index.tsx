@@ -96,11 +96,10 @@ const Wrapper = styled(CommonLayoutBox)`
   font: inherit;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 0 16px;
-  height: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
-  
+  margin: 0 0 10px;
+  width: 100%;
+  height: 280px;
+
   @media screen and (max-width: 768px) {
     width: 98%;
     height: auto;

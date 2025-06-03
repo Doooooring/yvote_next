@@ -24,6 +24,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
   const openModal = useCallback(() => {
     setIsModalOpen(true);
   }, [setIsModalOpen]);
+
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, [setIsModalOpen]);
@@ -62,7 +63,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
         <CommentModal
           state={isModalOpen}
           close={closeModal}
-          newsId={news.id}
+          news={news}
           commentType={commentType}
           title={title}
           date={date}
