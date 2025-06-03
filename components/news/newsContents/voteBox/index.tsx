@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { CommonLayoutBox } from '@components/common/commonStyles';
 import NewsRepository from '@repositories/news';
 import { News } from '@utils/interface/news';
-import { CommonLayoutBox } from '@components/common/commonStyles';
 
 type AnswerState = 'left' | 'right' | 'none';
 type SubmitState = 'resolve' | 'pending' | 'error';
@@ -94,7 +94,7 @@ export default function VoteBox({ id, state, opinions, votes, voteHistory }: Vot
               type="radio"
               name="think"
               id="yes"
-              checked={state === true && haveThinked === true}
+              checked={haveThinked === true}
               onClick={() => {
                 setHaveThinked(true);
               }}
@@ -107,7 +107,7 @@ export default function VoteBox({ id, state, opinions, votes, voteHistory }: Vot
               type="radio"
               name="think"
               id="no"
-              checked={state === true && haveThinked === false}
+              checked={haveThinked === false}
               onClick={() => {
                 setHaveThinked(false);
                 setCheckLeftRight(null);
@@ -189,7 +189,7 @@ export default function VoteBox({ id, state, opinions, votes, voteHistory }: Vot
           {submitButtonText[submitState]}
         </SubmitButton>
       </SubmitBlock>
-      <BackDrop state={state}></BackDrop>
+      {/* <BackDrop state={state}></BackDrop> */}
     </Wrapper>
   );
 }

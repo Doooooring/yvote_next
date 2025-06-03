@@ -1,12 +1,12 @@
 import { Backdrop, FallbackBox, Row, backgroundSlide } from '@components/common/commonStyles';
 import { memo } from 'react';
 import styled from 'styled-components';
-import PreviewBoxLayout from '../previewBox/previewBox.style';
+import { PreviewBoxLayout_Published } from '../previewBox/previewBox.style';
 
 function PreviewBoxFallback() {
   return (
     <Wrapper>
-      <PreviewBoxLayout
+      <PreviewBoxLayout_Published
         imgView={<ImgView />}
         headView={<HeadView />}
         contentView={

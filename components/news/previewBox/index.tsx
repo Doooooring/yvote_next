@@ -1,112 +1,179 @@
-import { Row } from '@components/common/commonStyles';
+import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { Preview } from '@utils/interface/news';
+import { Link } from '@utils/hook/useRouter';
+import { commentType, NewsState, Preview } from '@utils/interface/news';
+import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import React from 'react';
-import { useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from '../../../utils/hook/useRouter';
-import PreviewBoxLayout from './previewBox.style';
+import { useCommentModal_Preview } from './previewBox.hook';
+import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
-  click: (id: number) => void;
+  click?: (id: number) => void;
   img?: string;
 }
-function PreviewBox({ preview, img, click }: PreviewBoxProps) {
-  const { router } = useRouter();
-  const { id, title, subTitle, summary, date, newsImage, keywords, state } = preview;
+function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
+  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state } = preview;
+  const { showCommentModal } = useCommentModal_Preview();
 
-  const [activeSummary, setActiveSummary] = useState(0);
-  const dummySummaries = [
-    summary,
-    "summary[1]",
-    "summary[2]",
-    "summary[3]",
-    "summary[4]",
-    "summary[5]",
-    "summary[6]",
-  ];
-  const dummybuttonImages = [
-    '/assets/img/와이보트.png',
-    '/assets/img/국민의힘.png',
-    '/assets/img/더불어민주당.png',
-    '/assets/img/대통령실.png',
-    '/assets/img/행정부.png',
-    '/assets/img/헌법재판소.png',
-    '/assets/img/기타.png',
-  ]; // 순서는 기존 논평 순서, 자료 'or' 본문 있는 것만
+  const openComments = useCallback(() => {
+    showCommentModal(id, comments);
+  }, [id, comments]);
+
+  switch (state) {
+    case NewsState.Published:
+    case NewsState.NotPublished:
+      return (
+        <PreviewWrapper
+          href={`/news/${id}`}
+          onClick={() => {
+            click(id);
+            return;
+          }}
+        >
+          <PreviewBoxLayout_Published
+            imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
+            headView={<_NewsTitle title={title} />}
+            contentView={
+              <>
+                <_NewsSubTitle summary={summary} subTitle={subTitle} />
+                <RowWrapper>
+                  <_NewsDate date={date} />
+                  <_CommentButtons
+                    comments={comments}
+                    openComments={(commentType) => {
+                      openComments();
+                    }}
+                  />
+                </RowWrapper>
+              </>
+            }
+          />
+        </PreviewWrapper>
+      );
+    case NewsState.Pending:
+      return (
+        <PreviewWrapper
+          href={`/news/${id}`}
+          onClick={() => {
+            openComments();
+            return;
+          }}
+        >
+          <PreviewBoxLayout_Pending
+            bodyView={
+              <>
+                <PendingHead>?</PendingHead>
+                <_NewsTitle title={title} />
+                <_CommentButtons
+                  comments={comments}
+                  openComments={(commentType) => {
+                    openComments();
+                  }}
+                />
+              </>
+            }
+          />
+        </PreviewWrapper>
+      );
+  }
+}
+
+const _NewsTitle = ({ title }: { title: Preview['title'] }) => {
+  return (
+    <Title>
+      <div className="title">{title}</div>
+    </Title>
+  );
+};
+
+const _NewsSubTitle = ({
+  summary,
+  subTitle,
+}: {
+  summary: Preview['summary'];
+  subTitle: Preview['subTitle'];
+}) => {
+  return <SubTitle>{subTitle == '' ? summary : subTitle}</SubTitle>;
+};
+
+const _NewsDate = ({ date }: { date: Preview['date'] }) => {
+  return (
+    <Date>
+      {date ? (
+        <>
+          <span className={getDateDiff(getToday(), date) < 7 ? 'diff' : ''}>
+            {getTimeDiffBeforeToday(date)}
+          </span>
+        </>
+      ) : (
+        ''
+      )}
+    </Date>
+  );
+};
+
+const _CommentButtons = ({
+  comments,
+  openComments,
+}: {
+  comments: Preview['comments'];
+  openComments: (commentType: commentType) => void;
+}) => {
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   return (
-    <Wrapper
-      href={`/news/${id}`}
-      onClick={(e) => {
-        e.preventDefault();
-        click(id);
-      }}
-    >
-      <PreviewBoxLayout
-        onClick={() => {}}
-        imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
-        headView={
-          <Title>
-            <div className="title">{title}</div>
-          </Title>
-        }
-        contentView={
-          <>
-            <SubTitle>{subTitle == '' ? summary : subTitle}</SubTitle>
-            <RowWrapper>
-              <Date>
-                {date ? (
-                  <>
-                    <span className={getDateDiff(getToday(), date) < 7 ? 'diff' : ''}>
-                      {getTimeDiffBeforeToday(date)}
-                    </span>
-                  </>
-                ) : (
-                  ''
-                )}
-              </Date>
-              <SummaryButtons>
-                {dummySummaries.map((_, index) => (
-                  <SummaryButton
-                    key={index}
-                    active={index === activeSummary}
-                    image={dummybuttonImages[index]}
-                    onClick={() => setActiveSummary(index)}
-                  />
-                ))}
-              </SummaryButtons>
-            </RowWrapper>
-            {/* <Keywords>
-              {keywords?.map(({ id, keyword }) => {
-                return (
-                  <Keyword
-                    key={keyword}
-                    onClick={() => {
-                      router.push(`/keywords/${String(id)}`);
-                    }}
-                  >
-                    {`#${keyword}`}
-                  </Keyword>
-                );
-              })}
-              <p className="keyword"></p>
-            </Keywords> */}
-          </>
-        }
-      />
-    </Wrapper>
+    <SummaryButtons>
+      {comments.slice(0, 3).map((commentType, index) => (
+        <SummaryButton
+          key={index}
+          zindex={10 - index}
+          image={commentTypeImg(commentType)}
+          onClick={(e) => {
+            e.stopPropagation();
+            (e.nativeEvent as any).stopImmediatePropagation?.();
+            openComments(commentType);
+          }}
+        />
+      ))}
+      <span style={{ fontSize: '12px' }}>{comments.length > 3 && `+${comments.length - 3}`}</span>
+    </SummaryButtons>
   );
-}
+};
 
 export default React.memo(PreviewBox, (prevProps, nextProps) => {
   return prevProps.preview.id === nextProps.preview.id;
 });
 
-const Wrapper = styled(Link)`
+const PreviewWrapper = ({
+  href,
+  onClick,
+  children,
+}: {
+  href: string;
+  onClick: () => void;
+  children: ReactNode;
+}) => {
+  return (
+    <>
+      <Wrapper
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+      >
+        {children}
+        <Link href={href}>
+          <></>
+        </Link>
+      </Wrapper>
+    </>
+  );
+};
+
+const Wrapper = styled.div`
   filter: saturate(80%);
   width: 100%;
   text-decoration: none;
@@ -221,23 +288,48 @@ const RowWrapper = styled.div`
   margin-top: 4px;
 `;
 
+const SummaryButtonWrapper = styled(Row)`
+  gap: 6px;
+`;
+
+const PendingHead = styled(CommonLayoutBox)`
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  border-radius: 100%;
+  background-color: ${({ theme }) => theme.colors.gray600};
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const SummaryButtons = styled.div`
   display: flex;
-  gap: 12px;
+  align-items: center;
   margin-bottom: 0px;
 `;
 
-const SummaryButton = styled.button<{ active: boolean; image: string }>`
-  width: 12px;
-  height: 12px;
-  border-radius: 0;
-  border: none;
-  background-color: transparent;
+const SummaryButton = styled(CommonIconButton)<{
+  image: string;
+  zindex: number;
+}>`
+  margin-left: -8px;
+
+  &:first-child {
+    margin-left: 0px;
+  }
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  background-color: white !important;
   background-image: url(${({ image }) => image});
-  background-size: 12px 12px;
+  background-size: 16px 16px;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
   outline: none;
   box-sizing: border-box;
+  z-index: ${({ zindex }) => zindex};
 `; // 여기선 이거 클릭해도 그냥 프리뷰 클릭한 것처럼 뉴스 디테일로 이동
