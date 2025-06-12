@@ -34,7 +34,7 @@ export default function CommentModal({
   const { show } = useToastMessage();
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
-  const { router } = useRouter();
+  const { router, routeWithMouseEvent } = useRouter();
   const onRouteNews = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -42,12 +42,7 @@ export default function CommentModal({
         show(<CommonMessageBox>준비 중인 뉴스입니다.</CommonMessageBox>, 2000);
         return;
       }
-      if (e.altKey) {
-        window.open(`/news/${news.id}`, '_blank');
-        return;
-      } else {
-        router.push(`/news/${news.id}`);
-      }
+      routeWithMouseEvent(`/news/${news.id}`, e);
     },
     [router],
   );
