@@ -1,8 +1,9 @@
+import { Backdrop } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import commentRepository from '@repositories/comment';
 import openAIRepository from '@repositories/openai';
 import { useKoreanDateFormat } from '@utils/tools/date';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 interface CommentBodyExplainProps {
@@ -13,6 +14,44 @@ interface CommentBodyExplainProps {
 }
 
 export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {
+  const { summary, fetchSummary, isLoading } = useAISummary(explain);
+
+  const _explain = useMemo(() => {
+    if (summary !== null) {
+      return summary
+        .split('\n')
+        .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
+    } else {
+      return explain
+        .split('$')
+        .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
+    }
+  }, [summary, explain]);
+
+  return (
+    <Wrapper>
+      <ContentTitle>
+        {title}
+        <DateButtonWrapper>
+          <IsShow state={date != null}>
+            <DateText>{useKoreanDateFormat(date)}</DateText>
+          </IsShow>
+          <GrokButton onClick={fetchSummary} disabled={isLoading}>
+            요약하기
+          </GrokButton>
+        </DateButtonWrapper>
+      </ContentTitle>
+      <ContentBody>
+        {_explain}
+        <IsShow state={isLoading}>
+          <IsFetching />
+        </IsShow>
+      </ContentBody>
+    </Wrapper>
+  );
+}
+
+function useAISummary(explain: string) {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,30 +71,8 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
     } finally {
       setIsLoading(false);
     }
-  }, [id, isLoading, setIsLoading, setSummary]);
-
-  return (
-    <Wrapper>
-      <ContentTitle>
-        {title}
-        <DateButtonWrapper>
-          <IsShow state={date != null}>
-            <DateText>{useKoreanDateFormat(date)}</DateText>
-          </IsShow>
-          <GrokButton onClick={fetchSummary} disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'grok2'}
-          </GrokButton>
-        </DateButtonWrapper>
-      </ContentTitle>
-      <ContentBody>
-        {summary === null
-          ? explain.split('$').map((li, idx) => <ContentLine key={idx}>{li}</ContentLine>)
-          : summary
-              .split('\n')
-              .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>)}
-      </ContentBody>
-    </Wrapper>
-  );
+  }, [isLoading, setIsLoading, setSummary]);
+  return { summary, fetchSummary, isLoading };
 }
 
 const Wrapper = styled.div`
@@ -79,6 +96,7 @@ const ContentTitle = styled.div`
 `;
 
 const ContentBody = styled.div`
+  position: relative;
   font-weight: 400;
   font-size: 15px;
 `;
@@ -103,15 +121,25 @@ const DateText = styled.p`
 `;
 
 const GrokButton = styled.button`
+  position: relative;
   padding: 0.2rem 0.5rem;
   font-size: 12px;
-  background-color: ${({ theme }) => theme.colors.gray200 || '#f0f0f0'};
-  border: none;
+  background-color: ${({ theme }) => theme.colors.yvote05};
+  /* background: linear-gradient(-90deg, #5ab8e7 0%, #0463c2 100%), #fff; */
+
+  color: white;
   border-radius: 4px;
   cursor: pointer;
-  color: black;
-
+  transition: background-color 0.3s ease;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.gray300 || '#e0e0e0'};
+    opacity: 0.9;
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const IsFetching = styled(Backdrop)`
+  backdrop-filter: opacity(100%);
 `;

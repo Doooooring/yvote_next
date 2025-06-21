@@ -146,7 +146,6 @@ export default function NewsPage(props: pageProps) {
       if (filter) setKeyCached(filter);
       setCachedPreviews(page, limit, filter, scroll);
     } else {
-      console.log('is here');
       fetchPreviews({ limit: 16 });
     }
 

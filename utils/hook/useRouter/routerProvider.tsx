@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
+import { MouseEvent, PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { getRandomNumString } from '@utils/tools/crypto';
 import { useRouter } from 'next/router';
@@ -64,6 +64,18 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
       },
     });
   }, [originalRouter]);
+
+  const routeWithMouseEvent = useCallback(
+    (url: string, e?: MouseEvent<HTMLAnchorElement>) => {
+      if (e && (e.altKey || e.metaKey)) {
+        window.open(url, '_blank');
+        return;
+      } else {
+        router.push(url);
+      }
+    },
+    [router],
+  );
 
   const hydratePageHistory = useCallback(() => {
     while (pagePointer.current < pageHistoryStack.current.length - 1) {
@@ -181,6 +193,7 @@ export function RouterProvider({ children, ...others }: PropsWithChildren) {
     <RouterContext.Provider
       value={{
         router: router,
+        routeWithMouseEvent,
         getCurrentPageIndex,
         getPageInfoByIndex,
         getCurrentPageInfo,

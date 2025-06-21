@@ -67,10 +67,10 @@ export default function NewsDetailPage({ data }: pageProps) {
       title: news?.title || '',
       description: news?.subTitle || '',
       image: news.newsImage,
-      url: `https://yvoting.com/news/${id}`,
+      url: `https://yvoting.com/news/${news.id}`,
       type: 'article',
     };
-  }, []);
+  }, [news]);
 
   return (
     <>

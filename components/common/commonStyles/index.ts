@@ -99,10 +99,10 @@ export const Backdrop = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), white, rgba(255, 255, 255, 0));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), white, rgba(255, 255, 255, 0.5));
   background-size: 20% auto;
   background-repeat: no-repeat;
-  animation: ${backgroundSlide} 1s ease-in-out infinite;
+  animation: ${backgroundSlide} 2s ease-in-out infinite;
 `;
 
 export const FallbackBox = styled.div`
