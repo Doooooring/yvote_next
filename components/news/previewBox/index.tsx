@@ -65,7 +65,6 @@ function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
           <PreviewBoxLayout_Pending
             bodyView={
               <>
-                <PendingHead>?</PendingHead>
                 <_NewsTitle title={title} />
                 <_CommentButtons
                   comments={comments}
