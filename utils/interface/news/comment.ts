@@ -94,7 +94,7 @@ export const commentTypeImg = (type: commentType) => {
       return '/assets/img/대통령실.png';
     /*@입법부 */
     case commentType.입법부:
-      return '';
+      return '/assets/img/와이보트.png';
     case commentType.행정부:
       return '/assets/img/행정부.png';
     case commentType.헌법재판소:
