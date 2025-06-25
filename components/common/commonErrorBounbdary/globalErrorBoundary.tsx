@@ -4,26 +4,26 @@ import { Component, ReactNode } from 'react';
 import styled from 'styled-components';
 import { Column } from '../commonStyles';
 
-interface CommonErrorBoundaryProps {
+interface GlobalErrorBoundaryProps {
   children: ReactNode;
 }
 
-interface CommonErrorBoundaryState {
+interface GlobalErrorBoundaryState {
   hasError: boolean;
 }
 
 /**
  * @description 공통 에러 컴포넌트
  */
-class CommonErrorBoundary extends Component<CommonErrorBoundaryProps, CommonErrorBoundaryState> {
-  constructor(props: CommonErrorBoundaryProps) {
+class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErrorBoundaryState> {
+  constructor(props: GlobalErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
     };
   }
 
-  static getDerivedStateFromError(): Partial<CommonErrorBoundaryState> {
+  static getDerivedStateFromError(): Partial<GlobalErrorBoundaryState> {
     return { hasError: true };
   }
 
@@ -49,7 +49,7 @@ class CommonErrorBoundary extends Component<CommonErrorBoundaryProps, CommonErro
   }
 }
 
-export default CommonErrorBoundary;
+export default GlobalErrorBoundary;
 
 const Wrapper = styled(Column)`
   width: 100vw;

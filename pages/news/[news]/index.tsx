@@ -3,11 +3,17 @@ import NewsRepository from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { NewsInView } from '@utils/interface/news';
+import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import {
+  CommonErrorView,
+  ErrorComment,
+  ErrorHead,
+} from '../../../components/common/commonErrorBounbdary/commonErrorView';
+import { Row, TextButton } from '../../../components/common/commonStyles';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -67,23 +73,46 @@ export default function NewsDetailPage({ data }: pageProps) {
       title: news?.title || '',
       description: news?.subTitle || '',
       image: news.newsImage,
-      url: `https://yvoting.com/news/${id}`,
+      url: `https://yvoting.com/news/${news.id}`,
       type: 'article',
     };
-  }, []);
+  }, [news]);
 
   return (
     <>
       <HeadMeta {...metaTagsProps} />
-      <Wrapper>
-        <div className="main-contents">
-          <div className="main-contents-body">
-            <div className="news-contents-wrapper">
-              <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+      {news.state === NewsState.Published ? (
+        <Wrapper>
+          <div className="main-contents">
+            <div className="main-contents-body">
+              <div className="news-contents-wrapper">
+                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+              </div>
             </div>
           </div>
-        </div>
-      </Wrapper>
+        </Wrapper>
+      ) : (
+        <CommonErrorView>
+          <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
+          <ErrorComment>정확한 사실만을 전달하고자 노력하겠습니다.</ErrorComment>
+          <Row style={{ gap: '8px' }}>
+            <TextButton
+              onClick={() => {
+                router.back();
+              }}
+            >
+              뒤로가기
+            </TextButton>
+            <TextButton
+              onClick={() => {
+                router.push('/news');
+              }}
+            >
+              뉴스목록
+            </TextButton>
+          </Row>
+        </CommonErrorView>
+      )}
     </>
   );
 }

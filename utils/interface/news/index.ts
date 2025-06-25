@@ -10,6 +10,7 @@
 import { Keyword } from '../keywords';
 
 export enum commentType {
+  입법부 = '입법부',
   전략가 = '전략가',
   지도자 = '지도자',
   예술가 = '예술가',
@@ -42,15 +43,29 @@ export interface Timeline {
   title: string;
 }
 
-export interface Article {
-  id: number;
+export interface NewsSummary {
+  id?: number | null;
+  summary: string;
   commentType: commentType;
-  title: string;
-  comment: string;
-  date: Date;
   newsId: number;
-  news: News;
 }
+
+export enum NewsState {
+  Published = '0',
+  Pending = '1',
+  NotPublished = '2',
+}
+
+export const NewsStateKor = (state: NewsState) => {
+  switch (state) {
+    case NewsState.Published:
+      return '발행 완료';
+    case NewsState.Pending:
+      return '발행 대기';
+    case NewsState.NotPublished:
+      return '발행 전';
+  }
+};
 
 export interface Comment {
   id: number;
@@ -60,6 +75,15 @@ export interface Comment {
   comment: string;
   url?: string;
   date: Date;
+  news: Partial<News>;
+}
+
+export interface Article
+  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'comment' | 'date'> {
+  news: {
+    id: number;
+    state: NewsState;
+  };
 }
 
 export interface News {
@@ -68,11 +92,12 @@ export interface News {
   title: string;
   subTitle: string;
   summary: string;
+  summaries: Array<NewsSummary>;
   date?: Date;
   keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;
-  state: boolean;
+  state: NewsState;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
@@ -93,4 +118,6 @@ export interface Preview
   extends Pick<
     News,
     'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state'
-  > {}
+  > {
+  comments: Array<commentType>;
+}

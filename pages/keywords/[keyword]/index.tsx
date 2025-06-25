@@ -14,6 +14,7 @@ import styled from 'styled-components';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { getTextContentFromHtmlText } from '@utils/tools';
+import { useNewsNavigate } from '../../../utils/hook/useNewsNavigate';
 
 interface pageProps {
   data: {
@@ -67,7 +68,7 @@ export default function KeyExplanation({ data }: pageProps) {
     fetchPreviews,
     fetchNextPreviews,
   } = useFetchNewsPreviews(16);
-  const { newsContent, voteHistory, showNewsContent, hideNewsContent } = useFetchNewsContent();
+  const showNewsContent = useNewsNavigate();
 
   useMount(() => {
     fetchPreviews({ filter: keyword.keyword });
@@ -98,24 +99,14 @@ export default function KeyExplanation({ data }: pageProps) {
       </KeywordWrapper>
       <div className="main-contents">
         <div className="main-contents-body">
-          {newsContent ? (
-            <div className="news-contents-wrapper">
-              <NewsContent
-                newsContent={newsContent}
-                voteHistory={voteHistory}
-                hide={hideNewsContent}
-              />
-            </div>
-          ) : (
-            <NewsList
-              page={page}
-              previews={previews.length == 0 ? initialPreviews : previews}
-              isRequesting={isRequesting}
-              isFetchingImages={isFetchingImages}
-              fetchPreviews={fetchNextPreviews}
-              showNewsContent={showNewsContent}
-            />
-          )}
+          <NewsList
+            page={page}
+            previews={previews.length == 0 ? initialPreviews : previews}
+            isRequesting={isRequesting}
+            isFetchingImages={isFetchingImages}
+            fetchPreviews={fetchNextPreviews}
+            showNewsContent={showNewsContent}
+          />
         </div>
       </div>
     </Wrapper>

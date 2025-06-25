@@ -1,11 +1,11 @@
-import { CommonLayoutBox, Row } from '@components/common/commonStyles';
+import { Row } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import CommentModal from '@components/news/commentModal/modal_newspage';
 import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { commentTypeColor } from '../../../../utils/interface/news/commen';
+import { commentTypeColor } from '../../../../utils/interface/news/comment';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -24,6 +24,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
   const openModal = useCallback(() => {
     setIsModalOpen(true);
   }, [setIsModalOpen]);
+
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, [setIsModalOpen]);
@@ -62,7 +63,7 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
         <CommentModal
           state={isModalOpen}
           close={closeModal}
-          newsId={news.id}
+          news={news}
           commentType={commentType}
           title={title}
           date={date}

@@ -12,8 +12,8 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
+import SuspensePreNewsList from '@components/news/preNewsList';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
-import { useDevice } from '@utils/hook/useDevice';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -45,13 +45,13 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const device = useDevice();
-
   const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
+  const [keyCached, setKeyCached] = useState<string | null>(null);
+
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
-  const { isLoading: isGlobalLoading, setIsLoading: setIsGlobalLoading } = useGlobalLoading();
-  const [keyCached, setKeyCached] = useState<string | null>(null);
+  const { setIsLoading: setIsGlobalLoading } = useGlobalLoading();
+
   const {
     page,
     isRequesting,
@@ -61,6 +61,7 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
     getCurrentMetadata,
   } = useFetchNewsPreviews(16);
+
   const {
     keywordsToShow,
     keywordSelected,
@@ -82,6 +83,7 @@ export default function NewsPage(props: pageProps) {
         }, 100);
         await fetchNextPreviews(limit);
       } catch (e) {
+        console.log(e);
       } finally {
         setIsGlobalLoading(false);
       }
@@ -181,7 +183,6 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-
         <KeywordHeadTab
           keywords={keywordsToShow}
           setKeywords={setCustomKeywords}
@@ -193,6 +194,7 @@ export default function NewsPage(props: pageProps) {
         />
         <div className="main-contents">
           <div className="main-contents-body">
+            <SuspensePreNewsList />
             <NewsList
               page={page}
               previews={previews.length == 0 ? props.data : previews}
@@ -277,6 +279,7 @@ const Wrapper = styled.div`
   padding-top: 10px;
   padding-bottom: 50px;
   background-color: rgb(242, 242, 242);
+  overflow: clip visible;
 
   ::-webkit-scrollbar {
     display: none;
@@ -341,9 +344,7 @@ const Wrapper = styled.div`
     text-align: center;
     margin: 0;
     padding: 0;
-
     border: 0;
-
     font: inherit;
     vertical-align: baseline;
     position: relative;
@@ -371,7 +372,6 @@ const Header = styled(CommonLayoutBox)`
 `;
 
 const ArticlesWrapper = styled.div`
-  display: flex;
   width: 70%;
   max-width: 1000px;
   min-width: 800px;
@@ -379,7 +379,6 @@ const ArticlesWrapper = styled.div`
   @media screen and (max-width: 768px) {
     width: 100%;
     min-width: 0px;
-    overflow: hidden;
   }
 `;
 

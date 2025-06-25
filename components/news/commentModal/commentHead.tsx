@@ -1,6 +1,6 @@
 import ImageFallback from '@components/common/imageFallback';
 import { commentType } from '@utils/interface/news';
-import { typeCheckImg } from '@utils/interface/news/commen';
+import { commentTypeImg, typeCheckImg } from '@utils/interface/news/comment';
 import styled from 'styled-components';
 
 interface HeadTitleProps {
@@ -12,7 +12,7 @@ export default function CommentHead({ comment }: HeadTitleProps) {
     <HeadTitle>
       <CommentImageWrapper>
         <div className="image-box">
-          <ImageFallback src={`/assets/img/${comment}.png`} alt={comment!} fill={true} />
+          <ImageFallback src={commentTypeImg(comment)} alt={comment!} fill={true} />
         </div>
       </CommentImageWrapper>
       <p className="type-name">{comment}</p>

@@ -58,10 +58,6 @@ export default function useNewsKeywordFilter() {
   useEffect(() => {
     if (getRenderingEnvironment() === 'server') return;
 
-    console.log('================');
-    console.log(localStorage);
-    console.log(window);
-
     const saveCustomKeywords = () => {
       if (customKeywords.length > 0) {
         window.localStorage.setItem(CUSTOM_KEYWORDS_KEY, JSON.stringify(customKeywords));

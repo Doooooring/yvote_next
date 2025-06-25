@@ -17,17 +17,15 @@ interface SlideContentProps {
 
 function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
-  
+
   return (
     <>
       <LeftButton curView={curView} viewToLeft={onSlideLeft} />
       <div className="grid-wrapper">
         <GridContainer curView={curView}>
-          {filteredArticles
-            .slice(curView * numToShow, (curView + 1) * numToShow)
-            .map((article) => {
-              return <ArticleBox key={article.id} article={article} />;
-            })}
+          {filteredArticles.slice(curView * numToShow, (curView + 1) * numToShow).map((article) => {
+            return <ArticleBox key={article.id} article={article} />;
+          })}
         </GridContainer>
       </div>
       <RightButton
@@ -46,18 +44,18 @@ function NewArticles() {
   const recentArticles = useRecentArticles();
   const [activeCategory, setActiveCategory] = useState('전체');
 
-  const filteredArticles = activeCategory === '전체' 
-  ? recentArticles 
-  : recentArticles.filter(article => article.commentType === activeCategory);
-
+  const filteredArticles =
+    activeCategory === '전체'
+      ? recentArticles
+      : recentArticles.filter((article) => article.commentType === activeCategory);
 
   return (
     <>
       <Header>
         <CategoryNavigation>
-          {categories.map(category => (
-            <CategoryItem 
-              key={category} 
+          {categories.map((category) => (
+            <CategoryItem
+              key={category}
               isActive={category === activeCategory}
               onClick={() => setActiveCategory(category)}
             >
@@ -65,12 +63,12 @@ function NewArticles() {
             </CategoryItem>
           ))}
         </CategoryNavigation>
-        </Header>
+      </Header>
       <div className="body-wrapper">
-        <SlideContent 
+        <SlideContent
           key={activeCategory}
-          filteredArticles={filteredArticles} 
-          numToShow={numToShow.current} 
+          filteredArticles={filteredArticles}
+          numToShow={numToShow.current}
         />
       </div>
     </>
@@ -100,7 +98,7 @@ const Wrapper = styled(CommonLayoutBox)`
   height: auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border-radius: 6px;
-  
+
   @media screen and (max-width: 768px) {
     width: 98%;
     height: auto;
@@ -116,7 +114,7 @@ const Wrapper = styled(CommonLayoutBox)`
     position: relative;
     width: 100%;
     margin-top: 8px;
-    
+
     .grid-wrapper {
       width: 100%;
       overflow: hidden;
@@ -155,13 +153,12 @@ interface CategoryItemProps {
 
 const CategoryItem = styled.div<CategoryItemProps>`
   cursor: pointer;
-  font-weight: ${props => props.isActive ? '600' : '400'};
-  color: ${props => props.isActive 
-    ? ({ theme }) => theme.colors.gray800 
-    : ({ theme }) => theme.colors.gray500};
+  font-weight: ${(props) => (props.isActive ? '600' : '400')};
+  color: ${(props) =>
+    props.isActive ? ({ theme }) => theme.colors.gray800 : ({ theme }) => theme.colors.gray500};
   font-size: 16px;
   white-space: nowrap;
-  border-bottom: ${props => props.isActive ? '2px solid currentColor' : 'none'};
+  border-bottom: ${(props) => (props.isActive ? '2px solid currentColor' : 'none')};
   padding-bottom: 5px;
   transition: color 0.2s ease, border-bottom 0.2s ease;
   &:hover {
