@@ -14,7 +14,6 @@ import reloadImage from '@assets/img/reload_icon.svg';
 import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
 import SuspensePreNewsList from '@components/news/preNewsList';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
-import { useDevice } from '@utils/hook/useDevice';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -46,13 +45,13 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const device = useDevice();
-
   const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
+  const [keyCached, setKeyCached] = useState<string | null>(null);
+
   const showNewsContent = useNewsNavigate();
   const { router, getCurrentPageInfo } = useRouter();
-  const { isLoading: isGlobalLoading, setIsLoading: setIsGlobalLoading } = useGlobalLoading();
-  const [keyCached, setKeyCached] = useState<string | null>(null);
+  const { setIsLoading: setIsGlobalLoading } = useGlobalLoading();
+
   const {
     page,
     isRequesting,
@@ -62,6 +61,7 @@ export default function NewsPage(props: pageProps) {
     fetchNextPreviews,
     getCurrentMetadata,
   } = useFetchNewsPreviews(16);
+
   const {
     keywordsToShow,
     keywordSelected,

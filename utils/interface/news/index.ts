@@ -10,6 +10,7 @@
 import { Keyword } from '../keywords';
 
 export enum commentType {
+  입법부 = '입법부',
   전략가 = '전략가',
   지도자 = '지도자',
   예술가 = '예술가',
