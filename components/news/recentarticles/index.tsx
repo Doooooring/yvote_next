@@ -3,12 +3,13 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
-import { Suspense, useRef, useState } from 'react';
+import { commentType } from '@utils/interface/news';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-const categories = ['전체', '행정부', '대통령실', '국민의힘', '더불어민주당', '헌법재판소', '기타'];
+const categories = ['전체', ...Object.values(commentType)] as Array<'전체' | commentType>;
 
 interface SlideContentProps {
   filteredArticles: any[];
@@ -42,12 +43,14 @@ function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
 function NewArticles() {
   const numToShow = useRef(5);
   const recentArticles = useRecentArticles();
-  const [activeCategory, setActiveCategory] = useState('전체');
 
-  const filteredArticles =
-    activeCategory === '전체'
+  const [activeCategory, setActiveCategory] = useState<'전체' | commentType>('전체');
+
+  const filteredArticles = useMemo(() => {
+    return activeCategory === '전체'
       ? recentArticles
       : recentArticles.filter((article) => article.commentType === activeCategory);
+  }, [recentArticles, activeCategory]);
 
   return (
     <>
