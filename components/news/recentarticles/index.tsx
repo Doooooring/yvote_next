@@ -1,34 +1,44 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
+import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
 import { commentType } from '@utils/interface/news';
+import { commentTypeColor } from '@utils/interface/news/comment';
 import { Suspense, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-const categories = ['전체', ...Object.values(commentType)] as Array<'전체' | commentType>;
+type recentCommentType = '전체' | commentType;
+const categories = ['전체', ...Object.values(commentType)] as Array<recentCommentType>;
 
 interface SlideContentProps {
+  commentType: recentCommentType;
   filteredArticles: any[];
   numToShow: number;
 }
 
-function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
+function SlideContent({ commentType, filteredArticles, numToShow }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
   return (
     <>
       <LeftButton curView={curView} viewToLeft={onSlideLeft} />
-      <div className="grid-wrapper">
-        <GridContainer curView={curView}>
-          {filteredArticles.slice(curView * numToShow, (curView + 1) * numToShow).map((article) => {
-            return <ArticleBox key={article.id} article={article} />;
-          })}
-        </GridContainer>
-      </div>
+      <GridWrapper>
+        {filteredArticles.length !== 0 ? (
+          <GridContainer curView={curView}>
+            {filteredArticles
+              .slice(curView * numToShow, (curView + 1) * numToShow)
+              .map((article) => {
+                return <ArticleBox key={article.id} article={article} />;
+              })}
+          </GridContainer>
+        ) : (
+          <VacantContent commentType={commentType} />
+        )}
+      </GridWrapper>
       <RightButton
         curView={curView}
         viewToRight={onSlideRight}
@@ -40,11 +50,36 @@ function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
   );
 }
 
+function VacantContent({ commentType }: { commentType: recentCommentType }) {
+  return (
+    <VacantWrapper>
+      <ErrorComment>
+        <span
+          style={{
+            color: commentType === '전체' ? 'rgb(0,0,0)' : commentTypeColor(commentType),
+          }}
+        >
+          {commentType}
+        </span>{' '}
+        관련 최신 자료가 존재하지 않습니다.
+      </ErrorComment>
+    </VacantWrapper>
+  );
+}
+
+const VacantWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 function NewArticles() {
   const numToShow = useRef(5);
   const recentArticles = useRecentArticles();
 
-  const [activeCategory, setActiveCategory] = useState<'전체' | commentType>('전체');
+  const [activeCategory, setActiveCategory] = useState<recentCommentType>('전체');
 
   const filteredArticles = useMemo(() => {
     return activeCategory === '전체'
@@ -70,6 +105,7 @@ function NewArticles() {
       <div className="body-wrapper">
         <SlideContent
           key={activeCategory}
+          commentType={activeCategory}
           filteredArticles={filteredArticles}
           numToShow={numToShow.current}
         />
@@ -169,6 +205,14 @@ const CategoryItem = styled.div<CategoryItemProps>`
   }
   @media screen and (max-width: 768px) {
     font-size: 15px;
+  }
+`;
+
+const GridWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+  @media screen and (max-width: 768px) {
+    height: 150px;
   }
 `;
 
