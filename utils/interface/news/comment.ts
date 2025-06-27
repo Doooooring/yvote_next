@@ -23,17 +23,17 @@ export const typeExplain = {
 
 export const typeQualification = (type: commentType) => {
   switch (type) {
-    case commentType.전략가:
-    case commentType.지도자:
-    case commentType.예술가:
-    case commentType.감시자:
-    case commentType.운영자:
-    case commentType.공화주의자:
-    case commentType.관찰자:
-    case commentType.개혁가:
-    case commentType.이론가:
-    case commentType.자유주의자:
-      return CommentQualification.YVOTETYPE;
+    // case commentType.전략가:
+    // case commentType.지도자:
+    // case commentType.예술가:
+    // case commentType.감시자:
+    // case commentType.운영자:
+    // case commentType.공화주의자:
+    // case commentType.관찰자:
+    // case commentType.개혁가:
+    // case commentType.이론가:
+    // case commentType.자유주의자:
+    //   return CommentQualification.YVOTETYPE;
     case commentType.더불어민주당:
     case commentType.국민의힘:
     case commentType.대통령실:
@@ -54,8 +54,8 @@ export const typeCheckImg = (type: commentType) => {
     case CommentQualification.YVOTE:
     case CommentQualification.PUBLIC:
       return '/assets/img/yvote_check.svg';
-    case CommentQualification.YVOTETYPE:
-      return '/assets/img/green_check.svg';
+    // case CommentQualification.YVOTETYPE:
+    //   return '/assets/img/green_check.svg';
     case CommentQualification.ETC:
       return '/assets/img/grey_check.svg';
   }

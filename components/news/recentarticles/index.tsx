@@ -1,35 +1,44 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
+import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
-import { Suspense, useRef, useState } from 'react';
+import { commentType } from '@utils/interface/news';
+import { commentTypeColor } from '@utils/interface/news/comment';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-const categories = ['전체', '행정부', '대통령실', '국민의힘', '더불어민주당', '헌법재판소', '기타'];
+type recentCommentType = '전체' | commentType;
+const categories = ['전체', ...Object.values(commentType)] as Array<recentCommentType>;
 
 interface SlideContentProps {
+  commentType: recentCommentType;
   filteredArticles: any[];
   numToShow: number;
 }
 
-function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
+function SlideContent({ commentType, filteredArticles, numToShow }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
-  
+
   return (
     <>
       <LeftButton curView={curView} viewToLeft={onSlideLeft} />
-      <div className="grid-wrapper">
-        <GridContainer curView={curView}>
-          {filteredArticles
-            .slice(curView * numToShow, (curView + 1) * numToShow)
-            .map((article) => {
-              return <ArticleBox key={article.id} article={article} />;
-            })}
-        </GridContainer>
-      </div>
+      <GridWrapper>
+        {filteredArticles.length !== 0 ? (
+          <GridContainer curView={curView}>
+            {filteredArticles
+              .slice(curView * numToShow, (curView + 1) * numToShow)
+              .map((article) => {
+                return <ArticleBox key={article.id} article={article} />;
+              })}
+          </GridContainer>
+        ) : (
+          <VacantContent commentType={commentType} />
+        )}
+      </GridWrapper>
       <RightButton
         curView={curView}
         viewToRight={onSlideRight}
@@ -41,23 +50,50 @@ function SlideContent({ filteredArticles, numToShow }: SlideContentProps) {
   );
 }
 
+function VacantContent({ commentType }: { commentType: recentCommentType }) {
+  return (
+    <VacantWrapper>
+      <ErrorComment>
+        <span
+          style={{
+            color: commentType === '전체' ? 'rgb(0,0,0)' : commentTypeColor(commentType),
+          }}
+        >
+          {commentType}
+        </span>{' '}
+        관련 최신 자료가 존재하지 않습니다.
+      </ErrorComment>
+    </VacantWrapper>
+  );
+}
+
+const VacantWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 function NewArticles() {
   const numToShow = useRef(5);
   const recentArticles = useRecentArticles();
-  const [activeCategory, setActiveCategory] = useState('전체');
 
-  const filteredArticles = activeCategory === '전체' 
-  ? recentArticles 
-  : recentArticles.filter(article => article.commentType === activeCategory);
+  const [activeCategory, setActiveCategory] = useState<recentCommentType>('전체');
 
+  const filteredArticles = useMemo(() => {
+    return activeCategory === '전체'
+      ? recentArticles
+      : recentArticles.filter((article) => article.commentType === activeCategory);
+  }, [recentArticles, activeCategory]);
 
   return (
     <>
       <Header>
         <CategoryNavigation>
-          {categories.map(category => (
-            <CategoryItem 
-              key={category} 
+          {categories.map((category) => (
+            <CategoryItem
+              key={category}
               isActive={category === activeCategory}
               onClick={() => setActiveCategory(category)}
             >
@@ -65,12 +101,13 @@ function NewArticles() {
             </CategoryItem>
           ))}
         </CategoryNavigation>
-        </Header>
+      </Header>
       <div className="body-wrapper">
-        <SlideContent 
+        <SlideContent
           key={activeCategory}
-          filteredArticles={filteredArticles} 
-          numToShow={numToShow.current} 
+          commentType={activeCategory}
+          filteredArticles={filteredArticles}
+          numToShow={numToShow.current}
         />
       </div>
     </>
@@ -100,7 +137,7 @@ const Wrapper = styled(CommonLayoutBox)`
   height: auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border-radius: 6px;
-  
+
   @media screen and (max-width: 768px) {
     width: 98%;
     height: auto;
@@ -116,7 +153,7 @@ const Wrapper = styled(CommonLayoutBox)`
     position: relative;
     width: 100%;
     margin-top: 8px;
-    
+
     .grid-wrapper {
       width: 100%;
       overflow: hidden;
@@ -155,13 +192,12 @@ interface CategoryItemProps {
 
 const CategoryItem = styled.div<CategoryItemProps>`
   cursor: pointer;
-  font-weight: ${props => props.isActive ? '600' : '400'};
-  color: ${props => props.isActive 
-    ? ({ theme }) => theme.colors.gray800 
-    : ({ theme }) => theme.colors.gray500};
+  font-weight: ${(props) => (props.isActive ? '600' : '400')};
+  color: ${(props) =>
+    props.isActive ? ({ theme }) => theme.colors.gray800 : ({ theme }) => theme.colors.gray500};
   font-size: 16px;
   white-space: nowrap;
-  border-bottom: ${props => props.isActive ? '2px solid currentColor' : 'none'};
+  border-bottom: ${(props) => (props.isActive ? '2px solid currentColor' : 'none')};
   padding-bottom: 5px;
   transition: color 0.2s ease, border-bottom 0.2s ease;
   &:hover {
@@ -169,6 +205,14 @@ const CategoryItem = styled.div<CategoryItemProps>`
   }
   @media screen and (max-width: 768px) {
     font-size: 15px;
+  }
+`;
+
+const GridWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+  @media screen and (max-width: 768px) {
+    height: 150px;
   }
 `;
 
