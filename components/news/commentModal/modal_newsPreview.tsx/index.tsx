@@ -1,8 +1,9 @@
-import { CommonIconButton, CommonModalBackground } from '@components/common/commonStyles';
+import { CommonIconButton } from '@components/common/commonStyles';
+import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
-import { ReactNode, useState } from 'react';
+import { MouseEvent, ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -53,15 +54,15 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
 
 const _ModalWrapper = ({ close, children }: { close: () => void; children: ReactNode }) => {
   return (
-    <CommonModalBackground
-      onClick={(e) => {
+    <CommonModalLayout
+      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
           close();
         }
       }}
     >
       {children}
-    </CommonModalBackground>
+    </CommonModalLayout>
   );
 };
 

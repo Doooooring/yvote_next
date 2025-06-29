@@ -1,7 +1,7 @@
+import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import { ReactNode } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import styled from 'styled-components';
-import { CommonModalBackground } from '../../../common/commonStyles';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
 
@@ -25,15 +25,15 @@ export function CommentModal({
 
 const _ModalWrapper = ({ close, children }: { close: () => void; children: ReactNode }) => {
   return (
-    <CommonModalBackground
-      onClick={(e) => {
+    <CommonModalLayout
+      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
           close();
         }
       }}
     >
       {children}
-    </CommonModalBackground>
+    </CommonModalLayout>
   );
 };
 

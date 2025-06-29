@@ -1,9 +1,8 @@
 import { Row } from '@components/common/commonStyles';
-import IsShow from '@components/common/isShow';
-import CommentModal from '@components/news/commentModal/modal_newspage';
+import { useCommentModal_RecentArticle } from '@utils/hook/news/useCommentModal_RecentArticle';
 import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import styled from 'styled-components';
 import { commentTypeColor } from '../../../../utils/interface/news/comment';
 
@@ -19,15 +18,11 @@ interface ArticleBoxProps {
 export default function ArticleBox({ article }: ArticleBoxProps) {
   const { news, id, commentType, title, comment, date } = article;
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { showCommentModal } = useCommentModal_RecentArticle();
 
   const openModal = useCallback(() => {
-    setIsModalOpen(true);
-  }, [setIsModalOpen]);
-
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-  }, [setIsModalOpen]);
+    showCommentModal(article);
+  }, [showCommentModal, article]);
 
   const formatDate = (d: Date): string => {
     const date = new Date(d);
@@ -59,17 +54,6 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
           </div>
         </div>
       </LinkWrapper>
-      <IsShow state={isModalOpen}>
-        <CommentModal
-          state={isModalOpen}
-          close={closeModal}
-          news={news}
-          commentType={commentType}
-          title={title}
-          date={date}
-          comment={comment}
-        />
-      </IsShow>
     </>
   );
 }

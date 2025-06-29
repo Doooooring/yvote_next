@@ -1,6 +1,6 @@
-import Modal from '@components/common/modal';
+import { CommonModalLayout } from '@components/common/modal/component';
 import { Link, useRouter } from '@utils/hook/useRouter';
-import { commentType, News, NewsState } from '@utils/interface/news';
+import { Article, NewsState } from '@utils/interface/news';
 import { MouseEvent, useCallback } from 'react';
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
@@ -13,23 +13,13 @@ import { ModalBodyWrapper, ScrollWrapper } from '../figure';
 import ModalLayout from '../modal.layout';
 
 interface CommentModalProps {
-  state: boolean;
   close: () => void;
-  news: Pick<News, 'id' | 'state'>;
-  commentType: commentType;
-  title: string;
-  comment: string;
-  date: Date;
+  article: Article;
 }
 
 export default function CommentModal({
-  state,
   close,
-  news,
-  commentType,
-  title,
-  comment,
-  date,
+  article: { news, commentType, title, comment, date },
 }: CommentModalProps) {
   const { show } = useToastMessage();
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
@@ -47,8 +37,17 @@ export default function CommentModal({
     [router],
   );
 
+  const onModalOutClick = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget) {
+        close();
+      }
+    },
+    [close],
+  );
+
   return (
-    <Modal state={state} outClickAction={close}>
+    <CommonModalLayout onOutClick={onModalOutClick}>
       <ModalBodyWrapper>
         <ModalLayout
           close={close}
@@ -75,6 +74,6 @@ export default function CommentModal({
           }
         />
       </ModalBodyWrapper>
-    </Modal>
+    </CommonModalLayout>
   );
 }
