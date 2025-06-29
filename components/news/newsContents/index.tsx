@@ -5,7 +5,7 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 import VoteBox from '@components/news/newsContents/voteBox';
 import icoNew from '@images/ico_new_2x.png';
-import { useCommentModal } from '@utils/hook/news/useCommentModal';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { useBool } from '@utils/hook/useBool';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { commentType, NewsInView } from '@utils/interface/news';

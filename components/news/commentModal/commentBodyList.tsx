@@ -1,15 +1,22 @@
+import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import IsShow from '@components/common/isShow';
-import { Comment } from '@utils/interface/news';
+import { Comment, commentType } from '@utils/interface/news';
+import { commentTypeColor } from '@utils/interface/news/comment';
 import { getDateHidingCurrentYear } from '@utils/tools/date';
 import styled from 'styled-components';
 
 interface CommentBodyListProps {
+  commentType: commentType;
   comments: Comment[];
   clickComment: (comment: Comment) => void;
 }
 
-export default function CommentBodyList({ comments, clickComment }: CommentBodyListProps) {
-  return (
+export default function CommentBodyList({
+  commentType,
+  comments,
+  clickComment,
+}: CommentBodyListProps) {
+  return comments.length > 0 ? (
     <ModalList>
       {comments.map((comment, idx) => {
         return (
@@ -25,18 +32,23 @@ export default function CommentBodyList({ comments, clickComment }: CommentBodyL
             </IsShow>
           </BodyBlock>
         );
-      })}
+      })}{' '}
     </ModalList>
+  ) : (
+    <VacantWrapper>
+      <ErrorComment>
+        <span
+          style={{
+            color: commentTypeColor(commentType),
+          }}
+        >
+          {commentType}
+        </span>{' '}
+        관련 최신 자료가 존재하지 않습니다.
+      </ErrorComment>
+    </VacantWrapper>
   );
 }
-
-const ScrollWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  overflow-y: scroll;
-`;
 
 const ModalList = styled.div`
   display: flex;
@@ -56,8 +68,8 @@ const BodyBlock = styled.div`
   box-sizing: border-box;
   border-bottom: 1.5px solid #ddd;
   justify-content: space-between;
-  
-span:first-child {
+
+  span:first-child {
     flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -71,7 +83,7 @@ span:first-child {
     margin-right: 10px;
     align-self: center;
   }
-  
+
   .date {
     flex: 0 0 auto;
     font-size: 13px;
@@ -79,4 +91,12 @@ span:first-child {
     color: rgb(120, 120, 120);
     align-self: center;
   }
+`;
+
+const VacantWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

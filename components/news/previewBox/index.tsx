@@ -1,12 +1,12 @@
 import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import { Link } from '@utils/hook/useRouter';
 import { commentType, NewsState, Preview } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useCommentModal_Preview } from './previewBox.hook';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
 interface PreviewBoxProps {

@@ -3,7 +3,7 @@ import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { PositiveMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { Comment, commentType, NewsState } from '@utils/interface/news';
+import { Comment, commentType } from '@utils/interface/news';
 import { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import CommentBodyExplain from './commentBodyExplain';
@@ -97,7 +97,11 @@ export default function CommentBodyCommon({
         <>
           <ScrollWrapper ref={targetRef} className="common-scroll-style">
             {curComment === null ? (
-              <CommentBodyList comments={curComments} clickComment={clickComment} />
+              <CommentBodyList
+                commentType={commentType}
+                comments={curComments}
+                clickComment={clickComment}
+              />
             ) : (
               <>
                 <CommentProgressBar
@@ -115,7 +119,11 @@ export default function CommentBodyCommon({
             )}
           </ScrollWrapper>
           <IsShow state={isRequesting}>
-            <LoadingWrapper>
+            <LoadingWrapper
+              style={{
+                backgroundColor: curComments.length === 0 ? 'white' : '',
+              }}
+            >
               <LoadingCommon comment="" fontColor="black" />
             </LoadingWrapper>
           </IsShow>
