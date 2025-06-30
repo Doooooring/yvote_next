@@ -11,8 +11,8 @@ import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
-import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
 import SuspensePreNewsList from '@components/news/preNewsList';
+import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
@@ -45,7 +45,8 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const [isKeywordTopSheetOpen, setIsKeywordTopSheetOpen] = useState(false);
+  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
+
   const [keyCached, setKeyCached] = useState<string | null>(null);
 
   const showNewsContent = useNewsNavigate();
@@ -72,6 +73,16 @@ export default function NewsPage(props: pageProps) {
     reloadRandomKeywords,
     totalKeywords,
   } = useNewsKeywordFilter();
+
+  const openEditNewsKeywordTopSheet = useCallback(() => {
+    showEditNewsKeywordTopSheet(customKeywords, totalKeywords, randomKeywords, setCustomKeywords);
+  }, [
+    showEditNewsKeywordTopSheet,
+    customKeywords,
+    totalKeywords,
+    randomKeywords,
+    setCustomKeywords,
+  ]);
 
   const setCachedPreviews = useCallback(
     async (page: number, limit: number, filter: string | null, scroll: number) => {
@@ -186,7 +197,7 @@ export default function NewsPage(props: pageProps) {
         <KeywordHeadTab
           keywords={keywordsToShow}
           setKeywords={setCustomKeywords}
-          openEditKeywordsTopSheet={() => setIsKeywordTopSheetOpen(true)}
+          openEditKeywordsTopSheet={openEditNewsKeywordTopSheet}
           keywordSelected={keywordSelected}
           reload={refreshKeywordFilters}
           totalKeywords={totalKeywords}
@@ -227,7 +238,7 @@ export default function NewsPage(props: pageProps) {
                     alt="filter-menu"
                     width={16}
                     height={16}
-                    onClick={() => setIsKeywordTopSheetOpen(true)}
+                    onClick={openEditNewsKeywordTopSheet}
                   />
                 </ReloadButton>
               </Row>
@@ -250,14 +261,6 @@ export default function NewsPage(props: pageProps) {
           </TagWrapper>
         </div>
       </Wrapper>
-      <EditKeywordFiltersTopSheet
-        state={isKeywordTopSheetOpen}
-        close={() => setIsKeywordTopSheetOpen(false)}
-        keywordsToEdit={customKeywords}
-        totalKeywords={totalKeywords}
-        randomKeywords={randomKeywords}
-        saveKeywordFilteres={setCustomKeywords}
-      />
     </>
   );
 }

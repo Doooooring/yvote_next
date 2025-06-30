@@ -34,7 +34,7 @@ export default function CommentModal({
       }
       routeWithMouseEvent(`/news/${news.id}`, e);
     },
-    [router],
+    [router, show, routeWithMouseEvent, news],
   );
 
   const onModalOutClick = useCallback(

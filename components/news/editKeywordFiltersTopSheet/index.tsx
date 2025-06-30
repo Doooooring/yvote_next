@@ -6,7 +6,7 @@ import {
   Row,
 } from '@components/common/commonStyles';
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
-import Modal from '@components/common/modal';
+import { CommonModalLayout } from '@components/common/modal/component';
 import { KeyTitle } from '@utils/interface/keywords';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,7 +16,6 @@ import useKeywordsSelected from './useKeywordsSelected';
 import useSearchKeyword from './useSearchKeyword.';
 
 interface EditKeywordFiltersTopSheetProps {
-  state: boolean;
   close: () => void;
   keywordsToEdit: KeyTitle[];
   randomKeywords: KeyTitle[];
@@ -25,7 +24,6 @@ interface EditKeywordFiltersTopSheetProps {
 }
 
 export default function EditKeywordFiltersTopSheet({
-  state,
   close,
   keywordsToEdit,
   randomKeywords,
@@ -42,7 +40,7 @@ export default function EditKeywordFiltersTopSheet({
     setTimeout(() => {
       close();
     }, 200);
-  }, []);
+  }, [setIsTopSheetDown, close]);
 
   const saveKeywords = useCallback(() => {
     saveKeywordFilteres(curKeywords);
@@ -62,13 +60,11 @@ export default function EditKeywordFiltersTopSheet({
   );
 
   useEffect(() => {
-    if (state) {
-      setIsTopSheetDown(true);
-    }
-  }, [state]);
+    setIsTopSheetDown(true);
+  }, [setIsTopSheetDown]);
 
   return (
-    <Modal state={state} backgroundColor="rgba(0,0,0,0.1)" outClickAction={closeTopSheet}>
+    <CommonModalLayout onOutClick={closeTopSheet}>
       <TopSheet $isOpen={isTopSheetDown}>
         <Title>관심있는 키워드를 클릭해주세요.</Title>
         <SubTitle>키워드를 기반으로 뉴스를 골라볼 수 있어요!</SubTitle>
@@ -160,7 +156,7 @@ export default function EditKeywordFiltersTopSheet({
           <Image src={closeImage} alt="close" onClick={closeTopSheet} width={24} />
         </CloseButton>
       </TopSheet>
-    </Modal>
+    </CommonModalLayout>
   );
 }
 

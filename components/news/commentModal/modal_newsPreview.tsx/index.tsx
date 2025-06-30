@@ -3,7 +3,7 @@ import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
-import { MouseEvent, ReactNode, useState } from 'react';
+import { MouseEvent, ReactNode, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -15,7 +15,10 @@ interface Modal_NewsPreviewProp {
 }
 
 export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_NewsPreviewProp) {
-  const [commentSelected, setCommentSelected] = useState<commentType>(commentTypes[0]);
+  const commentTypesSorted = useMemo(() => {
+    return sortComment(commentTypes);
+  }, [commentTypes]);
+  const [commentSelected, setCommentSelected] = useState<commentType>(commentTypesSorted[0]);
 
   return (
     <_ModalWrapper close={close}>
@@ -25,7 +28,7 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
         ) : (
           <>
             <CommentButtons>
-              {sortComment(commentTypes).map((commentType) => {
+              {commentTypesSorted.map((commentType) => {
                 return (
                   <CommentButton
                     key={commentType}
