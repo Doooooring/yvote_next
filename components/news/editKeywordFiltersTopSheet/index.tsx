@@ -60,6 +60,7 @@ export default function EditKeywordFiltersTopSheet({
   );
 
   useEffect(() => {
+    console.log('is recalled?');
     setIsTopSheetDown(true);
   }, [setIsTopSheetDown]);
 
