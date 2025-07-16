@@ -4,23 +4,22 @@ import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { useRecentArticles } from '@utils/hook/useRecentComments';
 import { useSlide } from '@utils/hook/useSlide';
-import { commentType } from '@utils/interface/news';
+import { commentType, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
-import { Suspense, useMemo, useRef, useState } from 'react';
+import { Suspense, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-type recentCommentType = '전체' | commentType;
-const categories = ['전체', ...Object.values(commentType)] as Array<recentCommentType>;
+const categories = ['전체', ...Object.values(commentType)] as Array<recentArticleType>;
+const numToShowArticle = 5;
 
 interface SlideContentProps {
-  commentType: recentCommentType;
+  commentType: recentArticleType;
   filteredArticles: any[];
-  numToShow: number;
 }
 
-function SlideContent({ commentType, filteredArticles, numToShow }: SlideContentProps) {
+function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
 
   return (
@@ -30,7 +29,7 @@ function SlideContent({ commentType, filteredArticles, numToShow }: SlideContent
         {filteredArticles.length !== 0 ? (
           <GridContainer curView={curView}>
             {filteredArticles
-              .slice(curView * numToShow, (curView + 1) * numToShow)
+              .slice(curView * numToShowArticle, (curView + 1) * numToShowArticle)
               .map((article) => {
                 return <ArticleBox key={article.id} article={article} />;
               })}
@@ -43,14 +42,16 @@ function SlideContent({ commentType, filteredArticles, numToShow }: SlideContent
         curView={curView}
         viewToRight={onSlideRight}
         lastPage={
-          filteredArticles.length > 0 ? Math.ceil(filteredArticles.length / numToShow) - 1 : 0
+          filteredArticles.length > 0
+            ? Math.ceil(filteredArticles.length / numToShowArticle) - 1
+            : 0
         }
       />
     </>
   );
 }
 
-function VacantContent({ commentType }: { commentType: recentCommentType }) {
+function VacantContent({ commentType }: { commentType: recentArticleType }) {
   return (
     <VacantWrapper>
       <ErrorComment>
@@ -75,20 +76,21 @@ const VacantWrapper = styled.div`
   align-items: center;
 `;
 
-function NewArticles() {
-  const numToShow = useRef(5);
-  const recentArticles = useRecentArticles();
-
-  const [activeCategory, setActiveCategory] = useState<recentCommentType>('전체');
-
-  const filteredArticles = useMemo(() => {
-    return activeCategory === '전체'
-      ? recentArticles
-      : recentArticles.filter((article) => article.commentType === activeCategory);
-  }, [recentArticles, activeCategory]);
+function NewArticles({ category }: { category: recentArticleType }) {
+  const recentArticles = useRecentArticles(category);
 
   return (
-    <>
+    <div className="body-wrapper">
+      <SlideContent commentType={category} filteredArticles={recentArticles} />
+    </div>
+  );
+}
+
+export default function SuspenseNewsArticles() {
+  const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
+
+  return (
+    <Wrapper>
       <Header>
         <CategoryNavigation>
           {categories.map((category) => (
@@ -102,23 +104,8 @@ function NewArticles() {
           ))}
         </CategoryNavigation>
       </Header>
-      <div className="body-wrapper">
-        <SlideContent
-          key={activeCategory}
-          commentType={activeCategory}
-          filteredArticles={filteredArticles}
-          numToShow={numToShow.current}
-        />
-      </div>
-    </>
-  );
-}
-
-export default function SuspenseNewsArticles() {
-  return (
-    <Wrapper>
       <Suspense fallback={<NewArticlesFallback />}>
-        <NewArticles />
+        <NewArticles category={activeCategory} />
       </Suspense>
     </Wrapper>
   );

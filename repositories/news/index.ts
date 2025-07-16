@@ -11,6 +11,7 @@ import {
 
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
 import axios from 'axios';
+import { getRecentUpdatedCommentsQueryOption } from './newsRepository.type';
 
 type AnswerState = 'left' | 'right' | 'none';
 
@@ -90,10 +91,20 @@ class NewsRepository {
   /**
    * 최신 업데이트 평론 조회 API
    */
-  async getRecentUpdatedComments(offset: number, limit: number) {
-    const response: Response<Array<Article>> = await axios.get(
-      `${HOST_URL}/news/comment-updated?offset=${offset}&limit=${limit}`,
-    );
+
+  async getRecentUpdatedComments(
+    offset: number,
+    limit: number,
+    option: { type?: commentType } = {},
+  ) {
+    const { type } = option;
+
+    const queryOptions: getRecentUpdatedCommentsQueryOption = { offset, limit };
+    if (type) queryOptions['type'] = type;
+
+    const response: Response<Array<Article>> = await axios.get(`${HOST_URL}/news/comment-updated`, {
+      params: queryOptions,
+    });
     const data = response.data.result;
     return data;
   }

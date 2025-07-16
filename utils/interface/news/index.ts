@@ -86,6 +86,8 @@ export interface Article
   };
 }
 
+export type recentArticleType = '전체' | commentType;
+
 export interface News {
   id: number;
   order: number;
