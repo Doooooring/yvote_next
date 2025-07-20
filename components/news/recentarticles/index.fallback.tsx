@@ -16,10 +16,18 @@ export function NewArticlesFallback() {
 
 const BodyWrapper = styled.div`
   position: relative;
+  height: 200px;
+  @media screen and (max-width: 768px) {
+    height: 150px;
+  }
 `;
 
 const Fallback = styled(FallbackBox)`
   width: 90%;
-  height: 25px;
-  margin-bottom: 14px;
+  height: 30px;
+  margin-bottom: 10px;
+
+  @media screen and (max-width: 768px) {
+    height: 20px;
+  }
 `;
