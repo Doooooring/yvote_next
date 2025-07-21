@@ -1,5 +1,5 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 
 import HeadMeta from '@components/common/HeadMeta';
 import { useRouter } from '@utils/hook/useRouter/useRouter';
@@ -26,7 +26,7 @@ interface pageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr = await NewsRepository.getNewsIds();
+  const newsIdArr = await newsRepository.getNewsIds();
   const paths = newsIdArr.map((item) => {
     return {
       params: { news: String(item['id']) },
@@ -41,7 +41,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news;
   if (!id) throw Error('static props null');
-  const news = await NewsRepository.getNewsContent(Number(id), null);
+  const news = await newsRepository.getNewsContent(Number(id), null);
   const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';
 
   return {

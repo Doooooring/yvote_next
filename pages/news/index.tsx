@@ -32,7 +32,7 @@ interface pageProps {
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
-  //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
+  //const data: Array<Preview> = await newsRepository.getPreviews(0, '');
   return {
     props: { data: [] },
     revalidate: 300,

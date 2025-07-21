@@ -17,10 +17,10 @@
     "incremental": true,
     "paths": {
       "@*": ["./*"],
+      "@config/*": ["./config/*"],
       "@pages/*": ["./pages/*"],
       "@components/*": ["./components/*"],
       "@controller/*": ["./controller/*"],
-      "@store/*": ["./store/*"],
       "@utils/*": ["./utils/*"],
       "@assets/*": ["./public/assets/*"],
       "@images/*": ["./public/assets/img/*"],

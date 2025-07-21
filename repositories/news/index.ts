@@ -169,4 +169,4 @@ class NewsRepository {
   }
 }
 
-export default new NewsRepository();
+export const newsRepository = new NewsRepository();

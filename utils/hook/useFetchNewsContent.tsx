@@ -1,4 +1,4 @@
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 import { useCallback, useState } from 'react';
 
 import { NewsInView } from '@utils/interface/news';
@@ -10,7 +10,7 @@ export const useFetchNewsContent = () => {
   const [voteHistory, setVoteHistory] = useState<AnswerState>(null);
 
   const showNewsContent = async (id: number) => {
-    const news: NewsInView = await NewsRepository.getNewsContent(id, null);
+    const news: NewsInView = await newsRepository.getNewsContent(id, null);
 
     if (news === null) {
       Error('news content error');

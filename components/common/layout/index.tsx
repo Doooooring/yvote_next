@@ -9,26 +9,29 @@ import { ReactNode } from 'react';
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
 import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
 import LoadingIndicator from './loadingIndicator';
+import { QueryProvider } from './queryProvider';
 import RouteLoading from './routeLoading';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <RouterProvider>
-      <GlobalLoadingProvider>
-        <RouteLoading />
-        <ToastMessageProvider>
-          <ModalProvider>
-            <Wrapper>
-              <Header />
-              <GlobalErrorBoundary>
-                <Body>{children}</Body>
-              </GlobalErrorBoundary>
-            </Wrapper>
-            <LoadingIndicator />
-          </ModalProvider>
-        </ToastMessageProvider>
-      </GlobalLoadingProvider>
-    </RouterProvider>
+    <QueryProvider>
+      <RouterProvider>
+        <GlobalLoadingProvider>
+          <RouteLoading />
+          <ToastMessageProvider>
+            <ModalProvider>
+              <Wrapper>
+                <Header />
+                <GlobalErrorBoundary>
+                  <Body>{children}</Body>
+                </GlobalErrorBoundary>
+              </Wrapper>
+              <LoadingIndicator />
+            </ModalProvider>
+          </ToastMessageProvider>
+        </GlobalLoadingProvider>
+      </RouterProvider>
+    </QueryProvider>
   );
 };
 

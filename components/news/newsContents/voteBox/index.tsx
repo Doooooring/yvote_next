@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { CommonLayoutBox } from '@components/common/commonStyles';
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 import { News } from '@utils/interface/news';
 
 type AnswerState = 'left' | 'right' | 'none';
@@ -36,7 +36,7 @@ export default function VoteBox({ id, state, opinions, votes, voteHistory }: Vot
 
   const vote = async (voteAnswer: AnswerState) => {
     const token = localStorage.getItem('yVote');
-    const response = await NewsRepository.vote(id, voteAnswer, token);
+    const response = await newsRepository.vote(id, voteAnswer, token);
     localStorage.setItem('yVote', response.token);
     return;
   };
