@@ -1,5 +1,5 @@
-import { ReactNode } from '@node_modules/@types/react';
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode } from 'react';
 
 function makeQueryClient() {
   return new QueryClient({
