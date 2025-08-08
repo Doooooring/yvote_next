@@ -5,24 +5,23 @@ import {
   CommonTagBox,
   Row,
 } from '@components/common/commonStyles';
-import NewsList from '@components/news/newsLIst';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
+import LoadingCommon from '@/components/common/loading';
+import NewsListSection from '@/components/news/newsListSection';
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import SuspensePreNewsList from '@components/news/preNewsList';
 import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
-import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
-import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import KeywordHeadTab from '../../components/news/keywordHeadTab';
 import { KeyTitle } from '../../utils/interface/keywords';
@@ -45,23 +44,12 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
+  const searchParams = useSearchParams();
+  const keyword = searchParams.get('keyword') ?? null;
   const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
 
-  const [keyCached, setKeyCached] = useState<string | null>(null);
-
   const showNewsContent = useNewsNavigate();
-  const { router, getCurrentPageInfo } = useRouter();
   const { setIsLoading: setIsGlobalLoading } = useGlobalLoading();
-
-  const {
-    page,
-    isRequesting,
-    isFetchingImages,
-    previews,
-    fetchPreviews,
-    fetchNextPreviews,
-    getCurrentMetadata,
-  } = useFetchNewsPreviews(16);
 
   const {
     keywordsToShow,
@@ -84,41 +72,21 @@ export default function NewsPage(props: pageProps) {
     setCustomKeywords,
   ]);
 
-  const setCachedPreviews = useCallback(
-    async (page: number, limit: number, filter: string | null, scroll: number) => {
-      try {
-        setIsGlobalLoading(true);
-        await fetchPreviews({ limit: page, filter: filter ?? '' });
-        setTimeout(() => {
-          window.scrollTo({ left: 0, top: scroll });
-        }, 100);
-        await fetchNextPreviews(limit);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsGlobalLoading(false);
-      }
-    },
-    [fetchPreviews, fetchNextPreviews],
-  );
-
   const clickKeyword = useCallback(
     async (keyword: KeyTitle) => {
       setIsGlobalLoading(true);
       try {
         if (keyword.id == keywordSelected?.id) {
           setKeywordSelected(null);
-          await fetchPreviews({ filter: null, limit: 16 });
         } else {
           setKeywordSelected(keyword);
-          await fetchPreviews({ filter: keyword.keyword, limit: 16 });
         }
       } catch (e) {
       } finally {
         setIsGlobalLoading(false);
       }
     },
-    [setKeywordSelected, fetchPreviews, keywordSelected],
+    [setKeywordSelected, keywordSelected],
   );
 
   const refreshKeywordFilters = useCallback(async () => {
@@ -127,65 +95,21 @@ export default function NewsPage(props: pageProps) {
     if (prevSelected) {
       try {
         setIsGlobalLoading(true);
-        await fetchPreviews({ filter: '', limit: 16 });
       } catch (e) {
       } finally {
         setIsGlobalLoading(false);
       }
     }
-  }, [
-    reloadRandomKeywords,
-    setKeywordSelected,
-    setIsGlobalLoading,
-    fetchPreviews,
-    keywordSelected,
-  ]);
+  }, [reloadRandomKeywords, setKeywordSelected, setIsGlobalLoading, keywordSelected]);
 
   useEffect(() => {
-    const info = router.query.pageId as string;
-    if (!info) return;
-    const item = getSessionItem(info ?? '');
-    if (item) {
-      const { page, limit, filter, scroll } = item as {
-        path: string;
-        scroll: number;
-        page: number;
-        limit: number;
-        filter: string;
-        isAdmin: boolean;
-      };
-      if (filter) setKeyCached(filter);
-      setCachedPreviews(page, limit, filter, scroll);
-    } else {
-      fetchPreviews({ limit: 16 });
-    }
-
-    const handleRouteChangeStart = () => {
-      const info = getCurrentPageInfo();
-      if (info) {
-        saveSessionItem(info.pageId, {
-          path: info.path,
-          scroll: window.scrollY,
-          ...getCurrentMetadata(),
-        });
-      }
-    };
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-    };
-  }, [router.query.pageId, setKeyCached, setCachedPreviews, fetchPreviews]);
-
-  useEffect(() => {
-    if (keyCached && totalKeywords.length > 0) {
-      const keyword = totalKeywords.filter((v) => v.keyword === keyCached)[0];
+    if (keyword && totalKeywords.length > 0) {
+      const keywordSelected = totalKeywords.filter((v) => v.keyword === keyword)[0];
       if (keyword) {
-        setKeywordSelected(keyword);
+        setKeywordSelected(keywordSelected);
       }
-      setKeyCached(null);
     }
-  }, [keyCached, totalKeywords, setKeywordSelected, setKeyCached]);
+  }, [totalKeywords, setKeywordSelected]);
 
   return (
     <>
@@ -206,14 +130,15 @@ export default function NewsPage(props: pageProps) {
         <div className="main-contents">
           <div className="main-contents-body">
             <SuspensePreNewsList />
-            <NewsList
-              page={page}
-              previews={previews.length == 0 ? props.data : previews}
-              isRequesting={isRequesting}
-              isFetchingImages={isFetchingImages}
-              fetchPreviews={fetchNextPreviews}
-              showNewsContent={showNewsContent}
-            />
+            <Suspense
+              fallback={
+                <LoadingWrapper>
+                  <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+                </LoadingWrapper>
+              }
+            >
+              <NewsListSection keywordFilter={keyword ?? ''} clickPreviews={showNewsContent} />
+            </Suspense>
           </div>
           <TagWrapper>
             <KeywordsWrapper>
@@ -449,4 +374,8 @@ const ReloadButton = styled(CommonIconButton)`
   flex: 0 0 auto;
   width: 24px;
   height: 24px;
+`;
+
+const LoadingWrapper = styled(CommonLayoutBox)`
+  background-color: white;
 `;

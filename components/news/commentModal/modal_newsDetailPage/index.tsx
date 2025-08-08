@@ -1,6 +1,6 @@
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import { MouseEvent, ReactNode } from 'react';
+import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -15,16 +15,6 @@ export function CommentModal({
   close: () => void;
 }) {
   return (
-    <_ModalWrapper close={close}>
-      <ModalBodyWrapper>
-        <CommentBodyCommon id={id} commentType={commentType} close={close} />
-      </ModalBodyWrapper>
-    </_ModalWrapper>
-  );
-}
-
-const _ModalWrapper = ({ close, children }: { close: () => void; children: ReactNode }) => {
-  return (
     <CommonModalLayout
       onOutClick={(e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
@@ -32,10 +22,12 @@ const _ModalWrapper = ({ close, children }: { close: () => void; children: React
         }
       }}
     >
-      {children}
+      <ModalBodyWrapper>
+        <CommentBodyCommon id={id} commentType={commentType} close={close} />
+      </ModalBodyWrapper>
     </CommonModalLayout>
   );
-};
+}
 
 const _ModalBodyWrapper = styled.div`
   width: 60%;

@@ -3,7 +3,7 @@ import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
-import { MouseEvent, ReactNode, useMemo, useState } from 'react';
+import { MouseEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -21,11 +21,15 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
   const [commentSelected, setCommentSelected] = useState<commentType>(commentTypesSorted[0]);
 
   return (
-    <_ModalWrapper close={close}>
+    <CommonModalLayout
+      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+          close();
+        }
+      }}
+    >
       <ModalBodyWrapper>
-        {commentTypes.length === 0 ? (
-          <></>
-        ) : (
+        {commentTypes.length === 0 && (
           <>
             <CommentButtons>
               {commentTypesSorted.map((commentType) => {
@@ -51,23 +55,9 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
           </>
         )}
       </ModalBodyWrapper>
-    </_ModalWrapper>
-  );
-}
-
-const _ModalWrapper = ({ close, children }: { close: () => void; children: ReactNode }) => {
-  return (
-    <CommonModalLayout
-      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-          close();
-        }
-      }}
-    >
-      {children}
     </CommonModalLayout>
   );
-};
+}
 
 const _ModalBodyWrapper = styled.div`
   width: 60%;
