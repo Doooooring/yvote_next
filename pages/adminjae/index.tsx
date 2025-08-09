@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import NewsList from '@components/news/newsLIst';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
+import { useRouter } from 'next/router';
 
 type curPreviewsList = Preview[];
 
@@ -14,7 +14,7 @@ interface pageProps {
 }
 
 export default function NewsPage(props: pageProps) {
-  const { router } = useRouter();
+  const router = useRouter();
   const { page, isRequesting, isError, previews, fetchPreviews, fetchNextPreviews } =
     useFetchNewsPreviews(16, true);
 

@@ -1,7 +1,7 @@
-import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useRouter } from 'next/router';
 
 export const useCurRoute = () => {
-  const { router } = useRouter();
+  const router = useRouter();
 
   if (router.pathname === '/error') {
     console.log("it's error");

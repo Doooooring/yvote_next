@@ -1,6 +1,7 @@
+import { useRouterUtils } from '@/utils/hook/useRouter/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
-import { Link, useRouter } from '@utils/hook/useRouter';
 import { Article, NewsState } from '@utils/interface/news';
+import Link from 'next/link';
 import { MouseEvent } from 'react';
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
@@ -22,9 +23,9 @@ export default function CommentModal({
   article: { news, commentType, title, comment, date },
 }: CommentModalProps) {
   const { show } = useToastMessage();
+  const { routeWithMouseEvent } = useRouterUtils();
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
-  const { routeWithMouseEvent } = useRouter();
 
   return (
     <CommonModalLayout

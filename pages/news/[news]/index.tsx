@@ -1,12 +1,13 @@
 import NewsContent from '@components/news/newsContents';
 import { newsRepository } from '@repositories/news';
 
+import { useRouterUtils } from '@/utils/hook/useRouter/useRouterUtils';
 import HeadMeta from '@components/common/HeadMeta';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import {
   CommonErrorView,
@@ -57,16 +58,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const { router, getCurrentPageIndex } = useRouter();
+  const router = useRouter();
+  const {} = useRouterUtils();
   const { id, news, description } = data;
-
-  const hideNewsContent = useCallback(() => {
-    if (getCurrentPageIndex() === 0) {
-      router.push('/news');
-    } else {
-      router.back();
-    }
-  }, [router, getCurrentPageIndex]);
 
   const metaTagsProps = useMemo(() => {
     return {
@@ -86,7 +80,7 @@ export default function NewsDetailPage({ data }: pageProps) {
           <div className="main-contents">
             <div className="main-contents-body">
               <div className="news-contents-wrapper">
-                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+                <NewsContent newsContent={news!} voteHistory={null} />
               </div>
             </div>
           </div>

@@ -3,10 +3,9 @@ import { newsRepository } from '@repositories/news';
 
 import LoadingCommon from '@components/common/loading';
 import { useMount } from '@utils/hook/useMount';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
@@ -45,12 +44,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const [news, setNews] = useState<NewsInView | null>(null);
-  const { router } = useRouter();
   const { id } = data;
-
-  const hideNewsContent = useCallback(() => {
-    router.push('/adminjae');
-  }, []);
 
   useMount(async () => {
     const news = await newsRepository.getNewsContent(Number(id), null);
@@ -64,7 +58,7 @@ export default function NewsDetailPage({ data }: pageProps) {
           <div className="main-contents-body">
             <div className="news-contents-wrapper">
               {news ? (
-                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+                <NewsContent newsContent={news!} voteHistory={null} />
               ) : (
                 <LoadingCommon comment={'기다려주세요~'} />
               )}

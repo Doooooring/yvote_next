@@ -1,9 +1,9 @@
+import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useGlobalLoading } from '../../../../utils/hook/useGlobalLoading/useGlobalLoading';
-import { useRouter } from '../../../../utils/hook/useRouter';
 
 export default function RouteLoading() {
-  const { router } = useRouter();
+  const router = useRouter();
   const { setIsLoading } = useGlobalLoading();
 
   const setRouteStart = useCallback(() => {

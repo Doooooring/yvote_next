@@ -1,13 +1,13 @@
 import KeywordsRepository from '@repositories/keywords';
 import { KeyTitle } from '@utils/interface/keywords';
 import { getRenderingEnvironment } from '@utils/tools';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from '../useRouter';
 
 const CUSTOM_KEYWORDS_KEY = 'CUSTOM_KEYWORDS';
 
 export default function useNewsKeywordFilter() {
-  const { router } = useRouter();
+  const router = useRouter();
 
   const [keywordSelected, setKeywordSelected] = useState<KeyTitle | null>(null);
   const [customKeywords, setCustomKeywords] = useState<KeyTitle[]>([]);

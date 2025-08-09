@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Header from '@components/common/header';
 
 import { ModalProvider } from '@utils/hook/useModal';
-import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
@@ -15,22 +14,20 @@ import RouteLoading from './routeLoading';
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <QueryProvider>
-      <RouterProvider>
-        <GlobalLoadingProvider>
-          <RouteLoading />
-          <ToastMessageProvider>
-            <ModalProvider>
-              <Wrapper>
-                <Header />
-                <GlobalErrorBoundary>
-                  <Body>{children}</Body>
-                </GlobalErrorBoundary>
-              </Wrapper>
-              <LoadingIndicator />
-            </ModalProvider>
-          </ToastMessageProvider>
-        </GlobalLoadingProvider>
-      </RouterProvider>
+      <GlobalLoadingProvider>
+        <RouteLoading />
+        <ToastMessageProvider>
+          <ModalProvider>
+            <Wrapper>
+              <Header />
+              <GlobalErrorBoundary>
+                <Body>{children}</Body>
+              </GlobalErrorBoundary>
+            </Wrapper>
+            <LoadingIndicator />
+          </ModalProvider>
+        </ToastMessageProvider>
+      </GlobalLoadingProvider>
     </QueryProvider>
   );
 };

@@ -1,15 +1,15 @@
 import { useDevice } from '@utils/hook/useDevice';
-import { Link, useRouter } from '@utils/hook/useRouter';
 
-import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { HeaderHeight } from '../../../utils/layout';
 import ImageFallback from '../imageFallback';
 import { useCurRoute } from './header.tool';
-import { Device } from '../../../utils/interface/common';
-import { HeaderHeight } from '../../../utils/layout';
 
 export default function Header() {
-  const { router } = useRouter();
+  const router = useRouter();
   const curRoute = useCurRoute();
   const device = useDevice();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
