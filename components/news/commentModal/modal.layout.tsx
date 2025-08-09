@@ -17,12 +17,7 @@ export default function ModalLayout({
 }: ModalBodyLayoutProps) {
   return (
     <Wrapper>
-      <div
-        className="close-button"
-        onClick={() => {
-          close();
-        }}
-      >
+      <div className="close-button" onClick={close}>
         &times;
       </div>
       <ModalHead>{headView}</ModalHead>
@@ -39,7 +34,6 @@ const Wrapper = styled(CommonLayoutBox)`
   padding: 1rem 2rem;
   flex: 0 0 auto;
   letter-spacing: -0.5px;
-  
 
   @media screen and (max-width: 768px) {
     padding: 1.5rem 1rem;

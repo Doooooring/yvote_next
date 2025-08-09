@@ -1,29 +1,20 @@
 import HeadMeta from '@components/common/HeadMeta';
-import {
-  CommonIconButton,
-  CommonLayoutBox,
-  CommonTagBox,
-  Row,
-} from '@components/common/commonStyles';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
 import SuspenseNewsArticles from '@components/news/recentarticles';
 
 import LoadingCommon from '@/components/common/loading';
+import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
 import NewsListSection from '@/components/news/newsListSection';
-import menuImage from '@assets/img/menu_icon.svg';
-import reloadImage from '@assets/img/reload_icon.svg';
-import SuspensePreNewsList from '@components/news/preNewsList';
+import { PreNewsList } from '@/components/news/preNewsList';
+import { useCustomSearchParams } from '@/utils/hook/router/useSearchParams';
 import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
 import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
-import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect } from 'react';
+import { Suspense, useCallback, useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import KeywordHeadTab from '../../components/news/keywordHeadTab';
 import { KeyTitle } from '../../utils/interface/keywords';
 
 interface pageProps {
@@ -44,72 +35,40 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const searchParams = useSearchParams();
-  const keyword = searchParams.get('keyword') ?? null;
-  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const searchParams = useCustomSearchParams();
+  const keywordFilter = searchParams.get('keyword') ?? null;
 
   const showNewsContent = useNewsNavigate();
-  const { setIsLoading: setIsGlobalLoading } = useGlobalLoading();
+  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
 
-  const {
-    keywordsToShow,
-    keywordSelected,
-    customKeywords,
-    randomKeywords,
-    setKeywordSelected,
-    setCustomKeywords,
-    reloadRandomKeywords,
-    totalKeywords,
-  } = useNewsKeywordFilter();
+  const { customKeywords, randomKeywords, setCustomKeywords, reloadRandomKeywords, totalKeywords } =
+    useNewsKeywordFilter();
+  const keywordSelected = totalKeywords.find((value) => value.keyword === keywordFilter) ?? null;
+  const keywordsToShow = useMemo(() => {
+    const targetKeywords = customKeywords.length > 0 ? customKeywords : randomKeywords;
+    const keywordToAdd = totalKeywords.find((v) => v.keyword === keywordFilter);
 
-  const openEditNewsKeywordTopSheet = useCallback(() => {
-    showEditNewsKeywordTopSheet(customKeywords, totalKeywords, randomKeywords, setCustomKeywords);
-  }, [
-    showEditNewsKeywordTopSheet,
-    customKeywords,
-    totalKeywords,
-    randomKeywords,
-    setCustomKeywords,
-  ]);
+    if (!keywordToAdd) return targetKeywords;
 
-  const clickKeyword = useCallback(
-    async (keyword: KeyTitle) => {
-      setIsGlobalLoading(true);
-      try {
-        if (keyword.id == keywordSelected?.id) {
-          setKeywordSelected(null);
-        } else {
-          setKeywordSelected(keyword);
-        }
-      } catch (e) {
-      } finally {
-        setIsGlobalLoading(false);
-      }
-    },
-    [setKeywordSelected, keywordSelected],
-  );
+    if (targetKeywords.find((keyword) => keyword.keyword === keywordToAdd.keyword))
+      return targetKeywords;
 
-  const refreshKeywordFilters = useCallback(async () => {
-    const prevSelected = keywordSelected?.keyword;
-    reloadRandomKeywords();
-    if (prevSelected) {
-      try {
-        setIsGlobalLoading(true);
-      } catch (e) {
-      } finally {
-        setIsGlobalLoading(false);
-      }
+    return [keywordToAdd, ...targetKeywords];
+  }, [keywordSelected, customKeywords, randomKeywords]);
+
+  const clickKeyword = useCallback(async (keyword: KeyTitle) => {
+    if (keyword.keyword === keywordFilter) {
+      searchParams.remove('keyword');
+    } else {
+      searchParams.set('keyword', keyword.keyword);
     }
-  }, [reloadRandomKeywords, setKeywordSelected, setIsGlobalLoading, keywordSelected]);
-
-  useEffect(() => {
-    if (keyword && totalKeywords.length > 0) {
-      const keywordSelected = totalKeywords.filter((v) => v.keyword === keyword)[0];
-      if (keyword) {
-        setKeywordSelected(keywordSelected);
-      }
-    }
-  }, [totalKeywords, setKeywordSelected]);
+    setTimeout(() => {
+      if (ref.current)
+        window.scrollTo({ left: 0, top: ref.current!.offsetTop - 160, behavior: 'smooth' });
+    }, 100);
+  }, []);
 
   return (
     <>
@@ -118,18 +77,25 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <SuspenseNewsArticles />
         </ArticlesWrapper>
-        <KeywordHeadTab
+        <KeywordFiltersHeadTab
           keywords={keywordsToShow}
-          setKeywords={setCustomKeywords}
-          openEditKeywordsTopSheet={openEditNewsKeywordTopSheet}
+          openEditKeywordsTopSheet={() => {
+            showEditNewsKeywordTopSheet(
+              customKeywords,
+              totalKeywords,
+              randomKeywords,
+              setCustomKeywords,
+            );
+          }}
           keywordSelected={keywordSelected}
-          reload={refreshKeywordFilters}
-          totalKeywords={totalKeywords}
+          reload={reloadRandomKeywords}
           clickKeyword={clickKeyword}
         />
         <div className="main-contents">
-          <div className="main-contents-body">
-            <SuspensePreNewsList />
+          <div className="main-contents-body" ref={ref}>
+            <Suspense fallback={<></>}>
+              <PreNewsList />
+            </Suspense>
             <Suspense
               fallback={
                 <LoadingWrapper>
@@ -137,53 +103,26 @@ export default function NewsPage(props: pageProps) {
                 </LoadingWrapper>
               }
             >
-              <NewsListSection keywordFilter={keyword ?? ''} clickPreviews={showNewsContent} />
+              <NewsListSection
+                keywordFilter={keywordFilter ?? ''}
+                clickPreviews={showNewsContent}
+              />
             </Suspense>
           </div>
-          <TagWrapper>
-            <KeywordsWrapper>
-              <Row
-                style={{
-                  gap: '10px',
-                }}
-              >
-                <KeywordTitle>키워드로 골라보기</KeywordTitle>
-                <ReloadButton>
-                  <Image
-                    src={reloadImage}
-                    alt="reload"
-                    width={16}
-                    height={16}
-                    onClick={refreshKeywordFilters}
-                  />
-                </ReloadButton>
-                <ReloadButton>
-                  <Image
-                    src={menuImage}
-                    alt="filter-menu"
-                    width={16}
-                    height={16}
-                    onClick={openEditNewsKeywordTopSheet}
-                  />
-                </ReloadButton>
-              </Row>
-              <KeywordContents>
-                {keywordsToShow.map((keyword) => {
-                  return (
-                    <Keyword
-                      key={keyword.keyword}
-                      $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
-                      onClick={() => {
-                        clickKeyword(keyword);
-                      }}
-                    >
-                      {keyword.keyword}
-                    </Keyword>
-                  );
-                })}
-              </KeywordContents>
-            </KeywordsWrapper>
-          </TagWrapper>
+          <KeywordFiltersSideTab
+            keywords={keywordsToShow}
+            openEditKeywordsTopSheet={() => {
+              showEditNewsKeywordTopSheet(
+                customKeywords,
+                totalKeywords,
+                randomKeywords,
+                setCustomKeywords,
+              );
+            }}
+            keywordSelected={keywordSelected}
+            reload={reloadRandomKeywords}
+            clickKeyword={clickKeyword}
+          />
         </div>
       </Wrapper>
     </>
@@ -308,72 +247,6 @@ const ArticlesWrapper = styled.div`
     width: 100%;
     min-width: 0px;
   }
-`;
-
-const TagWrapper = styled.div`
-  flex: 1 0 auto;
-
-  width: 300px;
-  padding-left: 10px;
-
-  position: relative;
-
-  @media screen and (max-width: 1196px) {
-    display: none;
-  }
-`;
-
-const KeywordsWrapper = styled(CommonLayoutBox)`
-  padding: 1rem;
-  position: sticky;
-  top: 100px;
-`;
-
-const KeywordTitle = styled.div`
-  color: ${({ theme }) => theme.colors.gray800};
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-align: left;
-`;
-
-const KeywordContents = styled.div`
-  padding-top: 10px;
-  text-align: left;
-`;
-
-interface KeywordProps {
-  $clicked: boolean;
-}
-
-const Keyword = styled(CommonTagBox)<KeywordProps>`
-  margin-left: 3px;
-  margin-right: 6px;
-  margin-bottom: 6px;
-  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote05 : 'rgb(120, 120, 120)')};
-  background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
-  border-color: ${({ $clicked, theme }) =>
-    $clicked ? theme.colors.yvote03 + ' !important' : '#f1f2f5'};
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  animation: back-blink 0.4s ease-in-out forwards;
-  @keyframes back-blink {
-    0% {
-      opacity: 0.4;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.gray400};
-  }
-`;
-
-const ReloadButton = styled(CommonIconButton)`
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
 `;
 
 const LoadingWrapper = styled(CommonLayoutBox)`

@@ -1,7 +1,7 @@
 import NewsContent from '@components/news/newsContents';
 import { newsRepository } from '@repositories/news';
 
-import { useRouterUtils } from '@/utils/hook/useRouter/useRouterUtils';
+import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import HeadMeta from '@components/common/HeadMeta';
 import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';

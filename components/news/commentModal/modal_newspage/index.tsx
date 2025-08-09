@@ -1,4 +1,4 @@
-import { useRouterUtils } from '@/utils/hook/useRouter/useRouterUtils';
+import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { Article, NewsState } from '@utils/interface/news';
 import Link from 'next/link';
@@ -28,13 +28,7 @@ export default function CommentModal({
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
 
   return (
-    <CommonModalLayout
-      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-          close();
-        }
-      }}
-    >
+    <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper>
         <ModalLayout
           close={close}

@@ -1,9 +1,8 @@
 import PreviewBox from '@components/news/previewBox';
 import usePreNewsList from '@utils/hook/news/usePreNewsList';
-import { Suspense } from 'react';
 import styled from 'styled-components';
 
-function PreNewsList() {
+export function PreNewsList() {
   const read = usePreNewsList();
   const preNewsList = read();
 
@@ -16,12 +15,5 @@ function PreNewsList() {
   );
 }
 
-export default function SuspensePreNewsList() {
-  return (
-    <Suspense fallback={<></>}>
-      <PreNewsList />
-    </Suspense>
-  );
-}
 
 const Wrapper = styled.div``;

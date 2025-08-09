@@ -1,6 +1,5 @@
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -15,13 +14,7 @@ export function CommentModal({
   close: () => void;
 }) {
   return (
-    <CommonModalLayout
-      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-          close();
-        }
-      }}
-    >
+    <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper>
         <CommentBodyCommon id={id} commentType={commentType} close={close} />
       </ModalBodyWrapper>

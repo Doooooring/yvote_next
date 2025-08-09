@@ -3,7 +3,7 @@ import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import Image from 'next/image';
-import { MouseEvent, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -21,15 +21,9 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
   const [commentSelected, setCommentSelected] = useState<commentType>(commentTypesSorted[0]);
 
   return (
-    <CommonModalLayout
-      onOutClick={(e: MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-          close();
-        }
-      }}
-    >
+    <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper>
-        {commentTypes.length === 0 && (
+        {commentTypes.length > 0 && (
           <>
             <CommentButtons>
               {commentTypesSorted.map((commentType) => {

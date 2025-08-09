@@ -2,7 +2,7 @@ import { MouseEvent, PropsWithChildren, useCallback, useEffect } from 'react';
 import { CommonModalBackground } from '../commonStyles';
 
 interface CommonModalLayoutInterface extends PropsWithChildren {
-  onOutClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onOutClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 }
 
 export function CommonModalLayout({
