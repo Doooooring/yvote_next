@@ -1,19 +1,18 @@
 import HeadMeta from '@components/common/HeadMeta';
 import ExplanationComp from '@components/keywords/explainBox';
-import SearchBox from '@components/keywords/searchBox';
-import NewsContent from '@components/news/newsContents';
-import NewsList from '@components/news/newsLIst';
 import keywordRepository from '@repositories/keywords';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
-import { useFetchNewsContent } from '@utils/hook/useFetchNewsContent';
 import { useMount } from '@utils/hook/useMount';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { Preview } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import styled from 'styled-components';
 
+import LoadingCommon from '@/components/common/loading';
+import NewsListSection from '@/components/news/newsListSection';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { getTextContentFromHtmlText } from '@utils/tools';
+import { Suspense } from 'react';
 import { useNewsNavigate } from '../../../utils/hook/useNewsNavigate';
 
 interface pageProps {
@@ -58,7 +57,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function KeyExplanation({ data }: pageProps) {
-  const { keyword = {}, previews: initialPreviews } = data;
+  const { keyword, previews: initialPreviews } = data;
   const {
     page,
     isRequesting,
@@ -99,14 +98,15 @@ export default function KeyExplanation({ data }: pageProps) {
       </KeywordWrapper>
       <div className="main-contents">
         <div className="main-contents-body">
-          <NewsList
-            page={page}
-            previews={previews.length == 0 ? initialPreviews : previews}
-            isRequesting={isRequesting}
-            isFetchingImages={isFetchingImages}
-            fetchPreviews={fetchNextPreviews}
-            showNewsContent={showNewsContent}
-          />
+          <Suspense
+            fallback={
+              <LoadingWrapper>
+                <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+              </LoadingWrapper>
+            }
+          >
+            <NewsListSection keywordFilter={keyword.keyword} clickPreviews={showNewsContent} />
+          </Suspense>
         </div>
       </div>
     </Wrapper>
@@ -200,4 +200,8 @@ const SearchWrapper = styled(CommonLayoutBox)`
     width: 90%;
     min-width: 0px;
   }
+`;
+
+const LoadingWrapper = styled(CommonLayoutBox)`
+  background-color: white;
 `;

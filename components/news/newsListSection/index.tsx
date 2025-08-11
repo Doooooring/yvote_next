@@ -16,9 +16,11 @@ export const PREVIEWS_PAGES_LIMIT = 16;
 export default function NewsListSection({
   keywordFilter,
   clickPreviews,
+  isAdmin = false,
 }: {
   keywordFilter: string;
   clickPreviews: (id: number) => void;
+  isAdmin?: boolean;
 }) {
   const router = useRouter();
   const { page } = getCachedInfo();
@@ -34,6 +36,7 @@ export default function NewsListSection({
       offset: page,
       limit: PREVIEWS_PAGES_LIMIT,
       filter: keywordFilter,
+      isAdmin,
     }),
   });
 

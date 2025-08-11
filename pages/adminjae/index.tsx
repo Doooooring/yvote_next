@@ -1,7 +1,9 @@
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 import styled from 'styled-components';
 
-import NewsList from '@components/news/newsLIst';
+import { CommonLayoutBox } from '@/components/common/commonStyles';
+import LoadingCommon from '@/components/common/loading';
+import NewsListSection from '@/components/news/newsListSection';
 import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { Preview } from '@utils/interface/news';
@@ -30,14 +32,23 @@ export default function NewsPage(props: pageProps) {
     <Wrapper>
       <div className="main-contents">
         <div className="main-contents-body">
+          <Suspense
+            fallback={
+              <LoadingWrapper>
+                <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+              </LoadingWrapper>
+            }
+          >
+            <NewsListSection keywordFilter="" clickPreviews={showNewsContent} isAdmin={true} />
+          </Suspense>
           {/* <SuspensePreNewsList /> */}
-          <NewsList
+          {/* <NewsList
             page={page}
             previews={previews}
             isRequesting={isRequesting}
             fetchPreviews={fetchNextPreviews}
             showNewsContent={showNewsContent}
-          />
+          /> */}
         </div>
       </div>
     </Wrapper>
@@ -120,4 +131,7 @@ const Wrapper = styled.div`
       font-size: 13px;
     }
   }
+`;
+const LoadingWrapper = styled(CommonLayoutBox)`
+  background-color: white;
 `;
