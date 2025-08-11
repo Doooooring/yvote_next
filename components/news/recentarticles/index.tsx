@@ -2,7 +2,9 @@
 import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
-import { useRecentArticles } from '@utils/hook/useRecentComments';
+import { INF } from '@public/assets/resource';
+import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
 import { commentType, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
@@ -77,7 +79,7 @@ const VacantWrapper = styled.div`
 `;
 
 function NewArticles({ category }: { category: recentArticleType }) {
-  const recentArticles = useRecentArticles(category);
+  const { data: recentArticles } = useSuspenseQuery(RecentArticleQueryOption(category, 0, INF));
 
   return (
     <div className="body-wrapper">
@@ -86,7 +88,7 @@ function NewArticles({ category }: { category: recentArticleType }) {
   );
 }
 
-export default function SuspenseNewsArticles() {
+export default function NewsArticlesSection() {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
 
   return (

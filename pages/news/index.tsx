@@ -1,30 +1,19 @@
 import HeadMeta from '@components/common/HeadMeta';
-import {
-  CommonIconButton,
-  CommonLayoutBox,
-  CommonTagBox,
-  Row,
-} from '@components/common/commonStyles';
-import NewsList from '@components/news/newsLIst';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 
-import SuspenseNewsArticles from '@components/news/recentarticles';
-
-import menuImage from '@assets/img/menu_icon.svg';
-import reloadImage from '@assets/img/reload_icon.svg';
-import SuspensePreNewsList from '@components/news/preNewsList';
+import LoadingCommon from '@/components/common/loading';
+import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
+import NewsListSection from '@/components/news/newsListSection';
+import { PreNewsList } from '@/components/news/preNewsList';
+import { useCustomSearchParams } from '@/utils/hook/router/useSearchParams';
+import NewsArticlesSection from '@components/news/recentarticles';
+import useNewsKeywordFilter from '@utils/hook/news/keywordFilter/useNewsKeywordFilter';
 import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
-import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
-import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
-import { useGlobalLoading } from '@utils/hook/useGlobalLoading/useGlobalLoading';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { Preview } from '@utils/interface/news';
-import { getSessionItem, saveSessionItem } from '@utils/tools/session';
 import { GetStaticProps } from 'next';
-import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import KeywordHeadTab from '../../components/news/keywordHeadTab';
 import { KeyTitle } from '../../utils/interface/keywords';
 
 interface pageProps {
@@ -32,7 +21,7 @@ interface pageProps {
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
-  //const data: Array<Preview> = await NewsRepository.getPreviews(0, '');
+  //const data: Array<Preview> = await newsRepository.getPreviews(0, '');
   return {
     props: { data: [] },
     revalidate: 300,
@@ -45,225 +34,104 @@ const metaTagsProps = {
 };
 
 export default function NewsPage(props: pageProps) {
-  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const [keyCached, setKeyCached] = useState<string | null>(null);
+  const searchParams = useCustomSearchParams();
+  const keywordFilter = searchParams.get('keyword') ?? null;
 
   const showNewsContent = useNewsNavigate();
-  const { router, getCurrentPageInfo } = useRouter();
-  const { setIsLoading: setIsGlobalLoading } = useGlobalLoading();
+  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
 
-  const {
-    page,
-    isRequesting,
-    isFetchingImages,
-    previews,
-    fetchPreviews,
-    fetchNextPreviews,
-    getCurrentMetadata,
-  } = useFetchNewsPreviews(16);
-
-  const {
-    keywordsToShow,
-    keywordSelected,
-    customKeywords,
-    randomKeywords,
-    setKeywordSelected,
-    setCustomKeywords,
-    reloadRandomKeywords,
+  const { customKeywords, randomKeywords, setCustomKeywords, reloadRandomKeywords, totalKeywords } =
+    useNewsKeywordFilter();
+  const keywordSelected = totalKeywords.find((value) => value.keyword === keywordFilter) ?? null;
+  const keywordsToShow = unshiftKeywordToKeywords(
+    customKeywords.length > 0 ? customKeywords : randomKeywords,
     totalKeywords,
-  } = useNewsKeywordFilter();
-
-  const openEditNewsKeywordTopSheet = useCallback(() => {
-    showEditNewsKeywordTopSheet(customKeywords, totalKeywords, randomKeywords, setCustomKeywords);
-  }, [
-    showEditNewsKeywordTopSheet,
-    customKeywords,
-    totalKeywords,
-    randomKeywords,
-    setCustomKeywords,
-  ]);
-
-  const setCachedPreviews = useCallback(
-    async (page: number, limit: number, filter: string | null, scroll: number) => {
-      try {
-        setIsGlobalLoading(true);
-        await fetchPreviews({ limit: page, filter: filter ?? '' });
-        setTimeout(() => {
-          window.scrollTo({ left: 0, top: scroll });
-        }, 100);
-        await fetchNextPreviews(limit);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsGlobalLoading(false);
-      }
-    },
-    [fetchPreviews, fetchNextPreviews],
+    keywordFilter ?? '',
   );
-
-  const clickKeyword = useCallback(
-    async (keyword: KeyTitle) => {
-      setIsGlobalLoading(true);
-      try {
-        if (keyword.id == keywordSelected?.id) {
-          setKeywordSelected(null);
-          await fetchPreviews({ filter: null, limit: 16 });
-        } else {
-          setKeywordSelected(keyword);
-          await fetchPreviews({ filter: keyword.keyword, limit: 16 });
-        }
-      } catch (e) {
-      } finally {
-        setIsGlobalLoading(false);
-      }
-    },
-    [setKeywordSelected, fetchPreviews, keywordSelected],
-  );
-
-  const refreshKeywordFilters = useCallback(async () => {
-    const prevSelected = keywordSelected?.keyword;
-    reloadRandomKeywords();
-    if (prevSelected) {
-      try {
-        setIsGlobalLoading(true);
-        await fetchPreviews({ filter: '', limit: 16 });
-      } catch (e) {
-      } finally {
-        setIsGlobalLoading(false);
-      }
-    }
-  }, [
-    reloadRandomKeywords,
-    setKeywordSelected,
-    setIsGlobalLoading,
-    fetchPreviews,
-    keywordSelected,
-  ]);
-
-  useEffect(() => {
-    const info = router.query.pageId as string;
-    if (!info) return;
-    const item = getSessionItem(info ?? '');
-    if (item) {
-      const { page, limit, filter, scroll } = item as {
-        path: string;
-        scroll: number;
-        page: number;
-        limit: number;
-        filter: string;
-        isAdmin: boolean;
-      };
-      if (filter) setKeyCached(filter);
-      setCachedPreviews(page, limit, filter, scroll);
+  const toggleKeywordFilter = useCallback(async (keyword: KeyTitle) => {
+    if (keyword.keyword === keywordFilter) {
+      searchParams.remove('keyword');
     } else {
-      fetchPreviews({ limit: 16 });
+      searchParams.set('keyword', keyword.keyword);
     }
-
-    const handleRouteChangeStart = () => {
-      const info = getCurrentPageInfo();
-      if (info) {
-        saveSessionItem(info.pageId, {
-          path: info.path,
-          scroll: window.scrollY,
-          ...getCurrentMetadata(),
-        });
-      }
-    };
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-    };
-  }, [router.query.pageId, setKeyCached, setCachedPreviews, fetchPreviews]);
-
-  useEffect(() => {
-    if (keyCached && totalKeywords.length > 0) {
-      const keyword = totalKeywords.filter((v) => v.keyword === keyCached)[0];
-      if (keyword) {
-        setKeywordSelected(keyword);
-      }
-      setKeyCached(null);
-    }
-  }, [keyCached, totalKeywords, setKeywordSelected, setKeyCached]);
+    setTimeout(() => {
+      if (ref.current)
+        window.scrollTo({ left: 0, top: ref.current!.offsetTop - 160, behavior: 'smooth' });
+    }, 100);
+  }, []);
 
   return (
     <>
       <HeadMeta {...metaTagsProps} />
       <Wrapper>
         <ArticlesWrapper>
-          <SuspenseNewsArticles />
+          <NewsArticlesSection />
         </ArticlesWrapper>
-        <KeywordHeadTab
+        <KeywordFiltersHeadTab
           keywords={keywordsToShow}
-          setKeywords={setCustomKeywords}
-          openEditKeywordsTopSheet={openEditNewsKeywordTopSheet}
+          openEditKeywordsTopSheet={() => {
+            showEditNewsKeywordTopSheet(
+              customKeywords,
+              totalKeywords,
+              randomKeywords,
+              setCustomKeywords,
+            );
+          }}
           keywordSelected={keywordSelected}
-          reload={refreshKeywordFilters}
-          totalKeywords={totalKeywords}
-          clickKeyword={clickKeyword}
+          reload={reloadRandomKeywords}
+          clickKeyword={toggleKeywordFilter}
         />
         <div className="main-contents">
-          <div className="main-contents-body">
-            <SuspensePreNewsList />
-            <NewsList
-              page={page}
-              previews={previews.length == 0 ? props.data : previews}
-              isRequesting={isRequesting}
-              isFetchingImages={isFetchingImages}
-              fetchPreviews={fetchNextPreviews}
-              showNewsContent={showNewsContent}
-            />
+          <div className="main-contents-body" ref={ref}>
+            <Suspense fallback={<></>}>
+              <PreNewsList />
+            </Suspense>
+            <Suspense
+              fallback={
+                <LoadingWrapper>
+                  <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+                </LoadingWrapper>
+              }
+            >
+              <NewsListSection
+                keywordFilter={keywordFilter ?? ''}
+                clickPreviews={showNewsContent}
+              />
+            </Suspense>
           </div>
-          <TagWrapper>
-            <KeywordsWrapper>
-              <Row
-                style={{
-                  gap: '10px',
-                }}
-              >
-                <KeywordTitle>키워드로 골라보기</KeywordTitle>
-                <ReloadButton>
-                  <Image
-                    src={reloadImage}
-                    alt="reload"
-                    width={16}
-                    height={16}
-                    onClick={refreshKeywordFilters}
-                  />
-                </ReloadButton>
-                <ReloadButton>
-                  <Image
-                    src={menuImage}
-                    alt="filter-menu"
-                    width={16}
-                    height={16}
-                    onClick={openEditNewsKeywordTopSheet}
-                  />
-                </ReloadButton>
-              </Row>
-              <KeywordContents>
-                {keywordsToShow.map((keyword) => {
-                  return (
-                    <Keyword
-                      key={keyword.keyword}
-                      $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
-                      onClick={() => {
-                        clickKeyword(keyword);
-                      }}
-                    >
-                      {keyword.keyword}
-                    </Keyword>
-                  );
-                })}
-              </KeywordContents>
-            </KeywordsWrapper>
-          </TagWrapper>
+          <KeywordFiltersSideTab
+            keywords={keywordsToShow}
+            openEditKeywordsTopSheet={() => {
+              showEditNewsKeywordTopSheet(
+                customKeywords,
+                totalKeywords,
+                randomKeywords,
+                setCustomKeywords,
+              );
+            }}
+            keywordSelected={keywordSelected}
+            reload={reloadRandomKeywords}
+            clickKeyword={toggleKeywordFilter}
+          />
         </div>
       </Wrapper>
     </>
   );
 }
+
+const unshiftKeywordToKeywords = (
+  targetKeywords: Array<KeyTitle>,
+  totalKeywords: Array<KeyTitle>,
+  keyword: string,
+) => {
+  const keywordToAdd = totalKeywords.find((v) => v.keyword === keyword);
+  if (!keywordToAdd || targetKeywords.map((v) => v.keyword).includes(keyword)) {
+    return targetKeywords;
+  }
+  return [keywordToAdd, ...targetKeywords];
+};
 
 const Wrapper = styled.div`
   width: 100%;
@@ -385,68 +253,6 @@ const ArticlesWrapper = styled.div`
   }
 `;
 
-const TagWrapper = styled.div`
-  flex: 1 0 auto;
-
-  width: 300px;
-  padding-left: 10px;
-
-  position: relative;
-
-  @media screen and (max-width: 1196px) {
-    display: none;
-  }
-`;
-
-const KeywordsWrapper = styled(CommonLayoutBox)`
-  padding: 1rem;
-  position: sticky;
-  top: 100px;
-`;
-
-const KeywordTitle = styled.div`
-  color: ${({ theme }) => theme.colors.gray800};
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-align: left;
-`;
-
-const KeywordContents = styled.div`
-  padding-top: 10px;
-  text-align: left;
-`;
-
-interface KeywordProps {
-  $clicked: boolean;
-}
-
-const Keyword = styled(CommonTagBox)<KeywordProps>`
-  margin-left: 3px;
-  margin-right: 6px;
-  margin-bottom: 6px;
-  color: ${({ $clicked, theme }) => ($clicked ? theme.colors.yvote05 : 'rgb(120, 120, 120)')};
-  background-color: ${({ $clicked }) => ($clicked ? 'white !important' : '#f1f2f5')};
-  border-color: ${({ $clicked, theme }) =>
-    $clicked ? theme.colors.yvote03 + ' !important' : '#f1f2f5'};
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  animation: back-blink 0.4s ease-in-out forwards;
-  @keyframes back-blink {
-    0% {
-      opacity: 0.4;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.gray400};
-  }
-`;
-
-const ReloadButton = styled(CommonIconButton)`
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
+const LoadingWrapper = styled(CommonLayoutBox)`
+  background-color: white;
 `;

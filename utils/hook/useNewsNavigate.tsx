@@ -1,8 +1,10 @@
-import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useRouter } from 'next/router';
 import { MouseEvent, useCallback } from 'react';
+import { useRouterUtils } from './router/useRouterUtils';
 
 export const useNewsNavigate = () => {
-  const { router, routeWithMouseEvent } = useRouter();
+  const router = useRouter();
+  const { routeWithMouseEvent } = useRouterUtils();
 
   const moveToNewsDetail = useCallback(
     (id: number, e?: MouseEvent<HTMLAnchorElement>) => {

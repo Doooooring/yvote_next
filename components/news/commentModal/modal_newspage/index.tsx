@@ -1,7 +1,8 @@
+import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
-import { Link, useRouter } from '@utils/hook/useRouter';
 import { Article, NewsState } from '@utils/interface/news';
-import { MouseEvent, useCallback } from 'react';
+import Link from 'next/link';
+import { MouseEvent } from 'react';
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
 import { CommonMessageBox } from '../../../common/messageBox';
@@ -22,32 +23,12 @@ export default function CommentModal({
   article: { news, commentType, title, comment, date },
 }: CommentModalProps) {
   const { show } = useToastMessage();
+  const { routeWithMouseEvent } = useRouterUtils();
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
-  const { router, routeWithMouseEvent } = useRouter();
-  const onRouteNews = useCallback(
-    (e: MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      if (news.state !== NewsState.Published) {
-        show(<CommonMessageBox>준비 중인 뉴스입니다.</CommonMessageBox>, 2000);
-        return;
-      }
-      routeWithMouseEvent(`/news/${news.id}`, e);
-    },
-    [router, show, routeWithMouseEvent, news],
-  );
-
-  const onModalOutClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (e.target === e.currentTarget) {
-        close();
-      }
-    },
-    [close],
-  );
 
   return (
-    <CommonModalLayout onOutClick={onModalOutClick}>
+    <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper>
         <ModalLayout
           close={close}
@@ -64,7 +45,17 @@ export default function CommentModal({
           }
           footerView={
             <>
-              <a href={`/news/${news.id}`} onClick={onRouteNews}>
+              <a
+                href={`/news/${news.id}`}
+                onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                  e.preventDefault();
+                  if (news.state !== NewsState.Published) {
+                    show(<CommonMessageBox>준비 중인 뉴스입니다.</CommonMessageBox>, 2000);
+                    return;
+                  }
+                  routeWithMouseEvent(`/news/${news.id}`, e);
+                }}
+              >
                 <TextButton>뉴스보기</TextButton>
               </a>
               <Link href={`/news/${news.id}`}>

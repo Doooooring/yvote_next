@@ -2,7 +2,7 @@ import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import { KeyTitle } from '@utils/interface/keywords';
 import Image from 'next/image';
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { useDevice } from '../../../utils/hook/useDevice';
 import { useScrollInfo } from '../../../utils/hook/useScrollInfo';
@@ -10,26 +10,22 @@ import { HeaderHeight } from '../../../utils/layout';
 import { CommonIconButton, CommonLayoutBox, CommonTagBox, Row } from '../../common/commonStyles';
 import HorizontalScroll from '../../common/horizontalScroll/horizontalScroll';
 
-interface KeywordHeadTabProps {
-  keywords: Array<KeyTitle>;
-  setKeywords: (keywords: KeyTitle[]) => void;
-  openEditKeywordsTopSheet: () => void;
-  totalKeywords: Array<KeyTitle>;
-  keywordSelected: KeyTitle | null;
-  reload: () => void;
-  clickKeyword: (keyword: KeyTitle) => Promise<void>;
-  style?: CSSProperties;
-}
-
-export default function KeywordHeadTab({
+export function KeywordFiltersHeadTab({
   keywords,
   keywordSelected,
   reload,
   clickKeyword,
   openEditKeywordsTopSheet,
   style = {},
-}: KeywordHeadTabProps) {
-  const { scrollDirection, scrollY } = useScrollInfo();
+}: {
+  keywords: Array<KeyTitle>;
+  openEditKeywordsTopSheet: () => void;
+  keywordSelected: KeyTitle | null;
+  reload: () => void;
+  clickKeyword: (keyword: KeyTitle) => Promise<void>;
+  style?: CSSProperties;
+}) {
+  const { scrollY } = useScrollInfo();
   const headRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const device = useDevice();
@@ -43,18 +39,6 @@ export default function KeywordHeadTab({
 
     return scrollY > headRef.current.offsetTop ? { borderRadius: '0px', width: '100%' } : {};
   }, [device, scrollY]);
-
-  const clickKeywordWithScroll = useCallback(
-    async (keyword: KeyTitle) => {
-      await clickKeyword(keyword);
-      if (headRef.current && window) {
-        setTimeout(() => {
-          window.scrollTo({ left: 0, top: headRef.current!.offsetTop - 160, behavior: 'smooth' });
-        }, 100);
-      }
-    },
-    [clickKeyword],
-  );
 
   return (
     <>
@@ -82,7 +66,7 @@ export default function KeywordHeadTab({
                   key={keyword.keyword + idx}
                   $clicked={keywordSelected != null && keywordSelected.id === keyword.id}
                   onClick={() => {
-                    clickKeywordWithScroll(keyword);
+                    clickKeyword(keyword);
                   }}
                 >
                   {keyword.keyword}
@@ -95,7 +79,6 @@ export default function KeywordHeadTab({
     </>
   );
 }
-
 const Head = styled.p``;
 
 const Wrapper = styled(CommonLayoutBox)`
@@ -114,12 +97,14 @@ const Wrapper = styled(CommonLayoutBox)`
   position: sticky;
   z-index: 999;
   background-color: white;
+
+  padding: 8px 8px;
+  margin-bottom: 10px;
+
   @media screen and (max-width: 768px) {
     width: 98%;
     min-width: 0px;
   }
-  padding: 8px 8px;
-  margin-bottom: 10px;
 `;
 
 const Layout = styled(Row)`

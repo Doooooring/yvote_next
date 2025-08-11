@@ -1,11 +1,11 @@
 import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
 import ImageFallback from '@components/common/imageFallback';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import { Link } from '@utils/hook/useRouter';
 import { commentType, NewsState, Preview } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDateDiff, getTimeDiffBeforeToday, getToday } from '@utils/tools/date';
-import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
+import Link from 'next/link';
+import React, { MouseEvent, ReactNode, useCallback } from 'react';
 import styled from 'styled-components';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
@@ -121,7 +121,6 @@ const _CommentButtons = ({
   comments: Preview['comments'];
   openComments: (commentType: commentType) => void;
 }) => {
-  const [isActive, setIsActive] = useState<boolean>(false);
 
   return (
     <SummaryButtons>

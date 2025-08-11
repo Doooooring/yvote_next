@@ -1,4 +1,4 @@
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 import { throttle } from '@utils/tools/lodash';
 
@@ -12,7 +12,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   async function fetchNewsComment(page: number) {
     try {
       setIsRequesting(true);
-      const response = await NewsRepository.getNewsComment(id, comment!, page);
+      const response = await newsRepository.getNewsComment(id, comment!, page);
       if (!response || response.length == 0) {
         return false;
       } else {

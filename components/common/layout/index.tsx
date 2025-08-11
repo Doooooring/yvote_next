@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import Header from '@components/common/header';
 
 import { ModalProvider } from '@utils/hook/useModal';
-import { RouterProvider } from '@utils/hook/useRouter/routerProvider';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
 import { ReactNode } from 'react';
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
 import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
 import LoadingIndicator from './loadingIndicator';
+import { QueryProvider } from './queryProvider';
 import RouteLoading from './routeLoading';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <RouterProvider>
+    <QueryProvider>
       <GlobalLoadingProvider>
         <RouteLoading />
         <ToastMessageProvider>
@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </ModalProvider>
         </ToastMessageProvider>
       </GlobalLoadingProvider>
-    </RouterProvider>
+    </QueryProvider>
   );
 };
 

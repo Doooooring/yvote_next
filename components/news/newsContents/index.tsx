@@ -7,23 +7,22 @@ import VoteBox from '@components/news/newsContents/voteBox';
 import icoNew from '@images/ico_new_2x.png';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { useBool } from '@utils/hook/useBool';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { commentType, NewsInView } from '@utils/interface/news';
 import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { Suspense, useMemo, useState } from 'react';
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
   newsContent: NewsInView;
   voteHistory: 'left' | 'right' | 'none' | null;
-  hide: () => void;
 }
 
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 
-export default function NewsContent({ newsContent, voteHistory, hide }: NewsContentProps) {
+export default function NewsContent({ newsContent, voteHistory }: NewsContentProps) {
   const {
     id,
     title,
@@ -39,7 +38,7 @@ export default function NewsContent({ newsContent, voteHistory, hide }: NewsCont
     subTitle,
     votes,
   } = newsContent;
-  const { router } = useRouter();
+  const router = useRouter();
   const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);

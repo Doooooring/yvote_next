@@ -1,12 +1,13 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 
+import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import HeadMeta from '@components/common/HeadMeta';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
 import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import {
   CommonErrorView,
@@ -26,7 +27,7 @@ interface pageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr = await NewsRepository.getNewsIds();
+  const newsIdArr = await newsRepository.getNewsIds();
   const paths = newsIdArr.map((item) => {
     return {
       params: { news: String(item['id']) },
@@ -41,7 +42,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params!.news;
   if (!id) throw Error('static props null');
-  const news = await NewsRepository.getNewsContent(Number(id), null);
+  const news = await newsRepository.getNewsContent(Number(id), null);
   const description = getTextContentFromHtmlText(news.summary)?.split('.')[0] ?? '';
 
   return {
@@ -57,16 +58,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default function NewsDetailPage({ data }: pageProps) {
-  const { router, getCurrentPageIndex } = useRouter();
+  const router = useRouter();
+  const {} = useRouterUtils();
   const { id, news, description } = data;
-
-  const hideNewsContent = useCallback(() => {
-    if (getCurrentPageIndex() === 0) {
-      router.push('/news');
-    } else {
-      router.back();
-    }
-  }, [router, getCurrentPageIndex]);
 
   const metaTagsProps = useMemo(() => {
     return {
@@ -86,7 +80,7 @@ export default function NewsDetailPage({ data }: pageProps) {
           <div className="main-contents">
             <div className="main-contents-body">
               <div className="news-contents-wrapper">
-                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+                <NewsContent newsContent={news!} voteHistory={null} />
               </div>
             </div>
           </div>

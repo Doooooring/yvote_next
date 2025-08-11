@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useRouter } from '@utils/hook/useRouter/useRouter';
+import { useRouter } from 'next/router';
 
 import styled from 'styled-components';
 
+import { PositiveMessageBox } from '@components/common/messageBox';
 import KeywordRepository from '@repositories/keywords';
+import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Keyword } from '@utils/interface/keywords';
 import { arrObjIncludeProp, getConstantVowel } from '@utils/tools';
-import { useToastMessage } from '@utils/hook/useToastMessage';
-import { PositiveMessageBox } from '@components/common/messageBox';
 
 interface KeyTitle extends Pick<Keyword, 'id' | 'keyword'> {}
 
 export default function SearchBox() {
-  const { router } = useRouter();
+  const router = useRouter();
   const { show } = useToastMessage();
   const [searchWord, setSearchWord] = useState<string>('');
   const [relatedWords, setRelatedWords] = useState<string[]>([

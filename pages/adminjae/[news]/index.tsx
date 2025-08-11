@@ -1,15 +1,12 @@
 import NewsContent from '@components/news/newsContents';
-import NewsRepository from '@repositories/news';
+import { newsRepository } from '@repositories/news';
 
-import HeadMeta from '@components/common/HeadMeta';
-import { HOST_URL } from '@public/assets/url';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from '@utils/hook/useRouter/useRouter';
-import { useCallback, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import LoadingCommon from '@components/common/loading';
 import { useMount } from '@utils/hook/useMount';
 import { NewsInView } from '@utils/interface/news';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -20,7 +17,7 @@ interface pageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const newsIdArr: Array<{ id: number }> = await NewsRepository.getNewsIds();
+  const newsIdArr: Array<{ id: number }> = await newsRepository.getNewsIds();
   const paths = newsIdArr.map((item: { id: number }) => {
     return {
       params: { news: String(item['id']) },
@@ -47,15 +44,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const [news, setNews] = useState<NewsInView | null>(null);
-  const { router } = useRouter();
   const { id } = data;
 
-  const hideNewsContent = useCallback(() => {
-    router.push('/adminjae');
-  }, []);
-
   useMount(async () => {
-    const news = await NewsRepository.getNewsContent(Number(id), null);
+    const news = await newsRepository.getNewsContent(Number(id), null);
     setNews(news);
   });
 
@@ -66,7 +58,7 @@ export default function NewsDetailPage({ data }: pageProps) {
           <div className="main-contents-body">
             <div className="news-contents-wrapper">
               {news ? (
-                <NewsContent newsContent={news!} voteHistory={null} hide={hideNewsContent} />
+                <NewsContent newsContent={news!} voteHistory={null} />
               ) : (
                 <LoadingCommon comment={'기다려주세요~'} />
               )}

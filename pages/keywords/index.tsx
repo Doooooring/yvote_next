@@ -1,8 +1,8 @@
+import { getKeywordsGroupByCategoryAndRecent } from '@/controller';
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import CategoryGrid from '@components/keywords/categoryGrid';
-import SearchBox from '@components/keywords/searchBox';
-import { getKeywordsGroupByCategoryAndRecent } from '@controller';
+
 import { INF } from '@public/assets/resource';
 import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
