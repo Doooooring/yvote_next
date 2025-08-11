@@ -88,7 +88,7 @@ function NewArticles({ category }: { category: recentArticleType }) {
   );
 }
 
-export default function SuspenseNewsArticles() {
+export default function NewsArticlesSection() {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
 
   return (

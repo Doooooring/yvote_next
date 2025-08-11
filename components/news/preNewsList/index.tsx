@@ -1,10 +1,14 @@
+import { INF } from '@/public/assets/resource';
+import { newsRepository } from '@/repositories/news';
+import { NewsState } from '@/utils/interface/news';
 import PreviewBox from '@components/news/previewBox';
-import usePreNewsList from '@utils/hook/news/usePreNewsList';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 
 export function PreNewsList() {
-  const read = usePreNewsList();
-  const preNewsList = read();
+  const { data: preNewsList } = useSuspenseQuery({
+    ...getPreNewsListQueryOption,
+  });
 
   return (
     <Wrapper>
@@ -15,5 +19,11 @@ export function PreNewsList() {
   );
 }
 
+const getPreNewsListQueryOption = queryOptions({
+  queryKey: ['getPreNewsList'],
+  queryFn: () => {
+    return newsRepository.getPreviews(0, INF, null, NewsState.Pending);
+  },
+});
 
 const Wrapper = styled.div``;

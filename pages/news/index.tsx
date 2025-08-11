@@ -1,19 +1,18 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 
-import SuspenseNewsArticles from '@components/news/recentarticles';
-
 import LoadingCommon from '@/components/common/loading';
 import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useSearchParams';
+import NewsArticlesSection from '@components/news/recentarticles';
+import useNewsKeywordFilter from '@utils/hook/news/keywordFilter/useNewsKeywordFilter';
 import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
-import useNewsKeywordFilter from '@utils/hook/news/useNewsKeywordFilter';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { Suspense, useCallback, useMemo, useRef } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { KeyTitle } from '../../utils/interface/keywords';
 
@@ -46,19 +45,12 @@ export default function NewsPage(props: pageProps) {
   const { customKeywords, randomKeywords, setCustomKeywords, reloadRandomKeywords, totalKeywords } =
     useNewsKeywordFilter();
   const keywordSelected = totalKeywords.find((value) => value.keyword === keywordFilter) ?? null;
-  const keywordsToShow = useMemo(() => {
-    const targetKeywords = customKeywords.length > 0 ? customKeywords : randomKeywords;
-    const keywordToAdd = totalKeywords.find((v) => v.keyword === keywordFilter);
-
-    if (!keywordToAdd) return targetKeywords;
-
-    if (targetKeywords.find((keyword) => keyword.keyword === keywordToAdd.keyword))
-      return targetKeywords;
-
-    return [keywordToAdd, ...targetKeywords];
-  }, [keywordSelected, customKeywords, randomKeywords]);
-
-  const clickKeyword = useCallback(async (keyword: KeyTitle) => {
+  const keywordsToShow = unshiftKeywordToKeywords(
+    customKeywords.length > 0 ? customKeywords : randomKeywords,
+    totalKeywords,
+    keywordFilter ?? '',
+  );
+  const toggleKeywordFilter = useCallback(async (keyword: KeyTitle) => {
     if (keyword.keyword === keywordFilter) {
       searchParams.remove('keyword');
     } else {
@@ -75,7 +67,7 @@ export default function NewsPage(props: pageProps) {
       <HeadMeta {...metaTagsProps} />
       <Wrapper>
         <ArticlesWrapper>
-          <SuspenseNewsArticles />
+          <NewsArticlesSection />
         </ArticlesWrapper>
         <KeywordFiltersHeadTab
           keywords={keywordsToShow}
@@ -89,7 +81,7 @@ export default function NewsPage(props: pageProps) {
           }}
           keywordSelected={keywordSelected}
           reload={reloadRandomKeywords}
-          clickKeyword={clickKeyword}
+          clickKeyword={toggleKeywordFilter}
         />
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
@@ -121,13 +113,25 @@ export default function NewsPage(props: pageProps) {
             }}
             keywordSelected={keywordSelected}
             reload={reloadRandomKeywords}
-            clickKeyword={clickKeyword}
+            clickKeyword={toggleKeywordFilter}
           />
         </div>
       </Wrapper>
     </>
   );
 }
+
+const unshiftKeywordToKeywords = (
+  targetKeywords: Array<KeyTitle>,
+  totalKeywords: Array<KeyTitle>,
+  keyword: string,
+) => {
+  const keywordToAdd = totalKeywords.find((v) => v.keyword === keyword);
+  if (!keywordToAdd || targetKeywords.map((v) => v.keyword).includes(keyword)) {
+    return targetKeywords;
+  }
+  return [keywordToAdd, ...targetKeywords];
+};
 
 const Wrapper = styled.div`
   width: 100%;

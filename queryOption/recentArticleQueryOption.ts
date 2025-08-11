@@ -7,7 +7,7 @@ export const RecentArticleQueryOption = (
   limit: number,
 ) => {
   return {
-    queryKey: ['recentArticles' + category, offset, limit],
+    queryKey: ['recentArticle', category, offset, limit],
     queryFn: async () => {
       const option: { type?: commentType } = {};
       if (category !== '전체') option.type = category;

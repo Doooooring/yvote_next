@@ -1,14 +1,9 @@
-// useSuspenseInfiniteQuery 옵션 참조
-// keyword
-
 import { Column, CommonLayoutBox } from '@/components/common/commonStyles';
 import { PositiveMessageBox } from '@/components/common/messageBox';
-import { newsRepository } from '@/repositories/news';
+import { getNewsPreviewsQueryOption } from '@/queryOption/getNewsPreviews';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
-import { NewsState, Preview } from '@/utils/interface/news';
-import { fetchImg } from '@/utils/tools/async';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
-import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Virtuoso } from 'react-virtuoso/dist';
@@ -35,7 +30,11 @@ export default function NewsListSection({
     fetchNextPage,
     hasNextPage,
   } = useSuspenseInfiniteQuery({
-    ...getNewsPreviewsQueryOption({ offset: page, filter: keywordFilter }),
+    ...getNewsPreviewsQueryOption({
+      offset: page,
+      limit: PREVIEWS_PAGES_LIMIT,
+      filter: keywordFilter,
+    }),
   });
 
   useEffect(() => {
@@ -137,63 +136,6 @@ function saveCachedInfo(cacheInfo: CacheInfo) {
   if (!key) return;
   saveSessionItem(key, cacheInfo);
 }
-
-async function getNewsPreviews({
-  page,
-  filter,
-  isAdmin,
-}: {
-  page: number;
-  filter: string;
-  isAdmin: boolean;
-  newsState?: NewsState;
-}) {
-  const datas: Array<Preview> = isAdmin
-    ? await newsRepository.getPreviewsAdmin(page, PREVIEWS_PAGES_LIMIT, filter)
-    : await newsRepository.getPreviews(page, PREVIEWS_PAGES_LIMIT, filter, NewsState.Published);
-
-  await Promise.all(
-    datas.map(async (data) => {
-      const newsImageId = `news-${data.id}-image`;
-
-      try {
-        const response = await fetchImg(data.newsImage as string);
-
-        data.newsImage = response;
-      } catch (e) {
-        data.newsImage = '';
-      }
-    }),
-  );
-
-  return datas;
-}
-
-const getNewsPreviewsQueryOption = ({
-  filter,
-  offset,
-  isAdmin = false,
-}: {
-  filter: string;
-  offset: number;
-  isAdmin?: boolean;
-}) =>
-  infiniteQueryOptions({
-    queryKey: ['getNewsPreviews', filter, isAdmin],
-    queryFn: (context) => {
-      const pageParam = context.pageParam;
-      return getNewsPreviews({
-        page: pageParam,
-        filter,
-        isAdmin,
-      });
-    },
-    initialPageParam: offset,
-
-    getNextPageParam: (prevPageData, __, lastPageParam) => {
-      return prevPageData.length === 0 ? undefined : lastPageParam + prevPageData.length;
-    },
-  });
 
 const Wrapper = styled(Column)`
   -webkit-text-size-adjust: none;
