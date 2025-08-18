@@ -5,9 +5,9 @@ import PreviewBox from '@components/news/previewBox';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 
-export function PreNewsList() {
+export function PreNewsList({ keywordFilter }: { keywordFilter: string }) {
   const { data: preNewsList } = useSuspenseQuery({
-    ...getPreNewsListQueryOption,
+    ...getPreNewsListQueryOption({ keyword: keywordFilter }),
   });
 
   return (
@@ -19,11 +19,12 @@ export function PreNewsList() {
   );
 }
 
-const getPreNewsListQueryOption = queryOptions({
-  queryKey: ['getPreNewsList'],
-  queryFn: () => {
-    return newsRepository.getPreviews(0, INF, null, NewsState.Pending);
-  },
-});
+const getPreNewsListQueryOption = ({ keyword }: { keyword: string }) =>
+  queryOptions({
+    queryKey: ['getPreNewsList', keyword],
+    queryFn: () => {
+      return newsRepository.getPreviews(0, INF, keyword, NewsState.Pending);
+    },
+  });
 
 const Wrapper = styled.div``;

@@ -1,4 +1,4 @@
-import { MouseEvent, PropsWithChildren, useCallback, useEffect } from 'react';
+import { MouseEvent, PropsWithChildren, useEffect } from 'react';
 import { CommonModalBackground } from '../commonStyles';
 
 interface CommonModalLayoutInterface extends PropsWithChildren {
@@ -9,15 +9,6 @@ export function CommonModalLayout({
   onOutClick: onOutClickUser = () => {},
   children,
 }: CommonModalLayoutInterface) {
-  const onOutClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (e.target === e.currentTarget) {
-        onOutClickUser(e);
-      }
-    },
-    [onOutClickUser],
-  );
-
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -25,5 +16,15 @@ export function CommonModalLayout({
     };
   }, []);
 
-  return <CommonModalBackground onClick={onOutClick}>{children}</CommonModalBackground>;
+  return (
+    <CommonModalBackground
+      onClick={(e: MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+          onOutClickUser(e);
+        }
+      }}
+    >
+      {children}
+    </CommonModalBackground>
+  );
 }
