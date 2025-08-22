@@ -73,7 +73,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
               <div className="summary content">
                 <h1 className="head">
                   <span>
-                    {subTitle} {state ? <Image src={icoNew} alt="new" height="16" /> : <></>}
+                    {subTitle} {state && <Image src={icoNew} alt="new" height="16" />}
                   </span>
                 </h1>
 

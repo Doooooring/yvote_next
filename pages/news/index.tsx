@@ -5,7 +5,7 @@ import LoadingCommon from '@/components/common/loading';
 import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
-import { useCustomSearchParams } from '@/utils/hook/router/useSearchParams';
+import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
 import NewsArticlesSection from '@components/news/recentarticles';
 import useNewsKeywordFilter from '@utils/hook/news/keywordFilter/useNewsKeywordFilter';
 import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
@@ -28,11 +28,6 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
   };
 };
 
-const metaTagsProps = {
-  title: '뉴스 모아보기',
-  url: `https://yvoting.com/news`,
-};
-
 export default function NewsPage(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -50,21 +45,29 @@ export default function NewsPage(props: pageProps) {
     totalKeywords,
     keywordFilter ?? '',
   );
-  const toggleKeywordFilter = useCallback(async (keyword: KeyTitle) => {
-    if (keyword.keyword === keywordFilter) {
-      searchParams.remove('keyword');
-    } else {
-      searchParams.set('keyword', keyword.keyword);
-    }
-    setTimeout(() => {
-      if (ref.current)
-        window.scrollTo({ left: 0, top: ref.current!.offsetTop - 160, behavior: 'smooth' });
-    }, 100);
-  }, []);
+  const toggleKeywordFilter = useCallback(
+    async (keyword: KeyTitle) => {
+      if (keyword.keyword === keywordFilter) {
+        searchParams.remove('keyword');
+      } else {
+        searchParams.set('keyword', keyword.keyword);
+      }
+      setTimeout(() => {
+        if (ref.current)
+          window.scrollTo({ left: 0, top: ref.current!.offsetTop - 160, behavior: 'smooth' });
+      }, 100);
+    },
+    [keywordFilter],
+  );
 
   return (
     <>
-      <HeadMeta {...metaTagsProps} />
+      <HeadMeta
+        {...{
+          title: '뉴스 모아보기',
+          url: `https://yvoting.com/news`,
+        }}
+      />
       <Wrapper>
         <ArticlesWrapper>
           <NewsArticlesSection />
@@ -86,7 +89,7 @@ export default function NewsPage(props: pageProps) {
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
             <Suspense fallback={<></>}>
-              <PreNewsList />
+              <PreNewsList keywordFilter={keywordFilter ?? ''} />
             </Suspense>
             <Suspense
               fallback={

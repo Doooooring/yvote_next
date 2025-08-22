@@ -33,9 +33,7 @@ export default function KeywordsPage({ data }: pageProps) {
   return (
     <Wrapper>
       <HeadMeta {...metaTagsProps} />
-      {/* <SearchWrapper>
-        <SearchBox />
-      </SearchWrapper> */}
+
       <GridContainer>
         {data.map(({ category, data }) => {
           return <CategoryGrid category={category} keywords={data} />;

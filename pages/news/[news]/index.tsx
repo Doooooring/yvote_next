@@ -7,7 +7,6 @@ import { NewsInView, NewsState } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
 import styled from 'styled-components';
 import {
   CommonErrorView,
@@ -62,19 +61,17 @@ export default function NewsDetailPage({ data }: pageProps) {
   const {} = useRouterUtils();
   const { id, news, description } = data;
 
-  const metaTagsProps = useMemo(() => {
-    return {
-      title: news?.title || '',
-      description: news?.subTitle || '',
-      image: news.newsImage,
-      url: `https://yvoting.com/news/${news.id}`,
-      type: 'article',
-    };
-  }, [news]);
-
   return (
     <>
-      <HeadMeta {...metaTagsProps} />
+      <HeadMeta
+        {...{
+          title: news?.title || '',
+          description: news?.subTitle || '',
+          image: news.newsImage,
+          url: `https://yvoting.com/news/${news.id}`,
+          type: 'article',
+        }}
+      />
       {news.state === NewsState.Published ? (
         <Wrapper>
           <div className="main-contents">
