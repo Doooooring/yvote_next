@@ -7,12 +7,17 @@ export default function useEditNewsKeywordFilters() {
   const { show, close } = useModal();
 
   const showEditNewsKeywordTopSheet = useCallback(
-    (
-      keywordsToEdit: KeyTitle[],
-      randomKeywords: KeyTitle[],
-      totalKeywords: KeyTitle[],
-      saveKeywordFilteres: (keywords: KeyTitle[]) => void,
-    ) => {
+    ({
+      keywordsToEdit,
+      randomKeywords,
+      totalKeywords,
+      saveKeywordFilteres,
+    }: {
+      keywordsToEdit: KeyTitle[];
+      randomKeywords: KeyTitle[];
+      totalKeywords: KeyTitle[];
+      saveKeywordFilteres: (keywords: KeyTitle[]) => void;
+    }) => {
       show(
         <EditKeywordFiltersTopSheet
           close={close}
