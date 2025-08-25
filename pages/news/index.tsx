@@ -75,12 +75,12 @@ export default function NewsPage(props: pageProps) {
         <KeywordFiltersHeadTab
           keywords={keywordsToShow}
           openEditKeywordsTopSheet={() => {
-            showEditNewsKeywordTopSheet(
-              customKeywords,
+            showEditNewsKeywordTopSheet({
+              keywordsToEdit: customKeywords,
               totalKeywords,
               randomKeywords,
-              setCustomKeywords,
-            );
+              saveKeywordFilteres: setCustomKeywords,
+            });
           }}
           keywordSelected={keywordSelected}
           reload={reloadRandomKeywords}
@@ -107,12 +107,12 @@ export default function NewsPage(props: pageProps) {
           <KeywordFiltersSideTab
             keywords={keywordsToShow}
             openEditKeywordsTopSheet={() => {
-              showEditNewsKeywordTopSheet(
-                customKeywords,
+              showEditNewsKeywordTopSheet({
+                keywordsToEdit: customKeywords,
                 totalKeywords,
                 randomKeywords,
-                setCustomKeywords,
-              );
+                saveKeywordFilteres: setCustomKeywords,
+              });
             }}
             keywordSelected={keywordSelected}
             reload={reloadRandomKeywords}
