@@ -1,3 +1,4 @@
+import { RowSwipeCature } from '@/utils/hook/useSwipe';
 import { TextButton } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
@@ -109,12 +110,32 @@ export default function CommentBodyCommon({
                   maxScrollHeight={maxScrollHeight}
                   moveToScrollHeight={moveToScrollHeight}
                 />
-                <CommentBodyExplain
-                  id={id}
-                  title={curComment.title}
-                  explain={curComment.comment}
-                  date={curComment.date}
-                />
+                <RowSwipeCature
+                  threshold={10}
+                  onLeftSwipe={() => {
+                    showCommentEndMessage(
+                      <PositiveMessageBox>
+                        <p>왼쪽</p>
+                      </PositiveMessageBox>,
+                      2000,
+                    );
+                  }}
+                  onRightSwipe={() => {
+                    showCommentEndMessage(
+                      <PositiveMessageBox>
+                        <p>오른쪽</p>
+                      </PositiveMessageBox>,
+                      2000,
+                    );
+                  }}
+                >
+                  <CommentBodyExplain
+                    id={id}
+                    title={curComment.title}
+                    explain={curComment.comment}
+                    date={curComment.date}
+                  />
+                </RowSwipeCature>
               </>
             )}
           </ScrollWrapper>
