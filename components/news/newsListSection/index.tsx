@@ -126,6 +126,7 @@ function getCachedInfo() {
     scroll: 0,
     page: 0,
   };
+  if (typeof window === 'undefined') return defaultCacheInfo;
   const key = (history?.state?.key as string) ?? null;
   if (!key) return defaultCacheInfo;
   const item = getSessionItem(key);
@@ -135,6 +136,7 @@ function getCachedInfo() {
 }
 
 function saveCachedInfo(cacheInfo: CacheInfo) {
+  if (typeof window === 'undefined') return;
   const key = (history?.state?.key as string) ?? null;
   if (!key) return;
   saveSessionItem(key, cacheInfo);
