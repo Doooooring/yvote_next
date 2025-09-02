@@ -1,4 +1,6 @@
+import { useDevice } from '@/utils/hook/useDevice';
 import { RowSwipeCature } from '@/utils/hook/useSwipe';
+import { Device } from '@/utils/interface/common';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { TextButton } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
@@ -25,6 +27,7 @@ export default function CommentBodyCommon({
   commentType: commentType;
   close: () => void;
 }) {
+  const device = useDevice();
   const { show: showToastMessage } = useToastMessage();
   const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
@@ -64,18 +67,20 @@ export default function CommentBodyCommon({
                   setCurComment(comment);
                   moveToScrollHeight(0);
 
-                  const item = getSessionItem('commentSwipeToast');
+                  if (device === Device.mobile) {
+                    const item = getSessionItem('commentSwipeToast');
 
-                  if (item) return;
-                  saveSessionItem('commentSwipeToast', 'true');
+                    if (item) return;
+                    saveSessionItem('commentSwipeToast', 'true');
 
-                  showToastMessage(
-                    <CommonMessageBox>좌우로 밀어서 논평을 넘겨볼 수 있어요.</CommonMessageBox>,
-                    2500,
-                    {
-                      direction: 'bottom',
-                    },
-                  );
+                    showToastMessage(
+                      <CommonMessageBox>좌우로 밀어서 논평을 넘겨볼 수 있어요.</CommonMessageBox>,
+                      2500,
+                      {
+                        direction: 'bottom',
+                      },
+                    );
+                  }
                 }}
               />
             ) : (

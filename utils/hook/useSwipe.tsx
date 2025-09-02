@@ -1,32 +1,28 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
-export type Axis = 'x' | 'y' | 'both';
+export type Axis = 'x' | 'y';
 export type Direction = 'left' | 'right' | 'up' | 'down';
 
 export type Options = {
   threshold?: number;
-  axis?: Axis;
+  axis: Axis;
   onStart?: (e: React.PointerEvent) => void;
   onEnd?: (dir: Direction | null, dx: number, dy: number) => void;
 };
 
-export function useSwipe(opts: Options = {}) {
+export function useSwipe(opts: Options = { axis: 'x' }) {
   const { threshold = 16, axis = 'both', onStart, onEnd } = opts;
 
   const idRef = useRef<number | null>(null);
-  const startX = useRef(0);
-  const startY = useRef(0);
 
-  const lastX = useRef(0);
-  const lastY = useRef(0);
+  const isSwiping = useRef(false);
 
-  const [state, setState] = useState({
-    isSwiping: false,
-    dx: 0,
-    dy: 0,
-    direction: null as Direction | null,
-  });
+  const startX = useRef<number | null>(0);
+  const startY = useRef<number | null>(0);
+
+  const lastX = useRef<number | null>(0);
+  const lastY = useRef<number | null>(0);
 
   const passed = (dx: number, dy: number) => {
     const adx = Math.abs(dx);
@@ -36,31 +32,32 @@ export function useSwipe(opts: Options = {}) {
     return Math.max(adx, ady) >= threshold;
   };
 
-  const dir = (dx: number, dy: number): Direction => {
-    const adx = Math.abs(dx);
-    const ady = Math.abs(dy);
+  const dir = (dx: number, dy: number): Direction | null => {
     if (axis === 'x') return dx < 0 ? 'right' : 'left';
     if (axis === 'y') return dy < 0 ? 'down' : 'up';
-    return adx >= ady ? (dx < 0 ? 'right' : 'left') : dy < 0 ? 'down' : 'up';
+    return null;
   };
 
   const initialize = () => {
-    setState({
-      isSwiping: false,
-      dx: 0,
-      dy: 0,
-      direction: null,
-    });
+    idRef.current = null;
+    isSwiping.current = false;
+    startX.current = null;
+    startY.current = null;
+    lastX.current = null;
+    lastY.current = null;
   };
 
   const onPointerDown: React.PointerEventHandler = (e) => {
     if (!e.isPrimary) return;
 
+    // @fix pc에서 스와이프 로직 추가 필요 ( 스와이프와 드래그 액션 구분 불가)
+    if (e.pointerType === 'mouse') return;
+
+    isSwiping.current = true;
     idRef.current = e.pointerId;
     startX.current = e.clientX;
     startY.current = e.clientY;
 
-    setState({ isSwiping: true, dx: 0, dy: 0, direction: null });
     onStart?.(e);
     try {
       (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
@@ -68,28 +65,26 @@ export function useSwipe(opts: Options = {}) {
   };
 
   const onPointerMove: React.PointerEventHandler = (e) => {
-    if (idRef.current !== e.pointerId || !state.isSwiping) return;
+    if (idRef.current !== e.pointerId || !isSwiping.current) return;
     lastX.current = e.clientX;
     lastY.current = e.clientY;
   };
 
   const finish = useCallback(
     (e: React.PointerEvent) => {
-      if (idRef.current !== e.pointerId || !state.isSwiping) return;
-
-      if (e.pointerType === 'mouse') {
-        const sel = window.getSelection?.();
-        if (sel && !sel.isCollapsed) {
-          initialize();
-          return;
-        }
-      }
+      if (
+        idRef.current !== e.pointerId ||
+        startX.current === null ||
+        startY.current === null ||
+        !isSwiping.current
+      )
+        return;
 
       const dx = (lastX.current ?? e.clientX) - startX.current;
       const dy = (lastY.current ?? e.clientY) - startY.current;
       const d = passed(dx, dy) ? dir(dx, dy) : null;
 
-      setState({ isSwiping: false, dx, dy, direction: d });
+      isSwiping.current = false;
       onEnd?.(d, dx, dy);
       initialize();
       idRef.current = null;
@@ -104,7 +99,6 @@ export function useSwipe(opts: Options = {}) {
       onPointerUp: finish,
       onPointerCancel: finish,
     },
-    state,
   } as const;
 }
 
