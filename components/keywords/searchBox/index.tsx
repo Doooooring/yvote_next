@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import styled from 'styled-components';
 
-import { PositiveMessageBox } from '@components/common/messageBox';
+import { DefaultMessageBox } from '@components/common/messageBox';
 import KeywordRepository from '@repositories/keywords';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Keyword } from '@utils/interface/keywords';
@@ -89,9 +89,9 @@ export default function SearchBox() {
       e.preventDefault();
       if (!arrObjIncludeProp(keylist, 'keyword', searchWord)) {
         show(
-          <PositiveMessageBox>
+          <DefaultMessageBox>
             <p>{'존재하지 않는 키워드에요.'}</p>
-          </PositiveMessageBox>,
+          </DefaultMessageBox>,
           2000,
         );
         return;

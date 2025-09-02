@@ -1,8 +1,9 @@
 import { RowSwipeCature } from '@/utils/hook/useSwipe';
+import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { TextButton } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
-import { PositiveMessageBox } from '@components/common/messageBox';
+import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Comment, commentType } from '@utils/interface/news';
 import { useEffect, useState } from 'react';
@@ -62,6 +63,19 @@ export default function CommentBodyCommon({
                   saveScrollHeight();
                   setCurComment(comment);
                   moveToScrollHeight(0);
+
+                  const item = getSessionItem('commentSwipeToast');
+
+                  if (item) return;
+                  saveSessionItem('commentSwipeToast', 'true');
+
+                  showToastMessage(
+                    <CommonMessageBox>좌우로 밀어서 논평을 넘겨볼 수 있어요.</CommonMessageBox>,
+                    2500,
+                    {
+                      direction: 'bottom',
+                    },
+                  );
                 }}
               />
             ) : (
@@ -87,9 +101,9 @@ export default function CommentBodyCommon({
                         moveToScrollHeight(0);
                       } else {
                         showToastMessage(
-                          <PositiveMessageBox>
+                          <DefaultMessageBox>
                             <p>가장 최신 논평입니다!</p>
-                          </PositiveMessageBox>,
+                          </DefaultMessageBox>,
                           2000,
                         );
                       }
@@ -109,9 +123,9 @@ export default function CommentBodyCommon({
                         moveToScrollHeight(0);
                       } else {
                         showToastMessage(
-                          <PositiveMessageBox>
+                          <DefaultMessageBox>
                             <p>준비된 평론들을 모두 확인했어요</p>
-                          </PositiveMessageBox>,
+                          </DefaultMessageBox>,
                           2000,
                         );
                       }
@@ -160,9 +174,9 @@ export default function CommentBodyCommon({
                   moveToScrollHeight(0);
                 } else {
                   showToastMessage(
-                    <PositiveMessageBox>
+                    <DefaultMessageBox>
                       <p>준비된 평론들을 모두 확인했어요</p>
-                    </PositiveMessageBox>,
+                    </DefaultMessageBox>,
                     2000,
                   );
                 }
