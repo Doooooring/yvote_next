@@ -57,27 +57,6 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   };
 };
 
-export const useCurComment = () => {
-  const [curComment, setCurComment] = useState<Comment | null>(null);
-
-  const showCurComment = useCallback(
-    (comment: Comment) => {
-      setCurComment(comment);
-    },
-    [setCurComment],
-  );
-
-  const closeCurComment = useCallback(() => {
-    setCurComment(null);
-  }, [setCurComment]);
-
-  return {
-    curComment,
-    showCurComment,
-    closeCurComment,
-  };
-};
-
 export const useListScrollheight = (ref?: RefObject<HTMLDivElement>) => {
   let target = useRef<HTMLDivElement>(null);
   if (ref) target = ref;

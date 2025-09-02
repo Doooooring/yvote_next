@@ -1,7 +1,7 @@
 import { Column, CommonLayoutBox } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
-import { PositiveMessageBox } from '@components/common/messageBox';
+import { DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Preview } from '@utils/interface/news';
 import { useCallback } from 'react';
@@ -34,9 +34,9 @@ export default function NewsList({
     const res = await fetchPreviews();
     if (!res) {
       showToastMessage(
-        <PositiveMessageBox>
+        <DefaultMessageBox>
           <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
-        </PositiveMessageBox>,
+        </DefaultMessageBox>,
         2000,
       );
     }

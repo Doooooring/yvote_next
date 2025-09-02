@@ -1,5 +1,5 @@
 import { Column, CommonLayoutBox } from '@/components/common/commonStyles';
-import { PositiveMessageBox } from '@/components/common/messageBox';
+import { DefaultMessageBox } from '@/components/common/messageBox';
 import { getNewsPreviewsQueryOption } from '@/queryOption/getNewsPreviews';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
@@ -86,17 +86,17 @@ export default function NewsListSection({
             const lastPage = data?.pages[data.pages.length - 1];
             if (lastPage === undefined || lastPage.length === 0) {
               showToastMessage(
-                <PositiveMessageBox>
+                <DefaultMessageBox>
                   <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
-                </PositiveMessageBox>,
+                </DefaultMessageBox>,
                 2000,
               );
             }
           } catch (e) {
             showToastMessage(
-              <PositiveMessageBox>
+              <DefaultMessageBox>
                 <p>{'다시 시도해 주세요.'}</p>
-              </PositiveMessageBox>,
+              </DefaultMessageBox>,
               2000,
             );
           }
@@ -126,6 +126,7 @@ function getCachedInfo() {
     scroll: 0,
     page: 0,
   };
+  if (typeof window === 'undefined') return defaultCacheInfo;
   const key = (history?.state?.key as string) ?? null;
   if (!key) return defaultCacheInfo;
   const item = getSessionItem(key);
@@ -135,6 +136,7 @@ function getCachedInfo() {
 }
 
 function saveCachedInfo(cacheInfo: CacheInfo) {
+  if (typeof window === 'undefined') return;
   const key = (history?.state?.key as string) ?? null;
   if (!key) return;
   saveSessionItem(key, cacheInfo);

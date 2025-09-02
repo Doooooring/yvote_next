@@ -19,16 +19,20 @@ export function CommonMessageBox({ children, style = {} }: MessageBoxProps) {
   );
 }
 
-export function PositiveMessageBox({ children, style = {} }: MessageBoxProps) {
+export function DefaultMessageBox({ children, style = {} }: MessageBoxProps) {
   return (
-    <PositiveWrapper
+    <DefaultWrapper
       style={{
         ...style,
       }}
     >
       {children}
-    </PositiveWrapper>
+    </DefaultWrapper>
   );
+}
+
+export function PositiveMessageBox({ children, style }: MessageBoxProps) {
+  return <PositiveWrapper style={{ ...style }}>{children}</PositiveWrapper>;
 }
 
 export function NegativeMessageBox({ children, style }: MessageBoxProps) {
@@ -68,10 +72,17 @@ const CommonWrapper = styled(Wrapper)`
   box-shadow: 0px 0px 10px -5px ${({ theme }) => RGB(theme.colors.gray700)};
 `;
 
-const PositiveWrapper = styled(Wrapper)`
+const DefaultWrapper = styled(Wrapper)`
   background-color: ${({ theme }) => RGBA(theme.colors.gray700, 1)};
   border: none;
   color: white;
+`;
+
+const PositiveWrapper = styled(Wrapper)`
+  background-color: ${({ theme }) => theme.colors.yvote03};
+  border: none;
+  color: white;
+  font-weight: 500;
 `;
 
 const NegativeWrapper = styled(Wrapper)``;

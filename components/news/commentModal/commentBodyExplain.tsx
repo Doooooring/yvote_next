@@ -100,10 +100,14 @@ const ContentBody = styled.div`
   font-size: 15px;
 `;
 
-const ContentLine = styled.div`
+const ContentLine = styled.p`
+  margin: 0;
+  padding: 0;
+
   color: black;
   margin-bottom: 0.5rem;
   min-height: 10px;
+  cursor: text;
 `;
 
 const DateButtonWrapper = styled.div`
@@ -141,4 +145,16 @@ const GrokButton = styled.button`
 
 const IsFetching = styled(Backdrop)`
   backdrop-filter: opacity(100%);
+`;
+
+const Blink = styled.div`
+  @keyframes back-blink {
+    0% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  animation: back-blink 0.4s ease-in-out forwards;
 `;
