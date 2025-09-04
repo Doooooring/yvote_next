@@ -12,7 +12,7 @@ export type Options = {
 };
 
 export function useSwipe(opts: Options = { axis: 'x' }) {
-  const { threshold = 16, axis = 'both', onStart, onEnd } = opts;
+  const { threshold = 16, axis = 'x', onStart, onEnd } = opts;
 
   const idRef = useRef<number | null>(null);
 

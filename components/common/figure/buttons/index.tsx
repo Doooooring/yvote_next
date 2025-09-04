@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 interface LeftButtonProps {
   curView: number;
-  viewToLeft: () => void;
+  viewToLeft: () => unknown;
 }
 
 interface RightButtonProps {
   curView: number;
-  viewToRight: () => void;
+  viewToRight: () => unknown;
   lastPage: number;
 }
 

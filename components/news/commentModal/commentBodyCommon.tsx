@@ -9,6 +9,7 @@ import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageB
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Comment, commentType } from '@utils/interface/news';
 import { useEffect, useState } from 'react';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import styled from 'styled-components';
 import CommentBodyExplain from './commentBodyExplain';
 import CommentBodyList from './commentBodyList';
@@ -28,13 +29,15 @@ export default function CommentBodyCommon({
   close: () => void;
 }) {
   const device = useDevice();
+
   const { show: showToastMessage } = useToastMessage();
+
   const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
     commentType,
   );
-
   const [curComment, setCurComment] = useState<Comment | null>(null);
+  const commentIndex = curComment ? curComments.findIndex((c) => c.id === curComment.id) : null;
 
   const {
     target: targetRef,
@@ -42,8 +45,55 @@ export default function CommentBodyCommon({
     moveToScrollHeight,
     reloadScrollHeight,
   } = useListScrollheight();
-
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
+
+  const getPrevComment = async () => {
+    if (commentIndex === null) return;
+
+    if (commentIndex > 0) {
+      const prevComment = curComments[commentIndex - 1];
+      setCurComment(prevComment);
+      moveToScrollHeight(0);
+    } else {
+      const is = await getPageBefore();
+      if (is) {
+        const lastIndex = curComments.length - 1;
+        setCurComment(curComments[lastIndex]);
+        moveToScrollHeight(0);
+      } else {
+        showToastMessage(
+          <DefaultMessageBox>
+            <p>가장 최신 논평입니다!</p>
+          </DefaultMessageBox>,
+          2000,
+        );
+      }
+    }
+  };
+
+  const getNextComment = async () => {
+    if (commentIndex === null) return;
+
+    if (commentIndex < curComments.length - 1) {
+      const nextComment = curComments[commentIndex + 1];
+      setCurComment(nextComment);
+      moveToScrollHeight(0);
+    } else {
+      const is = await getPageAfter();
+      if (is) {
+        const firstIndex = 0;
+        setCurComment(curComments[firstIndex]);
+        moveToScrollHeight(0);
+      } else {
+        showToastMessage(
+          <DefaultMessageBox>
+            <p>준비된 평론들을 모두 확인했어요</p>
+          </DefaultMessageBox>,
+          2000,
+        );
+      }
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -92,50 +142,8 @@ export default function CommentBodyCommon({
                 />
                 <RowSwipeCature
                   threshold={20}
-                  onLeftSwipe={async () => {
-                    const commentIndex = curComments.findIndex((c) => c.id === curComment.id);
-                    if (commentIndex > 0) {
-                      const prevComment = curComments[commentIndex - 1];
-                      setCurComment(prevComment);
-                      moveToScrollHeight(0);
-                    } else {
-                      const is = await getPageBefore();
-                      if (is) {
-                        const lastIndex = curComments.length - 1;
-                        setCurComment(curComments[lastIndex]);
-                        moveToScrollHeight(0);
-                      } else {
-                        showToastMessage(
-                          <DefaultMessageBox>
-                            <p>가장 최신 논평입니다!</p>
-                          </DefaultMessageBox>,
-                          2000,
-                        );
-                      }
-                    }
-                  }}
-                  onRightSwipe={async () => {
-                    const commentIndex = curComments.findIndex((c) => c.id === curComment.id);
-                    if (commentIndex < curComments.length - 1) {
-                      const nextComment = curComments[commentIndex + 1];
-                      setCurComment(nextComment);
-                      moveToScrollHeight(0);
-                    } else {
-                      const is = await getPageAfter();
-                      if (is) {
-                        const firstIndex = 0;
-                        setCurComment(curComments[firstIndex]);
-                        moveToScrollHeight(0);
-                      } else {
-                        showToastMessage(
-                          <DefaultMessageBox>
-                            <p>준비된 평론들을 모두 확인했어요</p>
-                          </DefaultMessageBox>,
-                          2000,
-                        );
-                      }
-                    }
-                  }}
+                  onLeftSwipe={getPrevComment}
+                  onRightSwipe={getNextComment}
                 >
                   <Blink key={curComment.id}>
                     <CommentBodyExplain
@@ -191,14 +199,25 @@ export default function CommentBodyCommon({
             </TextButton>
           </>
         ) : (
-          <TextButton
-            onClick={() => {
-              setCurComment(null);
-              reloadScrollHeight();
-            }}
-          >
-            목록으로
-          </TextButton>
+          <CommentExplainFooter>
+            <ArrowButtonsWrapper>
+              <ButtonWrapper disabled={page === 0 && commentIndex === 0} onClick={getPrevComment}>
+                <AiOutlineLeft size="20px" />
+              </ButtonWrapper>
+              <ButtonWrapper onClick={getNextComment}>
+                <AiOutlineRight size="20px" />
+              </ButtonWrapper>
+            </ArrowButtonsWrapper>
+
+            <TextButton
+              onClick={() => {
+                setCurComment(null);
+                reloadScrollHeight();
+              }}
+            >
+              목록으로
+            </TextButton>
+          </CommentExplainFooter>
         )
       }
     />
@@ -224,4 +243,38 @@ const Blink = styled.div`
     }
   }
   animation: back-blink 0.4s ease-in-out forwards;
+`;
+
+const CommentExplainFooter = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ArrowButtonsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex: 0 1 auto;
+`;
+
+const ButtonWrapper = styled.button`
+  width: 30px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  box-shadow: 0 0 20px -10px;
+  background-color: rgba(255, 255, 255, 0);
+  color: ${({ disabled, theme }) => (!disabled ? theme.colors.yvote07 : theme.colors.gray400)};
+  z-index: 99;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray100};
+  }
 `;
