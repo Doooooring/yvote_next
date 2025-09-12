@@ -1,3 +1,4 @@
+import { Column } from '@/components/common/commonStyles';
 import { INF } from '@/public/assets/resource';
 import { newsRepository } from '@/repositories/news';
 import { NewsState } from '@/utils/interface/news';
@@ -27,4 +28,6 @@ const getPreNewsListQueryOption = ({ keyword }: { keyword: string }) =>
     },
   });
 
-const Wrapper = styled.div``;
+const Wrapper = styled(Column)`
+  gap: 6px;
+`;

@@ -1,5 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
-import { CommonLayoutBox } from '@components/common/commonStyles';
+import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
 
 import LoadingCommon from '@/components/common/loading';
 import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
@@ -12,7 +12,8 @@ import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { Preview } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { Suspense, useCallback, useRef } from 'react';
+import { ReactNode, Suspense, useCallback, useRef, useState } from 'react';
+import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 import { KeyTitle } from '../../utils/interface/keywords';
 
@@ -72,6 +73,7 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <NewsArticlesSection />
         </ArticlesWrapper>
+
         <KeywordFiltersHeadTab
           keywords={keywordsToShow}
           openEditKeywordsTopSheet={() => {
@@ -86,23 +88,32 @@ export default function NewsPage(props: pageProps) {
           reload={reloadRandomKeywords}
           clickKeyword={toggleKeywordFilter}
         />
+
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
-            <Suspense fallback={<></>}>
-              <PreNewsList keywordFilter={keywordFilter ?? ''} />
-            </Suspense>
-            <Suspense
-              fallback={
-                <LoadingWrapper>
-                  <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
-                </LoadingWrapper>
-              }
-            >
-              <NewsListSection
-                keywordFilter={keywordFilter ?? ''}
-                clickPreviews={showNewsContent}
-              />
-            </Suspense>
+            <ToggleContainer initialHeight={400}>
+              <SectionTitle>작성 중 뉴스</SectionTitle>
+              <SectionDescription></SectionDescription>
+              <Suspense fallback={<></>}>
+                <PreNewsList keywordFilter={keywordFilter ?? ''} />
+              </Suspense>
+            </ToggleContainer>
+            <SectionContainer>
+              <SectionTitle>전체 뉴스</SectionTitle>
+              <SectionDescription></SectionDescription>
+              <Suspense
+                fallback={
+                  <LoadingWrapper>
+                    <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+                  </LoadingWrapper>
+                }
+              >
+                <NewsListSection
+                  keywordFilter={keywordFilter ?? ''}
+                  clickPreviews={showNewsContent}
+                />
+              </Suspense>
+            </SectionContainer>
           </div>
           <KeywordFiltersSideTab
             keywords={keywordsToShow}
@@ -121,6 +132,43 @@ export default function NewsPage(props: pageProps) {
         </div>
       </Wrapper>
     </>
+  );
+}
+
+function ToggleContainer({
+  children,
+  initialHeight = 200,
+}: {
+  children: ReactNode;
+  initialHeight?: number;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  return (
+    <SectionContainer ref={ref} style={{}}>
+      <ContentContainer $isOpen={isOpen} initialHeight={initialHeight}>
+        {children}
+      </ContentContainer>
+      <OpenToggleButton
+        onClick={() => {
+          if (isOpen && ref.current) {
+            ref.current?.scrollIntoView({ block: 'start' });
+          }
+          setIsOpen(!isOpen);
+        }}
+      >
+        {isOpen ? (
+          <>
+            <AiOutlineUp size="20px" />
+          </>
+        ) : (
+          <>
+            <AiOutlineDown size="20px" />
+          </>
+        )}
+      </OpenToggleButton>
+    </SectionContainer>
   );
 }
 
@@ -193,7 +241,6 @@ const Wrapper = styled.div`
   .main-contents {
     display: flex;
     flex-direction: row;
-
     -webkit-text-size-adjust: none;
     width: 70%;
     max-width: 1000px;
@@ -250,10 +297,101 @@ const ArticlesWrapper = styled.div`
   max-width: 1000px;
   min-width: 800px;
   position: relative;
+
   @media screen and (max-width: 768px) {
-    width: 100%;
+    width: 98%;
     min-width: 0px;
   }
+`;
+
+const SectionContainer = styled(CommonLayoutBox)`
+  padding: 20px;
+  margin-bottom: 16px;
+  position: relative;
+
+  @media screen and (max-width: 768px) {
+    padding: 16px 7px;
+    margin-bottom: 12px;
+  }
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.gray800};
+  margin: 0 0 8px 0;
+  text-align: left;
+  position: relative;
+  padding-left: 12px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background-color: ${({ theme }) => theme.colors.primary};
+    border-radius: 2px;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+    margin: 0 0 6px 0;
+    padding-left: 10px;
+
+    &::before {
+      width: 3px;
+      height: 16px;
+    }
+  }
+`;
+
+const SectionDescription = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.gray600};
+  margin: 0 0 16px 0;
+  text-align: left;
+  line-height: 1.5;
+
+  @media screen and (max-width: 768px) {
+    font-size: 13px;
+    margin: 0 0 12px 0;
+  }
+`;
+
+const ContentContainer = styled.div<{ $isOpen: boolean; initialHeight: number }>`
+  width: 100%;
+  max-height: ${({ $isOpen, initialHeight }) => ($isOpen ? '2888px' : `${initialHeight}px`)};
+  overflow: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+  position: relative;
+
+  /* transition: max-height 0.8s ease; */
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: radial-gradient(
+      ellipse at center bottom,
+      rgba(117, 116, 116, 0.15) 0%,
+      rgba(169, 168, 168, 0.08) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+    display: ${({ $isOpen }) => ($isOpen ? 'none' : 'block')};
+  }
+`;
+
+const OpenToggleButton = styled(CommonIconButton)`
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const LoadingWrapper = styled(CommonLayoutBox)`
