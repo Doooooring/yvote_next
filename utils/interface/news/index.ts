@@ -56,6 +56,18 @@ export enum NewsState {
   NotPublished = '2',
 }
 
+export type NewsType = 
+  | '법률'
+  | '헌법재판소'
+  | '시행령'
+  | '국무회의'
+  | '정상외교'
+  | '행정'
+  | '논평'
+  | '선거'
+  | '자체제작'
+  | '기타';
+
 export const NewsStateKor = (state: NewsState) => {
   switch (state) {
     case NewsState.Published:
@@ -100,6 +112,7 @@ export interface News {
   newsImage: string;
   isPublished: boolean;
   state: NewsState;
+  newsType?: NewsType;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
@@ -119,7 +132,7 @@ export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
 export interface Preview
   extends Pick<
     News,
-    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state'
+    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state' | 'newsType'
   > {
   comments: Array<commentType>;
 }

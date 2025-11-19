@@ -15,7 +15,7 @@ interface AdminPreviewBoxProps {
   showId?: boolean;
 }
 function AdminPreviewBox({ preview, click = () => {}, showId = false }: AdminPreviewBoxProps) {
-  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state } = preview;
+  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {

@@ -14,7 +14,7 @@ interface PreviewBoxProps {
   click?: (id: number, e?: MouseEvent) => void;
 }
 function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
-  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state } = preview;
+  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {
@@ -33,7 +33,7 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
           }}
         >
           <PreviewBoxLayout_Published
-            headView={<_NewsTitle title={title} />}
+            headView={<_NewsTitle title={title} newsType={newsType} />}
             contentView={
               <>
                 <_NewsSubTitle summary={summary} subTitle={subTitle} />
@@ -78,10 +78,13 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
   }
 }
 
-const _NewsTitle = ({ title }: { title: Preview['title'] }) => {
+const _NewsTitle = ({ title, newsType }: { title: Preview['title']; newsType?: Preview['newsType'] }) => {
   return (
     <Title>
-      <div className="title">{title}</div>
+      <div className="title">
+        {newsType && <span className="news-type">[{newsType}] </span>}
+        {title}
+      </div>
     </Title>
   );
 };
