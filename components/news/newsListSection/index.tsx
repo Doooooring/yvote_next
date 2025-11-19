@@ -10,6 +10,7 @@ import { Virtuoso } from 'react-virtuoso/dist';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
+import { NewsState } from '@/utils/interface/news';
 
 export const PREVIEWS_PAGES_LIMIT = 16;
 
@@ -65,7 +66,15 @@ export default function NewsListSection({
     }, 100);
   }, []);
 
-  const previews = pages.reduce((acc, cur) => [...acc, ...cur], []);
+  const previews = pages
+    .reduce((acc, cur) => [...acc, ...cur], [])
+    .filter((preview) => {
+      // Filter out pending news in admin mode to avoid duplicates with AdminPreNewsList
+      if (isAdmin && preview.state === NewsState.Pending) {
+        return false;
+      }
+      return true;
+    });
 
   return (
     <Wrapper>
@@ -103,7 +112,7 @@ export default function NewsListSection({
         }}
         itemContent={(_, item) => {
           return (
-            <PreviewBox key={item.id} preview={item} img={item.newsImage} click={clickPreviews} />
+            <PreviewBox key={item.id} preview={item} click={clickPreviews} />
           );
         }}
       />
