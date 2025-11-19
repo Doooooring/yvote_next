@@ -57,7 +57,6 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.others:
       return '기타';
     default:
-      newsType satisfies never;
       return '기타';
   }
 };
