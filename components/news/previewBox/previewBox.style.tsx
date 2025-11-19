@@ -15,7 +15,6 @@ export function PreviewBoxLayout_Published({
 }: PreviewBoxLayout_PublishedProps) {
   return (
     <Wrapper {...rest}>
-      <ImgWrapper>{imgView}</ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>
         <ContentWrapper>{contentView}</ContentWrapper>
