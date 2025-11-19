@@ -33,7 +33,7 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
           }}
         >
           <PreviewBoxLayout_Published
-            headView={<_NewsTitle title={title} newsType={newsType} />}
+            headView={<_NewsTitle title={title}/>}
             contentView={
               <>
                 <_NewsSubTitle summary={summary} subTitle={subTitle} />
@@ -78,11 +78,10 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
   }
 }
 
-const _NewsTitle = ({ title, newsType }: { title: Preview['title']; newsType?: Preview['newsType'] }) => {
+const _NewsTitle = ({ title }: { title: Preview['title'] }) => {
   return (
     <Title>
       <div className="title">
-        {newsType && <span className="news-type">[{newsType}] </span>}
         {title}
       </div>
     </Title>
