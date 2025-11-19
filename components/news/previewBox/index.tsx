@@ -12,9 +12,8 @@ import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewB
 interface PreviewBoxProps {
   preview: Preview;
   click?: (id: number, e?: MouseEvent) => void;
-  img?: string;
 }
-function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
+function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
@@ -34,7 +33,6 @@ function PreviewBox({ preview, img, click = () => {} }: PreviewBoxProps) {
           }}
         >
           <PreviewBoxLayout_Published
-            imgView={<ImageFallback src={img ?? ``} alt={title} fill={true} suspense={true} />}
             headView={<_NewsTitle title={title} />}
             contentView={
               <>

@@ -58,14 +58,7 @@ export default function NewsList({
             fetChPreviewsWithVal();
           }}
           itemContent={(_, item) => {
-            return (
-              <PreviewBox
-                key={item.id}
-                preview={item}
-                img={item.newsImage}
-                click={showNewsContent}
-              />
-            );
+            return <PreviewBox key={item.id} preview={item} click={showNewsContent} />;
           }}
         />
         <IsShow state={isFetchingImages}>
