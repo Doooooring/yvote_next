@@ -7,7 +7,6 @@ function PreviewBoxFallback() {
   return (
     <Wrapper>
       <PreviewBoxLayout_Published
-        imgView={<ImgView />}
         headView={<HeadView />}
         contentView={
           <>

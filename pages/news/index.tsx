@@ -91,12 +91,18 @@ export default function NewsPage(props: pageProps) {
 
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
-            <ToggleContainer initialHeight={400}>
-              <SectionTitle>작성 중 뉴스</SectionTitle>
-              <SectionDescription></SectionDescription>
-              <Suspense fallback={<></>}>
-                <PreNewsList keywordFilter={keywordFilter ?? ''} />
-              </Suspense>
+            <ToggleContainer initialHeight={200}>
+              {(isOpen: boolean, initialHeight: number) => (
+                <>
+                  <SectionTitle>작성 중 뉴스</SectionTitle>
+                  <SectionDescription></SectionDescription>
+                  <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
+                    <Suspense fallback={<></>}>
+                      <PreNewsList keywordFilter={keywordFilter ?? ''} />
+                    </Suspense>
+                  </ScrollableContent>
+                </>
+              )}
             </ToggleContainer>
             <SectionContainer>
               <SectionTitle>전체 뉴스</SectionTitle>
@@ -137,9 +143,9 @@ export default function NewsPage(props: pageProps) {
 
 function ToggleContainer({
   children,
-  initialHeight = 200,
+  initialHeight = 300,
 }: {
-  children: ReactNode;
+  children: (isOpen: boolean, initialHeight: number) => ReactNode;
   initialHeight?: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -148,7 +154,7 @@ function ToggleContainer({
   return (
     <SectionContainer ref={ref} style={{}}>
       <ContentContainer $isOpen={isOpen} initialHeight={initialHeight}>
-        {children}
+        {children(isOpen, initialHeight)}
       </ContentContainer>
       <OpenToggleButton
         onClick={() => {
@@ -363,11 +369,23 @@ const SectionDescription = styled.p`
 
 const ContentContainer = styled.div<{ $isOpen: boolean; initialHeight: number }>`
   width: 100%;
-  max-height: ${({ $isOpen, initialHeight }) => ($isOpen ? '2888px' : `${initialHeight}px`)};
-  overflow: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+  position: relative;
+`;
+
+const ScrollableContent = styled.div<{ $isOpen?: boolean; initialHeight?: number }>`
+  width: 100%;
+  max-height: ${({ $isOpen, initialHeight }) => ($isOpen ? '500px' : `${initialHeight || 200}px`)};
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 
   /* transition: max-height 0.8s ease; */
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   &::after {
     content: '';

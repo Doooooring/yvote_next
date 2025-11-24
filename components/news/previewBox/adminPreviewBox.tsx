@@ -9,11 +9,12 @@ import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
-interface PreviewBoxProps {
+interface AdminPreviewBoxProps {
   preview: Preview;
   click?: (id: number, e?: MouseEvent) => void;
+  showId?: boolean;
 }
-function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
+function AdminPreviewBox({ preview, click = () => {}, showId = false }: AdminPreviewBoxProps) {
   const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
@@ -33,7 +34,7 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
           }}
         >
           <PreviewBoxLayout_Published
-            headView={<_NewsTitle title={title}/>}
+            headView={<_NewsTitle title={title} id={id} showId={showId} />}
             contentView={
               <>
                 <_NewsSubTitle summary={summary} subTitle={subTitle} />
@@ -55,15 +56,15 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
       return (
         <PreviewWrapper
           href={`/news/${id}`}
-          onClick={() => {
-            openComments();
+          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+            click(id, e);
             return;
           }}
         >
           <PreviewBoxLayout_Pending
             bodyView={
               <>
-                <_NewsTitle title={title} />
+                <_NewsTitle title={title} id={id} showId={showId} />
                 <_CommentButtons
                   comments={comments}
                   openComments={(commentType) => {
@@ -78,11 +79,12 @@ function PreviewBox({ preview, click = () => {} }: PreviewBoxProps) {
   }
 }
 
-const _NewsTitle = ({ title }: { title: Preview['title'] }) => {
+const _NewsTitle = ({ title, id, showId }: { title: Preview['title']; id: number; showId: boolean }) => {
   return (
     <Title>
       <div className="title">
         {title}
+        {showId && <span className="id">[{id}] </span>}
       </div>
     </Title>
   );
@@ -142,7 +144,7 @@ const _CommentButtons = ({
   );
 };
 
-export default React.memo(PreviewBox, (prevProps, nextProps) => {
+export default React.memo(AdminPreviewBox, (prevProps, nextProps) => {
   return prevProps.preview.id === nextProps.preview.id;
 });
 
@@ -219,6 +221,11 @@ const Title = styled(Row)`
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    .id {
+      color: ${({ theme }) => theme.colors.primary};
+      font-weight: 600;
+    }
   }
 `;
 
@@ -331,4 +338,4 @@ const SummaryButton = styled(CommonIconButton)<{
   outline: none;
   box-sizing: border-box;
   z-index: ${({ zindex }) => zindex};
-`; // 여기선 이거 클릭해도 그냥 프리뷰 클릭한 것처럼 뉴스 디테일로 이동
+`;

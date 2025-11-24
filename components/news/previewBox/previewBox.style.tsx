@@ -2,20 +2,17 @@ import { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
 interface PreviewBoxLayout_PublishedProps extends HTMLAttributes<HTMLDivElement> {
-  imgView: ReactNode;
   headView: ReactNode;
   contentView: ReactNode;
 }
 
 export function PreviewBoxLayout_Published({
-  imgView,
   headView,
   contentView,
   ...rest
 }: PreviewBoxLayout_PublishedProps) {
   return (
     <Wrapper {...rest}>
-      <ImgWrapper>{imgView}</ImgWrapper>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>
         <ContentWrapper>{contentView}</ContentWrapper>
