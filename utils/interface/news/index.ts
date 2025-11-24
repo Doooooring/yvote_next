@@ -1,12 +1,3 @@
-// export enum Press {
-//   조선 = '조선',
-//   중앙 = '동아',
-//   한겨레 = '한겨레',
-//   한경 = '한경',
-//   매경 = '매경',
-//   동아 = '동아',
-// }
-
 import { Keyword } from '../keywords';
 
 export enum commentType {
@@ -29,6 +20,47 @@ export enum commentType {
   기타 = '기타',
   헌법재판소 = '헌법재판소',
 }
+
+export enum NewsType {
+  bill = 'bill',
+  constitution = 'constitution',
+  executive = 'executive',
+  cabinet = 'cabinet',
+  diplomat = 'diplomat',
+  govern = 'govern',
+  debate = 'debate',
+  election = 'election',
+  original = 'original',
+  others = 'others',
+}
+
+export const newsTypesToKor = (newsType: NewsType) => {
+  switch (newsType) {
+    case NewsType.bill:
+      return '법률';
+    case NewsType.constitution:
+      return '헌법재판소';
+    case NewsType.executive:
+      return '시행령';
+    case NewsType.cabinet:
+      return '국무회의';
+    case NewsType.diplomat:
+      return '정상외교';
+    case NewsType.govern:
+      return '행정';
+    case NewsType.debate:
+      return '논평';
+    case NewsType.election:
+      return '선거';
+    case NewsType.original:
+      return '자체제작';
+    case NewsType.others:
+      return '기타';
+    default:
+      newsType satisfies never;
+      return '기타';
+  }
+};
 
 export enum CommentQualification {
   YVOTE = 0,
@@ -55,18 +87,6 @@ export enum NewsState {
   Pending = '1',
   NotPublished = '2',
 }
-
-export type NewsType = 
-  | '법률'
-  | '헌법재판소'
-  | '시행령'
-  | '국무회의'
-  | '정상외교'
-  | '행정'
-  | '논평'
-  | '선거'
-  | '자체제작'
-  | '기타';
 
 export const NewsStateKor = (state: NewsState) => {
   switch (state) {
@@ -105,6 +125,7 @@ export interface News {
   order: number;
   title: string;
   subTitle: string;
+  newsType: NewsType;
   summary: string;
   summaries: Array<NewsSummary>;
   date?: Date;
@@ -112,7 +133,6 @@ export interface News {
   newsImage: string;
   isPublished: boolean;
   state: NewsState;
-  newsType?: NewsType;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
@@ -132,7 +152,16 @@ export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
 export interface Preview
   extends Pick<
     News,
-    'id' | 'order' | 'newsImage' | 'title' | 'subTitle' | 'summary' | 'date' | 'keywords' | 'state' | 'newsType'
+    | 'id'
+    | 'order'
+    | 'newsImage'
+    | 'title'
+    | 'subTitle'
+    | 'newsType'
+    | 'summary'
+    | 'date'
+    | 'keywords'
+    | 'state'
   > {
   comments: Array<commentType>;
 }
