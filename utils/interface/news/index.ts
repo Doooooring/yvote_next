@@ -1,16 +1,6 @@
 import { Keyword } from '../keywords';
 
 export enum commentType {
-  // 전략가 = '전략가',
-  // 지도자 = '지도자',
-  // 예술가 = '예술가',
-  // 감시자 = '감시자',
-  // 운영자 = '운영자',
-  // 공화주의자 = '공화주의자',
-  // 관찰자 = '관찰자',
-  // 개혁가 = '개혁가',
-  // 이론가 = '이론가',
-  // 자유주의자 = '자유주의자',
   와이보트 = '와이보트',
   입법부 = '입법부',
   행정부 = '행정부',
@@ -57,7 +47,6 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.others:
       return '기타';
     default:
-      newsType satisfies never;
       return '기타';
   }
 };
