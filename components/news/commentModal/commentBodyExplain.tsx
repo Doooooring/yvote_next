@@ -4,6 +4,8 @@ import openAIRepository from '@repositories/openai';
 import { useKoreanDateFormat } from '@utils/tools/date';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { useToastMessage } from '../../../utils/hook/useToastMessage';
+import { DefaultMessageBox } from '../../common/messageBox';
 
 interface CommentBodyExplainProps {
   id: number;
@@ -53,6 +55,7 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
 function useAISummary(explain: string) {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { show } = useToastMessage();
 
   const fetchSummary = useCallback(async () => {
     try {
@@ -67,6 +70,12 @@ function useAISummary(explain: string) {
       ]);
       setSummary(response);
     } catch (e) {
+      show(
+        <DefaultMessageBox>
+          <p>{'요약 기능 중 오류가 발생했어요. 다시 시도해주세요.'}</p>
+        </DefaultMessageBox>,
+        2000,
+      );
     } finally {
       setIsLoading(false);
     }

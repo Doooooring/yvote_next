@@ -12,8 +12,11 @@ class OpenAIRepository {
   async getAIResult(message: any) {
     const response: Response<string> = await axios.post(`${HOST_URL}/openai`, {
       message,
-      model : 'grok-2'
+      model: 'grok-3-mini',
     });
+    if (response.data.success === false) {
+      throw new Error('Failed to fetch AI result');
+    }
     return response.data.result;
   }
 }
