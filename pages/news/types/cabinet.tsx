@@ -11,8 +11,13 @@ import { NewsTypeLayoutProps } from './default';
 export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
   const summaryText = getTextContentFromHtmlText(news?.summary ?? '') || '';
   const { showCommentModal } = useCommentModal();
-  const agendaGroups = useMemo(() => parseAgendaGroups(news?.agendaList ?? ''), [news?.agendaList]);
-  const speechHtml = news?.speechContent ?? '';
+  // Hydration fix: Only parse agenda/speech on client
+  const [agendaGroups, setAgendaGroups] = useState<AgendaGroupShape[]>([]);
+  const [speechGroups, setSpeechGroups] = useState<AgendaGroupShape[]>([]);
+  useEffect(() => {
+    setAgendaGroups(parseAgendaGroups(news?.agendaList ?? ''));
+    setSpeechGroups(parseAgendaGroups(news?.speechContent ?? ''));
+  }, [news?.agendaList, news?.speechContent]);
   const timelineGroups = useMemo(() => {
     const groups: Record<string, string[]> = {};
     (news.timeline ?? []).forEach((tl) => {
@@ -53,14 +58,13 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
 
   // Dummy data for fallback
   const dummyTimeline: [string, string[]][] = [
-    ['2026.02.01', ['내각 회의 개최', '정책 발표']],
-    ['2026.02.02', ['예산안 논의', '국무총리 발언']],
+    ['2020.02.01', ['국무회의 타임라인 없음']],
   ];
   const dummyAgenda: AgendaGroupShape[] = [
-    { title: '경제 정책', items: ['2026년 경제 성장률 목표 설정', '중소기업 지원 방안 논의'] },
-    { title: '사회 정책', items: ['복지 확대 방안', '교육 개혁안 검토'] },
+    { title: '법률공포안', items: ['법률공포안1', '법률공포안2'] },
+    { title: '대통령령안', items: ['시행령1', '시행령2'] },
   ];
-  const dummySpeech = '<p>국민 여러분께 내각의 주요 정책을 설명드리며, 경제와 복지 모두를 강화하겠습니다.</p>';
+  const dummySpeech = '<p>발언 내용 없음</p>';
 
   return (
     <CabinetWrapper>
@@ -126,7 +130,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
 
           <CabinetCard>
             <SectionTitle>안건 목록</SectionTitle>
-            {(agendaGroups.length ? (
+            {agendaGroups.length ? (
               <AgendaGroups>
                 {agendaGroups.map((group) => (
                   <AgendaGroup key={group.title}>
@@ -162,21 +166,28 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
                   </AgendaGroup>
                 ))}
               </AgendaGroups>
-            ))}
+            )}
           </CabinetCard>
 
           <CabinetCard>
             <SectionTitle>주요 발언 내용</SectionTitle>
-            {speechHtml ? (
-              <SpeechContent
-                className="speech-html"
-                dangerouslySetInnerHTML={{ __html: speechHtml }}
-              />
+            {speechGroups.length ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                {speechGroups.map((group, gidx) => (
+                  <div key={group.title + gidx} style={{ marginBottom: '8px' }}>
+                    <div style={{ fontWeight: 600, fontSize: '1.08rem', marginBottom: '6px', color: '#1e293b' }}>{group.title}</div>
+                    {group.items.map((item, idx) => (
+                      <blockquote key={idx} style={{ margin: '0 0 10px 0', padding: '8px 16px', borderLeft: '4px solid #0ea5e9', background: '#f8fafc', color: '#334155', fontSize: '1rem', fontStyle: 'italic' }}>
+                        {item}
+                      </blockquote>
+                    ))}
+                  </div>
+                ))}
+              </div>
             ) : (
-              <SpeechContent
-                className="speech-html"
-                dangerouslySetInnerHTML={{ __html: dummySpeech }}
-              />
+              <SpeechContent className="speech-html">
+                <p>주요 발언 내용이 없습니다.</p>
+              </SpeechContent>
             )}
           </CabinetCard>
 

@@ -133,7 +133,7 @@ export default function NewsListSection({
         ))}
       </Grid>
 
-      {isFetching && <NewsListFallback length={PREVIEWS_PAGES_LIMIT} />}
+      {/* {isFetching && <NewsListFallback length={PREVIEWS_PAGES_LIMIT} />} */}
 
       <PaginationBar>
         <PageButton
