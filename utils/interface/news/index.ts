@@ -13,6 +13,7 @@ export enum commentType {
 
 export enum NewsType {
   bill = 'bill',
+  teukprosecution = 'teukprosecution',
   constitution = 'constitution',
   executive = 'executive',
   cabinet = 'cabinet',
@@ -22,6 +23,7 @@ export enum NewsType {
   election = 'election',
   original = 'original',
   others = 'others',
+  //헌재 종류별 만들 것
 }
 
 export const newsTypesToKor = (newsType: NewsType) => {
@@ -44,6 +46,8 @@ export const newsTypesToKor = (newsType: NewsType) => {
       return '선거';
     case NewsType.original:
       return '자체제작';
+    case NewsType.teukprosecution:
+      return '특검';
     case NewsType.others:
       return '기타';
     default:
@@ -117,6 +121,8 @@ export interface News {
   newsType: NewsType;
   summary: string;
   summaries: Array<NewsSummary>;
+  agendaList?: string;
+  speechContent?: string;
   date?: Date;
   keywords: Array<Keyword>;
   newsImage: string;

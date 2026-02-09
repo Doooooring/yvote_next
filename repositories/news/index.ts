@@ -47,6 +47,7 @@ class NewsRepository {
     limit: number,
     keyword: string | null = '',
     state: NewsState,
+    newsType?: string,
   ): Promise<Array<Preview>> {
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
       params: {
@@ -54,12 +55,13 @@ class NewsRepository {
         limit: limit,
         keyword: keyword ?? '',
         state: state,
+        ...(newsType ? { newsType } : {}),
       },
     });
     const data = response.data;
     return data.result.map((news) => {
       const preview = clone(news);
-      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      preview.summary = getTextContentFromHtmlText(news.summary) ?? '';
       return preview;
     });
   }
@@ -74,16 +76,17 @@ class NewsRepository {
     curNum: number,
     limit: number = 20,
     keyword: string | null = null,
+    newsType?: string,
   ): Promise<Array<Preview>> {
     const response: Response<Array<Preview>> = await axios.get(
       `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${
         keyword ?? ''
-      }&isAdmin==${true}`,
+      }&isAdmin==${true}${newsType ? `&newsType=${newsType}` : ''}`,
     );
     const data = response.data;
     return data.result.map((news) => {
       const preview = clone(news);
-      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      preview.summary = getTextContentFromHtmlText(news.summary) ?? '';
       return preview;
     });
   }

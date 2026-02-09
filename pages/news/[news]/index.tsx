@@ -1,19 +1,28 @@
-import NewsContent from '@components/news/newsContents';
 import { newsRepository } from '@repositories/news';
 
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import HeadMeta from '@components/common/HeadMeta';
-import { NewsInView, NewsState } from '@utils/interface/news';
+import { NewsInView, NewsState, NewsType } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
 import {
   CommonErrorView,
   ErrorComment,
   ErrorHead,
 } from '../../../components/common/commonErrorBounbdary/commonErrorView';
 import { Row, TextButton } from '../../../components/common/commonStyles';
+import DefaultNewsLayout from '../types/default';
+import BillNewsLayout from '../types/bill';
+import ConstitutionNewsLayout from '../types/constitution';
+import ExecutiveNewsLayout from '../types/executive';
+import CabinetNewsLayout from '../types/cabinet';
+import DiplomatNewsLayout from '../types/diplomat';
+import GovernNewsLayout from '../types/govern';
+import DebateNewsLayout from '../types/debate';
+import ElectionNewsLayout from '../types/election';
+import OriginalNewsLayout from '../types/original';
+import OthersNewsLayout from '../types/others';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -61,6 +70,20 @@ export default function NewsDetailPage({ data }: pageProps) {
   const {} = useRouterUtils();
   const { id, news, description } = data;
 
+  const renderByType = () => {
+    if (news.newsType === NewsType.bill) return <BillNewsLayout news={news} />;
+    if (news.newsType === NewsType.constitution) return <ConstitutionNewsLayout news={news} />;
+    if (news.newsType === NewsType.executive) return <ExecutiveNewsLayout news={news} />;
+    if (news.newsType === NewsType.cabinet) return <CabinetNewsLayout news={news} />;
+    if (news.newsType === NewsType.diplomat) return <DiplomatNewsLayout news={news} />;
+    if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;
+    if (news.newsType === NewsType.debate) return <DebateNewsLayout news={news} />;
+    if (news.newsType === NewsType.election) return <ElectionNewsLayout news={news} />;
+    if (news.newsType === NewsType.original) return <OriginalNewsLayout news={news} />;
+    if (news.newsType === NewsType.others) return <OthersNewsLayout news={news} />;
+    return <DefaultNewsLayout news={news} />;
+  };
+
   return (
     <>
       <HeadMeta
@@ -73,15 +96,7 @@ export default function NewsDetailPage({ data }: pageProps) {
         }}
       />
       {news.state === NewsState.Published ? (
-        <Wrapper>
-          <div className="main-contents">
-            <div className="main-contents-body">
-              <div className="news-contents-wrapper">
-                <NewsContent newsContent={news!} voteHistory={null} />
-              </div>
-            </div>
-          </div>
-        </Wrapper>
+        renderByType()
       ) : (
         <CommonErrorView>
           <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
@@ -107,35 +122,3 @@ export default function NewsDetailPage({ data }: pageProps) {
     </>
   );
 }
-
-const Wrapper = styled.div`
-  font-family: Helvetica, sans-serif;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: 20px;
-  background-color: rgb(242, 242, 242);
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  .main-contents {
-    width: 50%;
-    min-width: 600px;
-    @media screen and (max-width: 768px) {
-      width: 98%;
-      min-width: 0px;
-    }
-  }
-
-  .main-contents-body {
-    position: relative;
-    .news-contents-wrapper {
-      width: 100%;
-      font-size: 13px;
-    }
-  }
-`;

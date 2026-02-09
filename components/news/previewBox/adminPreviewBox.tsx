@@ -1,5 +1,4 @@
 import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
-import ImageFallback from '@components/common/imageFallback';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import Link from 'next/link';
 import { commentType, NewsState, Preview } from '@utils/interface/news';
@@ -15,7 +14,7 @@ interface AdminPreviewBoxProps {
   showId?: boolean;
 }
 function AdminPreviewBox({ preview, click = () => {}, showId = false }: AdminPreviewBoxProps) {
-  const { id, title, subTitle, summary, date, newsImage, keywords, comments = [], state, newsType } = preview;
+  const { id, title, subTitle, summary, date, comments = [], state } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {
@@ -127,7 +126,7 @@ const _CommentButtons = ({
 
   return (
     <SummaryButtons>
-      {comments.slice(0, 3).map((commentType, index) => (
+      {comments.map((commentType, index) => (
         <SummaryButton
           key={index}
           zindex={10 - index}
@@ -139,7 +138,6 @@ const _CommentButtons = ({
           }}
         />
       ))}
-      <span style={{ fontSize: '12px' }}>{comments.length > 3 && `+${comments.length - 3}`}</span>
     </SummaryButtons>
   );
 };
