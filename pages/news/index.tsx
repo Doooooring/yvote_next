@@ -261,8 +261,8 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 10px;
   padding-bottom: 50px;
-  background-color: rgb(242, 242, 242);
-  overflow: clip visible;
+  background-color: rgb(242, 244, 246);
+  overflow: visible;
 
   ::-webkit-scrollbar {
     display: none;
@@ -383,24 +383,10 @@ const SectionTitle = styled.h3`
   margin: 0 0 8px 0;
   text-align: left;
   position: relative;
-  padding-left: 12px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 20px;
-    background-color: ${({ theme }) => theme.colors.primary};
-    border-radius: 2px;
-  }
 
   @media screen and (max-width: 768px) {
     font-size: 16px;
     margin: 0 0 6px 0;
-    padding-left: 10px;
 
     &::before {
       width: 3px;
@@ -415,7 +401,7 @@ const SectionHeader = styled.div`
   justify-content: flex-start;
   gap: 10px;
   flex-wrap: nowrap;
-  overflow: hidden;
+  overflow: visible;
 `;
 
 const HeaderControls = styled.div`
@@ -428,6 +414,7 @@ const HeaderControls = styled.div`
 
 const TypeFilter = styled.div`
   position: relative;
+  overflow: visible;
 `;
 
 const TypeFilterButton = styled.button`
@@ -441,6 +428,7 @@ const TypeFilterButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  z-index: 1;
   &:after {
     content: '▾';
     font-size: 0.75rem;
@@ -542,8 +530,9 @@ const TypeFilterMenu = styled.div`
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
   border-radius: 10px;
   padding: 6px;
-  z-index: 10;
   min-width: 140px;
+  overflow: visible;
+  z-index: 2;
 `;
 
 const TypeFilterItem = styled.button`
@@ -556,7 +545,6 @@ const TypeFilterItem = styled.button`
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.85rem;
-
   &:hover {
     background: ${({ theme }) => theme.colors.hovergray};
   }

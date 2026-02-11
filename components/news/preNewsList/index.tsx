@@ -53,7 +53,7 @@ const getPreNewsListQueryOption = ({ keyword }: { keyword: string }) =>
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 9px;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;

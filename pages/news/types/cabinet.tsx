@@ -19,7 +19,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
     setSpeechGroups(parseAgendaGroups(news?.speechContent ?? ''));
   }, [news?.agendaList, news?.speechContent]);
   const timelineGroups = useMemo(() => {
-    const groups: Record<string, string[]> = {};
+    const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
     (news.timeline ?? []).forEach((tl) => {
       const dateKey = tl.date ? getDotDateForm(tl.date) : '날짜 미상';
       const titles = tl.title
@@ -29,7 +29,9 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      groups[dateKey].push(...titles);
+      titles.forEach(title => {
+        groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
+      });
     });
     return Object.entries(groups);
   }, [news.timeline]);
@@ -56,15 +58,30 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
     ? news.summaries?.find((summary) => summary.commentType === activeSummaryType)
     : undefined;
 
-  // Dummy data for fallback
-  const dummyTimeline: [string, string[]][] = [
-    ['2020.02.01', ['국무회의 타임라인 없음']],
-  ];
+  // Dummy data for fallback (match real timeline item shape: { title, type })
+  const dummyTimeline = [
+    ['2020.02.01', [{ title: '국무회의 타임라인 없음', type: COMMENT_TYPE_OTHERS }]],
+  ] as [string, { title: string; type: commentType }[]][];
   const dummyAgenda: AgendaGroupShape[] = [
     { title: '법률공포안', items: ['법률공포안1', '법률공포안2'] },
     { title: '대통령령안', items: ['시행령1', '시행령2'] },
   ];
-  const dummySpeech = '<p>발언 내용 없음</p>';
+  const dummySpeechGroups: AgendaGroupShape[] = [
+    {
+      title: '총리 발언',
+      items: [
+        '국무회의의 중요성을 강조하며, 각 부처의 협력을 요청했습니다.',
+        '경제 활성화 방안에 대해 논의하였습니다.'
+      ]
+    },
+    {
+      title: '장관 발언',
+      items: [
+        '교육 정책의 변화와 미래 방향에 대해 설명했습니다.',
+        '환경 보호를 위한 새로운 정책을 제안하였습니다.'
+      ]
+    }
+  ];
 
   return (
     <CabinetWrapper>
@@ -89,43 +106,12 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
               ) : null}
             </div>
           </div>
-          {news.newsImage ? (
-            <div className="header-image">
-              <Image src={news.newsImage} alt={news.title} fill style={{ objectFit: 'cover' }} />
-            </div>
-          ) : null}
         </CabinetHeader>
 
         <CabinetGrid>
           <CabinetCard>
             <SectionTitle>타임라인</SectionTitle>
-            {(timelineGroups.length ? (
-              <TimelineList>
-                {timelineGroups.map(([dateKey, items]) => (
-                  <li key={dateKey}>
-                    <span className="date">{dateKey}</span>
-                    <ul className="items">
-                      {items.map((item, idx) => (
-                        <li key={`${dateKey}-${idx}`}>{item}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </TimelineList>
-            ) : (
-              <TimelineList>
-                {dummyTimeline.map(([dateKey, items]) => (
-                  <li key={dateKey}>
-                    <span className="date">{dateKey}</span>
-                    <ul className="items">
-                      {items.map((item, idx) => (
-                        <li key={`${dateKey}-dummy-${idx}`}>{item}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </TimelineList>
-            ))}
+            <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} />
           </CabinetCard>
 
           <CabinetCard>
@@ -172,55 +158,42 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
           <CabinetCard>
             <SectionTitle>주요 발언 내용</SectionTitle>
             {speechGroups.length ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <SpeechGroupsLayout>
                 {speechGroups.map((group, gidx) => (
-                  <div key={group.title + gidx} style={{ marginBottom: '8px' }}>
-                    <div style={{ fontWeight: 600, fontSize: '1.08rem', marginBottom: '6px', color: '#1e293b' }}>{group.title}</div>
+                  <SpeechGroup key={group.title + gidx}>
+                    <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
                     {group.items.map((item, idx) => (
-                      <blockquote key={idx} style={{ margin: '0 0 10px 0', padding: '8px 16px', borderLeft: '4px solid #0ea5e9', background: '#f8fafc', color: '#334155', fontSize: '1rem', fontStyle: 'italic' }}>
-                        {item}
-                      </blockquote>
+                      <SpeechQuote key={idx}>{item}</SpeechQuote>
                     ))}
-                  </div>
+                  </SpeechGroup>
                 ))}
-              </div>
+              </SpeechGroupsLayout>
             ) : (
-              <SpeechContent className="speech-html">
-                <p>주요 발언 내용이 없습니다.</p>
-              </SpeechContent>
+              <SpeechGroupsLayout>
+                {dummySpeechGroups.map((group, gidx) => (
+                  <SpeechGroup key={group.title + gidx}>
+                    <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                    {group.items.map((item, idx) => (
+                      <SpeechQuote key={idx}>{item}</SpeechQuote>
+                    ))}
+                  </SpeechGroup>
+                ))}
+              </SpeechGroupsLayout>
             )}
           </CabinetCard>
 
           <CabinetCard>
             <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            {summaryTypes.length ? (
-              <SummarySelector>
-                <SummaryButtons>
-                  {summaryTypes.map((type) => (
-                    <SummaryButton
-                      key={type}
-                      image={commentTypeImg(type)}
-                      aria-label={`${type} 요약 보기`}
-                      data-active={activeSummaryType === type}
-                      onClick={() => setActiveSummaryType(type)}
-                    />
-                  ))}
-                </SummaryButtons>
-                <SummaryContent>
-                  <div
-                    className="summary-html"
-                    dangerouslySetInnerHTML={{ __html: activeSummary?.summary ?? '' }}
+            <SummaryList>
+              {(news.summaries ?? []).map((summary, idx) => (
+                <SummaryListItem key={summary.commentType + idx}>
+                  <CommentTypeIcon type={summary.commentType} />
+                  <SummaryHtml
+                    dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
                   />
-                </SummaryContent>
-              </SummarySelector>
-            ) : (
-              <SummarySelector>
-                <SummaryButtons />
-                <SummaryContent>
-                  <div className="summary-html" />
-                </SummaryContent>
-              </SummarySelector>
-            )}
+                </SummaryListItem>
+              ))}
+            </SummaryList>
           </CabinetCard>
         </CabinetGrid>
       </CabinetContent>
@@ -322,10 +295,7 @@ const CabinetHeader = styled.section`
   border: 1px solid #e2e8f0;
   border-radius: 5px;
   padding: 22px;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 16px;
-  align-items: center;
+  display: block;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 
   .header-text h1 {
@@ -347,22 +317,6 @@ const CabinetHeader = styled.section`
     gap: 8px;
     color: #64748b;
     font-size: 0.9rem;
-  }
-
-
-  .header-image {
-    position: relative;
-    width: 100%;
-    min-height: 220px;
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 1fr;
-    .header-image {
-      min-height: 200px;
-    }
   }
 `;
 
@@ -413,38 +367,234 @@ const Paragraph = styled.p`
   line-height: 1.7;
 `;
 
-const TimelineList = styled.ul`
+
+// --- TimelineList: compact, expandable, grouped by date, icons with count, expandable by icon click, default to 기타(others) ---
+
+
+const COMMENT_TYPE_OTHERS = commentType.기타;
+
+const CommentTypeIcon = ({ type }: { type: commentType }) => (
+  <CommentTypeIconWrapper>
+    <img
+      src={commentTypeImg(type)}
+      alt={type}
+      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
+    />
+  </CommentTypeIconWrapper>
+);
+
+const CommentTypeIconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  margin-left: 4px;
+  border-radius: 50%;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  box-sizing: border-box;
+`;
+
+type TimelineItem = { title: string; type: commentType };
+type TimelineListProps = {
+  timeline: [string, TimelineItem[]][];
+};
+
+const TimelineList = ({ timeline }: TimelineListProps) => {
+  if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
+  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+
+  // Extract years from all dates (assuming format 'YYYY.MM.DD' or 'YYYY-MM-DD')
+  const currentYear = new Date().getFullYear().toString();
+
+  // Helper to format date string to Korean style
+  function formatKoreanDate(date: string) {
+    // Accepts 'YYYY.MM.DD' or 'YYYY-MM-DD' or 'MM.DD' or 'MM-DD'
+    const match = date.match(/^(?:(\d{4})[.\-])?(\d{1,2})[.\-](\d{1,2})/);
+    if (!match) return date;
+    const [, year, month, day] = match;
+    if (year && year !== currentYear) {
+      return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
+    }
+    return `${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
+  }
+
+  return (
+    <TimelineListLayout>
+      {timeline.map(([date, items]) => {
+        const displayDate = formatKoreanDate(date);
+
+        // group items by comment type for this date
+        const groups: Record<string, TimelineItem[]> = {};
+        items.forEach((it) => {
+          const key = it.type ?? COMMENT_TYPE_OTHERS;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(it);
+        });
+
+        const count = items.length;
+        const isOpen = !!expanded[date];
+        return (
+          <TimelineListItem key={date}>
+            <TimelineRow>
+              <TimelineDate>{displayDate}</TimelineDate>
+              <TimelineControls>
+                <TimelineTypeRow
+                  data-open={isOpen}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setExpanded((prev) => ({ ...prev, [date]: !isOpen }))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setExpanded((prev) => ({ ...prev, [date]: !isOpen }));
+                    }
+                  }}
+                  aria-label={isOpen ? '접기' : '펼치기'}
+                >
+                  <TimelineIconButton aria-hidden="true">
+                    <TimelineCountText>
+                      {count}건
+                    </TimelineCountText>
+                  </TimelineIconButton>
+                </TimelineTypeRow>
+              </TimelineControls>
+            </TimelineRow>
+            {isOpen && (
+              <TimelineExpandableGrid>
+                {items.map((item, idx) => (
+                  <TimelineExpandableItem key={`${date}-${idx}`}>
+                    <CommentTypeIcon type={item.type} /> {item.title}
+                  </TimelineExpandableItem>
+                ))}
+              </TimelineExpandableGrid>
+            )}
+          </TimelineListItem>
+        );
+      })}
+    </TimelineListLayout>
+  );
+};
+
+const TimelineListLayout = styled.ul`
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+`;
+
+
+const TimelineListItem = styled.li`
+  padding: 0 0 1rem;
+`;
+
+const TimelineDate = styled.div`
+  font-size: 0.95rem;
+  color: #1e293b;
+  font-weight: 400;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  line-height: 1.2;
+`;
+
+const TimelineRow = styled.div`
+  display: flex;
+  align-self: center;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+const TimelineTypesColumn = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+`;
 
-  li {
-    padding: 0 0 4px 4px;
-  }
+const TimelineControls = styled.div`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+`;
 
-  .date {
-    font-size: 0.8rem;
+
+const TimelineTypeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1e293b;
+
+  &::after {
+    content: '▾';
+    font-size: 0.85rem;
     color: #64748b;
+    margin-left: 6px;
+    transition: transform 0.18s;
   }
 
-  .items {
-    list-style: none;
-    padding: 2px 0 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  &[data-open='true']::after {
+    transform: rotate(180deg);
   }
+`;
 
-  .items li {
-    margin: 0;
-    color: #1e293b;
-    line-height: 1.35;
-    font-size: 0.9rem;
+const TimelineIconButton = styled.button`
+  display: flex;
+  align-items: center;
+  align-self: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+`;
+
+
+const TimelineCountText = styled.span`
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+`;
+
+
+const TimelineExpandableGrid = styled.ul`
+  list-style: none;
+  margin: 0.5rem 0 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 10px;
+  width: 100%;
+  @media screen and (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
+`;
+
+const TimelineExpandableItem = styled.li`
+  font-size: 0.85rem;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  padding: 3px 0;
+  border-left: 2px solid #e2e8f0;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+`;
+
+const TimelineEmpty = styled.div`
+  color: #aaa;
+  text-align: center;
+  padding: 1.5rem 0;
 `;
 
 const AgendaGroups = styled.div`
@@ -465,9 +615,8 @@ const AgendaGroup = styled.details`
     justify-content: flex-start;
     gap: 6px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 500;
     color: #1e293b;
-    padding: 8px 0;
     padding: 6px 0;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -530,33 +679,49 @@ const SummaryList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  
+`;
+
+const SummaryListItem = styled.li`
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 20px;
+  border-top: 1px solid #e2e8f0;
 
-  li {
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
+  &:first-child {
+    border-top: none;
+    padding-top: 24px;
   }
+`;
 
-  .label {
-    display: inline-block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #0f172a;
-    background: #e2e8f0;
-    padding: 4px 8px;
-    border-radius: 999px;
-    margin-bottom: 8px;
-  }
+const SummaryHtml = styled.div`
+  display: inline;
+  margin-left: 6px;
+  color: #1e293b;
+  line-height: 1.6;
+  font-size: 1rem;
 
   p {
-    margin: 0;
-    color: #475569;
-    line-height: 1.6;
+    margin: 0 0 6px;
+  }
+
+  ul,
+  ol {
+    margin: 24px 0 6px 18px;
+    padding: 0;
+  }
+
+  p:has(strong) {
+    margin: 12px 0 4px;
+  }
+  word-break: break-word;
+
+  ul li strong {
+    font-weight: 500;
+  }
+
+  p strong {
+    font-weight: 400;
   }
 `;
 
@@ -611,8 +776,8 @@ const SummaryContent = styled.div`
 
   .summary-html {
     color: #475569;
-    line-height: 1.5;
-    font-size: 0.95rem;
+    line-height: 1.6;
+    font-size: 1rem;
 
     p {
       margin: 4px 0 4px;
@@ -639,74 +804,46 @@ const SummaryContent = styled.div`
     word-break: break-word;
 
     strong {
-      font-weight: 500;
+      font-weight: 400;
       color: #1e293b;
     }
 
     em {
-      font-style: italic;
+      font-style: normal;
     }
 
     a {
-      color: #0ea5e9;
+      color: #212324;
       text-decoration: underline;
-    }
-
-    blockquote {
-      margin: 8px 0;
-      padding-left: 10px;
-      border-left: 2px solid #cbd5f5;
-      color: #475569;
     }
   }
 `;
 
-const SpeechContent = styled.div`
-  color: #475569;
+const SpeechGroupsLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const SpeechGroup = styled.div`
+  margin-bottom: 8px;
+`;
+
+const SpeechGroupTitle = styled.div`
+  font-weight: 400;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 2px;
+`;
+
+const SpeechQuote = styled.blockquote`
+  padding-left: 8px;
+  margin: 9px 0;
+  color: #222;
+  background: none;
   line-height: 1.6;
-  font-size: 0.95rem;
-
-  p {
-    margin: 4px 0 4px;
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
-
-  ul,
-  ol {
-    margin: 4px 0 4px 18px;
-    padding: 0;
-  }
-
-  p + ul,
-  p + ol {
-    margin: 20px 0 4px 18px;
-  }
-
-  p:has(strong) {
-    margin: 12px 0 4px;
-  }
-
-  strong {
-    font-weight: 500;
-    color: #1e293b;
-  }
-
-  em {
-    font-style: italic;
-  }
-
-  a {
-    color: #0ea5e9;
-    text-decoration: underline;
-  }
-
-  blockquote {
-    margin: 8px 0;
-    padding-left: 10px;
-    border-left: 2px solid #cbd5f5;
-    color: #475569;
-  }
+  font-size: 1rem;
+  font-style: italic;
 `;

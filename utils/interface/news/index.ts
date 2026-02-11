@@ -66,6 +66,7 @@ export interface Timeline {
   id: number;
   date: Date;
   title: string;
+  commentType: commentType;
 }
 
 export interface NewsSummary {
