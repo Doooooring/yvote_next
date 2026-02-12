@@ -1,17 +1,21 @@
-import { Column } from '@/components/common/commonStyles';
 import { INF } from '@/public/assets/resource';
 import { newsRepository } from '@/repositories/news';
 import { NewsState } from '@/utils/interface/news';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
-import AdminPreviewBox from '@/components/news/previewBox/adminPreviewBox';
+import PreviewBox from '@/components/news/previewBox';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 
 export function AdminPreNewsList({ keywordFilter }: { keywordFilter: string }) {
   const router = useRouter();
   const { data: preNewsList } = useSuspenseQuery({
-    ...getPreNewsListQueryOption({ keyword: keywordFilter }),
+    queryKey: ['getPreNewsListAdmin', keywordFilter],
+    queryFn: async () => {
+      // fetch admin previews (all states) then filter to Pending + NotPublished
+      const items = await newsRepository.getPreviewsAdmin(0, INF, keywordFilter ?? '');
+      return items.filter((p) => p.state === NewsState.Pending || p.state === NewsState.NotPublished);
+    },
   });
 
   const handleClick = useCallback(
@@ -24,20 +28,20 @@ export function AdminPreNewsList({ keywordFilter }: { keywordFilter: string }) {
   return (
     <Wrapper>
       {preNewsList.map((item) => {
-        return <AdminPreviewBox key={item.id} preview={item} click={handleClick} showId={true} />;
+        return (
+          <PreviewBox key={item.id} preview={item} click={() => handleClick(item.id)} expanded={false} showId={true} />
+        );
       })}
     </Wrapper>
   );
 }
 
-const getPreNewsListQueryOption = ({ keyword }: { keyword: string }) =>
-  queryOptions({
-    queryKey: ['getPreNewsList', keyword],
-    queryFn: () => {
-      return newsRepository.getPreviews(0, INF, keyword, NewsState.Pending);
-    },
-  });
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
 
-const Wrapper = styled(Column)`
-  gap: 6px;
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;

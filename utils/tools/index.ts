@@ -68,15 +68,16 @@ export const RGBA = (hex: string, opacity: number) => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
-export const getTextContentFromHtmlText = (html: string) => {
+export const getTextContentFromHtmlText = (html: any) => {
+  if (typeof html !== 'string' || html === '') return '';
+
   if (typeof window !== 'undefined') {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    return doc.body.textContent;
+    return doc.body.textContent ?? '';
   } else {
-    const $ = load(html);
-
-    return $('body').text();
+    const $ = load(String(html));
+    return $('body').text() ?? '';
   }
 };
 

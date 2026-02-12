@@ -19,12 +19,14 @@ export default function NewsListSection({
   newsTypeFilter = 'all',
   titleSearch = '',
   isAdmin = false,
+  showId,
 }: {
   keywordFilter: string;
   clickPreviews: (id: number) => void;
   newsTypeFilter?: 'all' | string;
   titleSearch?: string;
   isAdmin?: boolean;
+  showId?: boolean;
 }) {
   const router = useRouter();
   const { page } = getCachedInfo();
@@ -129,7 +131,7 @@ export default function NewsListSection({
     <Wrapper>
       <Grid>
         {data.items.map((item) => (
-          <PreviewBox key={item.id} preview={item} click={clickPreviews} expanded />
+          <PreviewBox key={item.id} preview={item} click={clickPreviews} expanded showId={showId} />
         ))}
       </Grid>
 

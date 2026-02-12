@@ -12,8 +12,9 @@ interface PreviewBoxProps {
   preview: Preview;
   click?: (id: number, e?: MouseEvent) => void;
   expanded?: boolean;
+  showId?: boolean;
 }
-function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxProps) {
+function PreviewBox({ preview, click = () => {}, expanded = false, showId = false }: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
@@ -23,7 +24,6 @@ function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxP
 
   switch (state) {
     case NewsState.Published:
-    case NewsState.NotPublished:
       return (
         <PreviewWrapper
           href={`/news/${id}`}
@@ -34,7 +34,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxP
         >
           <PreviewBoxLayout_Published
             expanded={expanded}
-            headView={<_NewsTitle title={title}/>}
+            headView={<_NewsTitle title={title} id={id} showId={showId} />}
             contentView={
               <>
                 <_NewsSubTitle
@@ -57,6 +57,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxP
           />
         </PreviewWrapper>
       );
+    case NewsState.NotPublished:
     case NewsState.Pending:
       return (
         <PreviewWrapper
@@ -70,7 +71,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxP
             expanded={expanded}
             bodyView={
               <>
-                <_NewsTitle title={title} />
+                <_NewsTitle title={title} id={id} showId={showId} />
                 <_CommentButtons
                   comments={comments}
                   openComments={(commentType) => {
@@ -85,11 +86,12 @@ function PreviewBox({ preview, click = () => {}, expanded = false }: PreviewBoxP
   }
 }
 
-const _NewsTitle = ({ title }: { title: Preview['title'] }) => {
+const _NewsTitle = ({ title, id, showId }: { title: Preview['title']; id?: number; showId?: boolean }) => {
   return (
     <Title>
       <div className="title">
         {title}
+        {showId && id !== undefined && <IdSpan> [{id}] </IdSpan>}
       </div>
     </Title>
   );
@@ -234,6 +236,11 @@ const Wrapper = styled.div`
       transform: scale(1.1);
     }
   }
+`;
+
+const IdSpan = styled.span`
+  color: #3b82f6; /* very slight blue, adjust as needed */
+  font-weight: 500;
 `;
 
 const Title = styled(Row)`
