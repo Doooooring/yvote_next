@@ -1,16 +1,14 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
-
 import LoadingCommon from '@/components/common/loading';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
-import { AdminPreNewsList } from '@/components/news/preNewsList/adminPreNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
-import NewsArticlesSection from '@components/news/recentarticles';
-import { useRouter } from 'next/router';
-import { NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
+// import NewsArticlesSection from '@components/news/recentarticles';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { NewsType, Preview, newsTypesToKor, NewsState } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState } from 'react';
+import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, startTransition } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 
@@ -26,14 +24,13 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
   };
 };
 
-export default function AdminJaePage(props: pageProps) {
+export default function NewsPage(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
 
-  const router = useRouter();
-  const showNewsContent = (id: number) => router.push(`/adminjae/${id}`);
+  const showNewsContent = useNewsNavigate();
   const [typeFilterOpen, setTypeFilterOpen] = useState(false);
   const [writingFilterOpen, setWritingFilterOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<NewsType | 'all'>('all');
@@ -41,6 +38,7 @@ export default function AdminJaePage(props: pageProps) {
   const [writingTitleSearch, setWritingTitleSearch] = useState('');
   const [allTitleSearch, setAllTitleSearch] = useState('');
   const [allTitleSearchInput, setAllTitleSearchInput] = useState('');
+  
 
   return (
     <>
@@ -53,7 +51,29 @@ export default function AdminJaePage(props: pageProps) {
       <Wrapper>
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
-            <ToggleContainer initialHeight={400}>
+            <ToggleContainer initialHeight={200}>
+              {(isOpen: boolean, initialHeight: number) => (
+                <>
+                  <SectionHeader>
+                    <SectionTitle>숨겨진 뉴스</SectionTitle>
+                  </SectionHeader>
+                  <SectionDescription></SectionDescription>
+                  <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
+                    <Suspense fallback={<></>}>
+                      <PreNewsList
+                        keywordFilter={keywordFilter ?? ''}
+                        newsTypeFilter={'all'}
+                        titleSearch={''}
+                        showId={true}
+                        state={NewsState.NotPublished}
+                      />
+                    </Suspense>
+                  </ScrollableContent>
+                </>
+              )}
+            </ToggleContainer>
+
+            <ToggleContainer initialHeight={200}>
               {(isOpen: boolean, initialHeight: number) => (
                 <>
                   <SectionHeader>
@@ -61,10 +81,12 @@ export default function AdminJaePage(props: pageProps) {
                     <HeaderControls>
                       <TypeFilter>
                         <TypeFilterButton
-                          onClick={() => {
-                            setWritingFilterOpen((prev) => !prev);
-                            setTypeFilterOpen(false);
-                          }}
+                          onClick={() =>
+                            startTransition(() => {
+                              setWritingFilterOpen((prev) => !prev);
+                              setTypeFilterOpen(false);
+                            })
+                          }
                           aria-expanded={writingFilterOpen}
                         >
                           {writingSelectedType === 'all'
@@ -74,20 +96,24 @@ export default function AdminJaePage(props: pageProps) {
                         {writingFilterOpen && (
                           <TypeFilterMenu>
                             <TypeFilterItem
-                              onClick={() => {
-                                setWritingSelectedType('all');
-                                setWritingFilterOpen(false);
-                              }}
+                              onClick={() =>
+                                startTransition(() => {
+                                  setWritingSelectedType('all');
+                                  setWritingFilterOpen(false);
+                                })
+                              }
                             >
                               전체
                             </TypeFilterItem>
                             {Object.values(NewsType).map((type) => (
                               <TypeFilterItem
                                 key={type}
-                                onClick={() => {
-                                  setWritingSelectedType(type);
-                                  setWritingFilterOpen(false);
-                                }}
+                                onClick={() =>
+                                  startTransition(() => {
+                                    setWritingSelectedType(type);
+                                    setWritingFilterOpen(false);
+                                  })
+                                }
                               >
                                 {newsTypesToKor(type)}
                               </TypeFilterItem>
@@ -100,7 +126,9 @@ export default function AdminJaePage(props: pageProps) {
                           type="search"
                           placeholder="제목 검색"
                           value={writingTitleSearch}
-                          onChange={(event) => setWritingTitleSearch(event.target.value)}
+                          onChange={(event) =>
+                            startTransition(() => setWritingTitleSearch(event.target.value))
+                          }
                           aria-label="작성 중 뉴스 제목 검색"
                         />
                       </InlineSearchBox>
@@ -109,13 +137,12 @@ export default function AdminJaePage(props: pageProps) {
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
                     <Suspense fallback={<></>}>
-                      <AdminPreNewsList
-                        keywordFilter={keywordFilter ?? ''}
-                      />
                       <PreNewsList
                         keywordFilter={keywordFilter ?? ''}
                         newsTypeFilter={writingSelectedType}
                         titleSearch={writingTitleSearch}
+                        state={NewsState.Pending}
+                        showId={true}
                       />
                     </Suspense>
                   </ScrollableContent>
@@ -126,12 +153,14 @@ export default function AdminJaePage(props: pageProps) {
               <SectionHeader>
                 <SectionTitle>발행 완료 뉴스</SectionTitle>
                 <HeaderControls>
-                  <TypeFilter>
+                    <TypeFilter>
                     <TypeFilterButton
-                      onClick={() => {
-                        setTypeFilterOpen((prev) => !prev);
-                        setWritingFilterOpen(false);
-                      }}
+                      onClick={() =>
+                        startTransition(() => {
+                          setTypeFilterOpen((prev) => !prev);
+                          setWritingFilterOpen(false);
+                        })
+                      }
                       aria-expanded={typeFilterOpen}
                     >
                       {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
@@ -139,20 +168,24 @@ export default function AdminJaePage(props: pageProps) {
                     {typeFilterOpen && (
                       <TypeFilterMenu>
                         <TypeFilterItem
-                          onClick={() => {
-                            setSelectedType('all');
-                            setTypeFilterOpen(false);
-                          }}
+                          onClick={() =>
+                            startTransition(() => {
+                              setSelectedType('all');
+                              setTypeFilterOpen(false);
+                            })
+                          }
                         >
                           전체
                         </TypeFilterItem>
                         {Object.values(NewsType).map((type) => (
                           <TypeFilterItem
                             key={type}
-                            onClick={() => {
-                              setSelectedType(type);
-                              setTypeFilterOpen(false);
-                            }}
+                            onClick={() =>
+                              startTransition(() => {
+                                setSelectedType(type);
+                                setTypeFilterOpen(false);
+                              })
+                            }
                           >
                             {newsTypesToKor(type)}
                           </TypeFilterItem>
@@ -163,7 +196,7 @@ export default function AdminJaePage(props: pageProps) {
                   <SearchBox
                     onSubmit={(event: FormEvent<HTMLFormElement>) => {
                       event.preventDefault();
-                      setAllTitleSearch(allTitleSearchInput);
+                      startTransition(() => setAllTitleSearch(allTitleSearchInput));
                     }}
                   >
                     <SearchInput
@@ -174,7 +207,7 @@ export default function AdminJaePage(props: pageProps) {
                       onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === 'Enter') {
                           event.preventDefault();
-                          setAllTitleSearch(allTitleSearchInput);
+                          startTransition(() => setAllTitleSearch(allTitleSearchInput));
                         }
                       }}
                       aria-label="발행 완료 뉴스 제목 검색"

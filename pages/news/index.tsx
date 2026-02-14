@@ -1,6 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
-
 import LoadingCommon from '@/components/common/loading';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
@@ -9,7 +8,7 @@ import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState } from 'react';
+import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, startTransition } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 
@@ -18,7 +17,6 @@ interface pageProps {
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
-  //const data: Array<Preview> = await newsRepository.getPreviews(0, '');
   return {
     props: { data: [] },
     revalidate: 300,
@@ -52,8 +50,6 @@ export default function NewsPage(props: pageProps) {
         <ArticlesWrapper>
           <NewsArticlesSection />
         </ArticlesWrapper>
-
-
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
             <ToggleContainer initialHeight={200}>
@@ -64,10 +60,12 @@ export default function NewsPage(props: pageProps) {
                     <HeaderControls>
                       <TypeFilter>
                         <TypeFilterButton
-                          onClick={() => {
-                            setWritingFilterOpen((prev) => !prev);
-                            setTypeFilterOpen(false);
-                          }}
+                          onClick={() =>
+                            startTransition(() => {
+                              setWritingFilterOpen((prev) => !prev);
+                              setTypeFilterOpen(false);
+                            })
+                          }
                           aria-expanded={writingFilterOpen}
                         >
                           {writingSelectedType === 'all'
@@ -77,20 +75,24 @@ export default function NewsPage(props: pageProps) {
                         {writingFilterOpen && (
                           <TypeFilterMenu>
                             <TypeFilterItem
-                              onClick={() => {
-                                setWritingSelectedType('all');
-                                setWritingFilterOpen(false);
-                              }}
+                              onClick={() =>
+                                startTransition(() => {
+                                  setWritingSelectedType('all');
+                                  setWritingFilterOpen(false);
+                                })
+                              }
                             >
                               전체
                             </TypeFilterItem>
                             {Object.values(NewsType).map((type) => (
                               <TypeFilterItem
                                 key={type}
-                                onClick={() => {
-                                  setWritingSelectedType(type);
-                                  setWritingFilterOpen(false);
-                                }}
+                                onClick={() =>
+                                  startTransition(() => {
+                                    setWritingSelectedType(type);
+                                    setWritingFilterOpen(false);
+                                  })
+                                }
                               >
                                 {newsTypesToKor(type)}
                               </TypeFilterItem>
@@ -103,7 +105,9 @@ export default function NewsPage(props: pageProps) {
                           type="search"
                           placeholder="제목 검색"
                           value={writingTitleSearch}
-                          onChange={(event) => setWritingTitleSearch(event.target.value)}
+                          onChange={(event) =>
+                            startTransition(() => setWritingTitleSearch(event.target.value))
+                          }
                           aria-label="작성 중 뉴스 제목 검색"
                         />
                       </InlineSearchBox>
@@ -126,12 +130,14 @@ export default function NewsPage(props: pageProps) {
               <SectionHeader>
                 <SectionTitle>발행 완료 뉴스</SectionTitle>
                 <HeaderControls>
-                  <TypeFilter>
+                    <TypeFilter>
                     <TypeFilterButton
-                      onClick={() => {
-                        setTypeFilterOpen((prev) => !prev);
-                        setWritingFilterOpen(false);
-                      }}
+                      onClick={() =>
+                        startTransition(() => {
+                          setTypeFilterOpen((prev) => !prev);
+                          setWritingFilterOpen(false);
+                        })
+                      }
                       aria-expanded={typeFilterOpen}
                     >
                       {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
@@ -139,20 +145,24 @@ export default function NewsPage(props: pageProps) {
                     {typeFilterOpen && (
                       <TypeFilterMenu>
                         <TypeFilterItem
-                          onClick={() => {
-                            setSelectedType('all');
-                            setTypeFilterOpen(false);
-                          }}
+                          onClick={() =>
+                            startTransition(() => {
+                              setSelectedType('all');
+                              setTypeFilterOpen(false);
+                            })
+                          }
                         >
                           전체
                         </TypeFilterItem>
                         {Object.values(NewsType).map((type) => (
                           <TypeFilterItem
                             key={type}
-                            onClick={() => {
-                              setSelectedType(type);
-                              setTypeFilterOpen(false);
-                            }}
+                            onClick={() =>
+                              startTransition(() => {
+                                setSelectedType(type);
+                                setTypeFilterOpen(false);
+                              })
+                            }
                           >
                             {newsTypesToKor(type)}
                           </TypeFilterItem>
@@ -163,7 +173,7 @@ export default function NewsPage(props: pageProps) {
                   <SearchBox
                     onSubmit={(event: FormEvent<HTMLFormElement>) => {
                       event.preventDefault();
-                      setAllTitleSearch(allTitleSearchInput);
+                      startTransition(() => setAllTitleSearch(allTitleSearchInput));
                     }}
                   >
                     <SearchInput
@@ -174,7 +184,7 @@ export default function NewsPage(props: pageProps) {
                       onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === 'Enter') {
                           event.preventDefault();
-                          setAllTitleSearch(allTitleSearchInput);
+                          startTransition(() => setAllTitleSearch(allTitleSearchInput));
                         }
                       }}
                       aria-label="발행 완료 뉴스 제목 검색"

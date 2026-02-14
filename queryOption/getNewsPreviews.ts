@@ -17,8 +17,8 @@ async function getNewsPreviews({
   newsType?: string;
 }) {
   const datas: Array<Preview> = isAdmin
-    ? await newsRepository.getPreviewsAdmin(page, limit, filter, newsType)
-    : await newsRepository.getPreviews(page, limit, filter, NewsState.Published, newsType);
+    ? await newsRepository.getPreviewsAdmin(page, limit, filter, undefined, undefined, undefined, newsType)
+    : await newsRepository.getPreviews(page, limit, filter, NewsState.Published, undefined, undefined, newsType);
 
   return datas;
 }
