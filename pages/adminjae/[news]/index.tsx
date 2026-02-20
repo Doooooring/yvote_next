@@ -3,10 +3,12 @@ import { newsRepository } from '@repositories/news';
 
 import LoadingCommon from '@components/common/loading';
 import { useMount } from '@utils/hook/useMount';
-import { NewsInView } from '@utils/interface/news';
+import { NewsInView, NewsType } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
+import CabinetNewsLayout from '../../news/types/cabinet';
+import WeeklyNewsLayout from '../../news/types/weekly';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -53,19 +55,25 @@ export default function NewsDetailPage({ data }: pageProps) {
 
   return (
     <>
-      <Wrapper>
-        <div className="main-contents">
-          <div className="main-contents-body">
-            <div className="news-contents-wrapper">
-              {news ? (
-                <NewsContent newsContent={news!} voteHistory={null} />
-              ) : (
-                <LoadingCommon comment={'기다려주세요~'} />
-              )}
+      {news ? (
+        news.newsType === NewsType.weekly ? (
+          <WeeklyNewsLayout news={news} />
+        ) : news.newsType === NewsType.cabinet ? (
+          <CabinetNewsLayout news={news} />
+        ) : (
+          <Wrapper>
+            <div className="main-contents">
+              <div className="main-contents-body">
+                <div className="news-contents-wrapper">
+                  <NewsContent newsContent={news} voteHistory={null} />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </Wrapper>
+          </Wrapper>
+        )
+      ) : (
+        <LoadingCommon comment={'기다려주세요~'} />
+      )}
     </>
   );
 }

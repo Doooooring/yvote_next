@@ -61,9 +61,9 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
     case NewsState.Pending:
       return (
         <PreviewWrapper
-          href={`/news/${id}`}
-          onClick={() => {
-            openComments();
+          href={`/adminjae/${id}`}
+          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+            click(id, e);
             return;
           }}
         >

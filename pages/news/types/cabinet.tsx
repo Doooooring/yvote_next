@@ -3,13 +3,12 @@ import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
-import { getTextContentFromHtmlText } from '@utils/tools';
+
 import { getDotDateForm } from '@utils/tools/date';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { NewsTypeLayoutProps } from './default';
 
 export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
-  const summaryText = getTextContentFromHtmlText(news?.summary ?? '') || '';
   const { showCommentModal } = useCommentModal();
   // Hydration fix: Only parse agenda/speech on client
   const [agendaGroups, setAgendaGroups] = useState<AgendaGroupShape[]>([]);
@@ -89,7 +88,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
         <CabinetHeader>
           <div className="header-text">
             <h1>{news.title}</h1>
-            <p className="subtitle">{news.subTitle || summaryText}</p>
+            {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
             <div className="meta">
               {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
               {commentTypes.length ? (

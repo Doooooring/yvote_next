@@ -8,7 +8,7 @@ import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, Preview, newsTypesToKor, NewsState } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, startTransition } from 'react';
+import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, useTransition } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 
@@ -31,11 +31,13 @@ export default function NewsPage(props: pageProps) {
   const keywordFilter = searchParams.get('keyword') ?? null;
 
   const showNewsContent = useNewsNavigate();
+  const [isPending, startTransition] = useTransition();
   const [typeFilterOpen, setTypeFilterOpen] = useState(false);
   const [writingFilterOpen, setWritingFilterOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<NewsType | 'all'>('all');
   const [writingSelectedType, setWritingSelectedType] = useState<NewsType | 'all'>('all');
   const [writingTitleSearch, setWritingTitleSearch] = useState('');
+  const [writingTitleSearchInput, setWritingTitleSearchInput] = useState('');
   const [allTitleSearch, setAllTitleSearch] = useState('');
   const [allTitleSearchInput, setAllTitleSearchInput] = useState('');
   
@@ -81,12 +83,10 @@ export default function NewsPage(props: pageProps) {
                     <HeaderControls>
                       <TypeFilter>
                         <TypeFilterButton
-                          onClick={() =>
-                            startTransition(() => {
-                              setWritingFilterOpen((prev) => !prev);
-                              setTypeFilterOpen(false);
-                            })
-                          }
+                          onClick={() => {
+                            setWritingFilterOpen((prev) => !prev);
+                            setTypeFilterOpen(false);
+                          }}
                           aria-expanded={writingFilterOpen}
                         >
                           {writingSelectedType === 'all'
@@ -96,24 +96,20 @@ export default function NewsPage(props: pageProps) {
                         {writingFilterOpen && (
                           <TypeFilterMenu>
                             <TypeFilterItem
-                              onClick={() =>
-                                startTransition(() => {
-                                  setWritingSelectedType('all');
-                                  setWritingFilterOpen(false);
-                                })
-                              }
+                              onClick={() => {
+                                setWritingFilterOpen(false);
+                                startTransition(() => setWritingSelectedType('all'));
+                              }}
                             >
                               전체
                             </TypeFilterItem>
                             {Object.values(NewsType).map((type) => (
                               <TypeFilterItem
                                 key={type}
-                                onClick={() =>
-                                  startTransition(() => {
-                                    setWritingSelectedType(type);
-                                    setWritingFilterOpen(false);
-                                  })
-                                }
+                                onClick={() => {
+                                  setWritingFilterOpen(false);
+                                  startTransition(() => setWritingSelectedType(type));
+                                }}
                               >
                                 {newsTypesToKor(type)}
                               </TypeFilterItem>
@@ -125,10 +121,11 @@ export default function NewsPage(props: pageProps) {
                         <SearchInput
                           type="search"
                           placeholder="제목 검색"
-                          value={writingTitleSearch}
-                          onChange={(event) =>
-                            startTransition(() => setWritingTitleSearch(event.target.value))
-                          }
+                          value={writingTitleSearchInput}
+                          onChange={(event) => {
+                            setWritingTitleSearchInput(event.target.value);
+                            startTransition(() => setWritingTitleSearch(event.target.value));
+                          }}
                           aria-label="작성 중 뉴스 제목 검색"
                         />
                       </InlineSearchBox>
@@ -155,12 +152,10 @@ export default function NewsPage(props: pageProps) {
                 <HeaderControls>
                     <TypeFilter>
                     <TypeFilterButton
-                      onClick={() =>
-                        startTransition(() => {
-                          setTypeFilterOpen((prev) => !prev);
-                          setWritingFilterOpen(false);
-                        })
-                      }
+                      onClick={() => {
+                        setTypeFilterOpen((prev) => !prev);
+                        setWritingFilterOpen(false);
+                      }}
                       aria-expanded={typeFilterOpen}
                     >
                       {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
@@ -168,24 +163,20 @@ export default function NewsPage(props: pageProps) {
                     {typeFilterOpen && (
                       <TypeFilterMenu>
                         <TypeFilterItem
-                          onClick={() =>
-                            startTransition(() => {
-                              setSelectedType('all');
-                              setTypeFilterOpen(false);
-                            })
-                          }
+                          onClick={() => {
+                            setTypeFilterOpen(false);
+                            startTransition(() => setSelectedType('all'));
+                          }}
                         >
                           전체
                         </TypeFilterItem>
                         {Object.values(NewsType).map((type) => (
                           <TypeFilterItem
                             key={type}
-                            onClick={() =>
-                              startTransition(() => {
-                                setSelectedType(type);
-                                setTypeFilterOpen(false);
-                              })
-                            }
+                            onClick={() => {
+                              setTypeFilterOpen(false);
+                              startTransition(() => setSelectedType(type));
+                            }}
                           >
                             {newsTypesToKor(type)}
                           </TypeFilterItem>
@@ -226,13 +217,15 @@ export default function NewsPage(props: pageProps) {
                   </LoadingWrapper>
                 }
               >
-                <NewsListSection
-                  keywordFilter={keywordFilter ?? ''}
-                  clickPreviews={showNewsContent}
-                  newsTypeFilter={selectedType}
-                  titleSearch={allTitleSearch}
-                  showId={true}
-                />
+                <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                  <NewsListSection
+                    keywordFilter={keywordFilter ?? ''}
+                    clickPreviews={showNewsContent}
+                    newsTypeFilter={selectedType}
+                    titleSearch={allTitleSearch}
+                    showId={true}
+                  />
+                </div>
               </Suspense>
             </SectionContainer>
           </div>

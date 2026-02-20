@@ -21,7 +21,7 @@ import DiplomatNewsLayout from '../types/diplomat';
 import GovernNewsLayout from '../types/govern';
 import DebateNewsLayout from '../types/debate';
 import ElectionNewsLayout from '../types/election';
-import OriginalNewsLayout from '../types/original';
+import WeeklyNewsLayout from '../types/weekly';
 import OthersNewsLayout from '../types/others';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
@@ -79,7 +79,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;
     if (news.newsType === NewsType.debate) return <DebateNewsLayout news={news} />;
     if (news.newsType === NewsType.election) return <ElectionNewsLayout news={news} />;
-    if (news.newsType === NewsType.original) return <OriginalNewsLayout news={news} />;
+    if (news.newsType === NewsType.weekly) return <WeeklyNewsLayout news={news} />;
     if (news.newsType === NewsType.others) return <OthersNewsLayout news={news} />;
     return <DefaultNewsLayout news={news} />;
   };

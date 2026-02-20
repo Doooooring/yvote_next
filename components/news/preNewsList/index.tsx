@@ -5,6 +5,7 @@ import PreviewBox from '@components/news/previewBox';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { useMemo, useCallback } from 'react';
+import { useRouter } from 'next/router';
 
 export function PreNewsList({
   keywordFilter,
@@ -19,13 +20,14 @@ export function PreNewsList({
   state?: NewsState;
   showId?: boolean;
 }) {
+  const router = useRouter();
   const { data: preNewsList } = useSuspenseQuery({
     ...getPreNewsListQueryOption({ keyword: keywordFilter, state }),
   });
 
   const handleClick = useCallback((id: number) => {
-    // no-op for public list
-  }, []);
+    router.push(`/adminjae/${id}`);
+  }, [router]);
 
   const normalizedTitleSearch = titleSearch.trim().toLowerCase();
 
