@@ -1,7 +1,5 @@
-import { CacheContainer } from '@container/cache';
 import { newsRepository } from '@repositories/news';
 import { NewsState, Preview } from '@utils/interface/news';
-import { fetchImg } from '@utils/tools/async';
 import { MutableRefObject, useCallback, useRef, useState } from 'react';
 
 export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
@@ -33,27 +31,6 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
           return false;
         }
 
-        setIsFetchingImages(true);
-
-        const cacheContainer = CacheContainer.getInstance();
-
-        await Promise.all(
-          datas.map(async (data) => {
-            const newsImageId = `news-${data.id}-image`;
-
-            try {
-              if (cacheContainer.isKey(newsImageId)) {
-                data.newsImage = cacheContainer.getData(newsImageId);
-              } else {
-                const response = await fetchImg(data.newsImage as string);
-                cacheContainer.addMap(newsImageId, response);
-                data.newsImage = response;
-              }
-            } catch (e) {
-              data.newsImage = '';
-            }
-          }),
-        );
         page.current += limit.current;
         isNew ? setPreviews(datas) : setPreviews((state) => [...state, ...datas]);
 

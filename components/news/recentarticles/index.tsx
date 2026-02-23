@@ -7,7 +7,8 @@ import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption'
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
 import { commentType, recentArticleType } from '@utils/interface/news';
-import { commentTypeColor } from '@utils/interface/news/comment';
+import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
+import { RgbToRgba } from '@utils/tools';
 import { Suspense, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
@@ -23,17 +24,32 @@ interface SlideContentProps {
 
 function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight] = useSlide();
+  const isAll = commentType === '전체';
 
   return (
     <>
       <LeftButton curView={curView} viewToLeft={onSlideLeft} />
       <GridWrapper>
+        {!isAll && (
+          <LogoColumn
+            style={{
+              backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
+            }}
+          >
+            <span
+              className="logo"
+              style={{
+                backgroundImage: `url(${commentTypeImg(commentType as commentType)})`,
+              }}
+            />
+          </LogoColumn>
+        )}
         {filteredArticles.length !== 0 ? (
-          <GridContainer curView={curView}>
+          <GridContainer curView={curView} $offset={!isAll}>
             {filteredArticles
               .slice(curView * numToShowArticle, (curView + 1) * numToShowArticle)
               .map((article) => {
-                return <ArticleBox key={article.id} article={article} />;
+                return <ArticleBox key={article.id} article={article} showLogo={isAll} />;
               })}
           </GridContainer>
         ) : (
@@ -199,14 +215,13 @@ const CategoryItem = styled.div<CategoryItemProps>`
 
 const GridWrapper = styled.div`
   width: 100%;
-  height: 200px;
-  @media screen and (max-width: 768px) {
-    height: 150px;
-  }
+  display: flex;
+  align-items: stretch;
 `;
 
 interface GridContainerProps {
   curView: number;
+  $offset?: boolean;
 }
 
 const GridContainer = styled.div<GridContainerProps>`
@@ -217,6 +232,7 @@ const GridContainer = styled.div<GridContainerProps>`
   grid-auto-flow: column;
   grid-row-gap: 10px;
   grid-column-gap: 15px;
+  ${({ $offset }) => ($offset ? 'padding-left: 0;' : '')}
   @media screen and (max-width: 768px) {
     grid-template-rows: repeat(5, 20px);
     overflow-x: scroll;
@@ -226,5 +242,33 @@ const GridContainer = styled.div<GridContainerProps>`
     }
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+`;
+
+const LogoColumn = styled.div`
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: rgba(148, 163, 184, 0.12);
+  border-radius: 6px;
+  margin-right: 8px;
+  .logo {
+    width: 18px;
+    height: 18px;
+    border-radius: 8px;
+    background-size: 14px 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 28px;
+    .logo {
+      width: 16px;
+      height: 16px;
+      background-size: 12px 12px;
+    }
   }
 `;

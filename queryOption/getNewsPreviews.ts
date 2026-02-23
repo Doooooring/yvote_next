@@ -1,34 +1,24 @@
 import { newsRepository } from '@/repositories/news';
 import { NewsState, Preview } from '@/utils/interface/news';
-import { fetchImg } from '@/utils/tools/async';
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 async function getNewsPreviews({
   page,
   limit,
   filter,
   isAdmin,
+  newsType,
 }: {
   page: number;
   limit: number;
   filter: string;
   isAdmin: boolean;
   newsState?: NewsState;
+  newsType?: string;
 }) {
   const datas: Array<Preview> = isAdmin
-    ? await newsRepository.getPreviewsAdmin(page, limit, filter)
-    : await newsRepository.getPreviews(page, limit, filter, NewsState.Published);
-
-  await Promise.all(
-    datas.map(async (data) => {
-      try {
-        const response = await fetchImg(data.newsImage as string);
-        data.newsImage = response;
-      } catch (e) {
-        data.newsImage = '';
-      }
-    }),
-  );
+    ? await newsRepository.getPreviewsAdmin(page, limit, filter, undefined, undefined, undefined, newsType)
+    : await newsRepository.getPreviews(page, limit, filter, NewsState.Published, undefined, undefined, newsType);
 
   return datas;
 }
@@ -38,14 +28,16 @@ export const getNewsPreviewsQueryOption = ({
   offset,
   limit,
   isAdmin = false,
+  newsType,
 }: {
   filter: string;
   offset: number;
   limit: number;
   isAdmin?: boolean;
+  newsType?: string;
 }) =>
   infiniteQueryOptions({
-    queryKey: ['getNewsPreviews', filter, isAdmin],
+    queryKey: ['getNewsPreviews', filter, isAdmin, newsType ?? 'all'],
     queryFn: (context) => {
       const pageParam = context.pageParam;
       return getNewsPreviews({
@@ -53,6 +45,7 @@ export const getNewsPreviewsQueryOption = ({
         limit,
         filter,
         isAdmin,
+        newsType,
       });
     },
     initialPageParam: offset,
@@ -60,4 +53,29 @@ export const getNewsPreviewsQueryOption = ({
     getNextPageParam: (prevPageData, __, lastPageParam) => {
       return prevPageData.length === 0 ? undefined : lastPageParam + prevPageData.length;
     },
+  });
+
+export const getNewsPreviewsPageQueryOption = ({
+  filter,
+  offset,
+  limit,
+  isAdmin = false,
+  newsType,
+}: {
+  filter: string;
+  offset: number;
+  limit: number;
+  isAdmin?: boolean;
+  newsType?: string;
+}) =>
+  queryOptions({
+    queryKey: ['getNewsPreviewsPage', filter, isAdmin, newsType ?? 'all', offset, limit],
+    queryFn: () =>
+      getNewsPreviews({
+        page: offset,
+        limit,
+        filter,
+        isAdmin,
+        newsType,
+      }),
   });

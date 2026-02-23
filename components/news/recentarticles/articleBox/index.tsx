@@ -4,7 +4,7 @@ import { Article, commentType } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { commentTypeColor } from '../../../../utils/interface/news/comment';
+import { commentTypeColor, commentTypeImg } from '../../../../utils/interface/news/comment';
 
 interface ArticlePartial extends Partial<Article> {
   id: number;
@@ -13,9 +13,10 @@ interface ArticlePartial extends Partial<Article> {
 
 interface ArticleBoxProps {
   article: Article;
+  showLogo?: boolean;
 }
 
-export default function ArticleBox({ article }: ArticleBoxProps) {
+export default function ArticleBox({ article, showLogo = true }: ArticleBoxProps) {
   const { news, id, commentType, title, comment, date } = article;
 
   const { showCommentModal } = useCommentModal_RecentArticle();
@@ -24,12 +25,11 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
     showCommentModal(article);
   }, [showCommentModal, article]);
 
-  const formatDate = (d: Date): string => {
-    const date = new Date(d);
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const day = date.getDate();
-    return `${month}/${day}`;
+  const formatDate = (d: string): string => {
+    const s = String(d).slice(0, 10);
+    const parts = s.split('-');
+    if (parts.length >= 3) return `${+parts[1]}/${+parts[2]}`;
+    return s;
   };
 
   return (
@@ -37,14 +37,19 @@ export default function ArticleBox({ article }: ArticleBoxProps) {
       <LinkWrapper onClick={openModal}>
         <div className="wrapper">
           <div className="text-wrapper">
-            <div className="writer-wrapper">
+            <div className={`writer-wrapper ${showLogo ? '' : 'hidden'}`}>
               <p
                 style={{
                   color: commentTypeColor(commentType),
                   backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
                 }}
               >
-                {commentType}
+                <span
+                  className="logo"
+                  style={{
+                    backgroundImage: `url(${commentTypeImg(commentType)})`,
+                  }}
+                />
               </p>
             </div>
             <LinkTitleWrapper>
@@ -110,26 +115,50 @@ const LinkWrapper = styled.div`
       color: ${({ theme }) => theme.colors.primary};
     }
     .writer-wrapper {
-      width: 85px;
+      width: 40px;
       flex-shrink: 0;
-      text-align: left;
+      text-align: center;
+      &.hidden {
+        width: 0;
+        padding: 0;
+        margin: 0;
+        display: none;
+      }
       p {
-        width: 72px;
+        width: 32px;
+        height: 32px;
         font-size: 11px;
         line-height: 1;
         font-weight: 500;
-        padding: 0.4rem 0rem;
+        padding: 0;
         flex-shrink: 0;
         flex-grow: 0;
         color: grey;
         text-align: center;
         border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo {
+        width: 18px;
+        height: 18px;
+        background-size: 14px 14px;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: inline-block;
       }
       @media screen and (max-width: 768px) {
-        width: 75px;
+        width: 36px;
         p {
           font-size: 10px;
-          width: 65px;
+          width: 28px;
+          height: 28px;
+        }
+        .logo {
+          width: 16px;
+          height: 16px;
+          background-size: 12px 12px;
         }
       }
     }

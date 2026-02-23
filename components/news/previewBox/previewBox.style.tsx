@@ -4,15 +4,17 @@ import styled from 'styled-components';
 interface PreviewBoxLayout_PublishedProps extends HTMLAttributes<HTMLDivElement> {
   headView: ReactNode;
   contentView: ReactNode;
+  expanded?: boolean;
 }
 
 export function PreviewBoxLayout_Published({
   headView,
   contentView,
+  expanded,
   ...rest
 }: PreviewBoxLayout_PublishedProps) {
   return (
-    <Wrapper {...rest}>
+    <Wrapper $expanded={expanded} {...rest}>
       <BodyWrapper>
         <HeadWrapper>{headView}</HeadWrapper>
         <ContentWrapper>{contentView}</ContentWrapper>
@@ -23,19 +25,21 @@ export function PreviewBoxLayout_Published({
 
 interface PreviewBoxLayout_PendingProps extends HTMLAttributes<HTMLDivElement> {
   bodyView: ReactNode;
+  expanded?: boolean;
 }
 
-export function PreviewBoxLayout_Pending({ bodyView, ...rest }: PreviewBoxLayout_PendingProps) {
+export function PreviewBoxLayout_Pending({ bodyView, expanded, ...rest }: PreviewBoxLayout_PendingProps) {
   return (
-    <Wrapper {...rest}>
+    <Wrapper $expanded={expanded} {...rest}>
       <HeadWrapper>{bodyView}</HeadWrapper>
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $expanded?: boolean }>`
   width: 100%;
-  height: 99%;
+  height: auto;
+  min-height: auto;
   box-sizing: border-box;
   -webkit-text-size-adjust: none;
   color: #666;

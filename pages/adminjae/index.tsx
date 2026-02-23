@@ -1,112 +1,214 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
-
 import LoadingCommon from '@/components/common/loading';
-import { KeywordFiltersHeadTab, KeywordFiltersSideTab } from '@/components/news/keywordFilters';
 import NewsListSection from '@/components/news/newsListSection';
-import { AdminPreNewsList } from '@/components/news/preNewsList/adminPreNewsList';
+import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
-import NewsArticlesSection from '@components/news/recentarticles';
-import useNewsKeywordFilter from '@utils/hook/news/keywordFilter/useNewsKeywordFilter';
-import useEditNewsKeywordFilters from '@utils/hook/news/useEditNewsKeywordFilter';
-import { Preview } from '@utils/interface/news';
+// import NewsArticlesSection from '@components/news/recentarticles';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { NewsType, Preview, newsTypesToKor, NewsState } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { ReactNode, Suspense, useCallback, useRef, useState } from 'react';
+import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, useTransition } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
-import { KeyTitle } from '../../utils/interface/keywords';
-import { useRouter } from 'next/router';
 
 interface pageProps {
   data: Array<Preview>;
 }
 
 export const getStaticProps: GetStaticProps<pageProps> = async () => {
+  //const data: Array<Preview> = await newsRepository.getPreviews(0, '');
   return {
     props: { data: [] },
     revalidate: 300,
   };
 };
 
-export default function AdminJaePage(props: pageProps) {
+export default function NewsPage(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
 
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
 
-  const showNewsContent = useCallback(
-    (id: number) => {
-      router.push(`/adminjae/${id}`);
-    },
-    [router],
-  );
-  const { showEditNewsKeywordTopSheet } = useEditNewsKeywordFilters();
-
-  const { customKeywords, randomKeywords, setCustomKeywords, reloadRandomKeywords, totalKeywords } =
-    useNewsKeywordFilter();
-  const keywordSelected = totalKeywords.find((value) => value.keyword === keywordFilter) ?? null;
-  const keywordsToShow = unshiftKeywordToKeywords(
-    customKeywords.length > 0 ? customKeywords : randomKeywords,
-    totalKeywords,
-    keywordFilter ?? '',
-  );
-  const toggleKeywordFilter = useCallback(
-    async (keyword: KeyTitle) => {
-      if (keyword.keyword === keywordFilter) {
-        searchParams.remove('keyword');
-      } else {
-        searchParams.set('keyword', keyword.keyword);
-      }
-      setTimeout(() => {
-        if (ref.current)
-          window.scrollTo({ left: 0, top: ref.current!.offsetTop - 160, behavior: 'smooth' });
-      }, 100);
-    },
-    [keywordFilter, searchParams],
-  );
+  const showNewsContent = useNewsNavigate();
+  const [isPending, startTransition] = useTransition();
+  const [typeFilterOpen, setTypeFilterOpen] = useState(false);
+  const [writingFilterOpen, setWritingFilterOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<NewsType | 'all'>('all');
+  const [writingSelectedType, setWritingSelectedType] = useState<NewsType | 'all'>('all');
+  const [writingTitleSearch, setWritingTitleSearch] = useState('');
+  const [writingTitleSearchInput, setWritingTitleSearchInput] = useState('');
+  const [allTitleSearch, setAllTitleSearch] = useState('');
+  const [allTitleSearchInput, setAllTitleSearchInput] = useState('');
+  
 
   return (
     <>
       <HeadMeta
         {...{
-          title: '관리자 페이지 : 어드민재 ㄷㄷ',
+          title: '뉴스 모아보기',
           url: `https://yvoting.com/adminjae`,
         }}
       />
       <Wrapper>
-        <KeywordFiltersHeadTab
-          keywords={keywordsToShow}
-          openEditKeywordsTopSheet={() => {
-            showEditNewsKeywordTopSheet({
-              keywordsToEdit: customKeywords,
-              totalKeywords,
-              randomKeywords,
-              saveKeywordFilteres: setCustomKeywords,
-            });
-          }}
-          keywordSelected={keywordSelected}
-          reload={reloadRandomKeywords}
-          clickKeyword={toggleKeywordFilter}
-        />
-
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
             <ToggleContainer initialHeight={200}>
               {(isOpen: boolean, initialHeight: number) => (
                 <>
-                  <SectionTitle>작성 중 뉴스[newsId]</SectionTitle>
+                  <SectionHeader>
+                    <SectionTitle>숨겨진 뉴스</SectionTitle>
+                  </SectionHeader>
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
                     <Suspense fallback={<></>}>
-                      <AdminPreNewsList keywordFilter={keywordFilter ?? ''} />
+                      <PreNewsList
+                        keywordFilter={keywordFilter ?? ''}
+                        newsTypeFilter={'all'}
+                        titleSearch={''}
+                        showId={true}
+                        state={NewsState.NotPublished}
+                      />
+                    </Suspense>
+                  </ScrollableContent>
+                </>
+              )}
+            </ToggleContainer>
+
+            <ToggleContainer initialHeight={200}>
+              {(isOpen: boolean, initialHeight: number) => (
+                <>
+                  <SectionHeader>
+                    <SectionTitle>작성 중 뉴스</SectionTitle>
+                    <HeaderControls>
+                      <TypeFilter>
+                        <TypeFilterButton
+                          onClick={() => {
+                            setWritingFilterOpen((prev) => !prev);
+                            setTypeFilterOpen(false);
+                          }}
+                          aria-expanded={writingFilterOpen}
+                        >
+                          {writingSelectedType === 'all'
+                            ? '전체'
+                            : newsTypesToKor(writingSelectedType)}
+                        </TypeFilterButton>
+                        {writingFilterOpen && (
+                          <TypeFilterMenu>
+                            <TypeFilterItem
+                              onClick={() => {
+                                setWritingFilterOpen(false);
+                                startTransition(() => setWritingSelectedType('all'));
+                              }}
+                            >
+                              전체
+                            </TypeFilterItem>
+                            {Object.values(NewsType).map((type) => (
+                              <TypeFilterItem
+                                key={type}
+                                onClick={() => {
+                                  setWritingFilterOpen(false);
+                                  startTransition(() => setWritingSelectedType(type));
+                                }}
+                              >
+                                {newsTypesToKor(type)}
+                              </TypeFilterItem>
+                            ))}
+                          </TypeFilterMenu>
+                        )}
+                      </TypeFilter>
+                      <InlineSearchBox>
+                        <SearchInput
+                          type="search"
+                          placeholder="제목 검색"
+                          value={writingTitleSearchInput}
+                          onChange={(event) => {
+                            setWritingTitleSearchInput(event.target.value);
+                            startTransition(() => setWritingTitleSearch(event.target.value));
+                          }}
+                          aria-label="작성 중 뉴스 제목 검색"
+                        />
+                      </InlineSearchBox>
+                    </HeaderControls>
+                  </SectionHeader>
+                  <SectionDescription></SectionDescription>
+                  <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
+                    <Suspense fallback={<></>}>
+                      <PreNewsList
+                        keywordFilter={keywordFilter ?? ''}
+                        newsTypeFilter={writingSelectedType}
+                        titleSearch={writingTitleSearch}
+                        state={NewsState.Pending}
+                        showId={true}
+                      />
                     </Suspense>
                   </ScrollableContent>
                 </>
               )}
             </ToggleContainer>
             <SectionContainer>
-              <SectionTitle>전체 뉴스(관리자용)</SectionTitle>
+              <SectionHeader>
+                <SectionTitle>발행 완료 뉴스</SectionTitle>
+                <HeaderControls>
+                    <TypeFilter>
+                    <TypeFilterButton
+                      onClick={() => {
+                        setTypeFilterOpen((prev) => !prev);
+                        setWritingFilterOpen(false);
+                      }}
+                      aria-expanded={typeFilterOpen}
+                    >
+                      {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
+                    </TypeFilterButton>
+                    {typeFilterOpen && (
+                      <TypeFilterMenu>
+                        <TypeFilterItem
+                          onClick={() => {
+                            setTypeFilterOpen(false);
+                            startTransition(() => setSelectedType('all'));
+                          }}
+                        >
+                          전체
+                        </TypeFilterItem>
+                        {Object.values(NewsType).map((type) => (
+                          <TypeFilterItem
+                            key={type}
+                            onClick={() => {
+                              setTypeFilterOpen(false);
+                              startTransition(() => setSelectedType(type));
+                            }}
+                          >
+                            {newsTypesToKor(type)}
+                          </TypeFilterItem>
+                        ))}
+                      </TypeFilterMenu>
+                    )}
+                  </TypeFilter>
+                  <SearchBox
+                    onSubmit={(event: FormEvent<HTMLFormElement>) => {
+                      event.preventDefault();
+                      startTransition(() => setAllTitleSearch(allTitleSearchInput));
+                    }}
+                  >
+                    <SearchInput
+                      type="search"
+                      placeholder="제목 검색"
+                      value={allTitleSearchInput}
+                      onChange={(event) => setAllTitleSearchInput(event.target.value)}
+                      onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                        if (event.key === 'Enter') {
+                          event.preventDefault();
+                          startTransition(() => setAllTitleSearch(allTitleSearchInput));
+                        }
+                      }}
+                      aria-label="발행 완료 뉴스 제목 검색"
+                    />
+                    <SearchButton type="submit" aria-label="발행 완료 뉴스 검색">
+                      <SearchIcon src="/assets/img/ico_search.png" alt="" />
+                    </SearchButton>
+                  </SearchBox>
+                </HeaderControls>
+              </SectionHeader>
               <SectionDescription></SectionDescription>
               <Suspense
                 fallback={
@@ -115,28 +217,18 @@ export default function AdminJaePage(props: pageProps) {
                   </LoadingWrapper>
                 }
               >
-                <NewsListSection
-                  keywordFilter={keywordFilter ?? ''}
-                  clickPreviews={showNewsContent}
-                  isAdmin={true}
-                />
+                <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                  <NewsListSection
+                    keywordFilter={keywordFilter ?? ''}
+                    clickPreviews={showNewsContent}
+                    newsTypeFilter={selectedType}
+                    titleSearch={allTitleSearch}
+                    showId={true}
+                  />
+                </div>
               </Suspense>
             </SectionContainer>
           </div>
-          <KeywordFiltersSideTab
-            keywords={keywordsToShow}
-            openEditKeywordsTopSheet={() => {
-              showEditNewsKeywordTopSheet({
-                keywordsToEdit: customKeywords,
-                totalKeywords,
-                randomKeywords,
-                saveKeywordFilteres: setCustomKeywords,
-              });
-            }}
-            keywordSelected={keywordSelected}
-            reload={reloadRandomKeywords}
-            clickKeyword={toggleKeywordFilter}
-          />
         </div>
       </Wrapper>
     </>
@@ -145,7 +237,7 @@ export default function AdminJaePage(props: pageProps) {
 
 function ToggleContainer({
   children,
-  initialHeight = 200,
+  initialHeight = 300,
 }: {
   children: (isOpen: boolean, initialHeight: number) => ReactNode;
   initialHeight?: number;
@@ -180,18 +272,6 @@ function ToggleContainer({
   );
 }
 
-const unshiftKeywordToKeywords = (
-  targetKeywords: Array<KeyTitle>,
-  totalKeywords: Array<KeyTitle>,
-  keyword: string,
-) => {
-  const keywordToAdd = totalKeywords.find((v) => v.keyword === keyword);
-  if (!keywordToAdd || targetKeywords.map((v) => v.keyword).includes(keyword)) {
-    return targetKeywords;
-  }
-  return [keywordToAdd, ...targetKeywords];
-};
-
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -208,8 +288,8 @@ const Wrapper = styled.div`
   text-align: center;
   padding-top: 10px;
   padding-bottom: 50px;
-  background-color: rgb(242, 242, 242);
-  overflow: clip visible;
+  background-color: rgb(242, 244, 246);
+  overflow: visible;
 
   ::-webkit-scrollbar {
     display: none;
@@ -250,9 +330,9 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     -webkit-text-size-adjust: none;
-    width: 70%;
-    max-width: 1000px;
-    min-width: 800px;
+    width: 92%;
+    max-width: 1200px;
+    min-width: 0px;
     color: #666;
     text-align: center;
     margin: 0;
@@ -301,9 +381,9 @@ const Header = styled(CommonLayoutBox)`
 `;
 
 const ArticlesWrapper = styled.div`
-  width: 70%;
-  max-width: 1000px;
-  min-width: 800px;
+  width: 92%;
+  max-width: 1200px;
+  min-width: 0px;
   position: relative;
 
   @media screen and (max-width: 768px) {
@@ -330,29 +410,170 @@ const SectionTitle = styled.h3`
   margin: 0 0 8px 0;
   text-align: left;
   position: relative;
-  padding-left: 12px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 20px;
-    background-color: ${({ theme }) => theme.colors.primary};
-    border-radius: 2px;
-  }
 
   @media screen and (max-width: 768px) {
     font-size: 16px;
     margin: 0 0 6px 0;
-    padding-left: 10px;
 
     &::before {
       width: 3px;
       height: 16px;
     }
+  }
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow: visible;
+`;
+
+const HeaderControls = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+`;
+
+const TypeFilter = styled.div`
+  position: relative;
+  overflow: visible;
+`;
+
+const TypeFilterButton = styled.button`
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  background: #ffffff;
+  color: ${({ theme }) => theme.colors.gray800};
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+  &:after {
+    content: '▾';
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.colors.gray500};
+  }
+`;
+
+const SearchBox = styled.form`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  background: #ffffff;
+  border-radius: 8px;
+  height: 32px;
+  padding-right: 30px;
+  box-sizing: border-box;
+  width: 160px;
+  min-width: 110px;
+  flex: 0 1 160px;
+  flex-shrink: 0;
+`;
+
+const InlineSearchBox = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  background: #ffffff;
+  border-radius: 8px;
+  height: 32px;
+  box-sizing: border-box;
+  width: 160px;
+  min-width: 110px;
+  flex: 0 1 160px;
+  flex-shrink: 0;
+`;
+
+const SearchInput = styled.input`
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.gray800};
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  min-width: 140px;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    min-width: 100px;
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  &::-ms-clear,
+  &::-ms-reveal {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+`;
+
+const SearchButton = styled.button`
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+const SearchIcon = styled.img`
+  width: 16px;
+  height: 16px;
+`;
+
+const TypeFilterMenu = styled.div`
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid ${({ theme }) => theme.colors.gray200};
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 140px;
+  overflow: visible;
+  z-index: 2;
+`;
+
+const TypeFilterItem = styled.button`
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.gray700};
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  &:hover {
+    background: ${({ theme }) => theme.colors.hovergray};
   }
 `;
 
@@ -390,20 +611,7 @@ const ScrollableContent = styled.div<{ $isOpen?: boolean; initialHeight?: number
   scrollbar-width: none;
 
   &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: radial-gradient(
-      ellipse at center bottom,
-      rgba(117, 116, 116, 0.15) 0%,
-      rgba(169, 168, 168, 0.08) 40%,
-      transparent 70%
-    );
-    pointer-events: none;
-    display: ${({ $isOpen }) => ($isOpen ? 'none' : 'block')};
+    content: none;
   }
 `;
 

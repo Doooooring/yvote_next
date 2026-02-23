@@ -13,6 +13,7 @@ class OpenAIRepository {
     const response: Response<string> = await axios.post(`${HOST_URL}/openai`, {
       message,
       model: 'grok-3-mini',
+
     });
     if (response.data.success === false) {
       throw new Error('Failed to fetch AI result');

@@ -13,6 +13,7 @@ export enum commentType {
 
 export enum NewsType {
   bill = 'bill',
+  teukprosecution = 'teukprosecution',
   constitution = 'constitution',
   executive = 'executive',
   cabinet = 'cabinet',
@@ -20,8 +21,9 @@ export enum NewsType {
   govern = 'govern',
   debate = 'debate',
   election = 'election',
-  original = 'original',
+  weekly = 'weekly',
   others = 'others',
+  //헌재 종류별 만들 것
 }
 
 export const newsTypesToKor = (newsType: NewsType) => {
@@ -42,8 +44,10 @@ export const newsTypesToKor = (newsType: NewsType) => {
       return '논평';
     case NewsType.election:
       return '선거';
-    case NewsType.original:
-      return '자체제작';
+    case NewsType.weekly:
+      return '일주일';
+    case NewsType.teukprosecution:
+      return '특검';
     case NewsType.others:
       return '기타';
     default:
@@ -60,8 +64,9 @@ export enum CommentQualification {
 
 export interface Timeline {
   id: number;
-  date: Date;
+  date: string;
   title: string;
+  commentType: commentType;
 }
 
 export interface NewsSummary {
@@ -95,7 +100,7 @@ export interface Comment {
   title: string;
   comment: string;
   url?: string;
-  date: Date;
+  date: string;
   news: Partial<News>;
 }
 
@@ -117,7 +122,9 @@ export interface News {
   newsType: NewsType;
   summary: string;
   summaries: Array<NewsSummary>;
-  date?: Date;
+  agendaList?: string;
+  speechContent?: string;
+  date?: string;
   keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;

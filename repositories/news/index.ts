@@ -46,20 +46,28 @@ class NewsRepository {
     curNum: number,
     limit: number,
     keyword: string | null = '',
-    state: NewsState,
+    state?: NewsState,
+    startDate?: string,
+    endDate?: string,
+    newsType?: string,
   ): Promise<Array<Preview>> {
+    const params = {
+      offset: curNum,
+      limit: limit,
+      keyword: keyword ?? '',
+      ...(state !== undefined ? { state } : {}),
+      ...(startDate ? { startDate } : {}),
+      ...(endDate ? { endDate } : {}),
+      ...(newsType ? { newsType } : {}),
+    };
+    console.log('newsRepository.getPreviews params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
-      params: {
-        offset: curNum,
-        limit: limit,
-        keyword: keyword ?? '',
-        state: state,
-      },
+      params,
     });
     const data = response.data;
     return data.result.map((news) => {
       const preview = clone(news);
-      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      preview.summary = getTextContentFromHtmlText(news.summary) ?? '';
       return preview;
     });
   }
@@ -72,18 +80,31 @@ class NewsRepository {
    */
   async getPreviewsAdmin(
     curNum: number,
-    limit: number = 20,
-    keyword: string | null = null,
+    limit: number,
+    keyword: string | null = '',
+    state?: NewsState,
+    startDate?: string,
+    endDate?: string,
+    newsType?: string,
   ): Promise<Array<Preview>> {
-    const response: Response<Array<Preview>> = await axios.get(
-      `${HOST_URL}/news/previews?offset=${curNum}&limit=${limit}&keyword=${
-        keyword ?? ''
-      }&isAdmin==${true}`,
-    );
+    const params = {
+      isAdmin: true,
+      offset: curNum,
+      limit,
+      keyword: keyword ?? '',
+      ...(startDate ? { startDate } : {}),
+      ...(endDate ? { endDate } : {}),
+      ...(newsType ? { newsType } : {}),
+      ...(state !== undefined ? { state } : {}),
+    };
+    console.log('newsRepository.getPreviewsAdmin params:', params);
+    const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
+      params,
+    });
     const data = response.data;
     return data.result.map((news) => {
       const preview = clone(news);
-      preview.summary = getTextContentFromHtmlText(news.summary)?.slice(0, 100) ?? '';
+      preview.summary = getTextContentFromHtmlText(news.summary) ?? '';
       return preview;
     });
   }

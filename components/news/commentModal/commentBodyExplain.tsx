@@ -11,7 +11,7 @@ interface CommentBodyExplainProps {
   id: number;
   title: string;
   explain: string;
-  date: Date;
+  date: string;
 }
 
 export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {
@@ -19,7 +19,11 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
 
   const _explain = useMemo(() => {
     if (summary !== null) {
-      return summary
+      const summaryText =
+        typeof summary === 'string'
+          ? summary
+          : JSON.stringify(summary ?? '', null, 2);
+      return summaryText
         .split('\n')
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
     } else {
@@ -70,12 +74,8 @@ function useAISummary(explain: string) {
       ]);
       setSummary(response);
     } catch (e) {
-      show(
-        <DefaultMessageBox>
-          <p>{'요약 기능 중 오류가 발생했어요. 다시 시도해주세요.'}</p>
-        </DefaultMessageBox>,
-        2000,
-      );
+      console.error('Failed to summarize comment', e);
+      setSummary('요약에 실패했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
       setIsLoading(false);
     }
