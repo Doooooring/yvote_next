@@ -64,7 +64,7 @@ export enum CommentQualification {
 
 export interface Timeline {
   id: number;
-  date: Date;
+  date: string;
   title: string;
   commentType: commentType;
 }
@@ -100,7 +100,7 @@ export interface Comment {
   title: string;
   comment: string;
   url?: string;
-  date: Date;
+  date: string;
   news: Partial<News>;
 }
 
@@ -124,7 +124,7 @@ export interface News {
   summaries: Array<NewsSummary>;
   agendaList?: string;
   speechContent?: string;
-  date?: Date;
+  date?: string;
   keywords: Array<Keyword>;
   newsImage: string;
   isPublished: boolean;

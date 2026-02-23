@@ -9,7 +9,7 @@ interface CommentBodyExplainProps {
   id: number;
   title: string;
   explain: string;
-  date: Date;
+  date: string;
 }
 
 export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {

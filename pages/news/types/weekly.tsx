@@ -552,13 +552,12 @@ const SummaryList = styled.ul`
 const SummaryListItem = styled.li`
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 0 20px;
+  gap: 20px;
+  padding: 16px 0 16px;
   border-top: 1px solid #e2e8f0;
 
   &:first-child {
     border-top: none;
-    padding-top: 24px;
   }
 `;
 

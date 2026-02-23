@@ -25,12 +25,11 @@ export default function ArticleBox({ article, showLogo = true }: ArticleBoxProps
     showCommentModal(article);
   }, [showCommentModal, article]);
 
-  const formatDate = (d: Date): string => {
-    const date = new Date(d);
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const day = date.getDate();
-    return `${month}/${day}`;
+  const formatDate = (d: string): string => {
+    const s = String(d).slice(0, 10);
+    const parts = s.split('-');
+    if (parts.length >= 3) return `${+parts[1]}/${+parts[2]}`;
+    return s;
   };
 
   return (
