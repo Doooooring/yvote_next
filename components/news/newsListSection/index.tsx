@@ -18,6 +18,7 @@ export default function NewsListSection({
   clickPreviews,
   newsTypeFilter = 'all',
   titleSearch = '',
+  dateFilter = '',
   isAdmin = false,
   showId,
 }: {
@@ -25,6 +26,7 @@ export default function NewsListSection({
   clickPreviews: (id: number) => void;
   newsTypeFilter?: 'all' | string;
   titleSearch?: string;
+  dateFilter?: string;
   isAdmin?: boolean;
   showId?: boolean;
 }) {
@@ -41,6 +43,7 @@ export default function NewsListSection({
       isAdmin,
       newsTypeFilter,
       normalizedTitleSearch,
+      dateFilter,
       pageIndex,
     ],
     queryFn: async () => {
@@ -59,6 +62,7 @@ export default function NewsListSection({
           const title = preview.title?.toLowerCase() ?? '';
           if (!title.includes(normalizedTitleSearch)) return false;
         }
+        if (dateFilter && preview.date && preview.date > dateFilter) return false;
         return true;
       };
 
@@ -123,7 +127,7 @@ export default function NewsListSection({
 
   useEffect(() => {
     setPageIndex(0);
-  }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch]);
+  }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
 
   const hasNextPage = data.hasNextPage;
 

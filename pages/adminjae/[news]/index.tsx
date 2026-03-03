@@ -7,8 +7,8 @@ import { NewsInView, NewsType } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
-import CabinetNewsLayout from '../../news/types/cabinet';
-import WeeklyNewsLayout from '../../news/types/weekly';
+import CabinetNewsLayout from '@components/news/types/cabinet';
+import WeeklyNewsLayout from '@components/news/types/weekly';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
