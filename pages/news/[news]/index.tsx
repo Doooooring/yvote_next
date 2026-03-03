@@ -12,17 +12,17 @@ import {
   ErrorHead,
 } from '../../../components/common/commonErrorBounbdary/commonErrorView';
 import { Row, TextButton } from '../../../components/common/commonStyles';
-import DefaultNewsLayout from '../types/default';
-import BillNewsLayout from '../types/bill';
-import ConstitutionNewsLayout from '../types/constitution';
-import ExecutiveNewsLayout from '../types/executive';
-import CabinetNewsLayout from '../types/cabinet';
-import DiplomatNewsLayout from '../types/diplomat';
-import GovernNewsLayout from '../types/govern';
-import DebateNewsLayout from '../types/debate';
-import ElectionNewsLayout from '../types/election';
-import WeeklyNewsLayout from '../types/weekly';
-import OthersNewsLayout from '../types/others';
+import DefaultNewsLayout from '@components/news/types/default';
+import BillNewsLayout from '@components/news/types/bill';
+import ConstitutionNewsLayout from '@components/news/types/constitution';
+import ExecutiveNewsLayout from '@components/news/types/executive';
+import CabinetNewsLayout from '@components/news/types/cabinet';
+import DiplomatNewsLayout from '@components/news/types/diplomat';
+import GovernNewsLayout from '@components/news/types/govern';
+import DebateNewsLayout from '@components/news/types/debate';
+import ElectionNewsLayout from '@components/news/types/election';
+import WeeklyNewsLayout from '@components/news/types/weekly';
+import OthersNewsLayout from '@components/news/types/others';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 

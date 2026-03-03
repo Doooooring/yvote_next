@@ -43,7 +43,7 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
     };
 
     const SUMMARY_ORDER: string[] = [
-      commentType.와이보트, commentType.헌법재판소, commentType.대통령실,
+      commentType.와이보트, commentType.헌법재판소, commentType.청와대,
       commentType.행정부, commentType.국민의힘, commentType.더불어민주당, commentType.기타,
     ];
 

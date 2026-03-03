@@ -40,7 +40,8 @@ export default function NewsPage(props: pageProps) {
   const [writingTitleSearchInput, setWritingTitleSearchInput] = useState('');
   const [allTitleSearch, setAllTitleSearch] = useState('');
   const [allTitleSearchInput, setAllTitleSearchInput] = useState('');
-  
+  const [dateFilter, setDateFilter] = useState('');
+
 
   return (
     <>
@@ -184,6 +185,12 @@ export default function NewsPage(props: pageProps) {
                       </TypeFilterMenu>
                     )}
                   </TypeFilter>
+                  <DateInput
+                    type="date"
+                    value={dateFilter}
+                    onChange={(event) => startTransition(() => setDateFilter(event.target.value))}
+                    aria-label="날짜 필터"
+                  />
                   <SearchBox
                     onSubmit={(event: FormEvent<HTMLFormElement>) => {
                       event.preventDefault();
@@ -223,6 +230,7 @@ export default function NewsPage(props: pageProps) {
                     clickPreviews={showNewsContent}
                     newsTypeFilter={selectedType}
                     titleSearch={allTitleSearch}
+                    dateFilter={dateFilter}
                     showId={true}
                   />
                 </div>
@@ -460,6 +468,25 @@ const TypeFilterButton = styled.button`
     content: '▾';
     font-size: 0.75rem;
     color: ${({ theme }) => theme.colors.gray500};
+  }
+`;
+
+const DateInput = styled.input`
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  background: #ffffff;
+  color: ${({ theme }) => theme.colors.gray800};
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  height: 32px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 130px;
   }
 `;
 
