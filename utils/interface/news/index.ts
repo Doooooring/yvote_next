@@ -134,8 +134,9 @@ export interface News {
   speechContent?: string;
   proDebate?: string;
   conDebate?: string;
-  etcDebate?: string;
+  billAmendment?: string;
   billSummary?: string;
+  billDetail?: string;
   billVoteResult?: string;
   billVoteTotal?: number;
   billVoteByParty?: PartyVote[];

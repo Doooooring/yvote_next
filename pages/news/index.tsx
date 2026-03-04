@@ -118,6 +118,7 @@ export default function NewsPage(props: pageProps) {
                         keywordFilter={keywordFilter ?? ''}
                         newsTypeFilter={writingSelectedType}
                         titleSearch={writingTitleSearch}
+                        openModalOnClick
                       />
                     </Suspense>
                   </ScrollableContent>

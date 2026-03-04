@@ -13,12 +13,14 @@ export function PreNewsList({
   titleSearch = '',
   state,
   showId = false,
+  openModalOnClick = false,
 }: {
   keywordFilter: string;
   newsTypeFilter?: 'all' | string;
   titleSearch?: string;
   state?: NewsState;
   showId?: boolean;
+  openModalOnClick?: boolean;
 }) {
   const router = useRouter();
   const { data: preNewsList } = useSuspenseQuery({
@@ -54,6 +56,7 @@ export function PreNewsList({
             click={() => handleClick(item.id)}
             expanded={false}
             showId={showId}
+            openModalOnClick={openModalOnClick}
           />
         );
       })}
