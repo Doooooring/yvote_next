@@ -13,8 +13,9 @@ interface PreviewBoxProps {
   click?: (id: number, e?: MouseEvent) => void;
   expanded?: boolean;
   showId?: boolean;
+  openModalOnClick?: boolean;
 }
-function PreviewBox({ preview, click = () => {}, expanded = false, showId = false }: PreviewBoxProps) {
+function PreviewBox({ preview, click = () => {}, expanded = false, showId = false, openModalOnClick = false }: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
@@ -63,6 +64,10 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
         <PreviewWrapper
           href={`/adminjae/${id}`}
           onClick={(e?: MouseEvent<HTMLDivElement>) => {
+            if (openModalOnClick) {
+              openComments();
+              return;
+            }
             click(id, e);
             return;
           }}

@@ -10,7 +10,7 @@ import { customTheme } from '@public/assets/theme';
 type BillArticle = { title: string; contentHtml: string };
 
 const CIRCLED_NUM = /^[\u2460-\u2473\u3251-\u325F\u32B1-\u32BF]/;
-const NUMBERED = /^\d+(?:의\d+)?\.\s/;
+const NUMBERED = /^\d+(?:의\d+)?\.\s?/;
 const LETTERED = /^[가-힣]\.\s/;
 
 function classifyParagraph(el: Element) {
@@ -29,7 +29,7 @@ function parseBillArticles(html: string): BillArticle[] {
   Array.from(doc.body.children).forEach((el) => {
     if (el.tagName === 'UL') {
       if (current && current.contentHtml) articles.push(current);
-      const title = el.querySelector('li')?.textContent?.trim() || '';
+      const title = el.querySelector('li')?.innerHTML?.trim() || '';
       current = { title, contentHtml: '' };
     } else if (current) {
       if (el.tagName === 'P') classifyParagraph(el);
@@ -45,8 +45,8 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
 
   const [billArticles, setBillArticles] = useState<BillArticle[]>([]);
   useEffect(() => {
-    setBillArticles(parseBillArticles(news.billSummary ?? ''));
-  }, [news.billSummary]);
+    setBillArticles(parseBillArticles(news.billDetail ?? ''));
+  }, [news.billDetail]);
 
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
@@ -87,17 +87,20 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
   }, [partyVotes]);
   const totalVotes = news.billVoteTotal ?? 0;
 
+  // Vote detail toggle
+  const [showVoteDetail, setShowVoteDetail] = useState(false);
+
   // Mobile tab state
   const [activeTab, setActiveTab] = useState(0);
 
+  const showAmendment = !!(news.billAmendment?.replace(/<[^>]*>/g, '').trim());
+
   const debateSlides = useMemo(() => {
-    const slides = [
+    return [
       { label: '찬성', content: news.proDebate ?? '' },
       { label: '반대', content: news.conDebate ?? '' },
     ];
-    if (news.etcDebate) slides.push({ label: '기타', content: news.etcDebate });
-    return slides;
-  }, [news.proDebate, news.conDebate, news.etcDebate]);
+  }, [news.proDebate, news.conDebate]);
 
   return (
     <Wrapper>
@@ -130,24 +133,13 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
             <TimelineList timeline={timelineGroups} />
           </Card>
 
-          {billArticles.length > 0 && (
-            <Card>
-              <SectionTitle>법안 요약</SectionTitle>
-              <BillArticleGroups>
-                {billArticles.map((article, idx) => (
-                  <BillArticleGroup key={idx}>
-                    <summary>
-                      <span>{article.title}</span>
-                    </summary>
-                    <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                  </BillArticleGroup>
-                ))}
-              </BillArticleGroups>
-            </Card>
-          )}
+          <Card>
+            <SectionTitle>법안 요약</SectionTitle>
+            <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
+          </Card>
 
           <Card>
-            <SectionTitle>본회의 표결 및 찬반 토론</SectionTitle>
+            <SectionTitle>본회의 표결 및 토론</SectionTitle>
 
             {totalVotes > 0 && (
               <VoteSummarySection>
@@ -178,7 +170,48 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                   <VoteBarSegment $width={(voteTotals.abstain / totalVotes) * 100} $color="#94a3b8" />
                   <VoteBarSegment $width={(voteTotals.absent / totalVotes) * 100} $color="#e2e8f0" />
                 </VoteBar>
+                {partyVotes.length > 0 && (
+                  <>
+                    <VoteDetailToggle onClick={() => setShowVoteDetail(!showVoteDetail)}>
+                      상세보기 {showVoteDetail ? '▴' : '▾'}
+                    </VoteDetailToggle>
+                    {showVoteDetail && (() => {
+                      const sorted = [...partyVotes].sort((a, b) => {
+                        const denomA = a.for + a.against + a.abstain + a.absent;
+                        const denomB = b.for + b.against + b.abstain + b.absent;
+                        const ratioA = denomA > 0 ? a.for / denomA : 0;
+                        const ratioB = denomB > 0 ? b.for / denomB : 0;
+                        return ratioB - ratioA;
+                      });
+                      return (
+                        <VoteDetailTable>
+                          <thead>
+                            <tr>
+                              <th />
+                              {sorted.map((pv, idx) => (
+                                <th key={idx}>{pv.party}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr><td>찬성</td>{sorted.map((pv, i) => <td key={i}>{pv.for}</td>)}</tr>
+                            <tr><td>반대</td>{sorted.map((pv, i) => <td key={i}>{pv.against}</td>)}</tr>
+                            <tr><td>기권</td>{sorted.map((pv, i) => <td key={i}>{pv.abstain}</td>)}</tr>
+                            <tr><td>불참</td>{sorted.map((pv, i) => <td key={i}>{pv.absent}</td>)}</tr>
+                          </tbody>
+                        </VoteDetailTable>
+                      );
+                    })()}
+                  </>
+                )}
               </VoteSummarySection>
+            )}
+
+            {showAmendment && (
+              <EtcDebateBox $show>
+                <DebateLabel>수정안 내용</DebateLabel>
+                <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
+              </EtcDebateBox>
             )}
 
             {/* PC: side by side */}
@@ -192,10 +225,6 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                 <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
               </DebateSide>
             </DebateGrid>
-            <EtcDebateBox $show={!!news.etcDebate}>
-              <DebateLabel>기타</DebateLabel>
-              <DebateContent dangerouslySetInnerHTML={{ __html: news.etcDebate ?? '' }} />
-            </EtcDebateBox>
 
             {/* Mobile: toggle tabs */}
             <MobileDebateWrapper>
@@ -215,6 +244,22 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
               />
             </MobileDebateWrapper>
           </Card>
+
+          {billArticles.length > 0 && (
+            <Card>
+              <SectionTitle>법안 상세보기</SectionTitle>
+              <BillArticleGroups>
+                {billArticles.map((article, idx) => (
+                  <BillArticleGroup key={idx}>
+                    <summary>
+                      <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                    </summary>
+                    <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+                  </BillArticleGroup>
+                ))}
+              </BillArticleGroups>
+            </Card>
+          )}
 
           <Card>
             <SectionTitle>브리핑 및 기타 반응</SectionTitle>
@@ -551,14 +596,14 @@ const DebateLabel = styled.div`
 
 const EtcDebateBox = styled.div<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
-  margin-top: 16px;
+  margin-bottom: 16px;
   padding: 14px;
   border: 1px solid #e2e8f0;
   border-radius: 5px;
   background: #fafafa;
 
   @media screen and (max-width: 768px) {
-    display: none;
+    display: ${({ $show }) => ($show ? 'block' : 'none')};
   }
 `;
 
@@ -628,6 +673,48 @@ const VoteBarSegment = styled.div<{ $width: number; $color: string }>`
   width: ${({ $width }) => $width}%;
   background: ${({ $color }) => $color};
   min-width: ${({ $width }) => ($width > 0 ? '2px' : '0')};
+`;
+
+const VoteDetailToggle = styled.button`
+  display: block;
+  margin: 12px auto 0;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 8px;
+
+  &:hover {
+    color: #1e293b;
+  }
+`;
+
+const VoteDetailTable = styled.table`
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th {
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 600;
+    color: #1e293b;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    padding: 6px 8px;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: #64748b;
+  }
 `;
 
 // Mobile debate tabs (mobile only)

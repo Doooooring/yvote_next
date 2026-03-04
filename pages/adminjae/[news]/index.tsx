@@ -7,6 +7,7 @@ import { NewsInView, NewsType } from '@utils/interface/news';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
+import BillNewsLayout from '@components/news/types/bill';
 import CabinetNewsLayout from '@components/news/types/cabinet';
 import WeeklyNewsLayout from '@components/news/types/weekly';
 
@@ -56,7 +57,9 @@ export default function NewsDetailPage({ data }: pageProps) {
   return (
     <>
       {news ? (
-        news.newsType === NewsType.weekly ? (
+        news.newsType === NewsType.bill ? (
+          <BillNewsLayout news={news} />
+        ) : news.newsType === NewsType.weekly ? (
           <WeeklyNewsLayout news={news} />
         ) : news.newsType === NewsType.cabinet ? (
           <CabinetNewsLayout news={news} />
