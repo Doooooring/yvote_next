@@ -1,6 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
-import LoadingCommon from '@/components/common/loading';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
@@ -8,7 +7,7 @@ import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, useTransition } from 'react';
+import { FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 
@@ -113,14 +112,12 @@ export default function NewsPage(props: pageProps) {
                   </SectionHeader>
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
-                    <Suspense fallback={<></>}>
-                      <PreNewsList
-                        keywordFilter={keywordFilter ?? ''}
-                        newsTypeFilter={writingSelectedType}
-                        titleSearch={writingTitleSearch}
-                        openModalOnClick
-                      />
-                    </Suspense>
+                    <PreNewsList
+                      keywordFilter={keywordFilter ?? ''}
+                      newsTypeFilter={writingSelectedType}
+                      titleSearch={writingTitleSearch}
+                      openModalOnClick
+                    />
                   </ScrollableContent>
                 </>
               )}
@@ -195,23 +192,15 @@ export default function NewsPage(props: pageProps) {
                 </HeaderControls>
               </SectionHeader>
               <SectionDescription></SectionDescription>
-              <Suspense
-                fallback={
-                  <LoadingWrapper>
-                    <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
-                  </LoadingWrapper>
-                }
-              >
-                <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-                  <NewsListSection
-                    keywordFilter={keywordFilter ?? ''}
-                    clickPreviews={showNewsContent}
-                    newsTypeFilter={selectedType}
-                    titleSearch={allTitleSearch}
-                    dateFilter={dateFilter}
-                  />
-                </div>
-              </Suspense>
+              <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                <NewsListSection
+                  keywordFilter={keywordFilter ?? ''}
+                  clickPreviews={showNewsContent}
+                  newsTypeFilter={selectedType}
+                  titleSearch={allTitleSearch}
+                  dateFilter={dateFilter}
+                />
+              </div>
             </SectionContainer>
           </div>
         </div>

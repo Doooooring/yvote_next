@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
-import React, { MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
+import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
@@ -116,6 +116,24 @@ const _NewsSubTitle = ({
   const overlayText = newsType ? newsTypesToKor(newsType) : '';
   const [hideOverlay, setHideOverlay] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scrollVars, setScrollVars] = useState<React.CSSProperties | undefined>();
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const overflow = el.scrollHeight - el.clientHeight;
+    if (overflow > 4) {
+      const dur = Math.max(3, overflow * 0.06);
+      setScrollVars({
+        '--scroll-dist': `-${overflow}px`,
+        '--scroll-dur': `${dur}s`,
+        '--container-h': `${el.clientHeight}px`,
+      } as React.CSSProperties);
+    } else {
+      setScrollVars(undefined);
+    }
+  }, [subTitle]);
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     touchStartX.current = event.touches[0]?.clientX ?? null;
@@ -137,15 +155,20 @@ const _NewsSubTitle = ({
 
   return (
     <SubTitle
+      ref={containerRef}
       $expanded={expanded}
       $showOverlay={expanded && !hideOverlay}
       $overlayText={overlayText}
+      $canScroll={!!scrollVars}
       data-overlay={overlayText}
+      style={scrollVars}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {subTitle || ''}
+      <span className="subtitle-text">
+        {subTitle || ''}
+      </span>
     </SubTitle>
   );
 };
@@ -271,7 +294,12 @@ const Title = styled(Row)`
   }
 `;
 
-const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string }>`
+const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string; $canScroll?: boolean }>`
+  @keyframes subtitleScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(var(--scroll-dist)); }
+  }
+
   -webkit-text-size-adjust: none;
   text-align: left;
   padding: 0;
@@ -292,6 +320,44 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
   overflow: hidden;
   text-overflow: ellipsis;
   position: relative;
+
+  @media (hover: hover) {
+    ${({ $canScroll }) =>
+      $canScroll
+        ? `
+      &:hover {
+        -webkit-line-clamp: unset;
+        -webkit-box-orient: unset;
+        display: block;
+        height: var(--container-h, auto);
+        text-overflow: clip;
+
+        .subtitle-text {
+          display: block;
+          animation: subtitleScroll var(--scroll-dur, 4s) linear infinite;
+        }
+      }
+    `
+        : ''}
+  }
+
+  @media (hover: none) {
+    ${({ $canScroll }) =>
+      $canScroll
+        ? `
+      -webkit-line-clamp: unset;
+      -webkit-box-orient: unset;
+      display: block;
+      height: var(--container-h, auto);
+      text-overflow: clip;
+
+      .subtitle-text {
+        display: block;
+        animation: subtitleScroll var(--scroll-dur, 4s) ease-in-out infinite;
+      }
+    `
+        : ''}
+  }
 
   ${({ $showOverlay }) =>
     $showOverlay

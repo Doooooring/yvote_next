@@ -4,15 +4,17 @@ import { throttle } from '@utils/tools/lodash';
 
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
+const PAGE_SIZE = 20;
+
 export const useFetchNewsComment = (id: number, comment: commentType | null) => {
   const curPage = useRef(0);
   const [curComments, setCurComments] = useState<Array<Comment>>([]);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
 
-  async function fetchNewsComment(page: number) {
+  async function fetchNewsComment(offset: number) {
     try {
       setIsRequesting(true);
-      const response = await newsRepository.getNewsComment(id, comment!, page);
+      const response = await newsRepository.getNewsComment(id, comment!, offset, PAGE_SIZE);
       if (!response || response.length == 0) {
         return false;
       } else {
@@ -29,13 +31,13 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
 
   const getPageBefore = async () => {
     if (curPage.current === 0) return false;
-    curPage.current -= 10;
+    curPage.current -= PAGE_SIZE;
     const response = await fetchNewsComment(curPage.current);
     return response;
   };
   const getPageAfter = async () => {
-    const response = await fetchNewsComment(curPage.current + 10);
-    if (response) curPage.current += 10;
+    const response = await fetchNewsComment(curPage.current + PAGE_SIZE);
+    if (response) curPage.current += PAGE_SIZE;
     return response;
   };
 
