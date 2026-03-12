@@ -208,10 +208,10 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
             )}
 
             {showAmendment && (
-              <EtcDebateBox $show>
+              <AmendmentBox $show>
                 <DebateLabel>수정안 내용</DebateLabel>
                 <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
-              </EtcDebateBox>
+              </AmendmentBox>
             )}
 
             {/* PC: side by side */}
@@ -594,7 +594,7 @@ const DebateLabel = styled.div`
   margin-bottom: 10px;
 `;
 
-const EtcDebateBox = styled.div<{ $show: boolean }>`
+const AmendmentBox = styled.div<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   margin-bottom: 16px;
   padding: 14px;

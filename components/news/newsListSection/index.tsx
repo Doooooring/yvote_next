@@ -1,8 +1,9 @@
 import { CommonLayoutBox } from '@/components/common/commonStyles';
+import LoadingCommon from '@/components/common/loading';
 import { DefaultMessageBox } from '@/components/common/messageBox';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -36,7 +37,7 @@ export default function NewsListSection({
   const [pageIndex, setPageIndex] = useState(page);
   const normalizedTitleSearch = titleSearch.trim().toLowerCase();
 
-  const { data, isFetching } = useSuspenseQuery({
+  const { data = { items: [], hasNextPage: false }, isFetching } = useQuery({
     queryKey: [
       'getNewsPreviewsFilled',
       keywordFilter,
@@ -48,6 +49,39 @@ export default function NewsListSection({
     ],
     queryFn: async () => {
       const start = pageIndex * PREVIEWS_PAGES_LIMIT;
+      const serverNewsType = newsTypeFilter !== 'all' ? newsTypeFilter : undefined;
+      const serverEndDate = dateFilter || undefined;
+      const needsClientFilter = (isAdmin) || normalizedTitleSearch;
+
+      // Fast path: no client-side filtering needed → single API call at exact offset
+      if (!needsClientFilter) {
+        const previews = isAdmin
+          ? await newsRepository.getPreviewsAdmin(
+              start,
+              PREVIEWS_PAGES_LIMIT,
+              keywordFilter,
+              undefined,
+              undefined,
+              serverEndDate,
+              serverNewsType,
+            )
+          : await newsRepository.getPreviews(
+              start,
+              PREVIEWS_PAGES_LIMIT,
+              keywordFilter,
+              NewsState.Published,
+              undefined,
+              serverEndDate,
+              serverNewsType,
+            );
+
+        return {
+          items: previews,
+          hasNextPage: previews.length >= PREVIEWS_PAGES_LIMIT,
+        };
+      }
+
+      // Slow path: client-side filtering required → loop until page is filled
       const end = start + PREVIEWS_PAGES_LIMIT;
       const aggregated: Array<Preview> = [];
       let offset = 0;
@@ -57,12 +91,10 @@ export default function NewsListSection({
 
       const shouldInclude = (preview: Preview) => {
         if (isAdmin && preview.state === NewsState.Pending) return false;
-        if (newsTypeFilter !== 'all' && preview.newsType !== newsTypeFilter) return false;
         if (normalizedTitleSearch) {
           const title = preview.title?.toLowerCase() ?? '';
           if (!title.includes(normalizedTitleSearch)) return false;
         }
-        if (dateFilter && preview.date && preview.date > dateFilter) return false;
         return true;
       };
 
@@ -73,12 +105,23 @@ export default function NewsListSection({
         }
 
         const previews = isAdmin
-          ? await newsRepository.getPreviewsAdmin(offset, PREVIEWS_PAGES_LIMIT, keywordFilter)
+          ? await newsRepository.getPreviewsAdmin(
+              offset,
+              PREVIEWS_PAGES_LIMIT,
+              keywordFilter,
+              undefined,
+              undefined,
+              serverEndDate,
+              serverNewsType,
+            )
           : await newsRepository.getPreviews(
               offset,
               PREVIEWS_PAGES_LIMIT,
               keywordFilter,
               NewsState.Published,
+              undefined,
+              serverEndDate,
+              serverNewsType,
             );
 
         const filtered = previews.filter(shouldInclude);
@@ -130,6 +173,14 @@ export default function NewsListSection({
   }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
 
   const hasNextPage = data.hasNextPage;
+
+  if (data.items.length === 0 && isFetching) {
+    return (
+      <LoadingWrapper>
+        <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+      </LoadingWrapper>
+    );
+  }
 
   return (
     <Wrapper>

@@ -1,6 +1,5 @@
 import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
-import LoadingCommon from '@/components/common/loading';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
@@ -8,8 +7,8 @@ import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, Preview, newsTypesToKor, NewsState } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
-import { FormEvent, KeyboardEvent, ReactNode, Suspense, useRef, useState, useTransition } from 'react';
-import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
+import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
+import { AiOutlineCalendar, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import styled from 'styled-components';
 
 interface pageProps {
@@ -26,6 +25,7 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 
 export default function NewsPage(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
 
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
@@ -41,6 +41,27 @@ export default function NewsPage(props: pageProps) {
   const [allTitleSearch, setAllTitleSearch] = useState('');
   const [allTitleSearchInput, setAllTitleSearchInput] = useState('');
   const [dateFilter, setDateFilter] = useState('');
+  const [dateInputValue, setDateInputValue] = useState('');
+
+  const handleDateTextChange = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
+    } else if (digits.length > 4) {
+      formatted = `${digits.slice(0, 4)}-${digits.slice(4)}`;
+    }
+    setDateInputValue(formatted);
+    if (formatted === '') startTransition(() => setDateFilter(''));
+  };
+
+  const applyDateFilter = () => {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateInputValue)) {
+      startTransition(() => setDateFilter(dateInputValue));
+    } else if (dateInputValue === '') {
+      startTransition(() => setDateFilter(''));
+    }
+  };
 
 
   return (
@@ -62,15 +83,13 @@ export default function NewsPage(props: pageProps) {
                   </SectionHeader>
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
-                    <Suspense fallback={<></>}>
-                      <PreNewsList
-                        keywordFilter={keywordFilter ?? ''}
-                        newsTypeFilter={'all'}
-                        titleSearch={''}
-                        showId={true}
-                        state={NewsState.NotPublished}
-                      />
-                    </Suspense>
+                    <PreNewsList
+                      keywordFilter={keywordFilter ?? ''}
+                      newsTypeFilter={'all'}
+                      titleSearch={''}
+                      showId={true}
+                      state={NewsState.NotPublished}
+                    />
                   </ScrollableContent>
                 </>
               )}
@@ -129,20 +148,21 @@ export default function NewsPage(props: pageProps) {
                           }}
                           aria-label="작성 중 뉴스 제목 검색"
                         />
+                        <SearchButton type="button" onClick={() => startTransition(() => setWritingTitleSearch(writingTitleSearchInput))} aria-label="작성 중 뉴스 검색">
+                          <SearchIcon src="/assets/img/ico_search.png" alt="" />
+                        </SearchButton>
                       </InlineSearchBox>
                     </HeaderControls>
                   </SectionHeader>
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
-                    <Suspense fallback={<></>}>
-                      <PreNewsList
-                        keywordFilter={keywordFilter ?? ''}
-                        newsTypeFilter={writingSelectedType}
-                        titleSearch={writingTitleSearch}
-                        state={NewsState.Pending}
-                        showId={true}
-                      />
-                    </Suspense>
+                    <PreNewsList
+                      keywordFilter={keywordFilter ?? ''}
+                      newsTypeFilter={writingSelectedType}
+                      titleSearch={writingTitleSearch}
+                      state={NewsState.Pending}
+                      showId={true}
+                    />
                   </ScrollableContent>
                 </>
               )}
@@ -185,12 +205,6 @@ export default function NewsPage(props: pageProps) {
                       </TypeFilterMenu>
                     )}
                   </TypeFilter>
-                  <DateInput
-                    type="date"
-                    value={dateFilter}
-                    onChange={(event) => startTransition(() => setDateFilter(event.target.value))}
-                    aria-label="날짜 필터"
-                  />
                   <SearchBox
                     onSubmit={(event: FormEvent<HTMLFormElement>) => {
                       event.preventDefault();
@@ -214,27 +228,50 @@ export default function NewsPage(props: pageProps) {
                       <SearchIcon src="/assets/img/ico_search.png" alt="" />
                     </SearchButton>
                   </SearchBox>
+                  <DatePickerWrapper>
+                    <DesktopDateInput
+                      type="text"
+                      placeholder="YYYY-MM-DD"
+                      value={dateInputValue}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleDateTextChange(event.target.value)}
+                      onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                        if (event.key === 'Enter') applyDateFilter();
+                      }}
+                      onBlur={() => { if (dateInputValue === '') startTransition(() => setDateFilter('')); }}
+                      aria-label="날짜 필터"
+                    />
+                    <HiddenDateInput
+                      ref={dateInputRef}
+                      type="date"
+                      value={dateInputValue}
+                      onChange={(event) => {
+                        const val = event.target.value;
+                        setDateInputValue(val);
+                        startTransition(() => setDateFilter(val));
+                      }}
+                      aria-label="날짜 필터 (모바일)"
+                    />
+                    <DatePickerButton
+                      onClick={() => dateInputRef.current?.showPicker()}
+                      title={dateFilter || '날짜 필터'}
+                      $active={!!dateFilter}
+                    >
+                      <AiOutlineCalendar />
+                    </DatePickerButton>
+                  </DatePickerWrapper>
                 </HeaderControls>
               </SectionHeader>
               <SectionDescription></SectionDescription>
-              <Suspense
-                fallback={
-                  <LoadingWrapper>
-                    <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
-                  </LoadingWrapper>
-                }
-              >
-                <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-                  <NewsListSection
-                    keywordFilter={keywordFilter ?? ''}
-                    clickPreviews={showNewsContent}
-                    newsTypeFilter={selectedType}
-                    titleSearch={allTitleSearch}
-                    dateFilter={dateFilter}
-                    showId={true}
-                  />
-                </div>
-              </Suspense>
+              <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                <NewsListSection
+                  keywordFilter={keywordFilter ?? ''}
+                  clickPreviews={showNewsContent}
+                  newsTypeFilter={selectedType}
+                  titleSearch={allTitleSearch}
+                  dateFilter={dateFilter}
+                  showId={true}
+                />
+              </div>
             </SectionContainer>
           </div>
         </div>
@@ -422,6 +459,8 @@ const SectionTitle = styled.h3`
   @media screen and (max-width: 768px) {
     font-size: 16px;
     margin: 0 0 6px 0;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &::before {
       width: 3px;
@@ -445,6 +484,11 @@ const HeaderControls = styled.div`
   gap: 8px;
   flex-wrap: nowrap;
   flex-shrink: 0;
+
+  @media screen and (max-width: 768px) {
+    flex-shrink: 1;
+    min-width: 0;
+  }
 `;
 
 const TypeFilter = styled.div`
@@ -471,24 +515,87 @@ const TypeFilterButton = styled.button`
   }
 `;
 
-const DateInput = styled.input`
+const DatePickerWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.gray300};
   background: #ffffff;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 10px;
   border-radius: 8px;
-  font-size: 0.85rem;
   height: 32px;
   box-sizing: border-box;
 
+  @media screen and (max-width: 768px) {
+    border: none;
+    background: transparent;
+    height: auto;
+  }
+`;
+
+const DesktopDateInput = styled.input`
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.gray800};
+  padding: 6px 28px 6px 10px;
+  font-size: 0.85rem;
+  height: 32px;
+  width: 130px;
+  box-sizing: border-box;
   &:focus {
     outline: none;
   }
-
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.gray400};
+  }
   @media screen and (max-width: 768px) {
-    width: 130px;
+    display: none;
   }
 `;
+
+const HiddenDateInput = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+`;
+
+interface DatePickerButtonProps {
+  $active: boolean;
+}
+
+const DatePickerButton = styled.button<DatePickerButtonProps>`
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.gray500};
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+
+  @media screen and (max-width: 768px) {
+    position: static;
+    transform: none;
+    border: 1px solid ${({ theme }) => theme.colors.gray300};
+    background: #ffffff;
+    color: ${({ theme }) => theme.colors.gray500};
+    padding: 6px 10px;
+    border-radius: 8px;
+    height: 32px;
+    width: auto;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+`;
+
 
 const SearchBox = styled.form`
   position: relative;
@@ -504,6 +611,11 @@ const SearchBox = styled.form`
   min-width: 110px;
   flex: 0 1 160px;
   flex-shrink: 0;
+
+  @media screen and (max-width: 768px) {
+    flex-shrink: 1;
+    min-width: 80px;
+  }
 `;
 
 const InlineSearchBox = styled.div`
@@ -514,6 +626,7 @@ const InlineSearchBox = styled.div`
   background: #ffffff;
   border-radius: 8px;
   height: 32px;
+  padding-right: 30px;
   box-sizing: border-box;
   width: 160px;
   min-width: 110px;

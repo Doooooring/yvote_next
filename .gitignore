@@ -1,7 +1,6 @@
 _next
 .next
 node_modules
-.env*
 # OS
 .DS_Store
 *.swp

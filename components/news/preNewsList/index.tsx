@@ -1,8 +1,10 @@
 import { INF } from '@/public/assets/resource';
 import { newsRepository } from '@/repositories/news';
 import { NewsState, Preview } from '@/utils/interface/news';
+import LoadingCommon from '@/components/common/loading';
+import { CommonLayoutBox } from '@/components/common/commonStyles';
 import PreviewBox from '@components/news/previewBox';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
@@ -23,7 +25,7 @@ export function PreNewsList({
   openModalOnClick?: boolean;
 }) {
   const router = useRouter();
-  const { data: preNewsList } = useSuspenseQuery({
+  const { data: preNewsList = [], isFetching } = useQuery({
     ...getPreNewsListQueryOption({ keyword: keywordFilter, state }),
   });
 
@@ -45,6 +47,14 @@ export function PreNewsList({
     }
     return true;
   }), [preNewsList, newsTypeFilter, normalizedTitleSearch]);
+
+  if (preNewsList.length === 0 && isFetching) {
+    return (
+      <LoadingWrapper>
+        <LoadingCommon comment={'새소식을 받아오고 있어요!'} fontColor="black" />
+      </LoadingWrapper>
+    );
+  }
 
   return (
     <Wrapper>
@@ -71,6 +81,10 @@ const getPreNewsListQueryOption = ({ keyword, state }: { keyword: string; state?
       return newsRepository.getPreviews(0, INF, keyword, state ?? NewsState.Pending);
     },
   });
+
+const LoadingWrapper = styled(CommonLayoutBox)`
+  background-color: white;
+`;
 
 const Wrapper = styled.div`
   display: grid;
