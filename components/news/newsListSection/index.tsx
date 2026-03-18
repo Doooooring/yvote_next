@@ -5,7 +5,7 @@ import { useToastMessage } from '@/utils/hook/useToastMessage';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
@@ -173,6 +173,7 @@ export default function NewsListSection({
   }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
 
   const hasNextPage = data.hasNextPage;
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   if (data.items.length === 0 && isFetching) {
     return (
@@ -183,7 +184,7 @@ export default function NewsListSection({
   }
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       <Grid>
         {data.items.map((item) => (
           <PreviewBox key={item.id} preview={item} click={clickPreviews} expanded showId={showId} />
@@ -193,35 +194,42 @@ export default function NewsListSection({
       {/* {isFetching && <NewsListFallback length={PREVIEWS_PAGES_LIMIT} />} */}
 
       <PaginationBar>
-        <PageButton
-          disabled={pageIndex === 0}
-          onClick={() => {
-            if (pageIndex === 0) return;
-            setPageIndex((prev) => Math.max(prev - 1, 0));
-            window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
-          }}
-        >
-          이전
-        </PageButton>
-        <PageIndicator>{pageIndex + 1}</PageIndicator>
-        <PageButton
-          disabled={!hasNextPage}
-          onClick={() => {
-            if (!hasNextPage) {
-              showToastMessage(
-                <DefaultMessageBox>
-                  <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
-                </DefaultMessageBox>,
-                2000,
-              );
-              return;
-            }
-            setPageIndex((prev) => prev + 1);
-            window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
-          }}
-        >
-          다음
-        </PageButton>
+        <div />
+        <PaginationCenter>
+          <PageButton
+            disabled={pageIndex === 0}
+            onClick={() => {
+              if (pageIndex === 0) return;
+              setPageIndex((prev) => Math.max(prev - 1, 0));
+            }}
+          >
+            이전
+          </PageButton>
+          <PageIndicator>{pageIndex + 1}</PageIndicator>
+          <PageButton
+            disabled={!hasNextPage}
+            onClick={() => {
+              if (!hasNextPage) {
+                showToastMessage(
+                  <DefaultMessageBox>
+                    <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
+                  </DefaultMessageBox>,
+                  2000,
+                );
+                return;
+              }
+              setPageIndex((prev) => prev + 1);
+            }}
+          >
+            다음
+          </PageButton>
+        </PaginationCenter>
+        <ScrollTopButton onClick={() => {
+            const el = wrapperRef.current?.closest('[data-section]');
+            el?.scrollIntoView({ behavior: 'smooth' });
+          }}>
+          맨 위로
+        </ScrollTopButton>
       </PaginationBar>
     </Wrapper>
   );
@@ -289,25 +297,26 @@ const Grid = styled.div`
 `;
 
 const PaginationBar = styled.div`
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
   margin-top: 16px;
 `;
 
 const PageButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border: none;
+  border-bottom: 1px solid #2c2c2c;
+  background: transparent;
+  color: #2c2c2c;
+  padding: 4px 10px;
+  border-radius: 0;
+  font-size: 0.85rem;
   cursor: pointer;
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
+    border-bottom-color: #b5aea3;
   }
 `;
 
@@ -316,8 +325,33 @@ const PageIndicator = styled.span`
   color: ${({ theme }) => theme.colors.gray700};
 `;
 
-const LoadingWrapper = styled(CommonLayoutBox)`
-  background-color: white;
+const PaginationCenter = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+`;
+
+const ScrollTopButton = styled.button`
+  justify-self: end;
+  border: 1px solid #b5aea3;
+  border-radius: 2px;
+  background: transparent;
+  color: #8a8178;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 4px 10px;
+  transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background-color: #b5aea3;
+    color: #faf9f7;
+  }
+`;
+
+const LoadingWrapper = styled.div`
+  background-color: transparent;
 `;
 
 const FetchButton = styled(CommonLayoutBox)`

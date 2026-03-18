@@ -82,8 +82,8 @@ const getPreNewsListQueryOption = ({ keyword, state }: { keyword: string; state?
     },
   });
 
-const LoadingWrapper = styled(CommonLayoutBox)`
-  background-color: white;
+const LoadingWrapper = styled.div`
+  background-color: transparent;
 `;
 
 const Wrapper = styled.div`

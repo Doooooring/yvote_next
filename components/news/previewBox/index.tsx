@@ -366,7 +366,7 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
       content: attr(data-overlay);
       position: absolute;
       inset: 0;
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: rgba(244, 241, 236, 0.9);
       opacity: 1;
       transition: opacity 0.2s ease;
       pointer-events: none;
@@ -456,7 +456,7 @@ const SummaryButton = styled(CommonIconButton)<{
   width: 20px;
   height: 20px;
   border-radius: 100%;
-  background-color: white !important;
+  background-color: #f4f1ec !important;
   background-image: url(${({ image }) => image});
   background-size: 16px 16px;
   background-position: center;

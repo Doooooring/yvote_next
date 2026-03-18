@@ -15,6 +15,7 @@ export interface ToastMessageContextProp {
 export const ToastMessageContext = createContext<ToastMessageContextProp | null>(null);
 
 export const useToastMessage = () => {
-  const { show } = useContext(ToastMessageContext)!;
-  return { show };
+  const context = useContext(ToastMessageContext);
+  const noop = (() => 0) as ToastMessageContextProp['show'];
+  return { show: context?.show ?? noop };
 };

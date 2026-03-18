@@ -30,9 +30,9 @@ interface PreviewBoxLayout_PendingProps extends HTMLAttributes<HTMLDivElement> {
 
 export function PreviewBoxLayout_Pending({ bodyView, expanded, ...rest }: PreviewBoxLayout_PendingProps) {
   return (
-    <Wrapper $expanded={expanded} {...rest}>
+    <CompactWrapper $expanded={expanded} {...rest}>
       <HeadWrapper>{bodyView}</HeadWrapper>
-    </Wrapper>
+    </CompactWrapper>
   );
 }
 
@@ -49,19 +49,30 @@ const Wrapper = styled.div<{ $expanded?: boolean }>`
   flex-direction: row;
   -webkit-box-align: center;
   align-items: start;
-  border-radius: 10px;
-  border: 1px solid rgba(200, 200, 200, 0.5);
-  box-shadow: 0px 0px 35px -30px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 0.5px solid #e5e0d8;
+  box-shadow: none;
   text-align: left;
-  padding: 7px 10px;
+  padding: 10px 4px;
   position: relative;
   @media screen and (max-width: 768px) {
-    padding: 5px 5px;
+    padding: 8px 2px;
   }
 
-  background-color: white;
+  background-color: transparent;
   &:hover {
     cursor: pointer;
+  }
+`;
+
+const CompactWrapper = styled(Wrapper)`
+  padding: 5px 4px;
+  min-height: 0;
+  font-size: 13px;
+
+  @media screen and (max-width: 768px) {
+    padding: 4px 2px;
   }
 `;
 

@@ -148,11 +148,11 @@ const Wrapper = styled.nav`
   border-bottom: 2px solid white;
 
   @media screen and (max-width: 768px) {
-    display: flex;
+    display: none;
   }
 
   @media screen and (max-width: 300px) {
-    justify-content: center;
+    display: none;
   }
 `;
 

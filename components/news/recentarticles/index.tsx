@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
 import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import { CommonLayoutBox } from '@components/common/commonStyles';
-import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import { INF } from '@public/assets/resource';
 import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -9,26 +8,42 @@ import { useSlide } from '@utils/hook/useSlide';
 import { commentType, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-const categories = ['전체', ...Object.values(commentType)] as Array<recentArticleType>;
-const numToShowArticle = 5;
-
+const categories = ['전체', ...Object.values(commentType).filter((c) => c !== commentType.와이보트)] as Array<recentArticleType>;
 interface SlideContentProps {
   commentType: recentArticleType;
   filteredArticles: any[];
 }
 
 function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
-  const [curView, onSlideLeft, onSlideRight] = useSlide();
+  const [curView, onSlideLeft, onSlideRight, setCurView] = useSlide();
+  const [numToShow, setNumToShow] = useState(10);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 769px)');
+    const update = () => setNumToShow(mql.matches ? 10 : 5);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
+
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurView(0);
+    setExpandedId(null);
+  }, [commentType]);
   const isAll = commentType === '전체';
+  const lastPage = filteredArticles.length > 0
+    ? Math.ceil(filteredArticles.length / numToShow) - 1
+    : 0;
 
   return (
     <>
-      <LeftButton curView={curView} viewToLeft={onSlideLeft} />
       <GridWrapper>
         {!isAll && (
           <LogoColumn
@@ -47,24 +62,34 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
         {filteredArticles.length !== 0 ? (
           <GridContainer curView={curView} $offset={!isAll}>
             {filteredArticles
-              .slice(curView * numToShowArticle, (curView + 1) * numToShowArticle)
+              .slice(curView * numToShow, (curView + 1) * numToShow)
               .map((article) => {
-                return <ArticleBox key={article.id} article={article} showLogo={isAll} />;
+                return (
+                  <ArticleBox
+                    key={article.id}
+                    article={article}
+                    showLogo={isAll}
+                    isExpanded={expandedId === article.id}
+                    onToggle={() => setExpandedId(expandedId === article.id ? null : article.id)}
+                  />
+                );
               })}
           </GridContainer>
         ) : (
           <VacantContent commentType={commentType} />
         )}
       </GridWrapper>
-      <RightButton
-        curView={curView}
-        viewToRight={onSlideRight}
-        lastPage={
-          filteredArticles.length > 0
-            ? Math.ceil(filteredArticles.length / numToShowArticle) - 1
-            : 0
-        }
-      />
+      {lastPage > 0 && (
+        <SlideNav>
+          <SlideNavButton onClick={onSlideLeft} disabled={curView === 0}>
+            ‹ 이전
+          </SlideNavButton>
+          <SlideNavIndicator>{curView + 1} / {lastPage + 1}</SlideNavIndicator>
+          <SlideNavButton onClick={onSlideRight} disabled={curView === lastPage}>
+            다음 ›
+          </SlideNavButton>
+        </SlideNav>
+      )}
     </>
   );
 }
@@ -130,23 +155,24 @@ export default function NewsArticlesSection() {
 }
 
 const Wrapper = styled(CommonLayoutBox)`
-  background-color: white;
+  background-color: transparent;
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
-  padding: 24px 30px;
+  padding: 24px 0;
   font: inherit;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 0 16px;
+  margin: 0;
   height: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
+  box-shadow: none;
+  border-radius: 0;
+  border: none;
 
   @media screen and (max-width: 768px) {
-    width: 98%;
+    width: 100%;
     height: auto;
-    padding: 16px 16px;
+    padding: 16px 0;
     margin: 0 auto 12px;
   }
 
@@ -197,16 +223,17 @@ interface CategoryItemProps {
 
 const CategoryItem = styled.div<CategoryItemProps>`
   cursor: pointer;
+  font-family: 'Noto Serif KR', Georgia, serif;
   font-weight: ${(props) => (props.isActive ? '600' : '400')};
-  color: ${(props) =>
-    props.isActive ? ({ theme }) => theme.colors.gray800 : ({ theme }) => theme.colors.gray500};
-  font-size: 16px;
+  color: ${(props) => (props.isActive ? '#2c2c2c' : '#8a8178')};
+  font-size: 15px;
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  border-bottom: ${(props) => (props.isActive ? '2px solid currentColor' : 'none')};
+  border-bottom: ${(props) => (props.isActive ? '2px solid #2c2c2c' : 'none')};
   padding-bottom: 5px;
   transition: color 0.2s ease, border-bottom 0.2s ease;
   &:hover {
-    color: ${({ theme }) => theme.colors.gray700};
+    color: #4a453d;
   }
   @media screen and (max-width: 768px) {
     font-size: 15px;
@@ -217,6 +244,7 @@ const GridWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: stretch;
+  touch-action: pan-y;
 `;
 
 interface GridContainerProps {
@@ -227,21 +255,26 @@ interface GridContainerProps {
 const GridContainer = styled.div<GridContainerProps>`
   display: grid;
   width: 100%;
-  grid-template-rows: repeat(5, 30px);
-  grid-template-columns: repeat(1, 100%);
-  grid-auto-flow: column;
-  grid-row-gap: 10px;
-  grid-column-gap: 15px;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
+  grid-auto-flow: row;
+  grid-row-gap: 4px;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  > :nth-child(n+6) {
+    display: none;
+  }
   ${({ $offset }) => ($offset ? 'padding-left: 0;' : '')}
-  @media screen and (max-width: 768px) {
-    grid-template-rows: repeat(5, 20px);
-    overflow-x: scroll;
-    overflow-y: hidden;
-    ::-webkit-scrollbar {
-      display: none;
+  @media screen and (min-width: 769px) {
+    > :nth-child(n+6) {
+      display: unset;
     }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    grid-template-rows: repeat(5, auto);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: column;
+    grid-column-gap: 15px;
+    touch-action: auto;
+    overscroll-behavior: auto;
   }
 `;
 
@@ -271,4 +304,38 @@ const LogoColumn = styled.div`
       background-size: 12px 12px;
     }
   }
+`;
+
+const SlideNav = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+`;
+
+const SlideNavButton = styled.button`
+  border: none;
+  background: transparent;
+  color: #4a453d;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+
+  &:hover:not(:disabled) {
+    color: #1a1a1a;
+  }
+
+  &:disabled {
+    color: #d8d3cb;
+    cursor: default;
+  }
+`;
+
+const SlideNavIndicator = styled.span`
+  font-size: 12px;
+  color: #8a8178;
+  letter-spacing: 0.05em;
 `;
