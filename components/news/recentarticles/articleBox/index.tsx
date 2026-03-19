@@ -90,7 +90,7 @@ const Dropdown = styled.div`
   border: 1px solid #e5e0d8;
   border-top: none;
   padding: 12px 14px;
-  max-height: 60dvh;
+  max-height: 60vh;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;

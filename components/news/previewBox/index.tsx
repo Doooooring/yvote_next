@@ -5,6 +5,7 @@ import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@util
 import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { AiOutlineBell, AiFillBell } from 'react-icons/ai';
 import styled from 'styled-components';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
@@ -55,6 +56,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                 </RowWrapper>
               </>
             }
+            sideView={<_AlarmButton />}
           />
         </PreviewWrapper>
       );
@@ -85,6 +87,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                 />
               </>
             }
+            sideView={<_AlarmButton />}
           />
         </PreviewWrapper>
       );
@@ -266,6 +269,41 @@ const Wrapper = styled.div`
   }
 `;
 
+const _AlarmButton = () => {
+  const [active, setActive] = useState(false);
+  return (
+    <AlarmToggle
+      $active={active}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive((prev) => !prev);
+      }}
+    >
+      {active ? <AiFillBell size="14px" /> : <AiOutlineBell size="14px" />}
+    </AlarmToggle>
+  );
+};
+
+const AlarmToggle = styled.button<{ $active: boolean }>`
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-left: 0.5px solid #e5e0d8;
+  padding: 0 4px;
+  cursor: pointer;
+  color: ${({ $active }) => ($active ? '#4a453d' : '#d5cfc7')};
+  transition: color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #8a8178;
+  }
+`;
+
 const IdSpan = styled.span`
   color: #3b82f6; /* very slight blue, adjust as needed */
   font-weight: 500;
@@ -274,6 +312,7 @@ const IdSpan = styled.span`
 const Title = styled(Row)`
   border: 0;
   margin: 0;
+  line-height: 1;
 
   .title {
     flex: 0 1 auto;
@@ -283,14 +322,20 @@ const Title = styled(Row)`
     text-align: left;
     padding: 0;
     padding-right: 2px;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-text-size-adjust: none;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+      -webkit-line-clamp: 2;
+    }
   }
 `;
 
@@ -308,17 +353,19 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 0;
-  margin-bottom: 6px;
+  margin: 6px 0;
   font-size: 15px;
   line-height: 20px;
   height: auto;
-  min-height: 60px;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-height: 40px;
+  display: block;
+
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    line-height: 16px;
+    min-height: 32px;
+  }
+  overflow: visible;
   position: relative;
 
   @media (hover: hover) {
@@ -393,13 +440,12 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
 
 const Date = styled.div`
   flex: 0 1 auto;
-  margin-bottom: 0;
+  margin: 0;
   font-size: 11px;
   color: ${({ theme }) => theme.colors.gray600};
   white-space: nowrap;
   font-weight: 400;
-  line-height: 1.2;
-  align-self: center;
+  line-height: 1;
 `;
 
 interface NewProps {
@@ -418,7 +464,8 @@ const RowWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 0;
+  margin: 0;
+  line-height: 1;
 `;
 
 const SummaryButtonWrapper = styled(Row)`

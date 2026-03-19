@@ -35,6 +35,8 @@ const GlobalStyle = createGlobalStyle`
   font-size: 100%;
   font-family: 'Noto Sans KR', Helvetica, sans-serif;
   vertical-align: baseline;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 article,

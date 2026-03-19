@@ -15,7 +15,7 @@ interface CommentBodyExplainProps {
 }
 
 export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {
-  const { summary, fetchSummary, isLoading } = useAISummary(explain);
+  const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(explain);
 
   const _explain = useMemo(() => {
     if (summary !== null) {
@@ -41,8 +41,8 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
           <IsShow state={date != null}>
             <DateText>{useKoreanDateFormat(date)}</DateText>
           </IsShow>
-          <GrokButton onClick={fetchSummary} disabled={isLoading}>
-            요약하기
+          <GrokButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
+            {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
           </GrokButton>
         </DateButtonWrapper>
       </ContentTitle>
@@ -80,7 +80,10 @@ function useAISummary(explain: string) {
       setIsLoading(false);
     }
   }, [isLoading, setIsLoading, setSummary]);
-  return { summary, fetchSummary, isLoading };
+
+  const clearSummary = useCallback(() => setSummary(null), []);
+
+  return { summary, fetchSummary, clearSummary, isLoading };
 }
 
 const Wrapper = styled.div`
@@ -90,15 +93,16 @@ const Wrapper = styled.div`
 
 const ContentTitle = styled.div`
   color: black;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
   @media screen and (max-width: 768px) {
+    font-size: 14px;
     font-weight: 600;
   }
   p {
     font-weight: 400;
-    font-size: 13.5px;
+    font-size: 13px;
     color: ${({ theme }) => theme.colors.gray600};
   }
 `;
@@ -106,7 +110,8 @@ const ContentTitle = styled.div`
 const ContentBody = styled.div`
   position: relative;
   font-weight: 400;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.7;
 `;
 
 const ContentLine = styled.p`

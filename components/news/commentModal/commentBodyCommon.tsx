@@ -51,14 +51,12 @@ export default function CommentBodyCommon({
     if (commentIndex === null) return;
 
     if (commentIndex > 0) {
-      const prevComment = curComments[commentIndex - 1];
-      setCurComment(prevComment);
+      setCurComment(curComments[commentIndex - 1]);
       moveToScrollHeight(0);
     } else {
-      const is = await getPageBefore();
-      if (is) {
-        const lastIndex = curComments.length - 1;
-        setCurComment(curComments[lastIndex]);
+      const newComments = await getPageBefore();
+      if (newComments) {
+        setCurComment(newComments[newComments.length - 1]);
         moveToScrollHeight(0);
       } else {
         showToastMessage(
@@ -75,14 +73,12 @@ export default function CommentBodyCommon({
     if (commentIndex === null) return;
 
     if (commentIndex < curComments.length - 1) {
-      const nextComment = curComments[commentIndex + 1];
-      setCurComment(nextComment);
+      setCurComment(curComments[commentIndex + 1]);
       moveToScrollHeight(0);
     } else {
-      const is = await getPageAfter();
-      if (is) {
-        const firstIndex = 0;
-        setCurComment(curComments[firstIndex]);
+      const newComments = await getPageAfter();
+      if (newComments) {
+        setCurComment(newComments[0]);
         moveToScrollHeight(0);
       } else {
         showToastMessage(
@@ -193,7 +189,7 @@ export default function CommentBodyCommon({
               <ButtonWrapper disabled={page === 0 && commentIndex === 0} onClick={getPrevComment}>
                 <AiOutlineLeft size="14px" />
               </ButtonWrapper>
-              <ButtonWrapper onClick={getNextComment}>
+              <ButtonWrapper disabled={!hasMore && commentIndex === curComments.length - 1} onClick={getNextComment}>
                 <AiOutlineRight size="14px" />
               </ButtonWrapper>
             </ArrowButtonsWrapper>

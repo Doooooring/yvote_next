@@ -80,7 +80,7 @@ export default function NewsPage(props: pageProps) {
         </ArticlesWrapper>
 
         <MainContent ref={ref}>
-          <ToggleContainer initialHeight={200}>
+          <ToggleContainer initialHeight={240}>
             {(isOpen: boolean, initialHeight: number) => (
               <>
                 <SectionHeader>
@@ -401,10 +401,10 @@ const SectionTitle = styled.h2`
 const Divider = styled.hr`
   border: none;
   border-top: 1px solid #e5e0d8;
-  margin: 6px 0 10px;
+  margin: 6px 0 0;
 
   @media screen and (max-width: 768px) {
-    margin: 4px 0 8px;
+    margin: 4px 0 0;
   }
 `;
 
