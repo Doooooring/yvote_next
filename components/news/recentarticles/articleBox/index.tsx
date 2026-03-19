@@ -55,10 +55,12 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
         <Dropdown>
           <DropdownHeader>
             <DropdownTitle>{title}</DropdownTitle>
+          </DropdownHeader>
+          <SummaryButtonRow>
             <SummarizeButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
               {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
             </SummarizeButton>
-          </DropdownHeader>
+          </SummaryButtonRow>
           <DropdownContent>
             {summary !== null
               ? (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
@@ -98,10 +100,10 @@ const Dropdown = styled.div`
 `;
 
 const DropdownHeader = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
+  margin-bottom: 4px;
+`;
+
+const SummaryButtonRow = styled.div`
   margin-bottom: 8px;
 `;
 
@@ -114,8 +116,8 @@ const DropdownTitle = styled.div`
 
 const SummarizeButton = styled.button`
   flex-shrink: 0;
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 2px 7px;
+  font-size: 10px;
   letter-spacing: 0.05em;
   background: transparent;
   color: #8a8178;

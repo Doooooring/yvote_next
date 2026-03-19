@@ -2,7 +2,7 @@ import { useDevice } from '@/utils/hook/useDevice';
 import { RowSwipeCature } from '@/utils/hook/useSwipe';
 import { Device } from '@/utils/interface/common';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
-import { TextButton } from '@components/common/commonStyles';
+// import { TextButton } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
@@ -15,7 +15,7 @@ import CommentBodyExplain from './commentBodyExplain';
 import CommentBodyList from './commentBodyList';
 import CommentHead from './commentHead';
 import { useFetchNewsComment, useListScrollheight, useScrollInfo } from './commentModal.hook';
-import CommentProgressBar from './commentProgressBar';
+// import CommentProgressBar from './commentProgressBar';
 import { ScrollWrapper } from './figure';
 import ModalLayout from './modal.layout';
 
@@ -32,7 +32,7 @@ export default function CommentBodyCommon({
 
   const { show: showToastMessage } = useToastMessage();
 
-  const { page, curComments, isRequesting, getPageBefore, getPageAfter } = useFetchNewsComment(
+  const { page, curComments, isRequesting, hasMore, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
     commentType,
   );
@@ -135,11 +135,6 @@ export default function CommentBodyCommon({
               />
             ) : (
               <>
-                <CommentProgressBar
-                  scrollHeight={scrollHeight}
-                  maxScrollHeight={maxScrollHeight}
-                  moveToScrollHeight={moveToScrollHeight}
-                />
                 <RowSwipeCature
                   threshold={20}
                   onLeftSwipe={getPrevComment}
@@ -159,64 +154,58 @@ export default function CommentBodyCommon({
           </ScrollWrapper>
           <IsShow state={isRequesting}>
             <LoadingWrapper
-              style={{
-                backgroundColor: curComments.length === 0 ? 'white' : '',
-              }}
+              $solid={curComments.length === 0}
             >
-              <LoadingCommon comment="" fontColor="black" />
+              <LoadingCommon comment="" fontColor="#8a8178" />
             </LoadingWrapper>
           </IsShow>
         </>
       }
       footerView={
         curComment === null ? (
-          <>
-            <TextButton
-              style={{ display: page != 0 ? 'block' : 'none' }}
+          <PaginationFooter>
+            <PaginationButton
+              disabled={page === 0}
               onClick={async () => {
                 await getPageBefore();
                 moveToScrollHeight(0);
               }}
             >
-              이전
-            </TextButton>
-            <TextButton
+              <AiOutlineLeft size="12px" />
+            </PaginationButton>
+            <PageIndicator>{Math.floor(page / 20) + 1}</PageIndicator>
+            <PaginationButton
+              disabled={!hasMore}
               onClick={async () => {
+                if (!hasMore) return;
                 const response = await getPageAfter();
                 if (response) {
                   moveToScrollHeight(0);
-                } else {
-                  showToastMessage(
-                    <DefaultMessageBox>
-                      <p>준비된 평론들을 모두 확인했어요</p>
-                    </DefaultMessageBox>,
-                    2000,
-                  );
                 }
               }}
             >
-              다음
-            </TextButton>
-          </>
+              <AiOutlineRight size="12px" />
+            </PaginationButton>
+          </PaginationFooter>
         ) : (
           <CommentExplainFooter>
             <ArrowButtonsWrapper>
               <ButtonWrapper disabled={page === 0 && commentIndex === 0} onClick={getPrevComment}>
-                <AiOutlineLeft size="20px" />
+                <AiOutlineLeft size="14px" />
               </ButtonWrapper>
               <ButtonWrapper onClick={getNextComment}>
-                <AiOutlineRight size="20px" />
+                <AiOutlineRight size="14px" />
               </ButtonWrapper>
             </ArrowButtonsWrapper>
 
-            <TextButton
+            <BackToListButton
               onClick={() => {
                 setCurComment(null);
                 reloadScrollHeight();
               }}
             >
-              목록으로
-            </TextButton>
+              목록
+            </BackToListButton>
           </CommentExplainFooter>
         )
       }
@@ -224,13 +213,14 @@ export default function CommentBodyCommon({
   );
 }
 
-const LoadingWrapper = styled.div`
+const LoadingWrapper = styled.div<{ $solid?: boolean }>`
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(2px);
+  background-color: ${({ $solid, theme }) => $solid ? theme.colors.yvote01 : `${theme.colors.yvote01}cc`};
 `;
 
 const Blink = styled.div`
@@ -261,20 +251,75 @@ const ArrowButtonsWrapper = styled.div`
 `;
 
 const ButtonWrapper = styled.button`
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 100%;
-  box-shadow: 0 0 20px -10px;
-  background-color: rgba(255, 255, 255, 0);
-  color: ${({ disabled, theme }) => (!disabled ? theme.colors.yvote07 : theme.colors.gray400)};
+  border-radius: 3px;
+  background-color: transparent;
+  color: ${({ disabled, theme }) => (!disabled ? theme.colors.yvote08 : theme.colors.yvote04)};
   z-index: 99;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.15s ease;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.gray100};
+    background-color: ${({ theme }) => theme.colors.yvote02};
+  }
+`;
+
+const PaginationFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+`;
+
+const PaginationButton = styled.button`
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  color: ${({ disabled, theme }) => (!disabled ? theme.colors.yvote08 : theme.colors.yvote04)};
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  &:hover:not(:disabled) {
+    background-color: ${({ theme }) => theme.colors.yvote02};
+  }
+  &:disabled {
+    cursor: default;
+    border-color: ${({ theme }) => theme.colors.yvote03};
+  }
+`;
+
+const PageIndicator = styled.span`
+  font-size: 11px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.yvote06};
+  min-width: 16px;
+  text-align: center;
+`;
+
+const BackToListButton = styled.button`
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote06};
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  outline: none;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote05};
+    color: ${({ theme }) => theme.colors.yvote01};
   }
 `;

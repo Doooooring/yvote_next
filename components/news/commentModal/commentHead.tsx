@@ -1,6 +1,6 @@
 import ImageFallback from '@components/common/imageFallback';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg, typeCheckImg } from '@utils/interface/news/comment';
+import { commentTypeImg } from '@utils/interface/news/comment';
 import styled from 'styled-components';
 
 interface HeadTitleProps {
@@ -16,7 +16,6 @@ export default function CommentHead({ comment }: HeadTitleProps) {
         </div>
       </CommentImageWrapper>
       <p className="type-name">{comment}</p>
-      <ImageFallback src={typeCheckImg(comment!)} alt="check-img" width="10" height="10" />
     </HeadTitle>
   );
 }
@@ -25,15 +24,16 @@ const HeadTitle = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 
   p.type-name {
-    padding-left: 0.5rem;
-    padding-right: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.3rem;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 14px;
+    color: ${({ theme }) => theme.colors.text};
     @media screen and (max-width: 768px) {
-      font-size: 17px;
+      font-size: 13px;
       font-weight: 600;
     }
   }
@@ -45,17 +45,14 @@ const CommentImageWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   flex: 0 0 auto;
-  background-color: white;
-  border-radius: 200px;
-  border: 1px solid rgb(225, 225, 225);
+  background-color: ${({ theme }) => theme.colors.yvote01};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote03};
   overflow: hidden;
   box-sizing: border-box;
-
-  @media screen and (max-width: 768px) {
-  }
 
   .image-box {
     width: 60%;

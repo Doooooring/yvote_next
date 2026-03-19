@@ -31,52 +31,57 @@ const Wrapper = styled(CommonLayoutBox)`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.25rem;
   flex: 0 0 auto;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
+  background-color: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote03};
+  border-radius: 4px;
 
   @media screen and (max-width: 768px) {
-    padding: 1.5rem 1rem;
+    padding: 0.75rem 0.75rem;
   }
 
   div.close-button {
     position: absolute;
-    top: 10px;
+    top: 6px;
     right: 10px;
     cursor: pointer;
     text-indent: 0;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 2rem;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.yvote06};
+    &:hover {
+      color: ${({ theme }) => theme.colors.yvote08};
+    }
     @media screen and (max-width: 768px) {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
     }
   }
 `;
 
 const ModalHead = styled.div`
-  @media screen and (max-width: 768px) {
-    padding-left: 0;
-  }
+  padding: 0;
 `;
 
 const ModalBody = styled.div`
   flex: 0 1 auto;
 
-  height: 500px;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1.5px solid rgb(225, 225, 225);
-  border-bottom: 1.5px solid #ddd;
+  height: 580px;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote03};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote03};
   position: relative;
 
   @media screen and (max-width: 768px) {
-    height: calc(0.63 * 100vh);
+    height: calc(0.65 * 100vh);
   }
 `;
 
 const ModalFooter = styled(Row)`
   justify-content: end;
-  gap: 12px;
-  padding-top: 0.5rem;
+  gap: 8px;
+  padding-top: 0.4rem;
 `;

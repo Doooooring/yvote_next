@@ -56,40 +56,40 @@ const ModalList = styled.div`
 `;
 
 const BodyBlock = styled.div`
-  height: 64px;
-  padding-left: 8px;
-  padding-right: 8px;
+  height: auto;
+  padding: 8px;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  align-items: center;
   cursor: pointer;
   box-sizing: border-box;
-  border-bottom: 1.5px solid #ddd;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote03};
   justify-content: space-between;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote02};
+  }
 
   span:first-child {
     flex: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 14.5px;
-    font-weight: 500;
-    color: rgb(50, 50, 50);
-    line-height: 1.5;
-    margin-right: 10px;
-    align-self: center;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: ${({ theme }) => theme.colors.text};
+    line-height: 1.4;
+    margin-right: 8px;
   }
 
   .date {
     flex: 0 0 auto;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 400;
-    color: rgb(120, 120, 120);
-    align-self: center;
+    color: ${({ theme }) => theme.colors.yvote06};
   }
 `;
 

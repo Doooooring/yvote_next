@@ -1,17 +1,17 @@
 export const customTheme = {
   colors: {
-    primary: '#0070f3',
-    secondary: '#ff6c00',
-    text: '#333333',
-    yvote01: '#d8eef8', // Brightest
-    yvote02: '#ccebfc',
-    yvote03: '#a2ddf2', // Original yvote01
-    yvote04: '#88cce8',
-    yvote05: '#72beda', // Original yvote02
-    yvote06: '#56b3d1',
-    yvote07: '#2b9fc2', // Original yvote03
-    yvote08: '#1d7ea2',
-    yvote09: '#0d5b7d', // Darkest
+    primary: '#4a453d',
+    secondary: '#8a8178',
+    text: '#2c2c2c',
+    yvote01: '#faf9f7', // Brightest
+    yvote02: '#f4f1ec',
+    yvote03: '#e5e0d8',
+    yvote04: '#d5cfc7',
+    yvote05: '#b5aea3',
+    yvote06: '#8a8178',
+    yvote07: '#6b6460',
+    yvote08: '#4a453d',
+    yvote09: '#2c2c2c', // Darkest
     gray100: '#fcfcfc',
     gray200: '#efefef',
     gray300: '#e1e1e1',

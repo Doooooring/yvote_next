@@ -133,18 +133,19 @@ const DateText = styled.p`
 `;
 
 const GrokButton = styled.button`
-  position: relative;
-  padding: 0.2rem 0.5rem;
-  font-size: 12px;
-  background-color: ${({ theme }) => theme.colors.yvote05};
-  /* background: linear-gradient(-90deg, #5ab8e7 0%, #0463c2 100%), #fff; */
-
-  color: white;
-  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote06};
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  border-radius: 2px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s;
   &:hover {
-    opacity: 0.9;
+    background-color: ${({ theme }) => theme.colors.yvote05};
+    color: ${({ theme }) => theme.colors.yvote01};
   }
   &:disabled {
     opacity: 0.5;

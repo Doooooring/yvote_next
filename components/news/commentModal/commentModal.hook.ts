@@ -10,6 +10,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   const curPage = useRef(0);
   const [curComments, setCurComments] = useState<Array<Comment>>([]);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   async function fetchNewsComment(offset: number) {
     try {
@@ -37,8 +38,12 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   };
   const getPageAfter = async () => {
     const response = await fetchNewsComment(curPage.current + PAGE_SIZE);
-    if (response) curPage.current += PAGE_SIZE;
-    return response;
+    if (response) {
+      curPage.current += PAGE_SIZE;
+      return true;
+    }
+    setHasMore(false);
+    return false;
   };
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
       return;
     }
     curPage.current = 0;
+    setHasMore(true);
     fetchNewsComment(0);
   }, [comment]);
 
@@ -54,6 +60,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
     page: curPage.current,
     curComments,
     isRequesting,
+    hasMore,
     getPageBefore,
     getPageAfter,
   };

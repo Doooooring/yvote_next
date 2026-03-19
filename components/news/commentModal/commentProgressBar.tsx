@@ -69,7 +69,7 @@ const ProgressWrapper = styled.div`
   border-radius: 8px;
   width: 100%;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.gray400};
+  background-color: ${({ theme }) => theme.colors.yvote04};
 `;
 
 const ProgressBar = styled.div`
@@ -77,7 +77,7 @@ const ProgressBar = styled.div`
 
   border-radius: 8px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.yvote05};
+  background-color: ${({ theme }) => theme.colors.yvote06};
 
   transition: width 0.3s;
 `;
@@ -93,8 +93,9 @@ const IconButton = styled(CommonIconButton)<IconButtonProps>`
   transform: translate(50%, -50%);
   cursor: none;
   border-width: ${({ $state }) => ($state ? '2px' : '1px')};
-  border-color: ${({ theme, $state }) => ($state ? theme.colors.yvote03 : theme.colors.gray300)};
+  border-color: ${({ theme, $state }) => ($state ? theme.colors.yvote06 : theme.colors.yvote04)};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   &:hover {
-    background-color: white;
+    background-color: ${({ theme }) => theme.colors.yvote01};
   }
 `;

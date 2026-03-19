@@ -3,14 +3,30 @@ import styled from 'styled-components';
 export const ScrollWrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  overflow-y: scroll;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.yvote04};
+    border-radius: 0;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.colors.yvote05};
+  }
+  scrollbar-width: thin;
 `;
 
 export const ModalBodyWrapper = styled.div`
-  width: 60%;
-  min-width: 680px;
+  width: 50%;
+  min-width: 560px;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
   position: fixed;
@@ -19,7 +35,7 @@ export const ModalBodyWrapper = styled.div`
   transform: translate(-50%, -50%);
 
   @media screen and (max-width: 768px) {
-    width: 99%;
+    width: 95%;
     min-width: 0px;
   }
 `;

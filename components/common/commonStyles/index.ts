@@ -68,6 +68,12 @@ export const CommonIconButton = styled.button`
   border-radius: 50%;
   background: white;
   cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray400};

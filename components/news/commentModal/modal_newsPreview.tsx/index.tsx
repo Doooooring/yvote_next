@@ -71,20 +71,26 @@ const _ModalBodyWrapper = styled.div`
 
 const CommentButtons = styled.div`
   position: absolute;
-  top: -30px;
+  top: -22px;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 0.5rem;
+  padding: 0.3rem;
 
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 4px;
 `;
 
 const CommentButton = styled(CommonIconButton)<{ $selected: boolean }>`
-  padding: 0.4rem;
-  background-color: white !important;
+  padding: 0.25rem;
+  border-radius: 4px;
+  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.yvote02 : theme.colors.yvote01)} !important;
   border: ${({ $selected, theme }) =>
-    $selected ? `2px solid ${theme.colors.yvote03}` : `2px solid ${theme.colors.gray400}`};
-  filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.7)')};
+    $selected ? `1px solid ${theme.colors.yvote06}` : `1px solid ${theme.colors.yvote04}`};
+  filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.6)')};
+  transition: all 0.15s ease;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote02} !important;
+    border-color: ${({ theme }) => theme.colors.yvote06};
+  }
 `;
