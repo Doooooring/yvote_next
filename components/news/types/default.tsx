@@ -28,7 +28,7 @@ const Wrapper = styled.div`
   align-items: center;
   text-align: center;
   padding-top: 20px;
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
   ::-webkit-scrollbar {
     display: none;
   }

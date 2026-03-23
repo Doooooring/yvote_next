@@ -50,8 +50,8 @@ const Wrapper = styled.div<{ $expanded?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  border-bottom: 0.5px solid #d5cfc7;
-  border-image: linear-gradient(90deg, transparent, #d5cfc7 15%, #d5cfc7 85%, transparent) 1;
+  border-bottom: 0.5px solid ${({ theme }) => theme.colors.yvote06};
+  border-image: linear-gradient(90deg, transparent, ${({ theme }) => theme.colors.yvote06} 15%, ${({ theme }) => theme.colors.yvote06} 85%, transparent) 1;
   padding: 10px 4px;
   background-color: transparent;
   cursor: pointer;

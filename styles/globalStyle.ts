@@ -68,7 +68,6 @@ body {
   font-weight: 300;
   width: 100vw;
   height: 100vh;
-  background-color: rgb(239, 239, 239);
 
   overflow-x: hidden;
   overflow-y: scroll;

@@ -301,14 +301,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0 0 80px;
-  background-color: #f4f1ec;
+  background-color: ${({ theme }) => theme.colors.yvote02};
 `;
 
 const PageHeader = styled.header`
   width: 92%;
   max-width: 1200px;
   padding: 48px 0 20px;
-  border-bottom: 2px solid #1a1a1a;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.yvote13};
   margin-bottom: 28px;
   text-align: left;
 
@@ -323,7 +323,7 @@ const PageTitle = styled.h1`
   font-family: 'Noto Serif KR', Georgia, serif;
   font-size: 36px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: ${({ theme }) => theme.colors.yvote13};
   letter-spacing: -0.03em;
   line-height: 1.2;
 
@@ -334,7 +334,7 @@ const PageTitle = styled.h1`
 
 const PageSubtitle = styled.p`
   font-size: 14px;
-  color: #8a8178;
+  color: ${({ theme }) => theme.colors.yvote08};
   margin-top: 8px;
   letter-spacing: 0.02em;
 `;
@@ -364,7 +364,7 @@ const MainContent = styled.div`
 
 const SectionContainer = styled.section`
   background: transparent;
-  border-top: 2px solid #2c2c2c;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
   padding: 20px 0;
   margin-bottom: 24px;
   position: relative;
@@ -388,7 +388,7 @@ const SectionTitle = styled.h2`
   font-family: 'Noto Serif KR', Georgia, serif;
   font-size: 20px;
   font-weight: 600;
-  color: #2c2c2c;
+  color: ${({ theme }) => theme.colors.yvote12};
   letter-spacing: -0.01em;
   flex-shrink: 0;
   margin: 0;
@@ -400,7 +400,7 @@ const SectionTitle = styled.h2`
 
 const Divider = styled.hr`
   border: none;
-  border-top: 1px solid #e5e0d8;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
   margin: 6px 0 0;
 
   @media screen and (max-width: 768px) {
@@ -429,9 +429,9 @@ const TypeFilter = styled.div`
 `;
 
 const TypeFilterButton = styled.button`
-  border: 1px solid #d8d3cb;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   background: transparent;
-  color: #4a453d;
+  color: ${({ theme }) => theme.colors.yvote11};
   padding: 5px 12px;
   border-radius: 2px;
   font-size: 0.82rem;
@@ -444,12 +444,12 @@ const TypeFilterButton = styled.button`
   &:after {
     content: '\\25BE';
     font-size: 0.7rem;
-    color: #b5aea3;
+    color: ${({ theme }) => theme.colors.yvote07};
   }
 
   &:hover {
-    color: #1a1a1a;
-    border-color: #1a1a1a;
+    color: ${({ theme }) => theme.colors.yvote13};
+    border-color: ${({ theme }) => theme.colors.yvote13};
   }
 `;
 
@@ -457,13 +457,13 @@ const TypeFilterMenu = styled.div`
   position: absolute;
   top: 110%;
   right: 0;
-  background: #f4f1ec;
-  border: 1px solid #d8d3cb;
+  background: ${({ theme }) => theme.colors.yvote02};
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   border-radius: 2px;
   padding: 4px;
   min-width: 140px;
   overflow: visible;
-  z-index: 2;
+  z-index: 20;
   box-shadow: 0 4px 12px rgba(40, 35, 28, 0.08);
 `;
 
@@ -473,14 +473,14 @@ const TypeFilterItem = styled.button`
   padding: 7px 10px;
   border: none;
   background: transparent;
-  color: #5a554d;
+  color: ${({ theme }) => theme.colors.yvote10};
   border-radius: 2px;
   cursor: pointer;
   font-size: 0.82rem;
 
   &:hover {
-    background: #efebe5;
-    color: #1a1a1a;
+    background: ${({ theme }) => theme.colors.yvote03};
+    color: ${({ theme }) => theme.colors.yvote13};
   }
 `;
 
@@ -488,7 +488,7 @@ const SearchBox = styled.form`
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid #d8d3cb;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   background: transparent;
   border-radius: 2px;
   height: 30px;
@@ -509,7 +509,7 @@ const InlineSearchBox = styled.div`
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid #d8d3cb;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   background: transparent;
   border-radius: 2px;
   height: 30px;
@@ -524,7 +524,7 @@ const InlineSearchBox = styled.div`
 const SearchInput = styled.input`
   border: none;
   background: transparent;
-  color: #2c2c2c;
+  color: ${({ theme }) => theme.colors.yvote12};
   padding: 5px 10px;
   font-size: 0.82rem;
   min-width: 80px;
@@ -535,7 +535,7 @@ const SearchInput = styled.input`
   }
 
   &::placeholder {
-    color: #b5aea3;
+    color: ${({ theme }) => theme.colors.yvote07};
   }
 
   @media screen and (max-width: 768px) {
@@ -589,7 +589,7 @@ const DatePickerWrapper = styled.div`
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid #d8d3cb;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   background: transparent;
   border-radius: 2px;
   height: 30px;
@@ -605,7 +605,7 @@ const DatePickerWrapper = styled.div`
 const DesktopDateInput = styled.input`
   border: none;
   background: transparent;
-  color: #2c2c2c;
+  color: ${({ theme }) => theme.colors.yvote12};
   padding: 5px 26px 5px 10px;
   font-size: 0.82rem;
   height: 30px;
@@ -617,7 +617,7 @@ const DesktopDateInput = styled.input`
   }
 
   &::placeholder {
-    color: #b5aea3;
+    color: ${({ theme }) => theme.colors.yvote07};
   }
 
   @media screen and (max-width: 768px) {
@@ -644,7 +644,7 @@ const DatePickerButton = styled.button<DatePickerButtonProps>`
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  color: ${({ $active }) => ($active ? '#2c2c2c' : '#b5aea3')};
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote07)};
   padding: 0;
   width: 16px;
   height: 16px;
@@ -656,15 +656,15 @@ const DatePickerButton = styled.button<DatePickerButtonProps>`
   transition: color 0.15s;
 
   &:hover {
-    color: #2c2c2c;
+    color: ${({ theme }) => theme.colors.yvote12};
   }
 
   @media screen and (max-width: 768px) {
     position: static;
     transform: none;
-    border: 1px solid #d8d3cb;
+    border: 1px solid ${({ theme }) => theme.colors.yvote05};
     background: transparent;
-    color: ${({ $active }) => ($active ? '#2c2c2c' : '#b5aea3')};
+    color: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote07)};
     padding: 5px 10px;
     border-radius: 2px;
     height: 30px;
@@ -704,7 +704,7 @@ const ToggleBar = styled.button`
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #8a8178;
+  color: ${({ theme }) => theme.colors.yvote08};
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -715,10 +715,10 @@ const ToggleBar = styled.button`
     content: '';
     flex: 1;
     height: 1px;
-    background: #d8d3cb;
+    background: ${({ theme }) => theme.colors.yvote05};
   }
 
   &:hover {
-    color: #2c2c2c;
+    color: ${({ theme }) => theme.colors.yvote12};
   }
 `;

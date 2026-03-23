@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  async rewrites() {
+    return [
+      {
+        source: '/proxy-api/:path*',
+        destination: `${process.env.INTERNAL_API_URL || 'http://localhost:3000'}/:path*`,
+      },
+    ];
+  },
   images: {
     // limit of 25 deviceSizes values
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

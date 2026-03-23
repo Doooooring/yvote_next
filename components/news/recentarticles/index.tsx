@@ -225,15 +225,15 @@ const CategoryItem = styled.div<CategoryItemProps>`
   cursor: pointer;
   font-family: 'Noto Serif KR', Georgia, serif;
   font-weight: ${(props) => (props.isActive ? '600' : '400')};
-  color: ${(props) => (props.isActive ? '#2c2c2c' : '#8a8178')};
+  color: ${({ theme, isActive }) => (isActive ? theme.colors.yvote12 : theme.colors.yvote08)};
   font-size: 15px;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  border-bottom: ${(props) => (props.isActive ? '2px solid #2c2c2c' : 'none')};
+  border-bottom: ${(props) => (props.isActive ? '2px solid ${({ theme }) => theme.colors.yvote12}' : 'none')};
   padding-bottom: 5px;
   transition: color 0.2s ease, border-bottom 0.2s ease;
   &:hover {
-    color: #4a453d;
+    color: ${({ theme }) => theme.colors.yvote11};
   }
   @media screen and (max-width: 768px) {
     font-size: 15px;
@@ -317,7 +317,7 @@ const SlideNav = styled.div`
 const SlideNavButton = styled.button`
   border: none;
   background: transparent;
-  color: #4a453d;
+  color: ${({ theme }) => theme.colors.yvote11};
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
@@ -325,17 +325,17 @@ const SlideNavButton = styled.button`
   transition: color 0.15s;
 
   &:hover:not(:disabled) {
-    color: #1a1a1a;
+    color: ${({ theme }) => theme.colors.yvote13};
   }
 
   &:disabled {
-    color: #d8d3cb;
+    color: ${({ theme }) => theme.colors.yvote05};
     cursor: default;
   }
 `;
 
 const SlideNavIndicator = styled.span`
   font-size: 12px;
-  color: #8a8178;
+  color: ${({ theme }) => theme.colors.yvote08};
   letter-spacing: 0.05em;
 `;

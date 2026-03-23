@@ -86,8 +86,8 @@ const ArticleRow = styled.div`
 `;
 
 const Dropdown = styled.div`
-  background-color: #f4f1ec;
-  border: 1px solid #e5e0d8;
+  background-color: ${({ theme }) => theme.colors.yvote02};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-top: none;
   padding: 12px 14px;
   max-height: 60vh;
@@ -110,7 +110,7 @@ const SummaryButtonRow = styled.div`
 const DropdownTitle = styled.div`
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: ${({ theme }) => theme.colors.yvote13};
   word-break: break-word;
 `;
 
@@ -120,15 +120,15 @@ const SummarizeButton = styled.button`
   font-size: 10px;
   letter-spacing: 0.05em;
   background: transparent;
-  color: #8a8178;
-  border: 1px solid #b5aea3;
+  color: ${({ theme }) => theme.colors.yvote08};
+  border: 1px solid ${({ theme }) => theme.colors.yvote07};
   border-radius: 2px;
   cursor: pointer;
   white-space: nowrap;
   transition: background-color 0.15s, color 0.15s;
   &:hover {
-    background-color: #b5aea3;
-    color: #faf9f7;
+    background-color: ${({ theme }) => theme.colors.yvote07};
+    color: ${({ theme }) => theme.colors.yvote01};
   }
   &:disabled {
     opacity: 0.5;
@@ -139,7 +139,7 @@ const SummarizeButton = styled.button`
 const DropdownContent = styled.div`
   font-size: 13.5px;
   line-height: 1.6;
-  color: #2c2c2c;
+  color: ${({ theme }) => theme.colors.yvote12};
 
   p {
     margin: 0 0 6px;
@@ -150,16 +150,16 @@ const DropdownContent = styled.div`
 const DropdownFooter = styled.div`
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 0.5px solid #e5e0d8;
+  border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
 
   a {
     font-size: 12px;
-    color: #8a8178;
+    color: ${({ theme }) => theme.colors.yvote08};
     text-decoration: none;
     letter-spacing: 0.02em;
 
     &:hover {
-      color: #4a453d;
+      color: ${({ theme }) => theme.colors.yvote11};
     }
   }
 `;

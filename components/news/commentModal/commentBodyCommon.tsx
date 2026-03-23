@@ -152,7 +152,7 @@ export default function CommentBodyCommon({
             <LoadingWrapper
               $solid={curComments.length === 0}
             >
-              <LoadingCommon comment="" fontColor="#8a8178" />
+              <LoadingCommon comment="" fontColor="${({ theme }) => theme.colors.yvote08}" />
             </LoadingWrapper>
           </IsShow>
         </>

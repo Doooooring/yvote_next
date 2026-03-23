@@ -306,9 +306,9 @@ const PaginationBar = styled.div`
 
 const PageButton = styled.button`
   border: none;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote12};
   background: transparent;
-  color: #2c2c2c;
+  color: ${({ theme }) => theme.colors.yvote12};
   padding: 4px 10px;
   border-radius: 0;
   font-size: 0.85rem;
@@ -317,7 +317,7 @@ const PageButton = styled.button`
   &:disabled {
     cursor: not-allowed;
     opacity: 0.3;
-    border-bottom-color: #b5aea3;
+    border-bottom-color: ${({ theme }) => theme.colors.yvote07};
   }
 `;
 
@@ -335,10 +335,10 @@ const PaginationCenter = styled.div`
 
 const ScrollTopButton = styled.button`
   justify-self: end;
-  border: 1px solid #b5aea3;
+  border: 1px solid ${({ theme }) => theme.colors.yvote07};
   border-radius: 2px;
   background: transparent;
-  color: #8a8178;
+  color: ${({ theme }) => theme.colors.yvote08};
   font-size: 12px;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -346,8 +346,8 @@ const ScrollTopButton = styled.button`
   transition: background-color 0.15s, color 0.15s;
 
   &:hover {
-    background-color: #b5aea3;
-    color: #faf9f7;
+    background-color: ${({ theme }) => theme.colors.yvote07};
+    color: ${({ theme }) => theme.colors.yvote01};
   }
 `;
 

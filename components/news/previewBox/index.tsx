@@ -6,6 +6,25 @@ import { commentTypeImg } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineBell, AiFillBell } from 'react-icons/ai';
+// Custom Y-vote icon: peace symbol with left branch removed (Y in circle)
+const YVoteIcon = ({ size = 14, filled = false }: { size?: number; filled?: boolean }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'} />
+    {filled ? (
+      <g stroke="${({ theme }) => theme.colors.yvote01}" strokeWidth={2}>
+        <line x1="12" y1="2" x2="12" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="22" />
+        <line x1="12" y1="12" x2="19" y2="19" />
+      </g>
+    ) : (
+      <g>
+        <line x1="12" y1="2" x2="12" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="22" />
+        <line x1="12" y1="12" x2="19" y2="19" />
+      </g>
+    )}
+  </svg>
+);
 import styled from 'styled-components';
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
@@ -56,7 +75,12 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                 </RowWrapper>
               </>
             }
-            sideView={<_AlarmButton />}
+            sideView={
+              <SideButtonStack>
+                <_AlarmButton />
+                <_VoteButton />
+              </SideButtonStack>
+            }
           />
         </PreviewWrapper>
       );
@@ -118,60 +142,33 @@ const _NewsSubTitle = ({
 }) => {
   const overlayText = newsType ? newsTypesToKor(newsType) : '';
   const [hideOverlay, setHideOverlay] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollVars, setScrollVars] = useState<React.CSSProperties | undefined>();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const textRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const overflow = el.scrollHeight - el.clientHeight;
-    if (overflow > 4) {
-      const dur = Math.max(3, overflow * 0.06);
-      setScrollVars({
-        '--scroll-dist': `-${overflow}px`,
-        '--scroll-dur': `${dur}s`,
-        '--container-h': `${el.clientHeight}px`,
-      } as React.CSSProperties);
-    } else {
-      setScrollVars(undefined);
+    const el = textRef.current;
+    if (el) {
+      setIsClamped(el.scrollHeight > el.clientHeight + 2);
     }
   }, [subTitle]);
 
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = event.touches[0]?.clientX ?? null;
-  };
-
-  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (touchStartX.current === null) return;
-    const currentX = event.touches[0]?.clientX ?? null;
-    if (currentX === null) return;
-    if (Math.abs(currentX - touchStartX.current) > 24) {
-      setHideOverlay(true);
-      touchStartX.current = null;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    touchStartX.current = null;
-  };
-
   return (
     <SubTitle
-      ref={containerRef}
       $expanded={expanded}
       $showOverlay={expanded && !hideOverlay}
       $overlayText={overlayText}
-      $canScroll={!!scrollVars}
       data-overlay={overlayText}
-      style={scrollVars}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={() => setHideOverlay(true)}
     >
-      <span className="subtitle-text">
+      <span className="subtitle-text" ref={textRef} style={isExpanded ? { WebkitLineClamp: 'unset' } : undefined}>
         {subTitle || ''}
       </span>
+      {isClamped && !isExpanded && (
+        <MoreButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsExpanded(true); }}>
+          더보기
+        </MoreButton>
+      )}
     </SubTitle>
   );
 };
@@ -246,27 +243,56 @@ const PreviewWrapper = ({
 };
 
 const Wrapper = styled.div`
-  filter: saturate(80%);
   width: 100%;
   text-decoration: none;
   font-family: Noto Sans KR, Helvetica, sans-serif;
-  transition: filter 0.2s ease;
   margin-bottom: 1px;
   img {
     transition: transform 0.3s ease-in-out;
   }
 
-  .title {
-    transition: color 0.3s ease;
-  }
-
   &:hover {
-    filter: saturate(130%);
-
     img {
       transform: scale(1.1);
     }
   }
+`;
+
+const SideButtonStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-left: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+`;
+
+const _VoteButton = () => {
+  const [active, setActive] = useState(false);
+  return (
+    <VoteToggle
+      $active={active}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive((prev) => !prev);
+      }}
+    >
+      {active ? <YVoteIcon size={14} /> : <YVoteIcon size={14} />}
+    </VoteToggle>
+  );
+};
+
+const VoteToggle = styled.button<{ $active: boolean }>`
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+  padding: 0 4px;
+  cursor: pointer;
+  color: ${({ $active, theme }) => ($active ? '#c0392b' : theme.colors.yvote06)};
+  flex: 1;
 `;
 
 const _AlarmButton = () => {
@@ -292,16 +318,10 @@ const AlarmToggle = styled.button<{ $active: boolean }>`
   justify-content: center;
   background: transparent;
   border: none;
-  border-left: 0.5px solid #e5e0d8;
   padding: 0 4px;
   cursor: pointer;
-  color: ${({ $active }) => ($active ? '#4a453d' : '#d5cfc7')};
-  transition: color 0.15s;
-  flex-shrink: 0;
-
-  &:hover {
-    color: #8a8178;
-  }
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote11 : theme.colors.yvote06)};
+  flex: 1;
 `;
 
 const IdSpan = styled.span`
@@ -339,12 +359,27 @@ const Title = styled(Row)`
   }
 `;
 
-const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string; $canScroll?: boolean }>`
-  @keyframes subtitleScroll {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(var(--scroll-dist)); }
-  }
+const MoreButton = styled.button`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border: none;
+  background: linear-gradient(90deg, transparent, ${({ theme }) => theme.colors.yvote02} 30%);
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 12px;
+  padding: 0 0 0 24px;
+  margin: 0;
+  cursor: pointer;
+  line-height: 24px;
+  white-space: nowrap;
 
+  @media screen and (max-width: 768px) {
+    line-height: 20px;
+    font-size: 11px;
+  }
+`;
+
+const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string }>`
   -webkit-text-size-adjust: none;
   text-align: left;
   padding: 0;
@@ -353,57 +388,24 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 6px 0;
+  margin: 8px 0;
   font-size: 15px;
-  line-height: 20px;
+  line-height: 24px;
   height: auto;
-  min-height: 40px;
-  display: block;
-
-  @media screen and (max-width: 768px) {
-    font-size: 12px;
-    line-height: 16px;
-    min-height: 32px;
-  }
-  overflow: visible;
+  min-height: 48px;
   position: relative;
 
-  @media (hover: hover) {
-    ${({ $canScroll }) =>
-      $canScroll
-        ? `
-      &:hover {
-        -webkit-line-clamp: unset;
-        -webkit-box-orient: unset;
-        display: block;
-        height: var(--container-h, auto);
-        text-overflow: clip;
-
-        .subtitle-text {
-          display: block;
-          animation: subtitleScroll var(--scroll-dur, 4s) linear infinite;
-        }
-      }
-    `
-        : ''}
+  .subtitle-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  @media (hover: none) {
-    ${({ $canScroll }) =>
-      $canScroll
-        ? `
-      -webkit-line-clamp: unset;
-      -webkit-box-orient: unset;
-      display: block;
-      height: var(--container-h, auto);
-      text-overflow: clip;
-
-      .subtitle-text {
-        display: block;
-        animation: subtitleScroll var(--scroll-dur, 4s) ease-in-out infinite;
-      }
-    `
-        : ''}
+  @media screen and (max-width: 768px) {
+    font-size: 13px;
+    line-height: 20px;
+    min-height: 40px;
   }
 
   ${({ $showOverlay }) =>
@@ -413,7 +415,7 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
       content: attr(data-overlay);
       position: absolute;
       inset: 0;
-      background-color: rgba(244, 241, 236, 0.9);
+      background-color: ${({ theme }) => theme.colors.yvote02}e6;
       opacity: 1;
       transition: opacity 0.2s ease;
       pointer-events: none;
@@ -503,7 +505,7 @@ const SummaryButton = styled(CommonIconButton)<{
   width: 20px;
   height: 20px;
   border-radius: 100%;
-  background-color: #f4f1ec !important;
+  background-color: ${({ theme }) => theme.colors.yvote02} !important;
   background-image: url(${({ image }) => image});
   background-size: 16px 16px;
   background-position: center;
