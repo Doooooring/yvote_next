@@ -165,10 +165,10 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                   </VoteItem>
                 </VoteNumbers>
                 <VoteBar>
-                  <VoteBarSegment $width={(voteTotals.for / totalVotes) * 100} $color="#1e293b" />
-                  <VoteBarSegment $width={(voteTotals.against / totalVotes) * 100} $color="#64748b" />
-                  <VoteBarSegment $width={(voteTotals.abstain / totalVotes) * 100} $color="#94a3b8" />
-                  <VoteBarSegment $width={(voteTotals.absent / totalVotes) * 100} $color="#e2e8f0" />
+                  <VoteBarSegment $width={(voteTotals.for / totalVotes) * 100} $color={customTheme.colors.yvote12} />
+                  <VoteBarSegment $width={(voteTotals.against / totalVotes) * 100} $color={customTheme.colors.yvote08} />
+                  <VoteBarSegment $width={(voteTotals.abstain / totalVotes) * 100} $color={customTheme.colors.yvote07} />
+                  <VoteBarSegment $width={(voteTotals.absent / totalVotes) * 100} $color={customTheme.colors.yvote04} />
                 </VoteBar>
                 {partyVotes.length > 0 && (
                   <>
@@ -368,7 +368,7 @@ const TimelineList = ({ timeline }: TimelineListProps) => {
 const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
   justify-content: center;
   padding: 16px 0 40px;
@@ -377,7 +377,7 @@ const Wrapper = styled.div`
 const Content = styled.div`
   width: 98%;
   max-width: 1120px;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 
   @media screen and (max-width: 768px) {
     max-width: none;
@@ -385,12 +385,12 @@ const Content = styled.div`
 `;
 
 const Header = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 22px;
   display: block;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
 
   .header-text h1 {
     margin: 8px 0 6px;
@@ -399,7 +399,7 @@ const Header = styled.section`
   }
 
   .subtitle {
-    color: #475569;
+    color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
   }
@@ -409,7 +409,7 @@ const Header = styled.section`
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-size: 0.9rem;
   }
 `;
@@ -424,8 +424,8 @@ const CommentIconButton = styled.button<{ image: string }>`
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   background-image: url(${({ image }) => image});
   background-size: 14px 14px;
   background-position: center;
@@ -442,17 +442,17 @@ const Grid = styled.div`
 `;
 
 const Card = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(21, 21, 21, 0.06);
 `;
 
 const SectionTitle = styled.h2`
   margin: 0 0 8px;
   font-size: 1.05rem;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const CommentTypeIconWrapper = styled.span`
@@ -465,8 +465,8 @@ const CommentTypeIconWrapper = styled.span`
   min-height: 20px;
   margin-left: 4px;
   border-radius: 50%;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
+  border: 1.5px solid ${({ theme }) => theme.colors.yvote04};
+  background: ${({ theme }) => theme.colors.yvote01};
   box-sizing: border-box;
 `;
 
@@ -491,9 +491,9 @@ const BillArticleGroup = styled.details`
     gap: 6px;
     cursor: pointer;
     font-weight: 500;
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
     padding: 6px 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
   summary::-webkit-details-marker {
@@ -503,7 +503,7 @@ const BillArticleGroup = styled.details`
   summary::after {
     content: '▾';
     font-size: 0.85rem;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     margin-left: 4px;
   }
 
@@ -514,7 +514,7 @@ const BillArticleGroup = styled.details`
 
 const BillArticleContent = styled.div`
   padding: 8px 0 0;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
   word-break: break-word;
@@ -577,18 +577,18 @@ const DebateGrid = styled.div`
 
 const DebateSide = styled.div`
   padding: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
-  background: #fafafa;
+  background: ${({ theme }) => theme.colors.yvote01};
 `;
 
 const DebateLabel = styled.div`
   display: inline-block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   background: transparent;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid ${({ theme }) => theme.colors.yvote05};
   padding: 3px 10px;
   border-radius: 999px;
   margin-bottom: 10px;
@@ -598,9 +598,9 @@ const AmendmentBox = styled.div<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   margin-bottom: 16px;
   padding: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
-  background: #fafafa;
+  background: ${({ theme }) => theme.colors.yvote01};
 
   @media screen and (max-width: 768px) {
     display: ${({ $show }) => ($show ? 'block' : 'none')};
@@ -608,7 +608,7 @@ const AmendmentBox = styled.div<{ $show: boolean }>`
 `;
 
 const DebateContent = styled.div`
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 0.95rem;
   word-break: break-word;
@@ -623,8 +623,8 @@ const DebateContent = styled.div`
 const VoteSummarySection = styled.div`
   margin-bottom: 20px;
   padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
 `;
 
@@ -632,7 +632,7 @@ const VoteResultBadge = styled.div`
   text-align: center;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #334155;
+  color: ${({ theme }) => theme.colors.yvote11};
   margin-bottom: 12px;
 `;
 
@@ -653,12 +653,12 @@ const VoteItem = styled.div`
 const VoteCount = styled.span`
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const VoteCountLabel = styled.span`
   font-size: 0.8rem;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
 `;
 
 const VoteBar = styled.div`
@@ -666,7 +666,7 @@ const VoteBar = styled.div`
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: #f1f5f9;
+  background: ${({ theme }) => theme.colors.yvote01};
 `;
 
 const VoteBarSegment = styled.div<{ $width: number; $color: string }>`
@@ -680,13 +680,13 @@ const VoteDetailToggle = styled.button`
   margin: 12px auto 0;
   background: none;
   border: none;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
   font-size: 0.85rem;
   cursor: pointer;
   padding: 4px 8px;
 
   &:hover {
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
   }
 `;
 
@@ -700,20 +700,20 @@ const VoteDetailTable = styled.table`
     padding: 6px 8px;
     text-align: center;
     font-weight: 600;
-    color: #1e293b;
-    border-bottom: 1px solid #e2e8f0;
+    color: ${({ theme }) => theme.colors.yvote12};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
   td {
     padding: 6px 8px;
     text-align: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote01};
   }
 
   td:first-child {
     text-align: left;
     font-weight: 500;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
   }
 `;
 
@@ -736,10 +736,10 @@ const DebateTabs = styled.div`
 const DebateTab = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 8px 0;
-  border: 1.5px solid ${({ $active }) => ($active ? '#1e293b' : '#cbd5e1')};
+  border: 1.5px solid ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote05)};
   border-radius: 999px;
-  background: ${({ $active }) => ($active ? '#1e293b' : 'transparent')};
-  color: ${({ $active }) => ($active ? '#fff' : '#1e293b')};
+  background: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : 'transparent')};
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote01 : theme.colors.yvote12)};
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -748,10 +748,10 @@ const DebateTab = styled.button<{ $active: boolean }>`
 
 const DebateTabContent = styled.div`
   padding: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
-  background: #fafafa;
-  color: #1e293b;
+  background: ${({ theme }) => theme.colors.yvote01};
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 0.95rem;
   word-break: break-word;
@@ -775,7 +775,7 @@ const TimelineListItem = styled.li`
 
 const TimelineDate = styled.div`
   font-size: 0.95rem;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   font-weight: 400;
   display: flex;
   align-self: center;
@@ -788,7 +788,7 @@ const TimelineRow = styled.div`
   align-self: center;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
 `;
 
 const TimelineControls = styled.div`
@@ -803,12 +803,12 @@ const TimelineTypeRow = styled.div`
   gap: 8px;
   cursor: pointer;
   font-weight: 600;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
 
   &::after {
     content: '▾';
     font-size: 0.85rem;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     margin-left: 6px;
     transition: transform 0.18s;
   }
@@ -831,7 +831,7 @@ const TimelineIconButton = styled.button`
 
 const TimelineCountText = styled.span`
   font-size: 0.8rem;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
   font-weight: 500;
 `;
 
@@ -850,11 +850,11 @@ const TimelineExpandableGrid = styled.ul`
 
 const TimelineExpandableItem = styled.li`
   font-size: 0.85rem;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.4;
   margin-bottom: 0.25rem;
   padding: 3px 0;
-  border-left: 2px solid #e2e8f0;
+  border-left: 2px solid ${({ theme }) => theme.colors.yvote04};
   background: transparent;
   width: 100%;
   display: flex;
@@ -865,7 +865,7 @@ const TimelineExpandableItem = styled.li`
 `;
 
 const TimelineEmpty = styled.div`
-  color: #aaa;
+  color: ${({ theme }) => theme.colors.yvote07};
   text-align: center;
   padding: 1.5rem 0;
 `;
@@ -883,7 +883,7 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 8px;
   padding: 4px 0 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
 
   &:first-child {
     border-top: none;
@@ -894,7 +894,7 @@ const SummaryListItem = styled.li`
 const SummaryHtml = styled.div`
   display: inline;
   margin-left: 6px;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
 

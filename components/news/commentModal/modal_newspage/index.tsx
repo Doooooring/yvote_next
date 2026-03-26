@@ -29,7 +29,7 @@ export default function CommentModal({
 
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper>
+      <ModalBodyWrapper onClick={(e: React.MouseEvent<HTMLDivElement>) => { if (e.target === e.currentTarget) close(); }}>
         <ModalLayout
           close={close}
           headView={<CommentHead comment={commentType} />}

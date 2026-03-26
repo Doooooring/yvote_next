@@ -57,21 +57,36 @@ const Wrapper = styled.div<{ $expanded?: boolean }>`
   cursor: pointer;
 
   @media screen and (max-width: 768px) {
-    padding: 8px 2px;
+    padding: 8px 2px 8px 6px;
   }
 `;
 
 const CompactWrapper = styled(Wrapper)`
-  padding: 7px 0;
+  padding: 0;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1;
+  min-height: 38px;
+  display: flex;
+  justify-content: center;
 
   && .title {
     font-weight: 400;
+    font-size: 13px;
+    line-height: 38px;
+    -webkit-line-clamp: 1;
+    padding: 0;
+    margin: 0;
   }
 
   @media screen and (max-width: 768px) {
-    padding: 7px 0;
+    padding: 6px 0 6px 6px;
+    min-height: unset;
+
+    && .title {
+      font-size: 14px;
+      line-height: 1.3;
+      -webkit-line-clamp: 2;
+    }
   }
 `;
 
@@ -104,6 +119,7 @@ const HeadWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 4px;
+  overflow: hidden;
 `;
 
 const ContentWrapper = styled.div``;

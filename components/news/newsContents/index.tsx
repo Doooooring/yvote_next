@@ -172,13 +172,13 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
 const CommonHeadLine = styled.h4`
   font-size: 14px;
   font-weight: 600;
-  color: black;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const Wrapper = styled.div`
   width: 100%;
   border-width: 0px;
-  border-color: #000000;
+  border-color: ${({ theme }) => theme.colors.yvote13};
   border-style: solid;
   padding-top: 30px;
   padding-bottom: 160px;
@@ -225,17 +225,17 @@ const TabWrapper = styled.div<TabWrapperProps>`
   }
 
   span {
-    color: #666;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-weight: 700;
     padding: 0.2rem 0.6rem;
-    background-color: white;
+    background-color: ${({ theme }) => theme.colors.yvote01};
     border-radius: 5px;
-    border: 1px solid rgba(200, 200, 200, 0.5);
+    border: 1px solid ${({ theme }) => theme.colors.yvote05};
     box-shadow: 0px 0px 35px -30px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     &:hover {
-      background-color: #f0f0f0;
+      background-color: ${({ theme }) => theme.colors.yvote02};
     }
 
     &.show-next {
@@ -291,7 +291,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
       padding: 0;
       margin-left: auto;
       margin-right: auto;
-      border: 1px solid rgb(230, 230, 230);
+      border: 1px solid ${({ theme }) => theme.colors.yvote03};
       border-radius: 10px;
       @media screen and (max-width: 760px) {
         height: 160px;
@@ -333,7 +333,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         margin: 0.2em 0 1rem 0;
         line-height: 1.6em;
         span {
-          color: rgb(6, 6, 6);
+          color: ${({ theme }) => theme.colors.yvote13};
           min-height: 20.25px;
           img {
             margin: 0.1em 0 -0.1em 0;
@@ -351,7 +351,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
         width: 100%;
         font-size: 16px;
         line-height: 1.8;
-        color: rgb(30, 30, 30);
+        color: ${({ theme }) => theme.colors.yvote12};
         font-weight: 400;
         word-break: break-all;
         font-family: Noto Sans KR, Helvetica, sans-serif;
@@ -359,7 +359,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           margin: 10px 0 0 0;
           font-size: 16px;
           font-weight: 400;
-          color: rgb(150, 150, 150);
+          color: ${({ theme }) => theme.colors.yvote07};
         }
         .writer {
           & {
@@ -380,7 +380,7 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
               }
               em {
                 font-style: normal;
-                color: rgb(100, 100, 100) !important;
+                color: ${({ theme }) => theme.colors.yvote08} !important;
               }
               &:has(em) {
                 line-height: 1.7;
@@ -440,13 +440,13 @@ const BodyLeft = styled(CommonLayoutBox)<BodyProps>`
           text-decoration: none;
           font-size: 14px;
           font-weight: 500;
-          color: rgb(120, 120, 120);
+          color: ${({ theme }) => theme.colors.yvote08};
           margin: 0;
           margin-left: 3px;
           margin-right: 6px;
           margin-bottom: 6px;
           padding: 0.25rem 0.25rem;
-          background-color: #f1f2f5;
+          background-color: ${({ theme }) => theme.colors.yvote02};
           border-radius: 4px;
           cursor: pointer;
         }
@@ -494,7 +494,7 @@ const CommentWrapper = styled(CommonLayoutBox)`
     }
 
     div.comment {
-      background-color: white;
+      background-color: ${({ theme }) => theme.colors.yvote01};
       box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.25);
       border-radius: 200px;
       cursor: pointer;
@@ -518,7 +518,7 @@ const CommentBox = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 16px;
-  border: 1.5px solid rgb(240, 240, 240);
+  border: 1.5px solid ${({ theme }) => theme.colors.yvote03};
   border-radius: 12px;
   overflow: hidden;
 
@@ -532,21 +532,21 @@ const CommentBox = styled.div`
 
     .selected_comment {
       font-size: 14px;
-      color: rgb(80, 80, 80);
+      color: ${({ theme }) => theme.colors.yvote08};
     }
 
     .comment_box_footer_text {
       font-size: 12px;
       font-weight: 500;
-      color: rgb(30, 30, 30);
+      color: ${({ theme }) => theme.colors.yvote12};
       padding: 6px 12px;
-      border: 1px solid rgb(225, 225, 225);
+      border: 1px solid ${({ theme }) => theme.colors.yvote04};
       border-radius: 6px;
-      background-color: white;
+      background-color: ${({ theme }) => theme.colors.yvote01};
       cursor: pointer;
       transition: background-color 0.3s ease;
       &:hover {
-        background-color: #f0f0f0;
+        background-color: ${({ theme }) => theme.colors.yvote02};
       }
     }
   }
@@ -558,7 +558,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
   gap: 10px;
   padding: 1rem;
   margin-bottom: 1rem;
-  color: #717171;
+  color: ${({ theme }) => theme.colors.yvote08};
   .timeline {
     display: flex;
     padding-bottom: 0.4rem;
@@ -572,7 +572,7 @@ const TimelineWrapper = styled(CommonLayoutBox)`
       flex-direction: row;
       gap: 8px;
       .timeline_date {
-        color: black;
+        color: ${({ theme }) => theme.colors.yvote13};
         flex-shrink: 0;
       }
     }
@@ -601,7 +601,7 @@ const SummaryButton = styled.button<{ active: boolean; image: string }>`
 `;
 
 const SelectionContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.gray50 || '#f9f9f9'};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 20px;

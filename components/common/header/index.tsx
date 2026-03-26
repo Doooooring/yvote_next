@@ -115,7 +115,7 @@ const Hamburger = styled.div<HamburgerProps>`
     left: 0.5px;
     width: 20px;
     height: 1.5px;
-    background: black;
+    background: ${({ theme }) => theme.colors.yvote13};
   }
 
   div.line1 {
@@ -140,12 +140,12 @@ const Wrapper = styled.nav`
   justify-content: center;
   align-items: center;
   width: 100%;
-  box-shadow: 0px 0px 30px -25px;
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 9999;
-  background-color: white;
-  border-bottom: 2px solid white;
+  background-color: ${({ theme }) => theme.colors.yvote04};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote06};
 
   @media screen and (max-width: 768px) {
     display: none;
@@ -204,7 +204,7 @@ const HomeLink = styled(Link)<homeLinkProps>`
   justify-content: center;
   padding: 0 10px;
   white-space: nowrap;
-  color: ${({ $state }) => ($state ? 'rgb(114, 190, 218) !important' : '#747272')};
+  color: ${({ $state, theme }) => ($state ? theme.colors.yvote13 : theme.colors.yvote08)};
   text-decoration: none;
   font: inherit;
   font-size: 1rem;
@@ -267,10 +267,10 @@ const NavigationBox = styled.div`
     flex-direction: column;
 
     width: 100%;
-    background-color: white;
+    background-color: ${({ theme }) => theme.colors.yvote04};
     padding: 1rem;
     margin: 0;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     gap: 1rem;
     // height: auto;
   }

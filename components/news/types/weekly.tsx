@@ -5,6 +5,7 @@ import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/commen
 import { getDotDateForm } from '@utils/tools/date';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { NewsTypeLayoutProps } from './default';
+import TimelineList, { CommentTypeIcon } from '@components/news/timeline';
 
 export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -172,7 +173,7 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
 const CabinetWrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
   justify-content: center;
   padding: 16px 0 40px;
@@ -181,7 +182,7 @@ const CabinetWrapper = styled.div`
 const CabinetContent = styled.div`
   width: 98%;
   max-width: 1120px;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 
   @media screen and (max-width: 768px) {
     max-width: none;
@@ -189,12 +190,12 @@ const CabinetContent = styled.div`
 `;
 
 const CabinetHeader = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 22px;
   display: block;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
 
   .header-text h1 {
     margin: 8px 0 6px;
@@ -203,7 +204,7 @@ const CabinetHeader = styled.section`
   }
 
   .subtitle {
-    color: #475569;
+    color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
   }
@@ -213,7 +214,7 @@ const CabinetHeader = styled.section`
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-size: 0.9rem;
   }
 `;
@@ -228,8 +229,8 @@ const CommentIconButton = styled.button<{ image: string }>`
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   background-image: url(${({ image }) => image});
   background-size: 14px 14px;
   background-position: center;
@@ -246,17 +247,17 @@ const CabinetGrid = styled.div`
 `;
 
 const CabinetCard = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(21, 21, 21, 0.06);
 `;
 
 const SectionTitle = styled.h2`
   margin: 0 0 8px;
   font-size: 1.05rem;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const ViewToggle = styled.div`
@@ -268,23 +269,23 @@ const ViewToggle = styled.div`
 const ViewToggleButton = styled.button`
   padding: 4px 12px;
   font-size: 0.82rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 999px;
-  background: #fff;
-  color: #64748b;
+  background: ${({ theme }) => theme.colors.yvote01};
+  color: ${({ theme }) => theme.colors.yvote08};
   cursor: pointer;
   font-weight: 500;
   transition: all 0.15s;
 
   &[data-active='true'] {
-    background: #0f172a;
-    color: #fff;
-    border-color: #0f172a;
+    background: ${({ theme }) => theme.colors.yvote13};
+    color: ${({ theme }) => theme.colors.yvote01};
+    border-color: ${({ theme }) => theme.colors.yvote13};
   }
 `;
 
 const PlaceholderText = styled.p`
-  color: #94a3b8;
+  color: ${({ theme }) => theme.colors.yvote07};
   text-align: center;
   padding: 2rem 0;
   font-size: 0.95rem;
@@ -301,7 +302,7 @@ const DateLabel = styled.span`
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
   margin-bottom: 2px;
 `;
 
@@ -312,9 +313,9 @@ const DateGroup = styled.div`
 const DateHeader = styled.div`
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
   padding: 8px 0 2px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   margin-bottom: 4px;
 `;
 
@@ -331,218 +332,6 @@ function formatSummaryDate(date: string) {
 }
 
 
-// --- TimelineList: compact, expandable, grouped by date, icons with count, expandable by icon click, default to 기타(others) ---
-
-
-const CommentTypeIcon = ({ type }: { type: commentType }) => (
-  <CommentTypeIconWrapper>
-    <img
-      src={commentTypeImg(type)}
-      alt={type}
-      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
-    />
-  </CommentTypeIconWrapper>
-);
-
-const CommentTypeIconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  margin-left: 4px;
-  border-radius: 50%;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
-  box-sizing: border-box;
-`;
-
-type TimelineItem = { title: string; type: commentType };
-type TimelineListProps = {
-  timeline: [string, TimelineItem[]][];
-};
-
-const TimelineList = ({ timeline }: TimelineListProps) => {
-  if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
-  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-
-  // Extract years from all dates (assuming format 'YYYY.MM.DD' or 'YYYY-MM-DD')
-  const currentYear = new Date().getFullYear().toString();
-
-  // Helper to format date string to Korean style
-  function formatKoreanDate(date: string) {
-    // Accepts 'YYYY.MM.DD' or 'YYYY-MM-DD' or 'MM.DD' or 'MM-DD'
-    const match = date.match(/^(?:(\d{4})[.\-])?(\d{1,2})[.\-](\d{1,2})/);
-    if (!match) return date;
-    const [, year, month, day] = match;
-    if (year && year !== currentYear) {
-      return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-    }
-    return `${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-
-  return (
-    <TimelineListLayout>
-      {timeline.map(([date, items]) => {
-        const displayDate = formatKoreanDate(date);
-        const count = items.length;
-        const isOpen = !!expanded[date];
-        return (
-          <TimelineListItem key={date}>
-            <TimelineRow>
-              <TimelineDate>{displayDate}</TimelineDate>
-              <TimelineControls>
-                <TimelineTypeRow
-                  data-open={isOpen}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setExpanded((prev) => ({ ...prev, [date]: !isOpen }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setExpanded((prev) => ({ ...prev, [date]: !isOpen }));
-                    }
-                  }}
-                  aria-label={isOpen ? '접기' : '펼치기'}
-                >
-                  <TimelineIconButton aria-hidden="true">
-                    <TimelineCountText>
-                      {count}건
-                    </TimelineCountText>
-                  </TimelineIconButton>
-                </TimelineTypeRow>
-              </TimelineControls>
-            </TimelineRow>
-            {isOpen && (
-              <TimelineExpandableGrid>
-                {items.map((item, idx) => (
-                  <TimelineExpandableItem key={`${date}-${idx}`}>
-                    <CommentTypeIcon type={item.type} /> {item.title}
-                  </TimelineExpandableItem>
-                ))}
-              </TimelineExpandableGrid>
-            )}
-          </TimelineListItem>
-        );
-      })}
-    </TimelineListLayout>
-  );
-};
-
-const TimelineListLayout = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-
-const TimelineListItem = styled.li`
-  padding: 0 0 1rem;
-`;
-
-const TimelineDate = styled.div`
-  font-size: 0.95rem;
-  color: #1e293b;
-  font-weight: 400;
-  display: flex;
-  align-self: center;
-  align-items: center;
-  line-height: 1.2;
-`;
-
-const TimelineRow = styled.div`
-  display: flex;
-  align-self: center;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
-`;
-
-const TimelineControls = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-`;
-
-
-const TimelineTypeRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #1e293b;
-
-  &::after {
-    content: '▾';
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-left: 6px;
-    transition: transform 0.18s;
-  }
-
-  &[data-open='true']::after {
-    transform: rotate(180deg);
-  }
-`;
-
-const TimelineIconButton = styled.button`
-  display: flex;
-  align-items: center;
-  align-self: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-`;
-
-
-const TimelineCountText = styled.span`
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
-`;
-
-
-const TimelineExpandableGrid = styled.ul`
-  list-style: none;
-  margin: 0.5rem 0 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px 10px;
-  width: 100%;
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TimelineExpandableItem = styled.li`
-  font-size: 0.85rem;
-  color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-  padding: 3px 0;
-  border-left: 2px solid #e2e8f0;
-  background: transparent;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-`;
-
-const TimelineEmpty = styled.div`
-  color: #aaa;
-  text-align: center;
-  padding: 1.5rem 0;
-`;
-
-
 const SummaryList = styled.ul`
   list-style: none;
   padding: 0;
@@ -554,7 +343,7 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 20px;
   padding: 16px 0 16px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
 
   &:first-child {
     border-top: none;
@@ -564,7 +353,7 @@ const SummaryListItem = styled.li`
 const SummaryHtml = styled.div`
   display: inline;
   margin-left: 6px;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
 

@@ -70,7 +70,7 @@ const ModalBody = styled.div`
 
   height: 580px;
   margin-top: 0.4rem;
-  padding-top: 0.4rem;
+  padding-top: 0;
   border-top: 1px solid ${({ theme }) => theme.colors.yvote03};
   border-bottom: 1px solid ${({ theme }) => theme.colors.yvote03};
   position: relative;

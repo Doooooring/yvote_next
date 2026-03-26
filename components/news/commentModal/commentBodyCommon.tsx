@@ -8,7 +8,7 @@ import LoadingCommon from '@components/common/loading';
 import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { Comment, commentType } from '@utils/interface/news';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import styled from 'styled-components';
 import CommentBodyExplain from './commentBodyExplain';
@@ -91,7 +91,129 @@ export default function CommentBodyCommon({
     }
   };
 
+  // === Refs for history/popstate ===
+  const curCommentRef = useRef(curComment);
+  curCommentRef.current = curComment;
+  const closeRef = useRef(close);
+  closeRef.current = close;
+  const historyCount = useRef(0);
+  // When we programmatically call history.back(), skip the next popstate
+  const skipPopState = useRef(0);
+
+  // Save the history state before we push anything, so we can restore on cleanup
+  const originalHistoryLength = useRef(0);
+
+  const pushState = () => {
+    historyCount.current++;
+    window.history.pushState({ commentModal: historyCount.current }, '');
+  };
+
+  const popOwnStateSilently = () => {
+    if (historyCount.current > 0) {
+      historyCount.current--;
+      skipPopState.current++;
+      window.history.back();
+    }
+  };
+
+  // On mount: push 1 state. On unmount: use go(-N) to pop all at once.
   useEffect(() => {
+    originalHistoryLength.current = window.history.length;
+    pushState();
+
+    const handlePopState = () => {
+      if (skipPopState.current > 0) {
+        skipPopState.current--;
+        return; // This was a programmatic pop, ignore
+      }
+
+      historyCount.current--;
+
+      if (curCommentRef.current !== null) {
+        // Detail → list via back button. Browser already popped one state.
+        // Mark so useEffect[curComment] doesn't also pop.
+        backCausedExit.current = true;
+        curCommentRef.current = null;
+        setCurComment(null);
+        reloadScrollHeight();
+      } else {
+        // List → close
+        closeRef.current();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      // Clean up pushed states on unmount.
+      // Use stopImmediatePropagation to prevent Next.js router from seeing the popstate.
+      const count = historyCount.current;
+      historyCount.current = 0;
+      if (count > 0) {
+        // history.go(-N) fires exactly 1 popstate event regardless of N.
+        // Block it at capture phase to prevent Next.js router from reacting.
+        const blocker = (e: PopStateEvent) => {
+          e.stopImmediatePropagation();
+          window.removeEventListener('popstate', blocker, true);
+        };
+        window.addEventListener('popstate', blocker, true);
+        window.history.go(-count);
+      }
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // Track detail enter/leave for history push/pop
+  // Track whether back-button caused the detail→list transition
+  const backCausedExit = useRef(false);
+  const wasInDetail = useRef(false);
+  useEffect(() => {
+    const nowInDetail = curComment !== null;
+    if (!wasInDetail.current && nowInDetail) {
+      // List → detail (user clicked a comment): push state
+      pushState();
+    } else if (wasInDetail.current && !nowInDetail && !backCausedExit.current) {
+      // Detail → list via programmatic nav (not back button): pop state
+      popOwnStateSilently();
+    }
+    backCausedExit.current = false;
+    wasInDetail.current = nowInDetail;
+  }, [curComment]);
+
+  // Keyboard: ArrowLeft/Right for nav, Escape/Alt+Left for back
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.altKey && e.key === 'ArrowLeft') || e.key === 'Escape') {
+        e.preventDefault();
+        if (curCommentRef.current !== null) {
+          setCurComment(null);
+          reloadScrollHeight();
+        } else {
+          close();
+        }
+        return;
+      }
+
+      if (curCommentRef.current !== null) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); getPrevComment(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); getNextComment(); }
+      } else {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          getPageBefore().then((res) => { if (res) moveToScrollHeight(0); });
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          if (hasMore) getPageAfter().then((res) => { if (res) moveToScrollHeight(0); });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [curComment, commentIndex, curComments, hasMore, page]);
+
+  // Reset curComment and scroll when switching comment type
+  useEffect(() => {
+    moveToScrollHeight(0);
     return () => {
       setCurComment(null);
     };

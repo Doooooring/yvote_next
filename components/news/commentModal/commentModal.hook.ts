@@ -15,13 +15,15 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   async function fetchNewsComment(offset: number): Promise<Comment[] | null> {
     try {
       setIsRequesting(true);
-      const response = await newsRepository.getNewsComment(id, comment!, offset, PAGE_SIZE);
+      const response = await newsRepository.getNewsComment(id, comment!, offset, PAGE_SIZE + 1);
       if (!response || response.length == 0) {
         return null;
       } else {
-        setCurComments(response);
-        setHasMore(response.length >= PAGE_SIZE);
-        return response;
+        const hasNextPage = response.length > PAGE_SIZE;
+        const pageComments = hasNextPage ? response.slice(0, PAGE_SIZE) : response;
+        setCurComments(pageComments);
+        setHasMore(hasNextPage);
+        return pageComments;
       }
     } catch (e) {
       console.log(e);

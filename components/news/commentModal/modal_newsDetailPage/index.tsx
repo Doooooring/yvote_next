@@ -15,7 +15,7 @@ export function CommentModal({
 }) {
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper>
+      <ModalBodyWrapper onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
         <CommentBodyCommon id={id} commentType={commentType} close={close} />
       </ModalBodyWrapper>
     </CommonModalLayout>

@@ -89,7 +89,7 @@ const LoadingWrapper = styled.div`
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
+  gap: 0 10px;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;

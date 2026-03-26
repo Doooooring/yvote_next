@@ -65,13 +65,13 @@ export default function NewsPage(props: pageProps) {
     <>
       <HeadMeta
         {...{
-          title: '뉴스 아카이브',
+          title: '뉴스 모아보기',
           url: `https://yvoting.com/news`,
         }}
       />
       <Wrapper>
         {/* <PageHeader>
-          <PageTitle>뉴스 아카이브</PageTitle>
+          <PageTitle>뉴스 모아보기</PageTitle>
           <PageSubtitle>yVote에서 발행한 뉴스를 모아봅니다</PageSubtitle>
         </PageHeader> */}
 
@@ -207,9 +207,9 @@ export default function NewsPage(props: pageProps) {
                         startTransition(() => setAllTitleSearch(allTitleSearchInput));
                       }
                     }}
-                    aria-label="발행 완료 뉴스 제목 검색"
+                    aria-label="발행 완료 제목 검색"
                   />
-                  <SearchButton type="submit" aria-label="발행 완료 뉴스 검색">
+                  <SearchButton type="submit" aria-label="발행 완료 검색">
                     <SearchIcon src="/assets/img/ico_search.png" alt="" />
                   </SearchButton>
                 </SearchBox>
@@ -365,7 +365,7 @@ const MainContent = styled.div`
 const SectionContainer = styled.section`
   background: transparent;
   border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
-  padding: 20px 0;
+  padding: 12px 0;
   margin-bottom: 24px;
   position: relative;
 
@@ -401,10 +401,10 @@ const SectionTitle = styled.h2`
 const Divider = styled.hr`
   border: none;
   border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
-  margin: 6px 0 0;
+  margin: 6px 0 6px;
 
   @media screen and (max-width: 768px) {
-    margin: 4px 0 0;
+    margin: 4px 0 4px;
   }
 `;
 

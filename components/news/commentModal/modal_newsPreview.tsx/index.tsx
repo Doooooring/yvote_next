@@ -22,7 +22,7 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
 
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper>
+      <ModalBodyWrapper onClick={(e: React.MouseEvent<HTMLDivElement>) => { if (e.target === e.currentTarget) close(); }}>
         {commentTypes.length > 0 && (
           <>
             <CommentButtons>
@@ -70,15 +70,11 @@ const _ModalBodyWrapper = styled.div`
 `;
 
 const CommentButtons = styled.div`
-  position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 0.3rem;
-
   display: flex;
   flex-direction: row;
+  justify-content: center;
   gap: 4px;
+  padding: 0.3rem 0 0.5rem;
 `;
 
 const CommentButton = styled(CommonIconButton)<{ $selected: boolean }>`

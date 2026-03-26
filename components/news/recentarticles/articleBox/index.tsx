@@ -11,9 +11,10 @@ interface ArticleBoxProps {
   showLogo?: boolean;
   isExpanded?: boolean;
   onToggle?: () => void;
+  column?: 'left' | 'right';
 }
 
-export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle }: ArticleBoxProps) {
+export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle, column }: ArticleBoxProps) {
   const { news, commentType, title, comment, date } = article;
   const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(comment);
 
@@ -52,7 +53,7 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
         </div>
       </LinkWrapper>
       {isExpanded && comment && (
-        <Dropdown>
+        <Dropdown $column={column}>
           <DropdownHeader>
             <DropdownTitle>{title}</DropdownTitle>
           </DropdownHeader>
@@ -85,7 +86,7 @@ const ArticleRow = styled.div`
   position: relative;
 `;
 
-const Dropdown = styled.div`
+const Dropdown = styled.div<{ $column?: 'left' | 'right' }>`
   background-color: ${({ theme }) => theme.colors.yvote02};
   border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-top: none;
@@ -96,6 +97,11 @@ const Dropdown = styled.div`
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  @media screen and (min-width: 769px) {
+    width: 180%;
+    ${({ $column }) => $column === 'right' ? 'margin-left: -80%;' : ''}
   }
 `;
 

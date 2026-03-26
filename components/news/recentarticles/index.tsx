@@ -63,7 +63,7 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
           <GridContainer curView={curView} $offset={!isAll}>
             {filteredArticles
               .slice(curView * numToShow, (curView + 1) * numToShow)
-              .map((article) => {
+              .map((article, idx) => {
                 return (
                   <ArticleBox
                     key={article.id}
@@ -71,6 +71,7 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
                     showLogo={isAll}
                     isExpanded={expandedId === article.id}
                     onToggle={() => setExpandedId(expandedId === article.id ? null : article.id)}
+                    column={idx < 5 ? 'left' : 'right'}
                   />
                 );
               })}

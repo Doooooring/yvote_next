@@ -2,7 +2,7 @@ import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commo
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import Link from 'next/link';
 import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
-import { commentTypeImg } from '@utils/interface/news/comment';
+import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineBell, AiFillBell } from 'react-icons/ai';
@@ -48,21 +48,25 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
       return (
         <PreviewWrapper
           href={`/news/${id}`}
-          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+          navigable={!openModalOnClick}
+          onClick={(e?: MouseEvent<HTMLElement>) => {
+            if (openModalOnClick) {
+              openComments();
+              return;
+            }
             click(id, e);
             return;
           }}
         >
           <PreviewBoxLayout_Published
             expanded={expanded}
-            headView={<_NewsTitle title={title} id={id} showId={showId} />}
+            headView={<_NewsTitle title={title} id={id} showId={showId} newsType={newsType} />}
             contentView={
               <>
                 <_NewsSubTitle
                   summary={summary}
                   subTitle={subTitle}
                   expanded={expanded}
-                  newsType={newsType}
                 />
                 <RowWrapper>
                   <_NewsDate date={date} />
@@ -72,14 +76,18 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                       openComments();
                     }}
                   />
+                  <BottomButtonRow>
+                    <_AlarmButton />
+                    <_VoteButton />
+                  </BottomButtonRow>
                 </RowWrapper>
               </>
             }
             sideView={
-              <SideButtonStack>
+              <MobileSideButtonStack>
                 <_AlarmButton />
                 <_VoteButton />
-              </SideButtonStack>
+              </MobileSideButtonStack>
             }
           />
         </PreviewWrapper>
@@ -89,7 +97,8 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
       return (
         <PreviewWrapper
           href={`/adminjae/${id}`}
-          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+          navigable={!openModalOnClick}
+          onClick={(e?: MouseEvent<HTMLElement>) => {
             if (openModalOnClick) {
               openComments();
               return;
@@ -118,9 +127,11 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
   }
 }
 
-const _NewsTitle = ({ title, id, showId }: { title: Preview['title']; id?: number; showId?: boolean }) => {
+const _NewsTitle = ({ title, id, showId, newsType }: { title: Preview['title']; id?: number; showId?: boolean; newsType?: NewsType }) => {
+  const typeLabel = newsType ? newsTypesToKor(newsType) : '';
   return (
     <Title>
+      {typeLabel && <TypeBadge>{typeLabel}</TypeBadge>}
       <div className="title">
         {title}
         {showId && id !== undefined && <IdSpan> [{id}] </IdSpan>}
@@ -133,15 +144,11 @@ const _NewsSubTitle = ({
   summary,
   subTitle,
   expanded = false,
-  newsType,
 }: {
   summary: Preview['summary'];
   subTitle: Preview['subTitle'];
   expanded?: boolean;
-  newsType: NewsType;
 }) => {
-  const overlayText = newsType ? newsTypesToKor(newsType) : '';
-  const [hideOverlay, setHideOverlay] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -154,13 +161,7 @@ const _NewsSubTitle = ({
   }, [subTitle]);
 
   return (
-    <SubTitle
-      $expanded={expanded}
-      $showOverlay={expanded && !hideOverlay}
-      $overlayText={overlayText}
-      data-overlay={overlayText}
-      onTouchStart={() => setHideOverlay(true)}
-    >
+    <SubTitle $expanded={expanded}>
       <span className="subtitle-text" ref={textRef} style={isExpanded ? { WebkitLineClamp: 'unset' } : undefined}>
         {subTitle || ''}
       </span>
@@ -196,12 +197,13 @@ const _CommentButtons = ({
 
   return (
     <SummaryButtons>
-      {comments.map((commentType, index) => (
+      {sortComment([...comments]).map((commentType, index) => (
         <SummaryButton
           key={index}
           zindex={10 - index}
           image={commentTypeImg(commentType)}
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
             (e.nativeEvent as any).stopImmediatePropagation?.();
             openComments(commentType);
@@ -220,25 +222,36 @@ const PreviewWrapper = ({
   href,
   onClick,
   children,
+  navigable = true,
 }: {
   href: string;
-  onClick: (e?: MouseEvent<HTMLDivElement>) => void;
+  onClick: (e?: MouseEvent<HTMLElement>) => void;
   children: ReactNode;
+  navigable?: boolean;
 }) => {
-  return (
-    <>
+  if (navigable) {
+    return (
       <Wrapper
-        onClick={(e: MouseEvent<HTMLDivElement>) => {
+        as="a"
+        href={href}
+        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
           e.preventDefault();
           onClick(e);
         }}
       >
         {children}
-        <Link href={href}>
-          <></>
-        </Link>
       </Wrapper>
-    </>
+    );
+  }
+  return (
+    <Wrapper
+      onClick={(e: MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
+      {children}
+    </Wrapper>
   );
 };
 
@@ -258,11 +271,24 @@ const Wrapper = styled.div`
   }
 `;
 
-const SideButtonStack = styled.div`
+const BottomButtonRow = styled.div`
+  display: none;
+  @media screen and (min-width: 769px) {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+`;
+
+const MobileSideButtonStack = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
   border-left: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+
+  @media screen and (min-width: 769px) {
+    display: none;
+  }
 `;
 
 const _VoteButton = () => {
@@ -283,16 +309,26 @@ const _VoteButton = () => {
 
 const VoteToggle = styled.button<{ $active: boolean }>`
   width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
-  padding: 0 4px;
+  padding: 0;
   cursor: pointer;
   color: ${({ $active, theme }) => ($active ? '#c0392b' : theme.colors.yvote06)};
-  flex: 1;
+
+  @media screen and (max-width: 768px) {
+    height: auto;
+    flex: 1;
+    border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+  }
+
+  @media screen and (min-width: 769px) {
+    border-top: none;
+  }
 `;
 
 const _AlarmButton = () => {
@@ -313,19 +349,43 @@ const _AlarmButton = () => {
 
 const AlarmToggle = styled.button<{ $active: boolean }>`
   width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
-  padding: 0 4px;
+  padding: 0;
   cursor: pointer;
   color: ${({ $active, theme }) => ($active ? theme.colors.yvote11 : theme.colors.yvote06)};
-  flex: 1;
+
+  @media screen and (max-width: 768px) {
+    height: auto;
+    flex: 1;
+  }
+`;
+
+const TypeBadge = styled.span`
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote08};
+  background: ${({ theme }) => theme.colors.yvote03};
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 6px;
+  white-space: nowrap;
+  line-height: 1.3;
+
+  @media screen and (max-width: 768px) {
+    font-size: 10px;
+    padding: 1px 4px;
+    margin-right: 4px;
+  }
 `;
 
 const IdSpan = styled.span`
-  color: #3b82f6; /* very slight blue, adjust as needed */
+  color: #3b82f6;
   font-weight: 500;
 `;
 
@@ -333,6 +393,7 @@ const Title = styled(Row)`
   border: 0;
   margin: 0;
   line-height: 1;
+  align-items: center;
 
   .title {
     flex: 0 1 auto;
@@ -379,7 +440,7 @@ const MoreButton = styled.button`
   }
 `;
 
-const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string }>`
+const SubTitle = styled.div<{ $expanded?: boolean }>`
   -webkit-text-size-adjust: none;
   text-align: left;
   padding: 0;
@@ -406,35 +467,6 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
     font-size: 13px;
     line-height: 20px;
     min-height: 40px;
-  }
-
-  ${({ $showOverlay }) =>
-    $showOverlay
-      ? `
-    &::after {
-      content: attr(data-overlay);
-      position: absolute;
-      inset: 0;
-      background-color: ${({ theme }) => theme.colors.yvote02}e6;
-      opacity: 1;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #334155;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-shadow: 0 1px 1px rgba(15, 23, 42, 0.08);
-    }
-    &:hover::after {
-      opacity: 0;
-    }
-  `
-      : ''}
-  @media screen and (max-width: 768px) {
     color: rgb(100, 100, 100);
     font-size: 13.5px;
   }

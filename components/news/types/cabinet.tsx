@@ -7,6 +7,7 @@ import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/commen
 import { getDotDateForm } from '@utils/tools/date';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { NewsTypeLayoutProps } from './default';
+import TimelineList, { CommentTypeIcon } from '@components/news/timeline';
 
 export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -59,7 +60,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
 
   // Dummy data for fallback (match real timeline item shape: { title, type })
   const dummyTimeline = [
-    ['2020.02.01', [{ title: '국무회의 타임라인 없음', type: COMMENT_TYPE_OTHERS }]],
+    ['2020.02.01', [{ title: '국무회의 타임라인 없음', type: commentType.기타 }]],
   ] as [string, { title: string; type: commentType }[]][];
   const dummyAgenda: AgendaGroupShape[] = [
     { title: '법률공포안', items: ['법률공포안1', '법률공포안2'] },
@@ -273,7 +274,7 @@ function parseAgendaGroups(raw: string): AgendaGroupShape[] {
 const CabinetWrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
   justify-content: center;
   padding: 16px 0 40px;
@@ -282,7 +283,7 @@ const CabinetWrapper = styled.div`
 const CabinetContent = styled.div`
   width: 98%;
   max-width: 1120px;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 
   @media screen and (max-width: 768px) {
     max-width: none;
@@ -290,12 +291,12 @@ const CabinetContent = styled.div`
 `;
 
 const CabinetHeader = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 22px;
   display: block;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
 
   .header-text h1 {
     margin: 8px 0 6px;
@@ -304,7 +305,7 @@ const CabinetHeader = styled.section`
   }
 
   .subtitle {
-    color: #475569;
+    color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
   }
@@ -314,7 +315,7 @@ const CabinetHeader = styled.section`
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-size: 0.9rem;
   }
 `;
@@ -329,8 +330,8 @@ const CommentIconButton = styled.button<{ image: string }>`
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   background-image: url(${({ image }) => image});
   background-size: 14px 14px;
   background-position: center;
@@ -347,254 +348,25 @@ const CabinetGrid = styled.div`
 `;
 
 const CabinetCard = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 5px;
   padding: 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(21, 21, 21, 0.06);
 `;
 
 const SectionTitle = styled.h2`
   margin: 0 0 8px;
   font-size: 1.05rem;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const Paragraph = styled.p`
   margin: 0;
-  color: #475569;
+  color: ${({ theme }) => theme.colors.yvote09};
   line-height: 1.7;
 `;
 
-
-// --- TimelineList: compact, expandable, grouped by date, icons with count, expandable by icon click, default to 기타(others) ---
-
-
-const COMMENT_TYPE_OTHERS = commentType.기타;
-
-const CommentTypeIcon = ({ type }: { type: commentType }) => (
-  <CommentTypeIconWrapper>
-    <img
-      src={commentTypeImg(type)}
-      alt={type}
-      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
-    />
-  </CommentTypeIconWrapper>
-);
-
-const CommentTypeIconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  margin-left: 4px;
-  border-radius: 50%;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
-  box-sizing: border-box;
-`;
-
-type TimelineItem = { title: string; type: commentType };
-type TimelineListProps = {
-  timeline: [string, TimelineItem[]][];
-};
-
-const TimelineList = ({ timeline }: TimelineListProps) => {
-  if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
-  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-
-  // Extract years from all dates (assuming format 'YYYY.MM.DD' or 'YYYY-MM-DD')
-  const currentYear = new Date().getFullYear().toString();
-
-  // Helper to format date string to Korean style
-  function formatKoreanDate(date: string) {
-    // Accepts 'YYYY.MM.DD' or 'YYYY-MM-DD' or 'MM.DD' or 'MM-DD'
-    const match = date.match(/^(?:(\d{4})[.\-])?(\d{1,2})[.\-](\d{1,2})/);
-    if (!match) return date;
-    const [, year, month, day] = match;
-    if (year && year !== currentYear) {
-      return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-    }
-    return `${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-
-  return (
-    <TimelineListLayout>
-      {timeline.map(([date, items]) => {
-        const displayDate = formatKoreanDate(date);
-
-        // group items by comment type for this date
-        const groups: Record<string, TimelineItem[]> = {};
-        items.forEach((it) => {
-          const key = it.type ?? COMMENT_TYPE_OTHERS;
-          if (!groups[key]) groups[key] = [];
-          groups[key].push(it);
-        });
-
-        const count = items.length;
-        const isOpen = !!expanded[date];
-        return (
-          <TimelineListItem key={date}>
-            <TimelineRow>
-              <TimelineDate>{displayDate}</TimelineDate>
-              <TimelineControls>
-                <TimelineTypeRow
-                  data-open={isOpen}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setExpanded((prev) => ({ ...prev, [date]: !isOpen }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setExpanded((prev) => ({ ...prev, [date]: !isOpen }));
-                    }
-                  }}
-                  aria-label={isOpen ? '접기' : '펼치기'}
-                >
-                  <TimelineIconButton aria-hidden="true">
-                    <TimelineCountText>
-                      {count}건
-                    </TimelineCountText>
-                  </TimelineIconButton>
-                </TimelineTypeRow>
-              </TimelineControls>
-            </TimelineRow>
-            {isOpen && (
-              <TimelineExpandableGrid>
-                {items.map((item, idx) => (
-                  <TimelineExpandableItem key={`${date}-${idx}`}>
-                    <CommentTypeIcon type={item.type} /> {item.title}
-                  </TimelineExpandableItem>
-                ))}
-              </TimelineExpandableGrid>
-            )}
-          </TimelineListItem>
-        );
-      })}
-    </TimelineListLayout>
-  );
-};
-
-const TimelineListLayout = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-
-const TimelineListItem = styled.li`
-  padding: 0 0 1rem;
-`;
-
-const TimelineDate = styled.div`
-  font-size: 0.95rem;
-  color: #1e293b;
-  font-weight: 400;
-  display: flex;
-  align-self: center;
-  align-items: center;
-  line-height: 1.2;
-`;
-
-const TimelineRow = styled.div`
-  display: flex;
-  align-self: center;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
-`;
-
-const TimelineTypesColumn = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-const TimelineControls = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-`;
-
-
-const TimelineTypeRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #1e293b;
-
-  &::after {
-    content: '▾';
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-left: 6px;
-    transition: transform 0.18s;
-  }
-
-  &[data-open='true']::after {
-    transform: rotate(180deg);
-  }
-`;
-
-const TimelineIconButton = styled.button`
-  display: flex;
-  align-items: center;
-  align-self: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-`;
-
-
-const TimelineCountText = styled.span`
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
-`;
-
-
-const TimelineExpandableGrid = styled.ul`
-  list-style: none;
-  margin: 0.5rem 0 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px 10px;
-  width: 100%;
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TimelineExpandableItem = styled.li`
-  font-size: 0.85rem;
-  color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-  padding: 3px 0;
-  border-left: 2px solid #e2e8f0;
-  background: transparent;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-`;
-
-const TimelineEmpty = styled.div`
-  color: #aaa;
-  text-align: center;
-  padding: 1.5rem 0;
-`;
 
 const AgendaGroups = styled.div`
   display: flex;
@@ -615,9 +387,9 @@ const AgendaGroup = styled.details`
     gap: 6px;
     cursor: pointer;
     font-weight: 500;
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
     padding: 6px 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
   summary::-webkit-details-marker {
@@ -627,7 +399,7 @@ const AgendaGroup = styled.details`
   summary::after {
     content: '▾';
     font-size: 0.85rem;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     margin-left: 4px;
   }
 
@@ -637,7 +409,7 @@ const AgendaGroup = styled.details`
 
   .count {
     font-size: 0.8rem;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-weight: 500;
     margin-left: 6px;
   }
@@ -658,7 +430,7 @@ const AgendaItems = styled.ul`
 
   li {
     padding: 3px 0 3px 8px;
-    border-left: 2px solid #e2e8f0;
+    border-left: 2px solid ${({ theme }) => theme.colors.yvote04};
     background: transparent;
     width: 100%;
     align-self: start;
@@ -666,7 +438,7 @@ const AgendaItems = styled.ul`
 
   p {
     margin: 0;
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
     line-height: 1.4;
     font-size: 0.85rem;
     word-break: keep-all;
@@ -685,7 +457,7 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 8px;
   padding: 4px 0 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
 
   &:first-child {
     border-top: none;
@@ -696,7 +468,7 @@ const SummaryListItem = styled.li`
 const SummaryHtml = styled.div`
   display: inline;
   margin-left: 6px;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
 
@@ -740,8 +512,8 @@ const SummaryButton = styled.button<{ image: string }>`
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  background-color: ${({ theme }) => theme.colors.yvote01};
   background-image: url(${({ image }) => image});
   background-size: 16px 16px;
   background-position: center;
@@ -750,8 +522,8 @@ const SummaryButton = styled.button<{ image: string }>`
   padding: 0;
 
   &[data-active='true'] {
-    border-color: #0f172a;
-    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.12);
+    border-color: ${({ theme }) => theme.colors.yvote13};
+    box-shadow: 0 0 0 2px rgba(21, 21, 21, 0.12);
   }
 `;
 
@@ -765,8 +537,8 @@ const SummaryContent = styled.div`
     display: inline-block;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #0f172a;
-    background: #e2e8f0;
+    color: ${({ theme }) => theme.colors.yvote13};
+    background: ${({ theme }) => theme.colors.yvote04};
     padding: 4px 8px;
     border-radius: 999px;
     margin-bottom: 8px;
@@ -774,7 +546,7 @@ const SummaryContent = styled.div`
   }
 
   .summary-html {
-    color: #475569;
+    color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     font-size: 1rem;
 
@@ -804,7 +576,7 @@ const SummaryContent = styled.div`
 
     strong {
       font-weight: 400;
-      color: #1e293b;
+      color: ${({ theme }) => theme.colors.yvote12};
     }
 
     em {
@@ -812,7 +584,7 @@ const SummaryContent = styled.div`
     }
 
     a {
-      color: #212324;
+      color: ${({ theme }) => theme.colors.yvote12};
       text-decoration: underline;
     }
   }
@@ -832,15 +604,15 @@ const SpeechGroupTitle = styled.div`
   font-weight: 400;
   font-size: 1rem;
   margin-bottom: 6px;
-  color: #1e293b;
-  border-bottom: 1px solid #e2e8f0;
+  color: ${({ theme }) => theme.colors.yvote12};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   padding-bottom: 2px;
 `;
 
 const SpeechQuote = styled.blockquote`
   padding-left: 8px;
   margin: 9px 0;
-  color: #222;
+  color: ${({ theme }) => theme.colors.yvote12};
   background: none;
   line-height: 1.6;
   font-size: 1rem;
