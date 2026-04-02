@@ -8,6 +8,7 @@ export type TimelineItem = { title: string; type: commentType };
 export type TimelineGroup = [string, TimelineItem[]];
 export type TimelineListProps = {
   timeline: TimelineGroup[];
+  flat?: boolean;
 };
 
 // --- CommentTypeIcon ---
@@ -22,7 +23,7 @@ export const CommentTypeIcon = ({ type }: { type: commentType }) => (
 );
 
 // --- TimelineList ---
-const TimelineList = ({ timeline }: TimelineListProps) => {
+const TimelineList = ({ timeline, flat }: TimelineListProps) => {
   if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
 
@@ -36,6 +37,26 @@ const TimelineList = ({ timeline }: TimelineListProps) => {
       return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
     }
     return `${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
+  }
+
+  if (flat) {
+    return (
+      <TimelineFlatLayout>
+        {timeline.map(([date, items]) => (
+          <TimelineFlatGroup key={date}>
+            <TimelineFlatDate>{formatKoreanDate(date)}</TimelineFlatDate>
+            <TimelineFlatItems>
+              {items.map((item, idx) => (
+                <TimelineFlatItem key={`${date}-${idx}`}>
+                  <CommentTypeIcon type={item.type} />
+                  <span>{item.title}</span>
+                </TimelineFlatItem>
+              ))}
+            </TimelineFlatItems>
+          </TimelineFlatGroup>
+        ))}
+      </TimelineFlatLayout>
+    );
   }
 
   return (
@@ -208,6 +229,51 @@ const TimelineExpandableItem = styled.li`
   display: flex;
   align-items: center;
   gap: 8px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+`;
+
+const TimelineFlatLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const TimelineFlatGroup = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const TimelineFlatDate = styled.div`
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-weight: 400;
+  white-space: nowrap;
+  min-width: 80px;
+  flex-shrink: 0;
+`;
+
+const TimelineFlatItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+`;
+
+const TimelineFlatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.yvote12};
+  line-height: 1.5;
   word-break: keep-all;
   overflow-wrap: anywhere;
 `;

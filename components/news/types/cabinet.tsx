@@ -111,7 +111,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
         <CabinetGrid>
           <CabinetCard>
             <SectionTitle>타임라인</SectionTitle>
-            <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} />
+            <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
           </CabinetCard>
 
           <CabinetCard>
@@ -387,8 +387,9 @@ const AgendaGroup = styled.details`
     gap: 6px;
     cursor: pointer;
     font-weight: 500;
+    font-size: 0.85rem;
     color: ${({ theme }) => theme.colors.yvote12};
-    padding: 6px 0;
+    padding: 4px 0;
     border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
@@ -593,28 +594,42 @@ const SummaryContent = styled.div`
 const SpeechGroupsLayout = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 `;
 
 const SpeechGroup = styled.div`
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 `;
 
 const SpeechGroupTitle = styled.div`
-  font-weight: 400;
-  font-size: 1rem;
-  margin-bottom: 6px;
-  color: ${({ theme }) => theme.colors.yvote12};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
-  padding-bottom: 2px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: ${({ theme }) => theme.colors.yvote08};
 `;
 
 const SpeechQuote = styled.blockquote`
-  padding-left: 8px;
-  margin: 9px 0;
+  position: relative;
+  padding: 10px 14px;
+  margin: 8px 0;
   color: ${({ theme }) => theme.colors.yvote12};
-  background: none;
-  line-height: 1.6;
-  font-size: 1rem;
-  font-style: italic;
+  background: ${({ theme }) => theme.colors.yvote02};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  border-radius: 10px;
+  line-height: 1.7;
+  font-size: 0.9rem;
+  font-style: normal;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: -7px;
+    width: 12px;
+    height: 12px;
+    background: ${({ theme }) => theme.colors.yvote02};
+    border-left: 1px solid ${({ theme }) => theme.colors.yvote04};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+    transform: rotate(45deg);
+  }
 `;

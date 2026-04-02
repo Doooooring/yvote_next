@@ -1,348 +1,468 @@
 import HeadMeta from '@components/common/HeadMeta';
-import HomeModal from '@components/home/homemodal';
-import valuesImage from '@images/eder.png';
-import keywordImage from '@images/keyword.png';
-import logoImage from '@images/logo_image.png';
-import newsImage from '@images/news.png';
-import backgroundImage from '@images/voting.png';
-import Image, { StaticImageData } from 'next/image';
-import { useEffect, useState } from 'react';
+import { commentTypeImg } from '@utils/interface/news/comment';
+import Image from 'next/image';
 import styled from 'styled-components';
 
-interface Item {
-  name: string;
-  title: string;
-  description: string;
-  imageUrl: StaticImageData;
-  linkUrl: string;
-  linkText: string;
-}
+/* ===== Dummy Data ===== */
+
+const todayNews = [
+  { summary: '제12회 임시국무회의에서 2027년도 예산안 편성지침 심의·의결, 전세사기 피해자 지원금 사업 추경 반영 예정', newsTitle: '제12회 임시국무회의', newsId: 942 },
+  { summary: '중동 사태 장기화에 공공부문 차량 5부제 시행, 전 국민 에너지 절약 실천 요청', newsTitle: '2026년 4월 1주차', newsId: 953 },
+  { summary: '이재명 대통령 부부 제주 4·3 평화공원 참배, 국가폭력 범죄 소멸시효 배제 입법 재추진', newsTitle: '2026년 4월 1주차', newsId: 953 },
+  { summary: '국세청, 강남3구 포함 5호 이상 다주택 임대업자 세무조사 착수', newsTitle: '다주택자 규제', newsId: 749 },
+  { summary: '통일부, 벨라루스 대통령 방북 통해 북-러-벨 3각 반서방 연대 강화 평가', newsTitle: '2026년 4월 1주차', newsId: 953 },
+];
+
+const partyPositions = [
+  {
+    party: '국민의힘',
+    summary: '민주당의 상임위 100% 독식 선언을 일당 독재로 규탄하며, 중동 에너지 위기 대응을 단기 처방으로 비판하고 원전 재가동을 촉구. 천안함 유가족 사과 요구에 대한 대통령의 면박 발언을 굴종적 안보관으로 지적.',
+  },
+  {
+    party: '더불어민주당',
+    summary: '국민의힘 대구시장 공천 갈등에서 장동혁 대표의 탈당 방지 의혹 제기. 오세훈 서울시장의 한강버스 사업 반복 사고에 즉시 중단 요구. 조정훈 의원의 지방의원 돈 상납·책 강매 의혹에 수사 촉구.',
+  },
+];
+
+const revivedNews = [
+  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', lastUpdate: '2026-03-30', originalDate: '2023-01-29',
+    added: [{ type: '행정부', count: 1 }] },
+  { id: 944, title: '중대재해처벌법', lastUpdate: '2026-03-30', originalDate: '2022-11-20',
+    added: [{ type: '행정부', count: 1 }] },
+  { id: 462, title: '화물연대 총파업', lastUpdate: '2026-03-30', originalDate: '2022-12-09',
+    added: [{ type: '청와대', count: 1 }, { type: '국민의힘', count: 9 }, { type: '더불어민주당', count: 10 }] },
+];
+
+
+
+const ongoingVotes = [
+  { id: 501, title: '간호법 재의결', status: '본회의 표결 예정', chamber: '국회', date: '2026-04-02' },
+  { id: 502, title: '전세사기 특별법 개정안', status: '법사위 심사 중', chamber: '국회', date: '2026-04-01' },
+];
+
+const nextElection = {
+  name: '제9회 전국동시지방선거',
+  date: '2026-06-03',
+  dday: 64,
+};
+
+const upcomingNews = [
+  { id: 940, type: 'weekly', typeLabel: '주간', title: '2026년 3월 4주차', date: '2026-03-29', status: '작성 중' },
+  { id: 615, type: 'weekly', typeLabel: '주간', title: '2022년 11월 5주차', date: '2022-12-04', status: '작성 중' },
+  { id: 483, type: 'constitution', typeLabel: '헌재', title: '낙태죄 헌법불합치 결정', date: '2019-04-11', status: '작성 중' },
+];
+
+/* ===== Page ===== */
 
 export default function Home() {
-  const [loaded, setLoaded] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState<Item | null>(null);
-
-  const items: Item[] = [
-    {
-      name: '뉴스',
-      title: '뉴스 모아보기',
-      description:
-        '와이보트는 정치 참여, 즉 투표에 고려될 가치가 있다고 판단되는 뉴스만을 선정하여 주제별로 제공합니다. 다시 말해, 국민이 선출한 피선거권자들이 세상을 바꾸는 방향에 관련된 뉴스를 제공합니다.\n국회의원들의 의견이 불일치하는 법률안, 대통령이 직접 추진하는 행정부의 기조, 입법부와 행정부의 결과가 간접적으로 반영되는 헌법재판소의 결정들이 이에 해당합니다. 정치인들의 사생활이나 비리, 말실수 등에 관한 뉴스가 제공되지 않는 것은 이러한 기준의 장점이자 단점입니다.\n정치 참여에 필요한 최소한의 뉴스를 만나보세요.',
-      imageUrl: newsImage,
-      linkUrl: '/news',
-      linkText: '뉴스 모아보기 >',
-    },
-    {
-      name: '키워드',
-      title: '키워드 모아보기',
-      description:
-        "정치와 경제에 대한 이해를 보편적으로 배우지 않은 결과, 우리는 뉴스를 이해하는데에 필요한 배경 지식이 결여되어 있습니다. 하지만 뉴스를 읽을 때마다 단편적인 개념들을 공부하며 읽는 것은 너무나도 소모적입니다.\n와이보트는 뉴스를 이해하기 위해 필요한 개념들을 4가지 항목으로 나누어 제공합니다. 분류 기준에는 뉴스에 자주 등장하는 '단체', 정치 이념과 우리나라의 정치 제도에 관한 '정치', 경제학의 기초적인 내용을 소개한 '경제', 가치관의 차이로 인해 끊임없이 주제가 되는 '사회'가 있습니다.\n뉴스의 이해를 돕는 주요 용어들을 정복하세요.",
-      imageUrl: keywordImage,
-      linkUrl: '/keywords',
-      linkText: '키워드 모아보기 >',
-    },
-    {
-      name: '가치관',
-      title: '가치관 테스트',
-      description:
-        '우리는 중립적인 뉴스에 대해 환상을 갖지만, 완벽한 중립이라는 것은 존재하지 않습니다. 정보의 가공만으로도 특정 집단에게 유리하게 글을 서술하는 것은 충분히 가능하며, 이 때문에 단순히 정보를 제공하거나 제공하지 않는 것만으로도 편향성 논란이 제기되기도 합니다.\n와이보트는 편향성에 의한 불신을 최대한 해결하기 위해 뉴스 가공을 최소화합니다. 하지만 뉴스에 대한 불신을 해소하기 위해서는 독자의 노력도 필요합니다. 정치적 대화에 대한 막연한 두려움은 자신의 관점이나 의견이 확실하지 않아, 언제든 휘둘릴 수 있다고 느끼기 때문입니다.\n나의 가치관을 파악하고 타인의 관점까지 이해해보세요.',
-      imageUrl: valuesImage,
-      linkUrl: '/analyze',
-      linkText: '가치관 알아보기 >',
-    },
-    {
-      name: 'Contact',
-      title: 'Contact',
-      description: '',
-      imageUrl: valuesImage,
-      linkUrl: '',
-      linkText: '',
-    },
-  ];
-
-  const handleItemClick = (item: Item) => {
-    setModalContent(item);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoaded(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <Wrapper>
+    <>
       <HeadMeta />
-      <Content show={showModal}>
-        <Rectangle loaded={loaded}>
-          <FlexContainer>
-            <LogoImage className="pear" loaded={loaded} src={logoImage.src} alt="logo" />
-            <TextBox loaded={loaded}>
-              <TextHeading>Why Vote?</TextHeading>
-              <TextParagraph>실용적인 뉴스 서비스를 지향합니다</TextParagraph>
-            </TextBox>
-          </FlexContainer>
-          <MobileTextParagraph loaded={loaded}>
-            실용적인 뉴스 서비스를 지향합니다
-          </MobileTextParagraph>
-        </Rectangle>
-        <MidlineWrapper>
-          <Midline />
-        </MidlineWrapper>
-        <ListContainer>
-          <List>
-            {items.map((item) => (
-              <ListItem onClick={() => handleItemClick(item)}>
-                <p>{item.name}</p>
-              </ListItem>
+      <Wrapper>
+        {/* 어제의 소식 */}
+        <Section>
+          <SectionTitle>어제의 소식 (내일 지움)</SectionTitle>
+          <SectionSubtitle>2026년 3월 29일</SectionSubtitle>
+          <Divider />
+          <YesterdaySummary>
+            서해수호의 날 기념식에서 55인 추모 및 보훈 확대 발표 · 전군주요지휘관회의에서 전작권 회복 주문 · 한강 작가 전미도서비평가협회상 수상 · 과기정통부, 물의 액체-액체 임계점 세계 최초 관측
+          </YesterdaySummary>
+        </Section>
+
+        {/* 오늘의 소식 */}
+        <Section>
+          <SectionTitle>오늘의 소식 (내일 요약함)</SectionTitle>
+          <SectionSubtitle>2026년 3월 30일</SectionSubtitle>
+          <Divider />
+          <TodayList>
+            {todayNews.map((item, i) => (
+              <TodayItem key={i}>
+                <TodaySummary>{item.summary}</TodaySummary>
+                <TodayNewsLink href={`/news/${item.newsId}`}>
+                  {item.newsTitle} →
+                </TodayNewsLink>
+              </TodayItem>
             ))}
-          </List>
-        </ListContainer>
-      </Content>
-      <HomeModal show={showModal} onClose={closeModal} content={modalContent} />
-      <BackgroundImage loaded={loaded} src={backgroundImage.src} />
-      <PreLoaded>
-        {items.map((item) => {
-          return <Image src={item.imageUrl} alt={item.name} />;
-        })}
-      </PreLoaded>
-    </Wrapper>
+          </TodayList>
+        </Section>
+
+        {/* 정당별 최신 입장 */}
+        <Section>
+          <SectionTitle>정당별 요즘 하는 소리</SectionTitle>
+          <Divider />
+          <PartyGrid>
+            {partyPositions.map((party) => (
+              <PartyColumn key={party.party}>
+                <PartyHeader>
+                  <PartyIcon src={commentTypeImg(party.party as any)} alt={party.party} width={16} height={16} />
+                  <PartyName>{party.party}</PartyName>
+                </PartyHeader>
+                <PartySummary>{party.summary}</PartySummary>
+              </PartyColumn>
+            ))}
+          </PartyGrid>
+        </Section>
+
+        {/* 끌올뉴스 */}
+        <Section>
+          <SectionTitle>뒷북...이라 하면 안 되겠죠?</SectionTitle>
+          <SectionSubtitle>오래된 뉴스에 새 코멘트가 추가되었습니다</SectionSubtitle>
+          <Divider />
+          <ListTable>
+            {revivedNews.map((item) => (
+              <ListRow key={item.id}>
+                <ListTitle>{item.title}</ListTitle>
+                <ListMeta>
+                  <CommentTypeBadges>
+                    {item.added.map((a, i) => (
+                      <CommentTypeBadge key={i}>
+                        <CommentTypeIconImg src={commentTypeImg(a.type as any)} alt={a.type} width={14} height={14} />
+                        <span>+{a.count}</span>
+                      </CommentTypeBadge>
+                    ))}
+                  </CommentTypeBadges>
+                  <span>{item.originalDate}</span>
+                </ListMeta>
+              </ListRow>
+            ))}
+          </ListTable>
+        </Section>
+
+        {/* 진행중 표결 + 다음 선거 */}
+        <TwoColumn>
+          <Section style={{ flex: 2 }}>
+            <SectionTitle>국회의원들 뭐하나...</SectionTitle>
+            <Divider />
+            <ListTable>
+              {ongoingVotes.map((item) => (
+                <ListRow key={item.id}>
+                  <ListTitle>{item.title}</ListTitle>
+                  <ListMeta>
+                    <StatusBadge>{item.status}</StatusBadge>
+                    <span>{item.date}</span>
+                  </ListMeta>
+                </ListRow>
+              ))}
+            </ListTable>
+          </Section>
+
+          <ElectionCard>
+            <ElectionLabel>다음 선거</ElectionLabel>
+            <ElectionName>{nextElection.name}</ElectionName>
+            <ElectionDate>{nextElection.date}</ElectionDate>
+            <ElectionDday>D-{nextElection.dday}</ElectionDday>
+          </ElectionCard>
+        </TwoColumn>
+
+        {/* 예정된 뉴스 */}
+        <Section>
+          <SectionTitle>곧 올림...</SectionTitle>
+          <SectionSubtitle>현재 작성 중인 뉴스입니다</SectionSubtitle>
+          <Divider />
+          <ListTable>
+            {upcomingNews.map((item) => (
+              <ListRow key={item.id}>
+                <ListTitle>
+                  <TypeTag>{item.typeLabel}</TypeTag>
+                  {item.title}
+                </ListTitle>
+                <ListMeta>
+                  <PendingBadge>{item.status}</PendingBadge>
+                  <span>{item.date}</span>
+                </ListMeta>
+              </ListRow>
+            ))}
+          </ListTable>
+        </Section>
+      </Wrapper>
+    </>
   );
 }
 
-const PreLoaded = styled.div`
-  display: none;
-`;
+/* ===== Styles ===== */
 
 const Wrapper = styled.div`
-  box-sizing: border-box;
-  font-family: 'Source Sans Pro', sans-serif;
-  position: relative;
-  height: calc(100vh - 65px);
-  background-color: black; /* Set initial background color to black */
-  padding: 3rem 2rem;
-  overflow: hidden;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  scrollbar-width: none;
-  @media (max-height: 480px) {
-    overflow-y: auto;
-    height: calc(100vh - 50px);
-  }
-`;
-
-const Content = styled.div<{ show: boolean }>`
-  position: relative;
-  width: 417px;
-  height: 254px;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 1; /* Ensure the content is above the background image */
-  transition: opacity 0.5s; // Transition opacity over 0.5 seconds
-  @media (max-width: 480px) {
-    width: 280px;
-    height: auto;
-  }
-`;
-
-const Rectangle = styled.div<{ loaded: boolean }>`
-  display: inline-flex; /* Adjust display property */
-  align-items: center; /* Center content vertically */
-  background-color: transparent;
-  border-top: 1.5px solid white;
-  border-bottom: 1.5px solid white;
-  position: relative;
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-`;
-
-const FlexContainer = styled.div`
+  width: 100%;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-`;
+  padding: 24px 0 60px;
+  background-color: ${({ theme }) => theme.colors.yvote02};
 
-const LogoImage = styled.img<{ loaded: boolean }>`
-  width: 4.5rem;
-  height: auto;
-  max-height: 40rem;
-  margin-left: 16px;
-  margin-right: 16px;
-  opacity: ${({ loaded }) => (loaded ? '1' : '0')};
-  transition: height 1s ease, opacity 1s ease;
-  @media (max-width: 480px) {
-    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
-    transition: opacity 1.5s ease;
+  @media (max-width: 768px) {
+    padding: 12px 0 40px;
   }
 `;
 
-const TextBox = styled.div<{ loaded: boolean }>`
-  flex-grow: 1;
-  height: auto;
-  max-height: 40rem;
-  padding: ${({ loaded }) => (loaded ? '40px 16px' : '5px 0 0 0')};
-  opacity: ${({ loaded }) => (loaded ? '1' : '0')};
-  transition: padding 1s ease, opacity 1s ease;
-  @media (max-width: 480px) {
-    padding: ${({ loaded }) => (loaded ? '15px 0 0 0' : '0 0 0 0')};
-    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
+const Section = styled.section`
+  width: 92%;
+  max-width: 1200px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    width: 96%;
+    margin-bottom: 24px;
   }
 `;
 
-const TextHeading = styled.h1`
-  color: #ffffff;
-  font-weight: 600;
-  margin: 0 0 1rem 0;
-  text-transform: uppercase;
-  font-size: 2rem;
-  line-height: 1.3;
-  letter-spacing: 0.5rem;
-  @media (max-width: 480px) {
-    margin: 0 0 0.5rem 0;
+const SectionTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote13};
+  letter-spacing: -0.02em;
+  margin: 0 0 2px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
   }
 `;
 
-const TextParagraph = styled.p`
-  color: white;
+const SectionTitleSub = styled.span`
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.yvote07};
+  margin-left: 6px;
+`;
+
+const SectionSubtitle = styled.p`
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.yvote08};
+  margin: 0 0 4px;
+`;
+
+const Divider = styled.hr`
+  border: none;
+  border-top: 1.5px solid ${({ theme }) => theme.colors.yvote12};
+  margin: 6px 0 10px;
+`;
+
+/* Today's news */
+
+const YesterdaySummary = styled.p`
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.yvote08};
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.15rem;
-  font-size: 0.9rem;
-  line-height: 2;
-
-  @media (max-width: 480px) {
-    display: none;
-  }
+  line-height: 1.6;
 `;
 
-const MobileTextParagraph = styled.p<{ loaded: boolean }>`
-  display: none;
-
-  @media (max-width: 480px) {
-    display: block;
-    width: 100%;
-    font: inherit;
-    color: white;
-    letter-spacing: 0.15rem;
-    font-size: 0.8rem;
-    padding: ${({ loaded }) => (loaded ? '0 0 10px 0' : '0 0 0 0')};
-    opacity: ${({ loaded }) => (loaded ? '1' : '0')};
-    transition: padding 1s ease, opacity 1s ease;
-  }
-`;
-
-const MidlineWrapper = styled.div`
-  height: 30px;
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
-`;
-
-const Midline = styled.div`
-  height: 30px;
-  width: 1px;
-  background-color: white;
-`;
-
-const ListContainer = styled.div`
-  border: 1px solid white;
-  border-radius: 4px; /* Rounded border */
-  overflow: hidden; /* Ensure the border radius is applied properly */
-`;
-
-const List = styled.ul`
+const TodayList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
+`;
 
-  @media (max-width: 480px) {
+const TodayItem = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    gap: 4px;
   }
 `;
 
-const ListItem = styled.li`
+const TodaySummary = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.yvote12};
+  margin: 0;
+  line-height: 1.6;
   flex: 1;
-  text-align: center;
-  position: relative;
-  color: white;
+`;
+
+const TodayNewsLink = styled.a`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote07};
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote12};
+    text-decoration: underline;
+  }
+`;
+
+/* Party */
+
+const PartyGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+`;
+
+const PartyColumn = styled.div``;
+
+const PartyHeader = styled.div`
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+`;
+
+const PartyIcon = styled(Image)`
+  object-fit: contain;
+`;
+
+const PartyName = styled.span`
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote12};
+`;
+
+const PartySummary = styled.p`
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.yvote12};
+  margin: 0;
+  line-height: 1.6;
+`;
+
+/* List rows */
+
+const ListTable = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ListRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   cursor: pointer;
 
-  transition: background-color 0.3s ease;
   &:hover {
-    background-color: #c1c1c1;
+    background-color: ${({ theme }) => theme.colors.hovergray};
   }
 
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 0.7px;
-    height: 100%;
-    background-color: white;
-  }
-
-  > p {
-    display: block;
-    line-height: 2.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15rem;
-    font-size: 0.8rem;
-    border-bottom: 0;
-  }
-
-  &:last-child > a {
-    font-size: 0.7rem;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    text-align: center;
-    border-bottom: 1px solid white;
-    border-left: none;
-
-    &:not(:last-child)::after {
-      display: none;
-    }
-    > p {
-      width: 80%;
-      margin: auto;
-      font-size: 0.8rem;
-    }
-    &:last-child {
-      border-bottom: none;
-      > p {
-        font-size: 0.7rem;
-      }
-    }
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 `;
 
-const BackgroundImage = styled.div<{ loaded: boolean; src: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% + 6rem);
-  background-image: ${({ src }) => `url('${src}')`};
-  background-size: cover;
-  background-position: center;
-  opacity: ${({ loaded }) => (loaded ? '0.7' : '0')}; /* Initially transparent, then fades in */
-  transition: opacity 1s ease-in-out; /* Slow transition duration */
-  z-index: 0; /* Ensure the background image is below the content */
+const ListTitle = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.yvote12};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ListMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.yvote08};
+  white-space: nowrap;
+`;
+
+const CommentTypeBadges = styled.span`
+  display: flex;
+  gap: 6px;
+  align-items: center;
+`;
+
+const CommentTypeBadge = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote10};
+  white-space: nowrap;
+`;
+
+const CommentTypeIconImg = styled(Image)`
+  object-fit: contain;
+`;
+
+const StatusBadge = styled.span`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote08};
+`;
+
+const PendingBadge = styled.span`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
+
+const TypeTag = styled.span`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote08};
+`;
+
+/* Two column layout */
+
+const TwoColumn = styled.div`
+  width: 92%;
+  max-width: 1200px;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    width: 96%;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+`;
+
+/* Election card */
+
+const ElectionCard = styled.div`
+  flex: 1;
+  background: ${({ theme }) => theme.colors.yvote12};
+  color: white;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+`;
+
+const ElectionLabel = styled.span`
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+`;
+
+const ElectionName = styled.h3`
+  font-size: 14px;
+  font-weight: 700;
+  margin: 6px 0 2px;
+`;
+
+const ElectionDate = styled.span`
+  font-size: 13px;
+  opacity: 0.7;
+`;
+
+const ElectionDday = styled.span`
+  font-size: 26px;
+  font-weight: 800;
+  margin-top: 8px;
+  letter-spacing: -0.02em;
 `;

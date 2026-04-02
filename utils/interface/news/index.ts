@@ -31,13 +31,13 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.bill:
       return '법률';
     case NewsType.constitution:
-      return '헌법재판소';
+      return '헌재';
     case NewsType.executive:
       return '시행령';
     case NewsType.cabinet:
-      return '국무회의';
+      return '국무';
     case NewsType.diplomat:
-      return '정상외교';
+      return '외교';
     case NewsType.govern:
       return '행정';
     case NewsType.debate:
@@ -45,7 +45,7 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.election:
       return '선거';
     case NewsType.weekly:
-      return '일주일';
+      return '주간';
     case NewsType.teukprosecution:
       return '특검';
     case NewsType.others:
