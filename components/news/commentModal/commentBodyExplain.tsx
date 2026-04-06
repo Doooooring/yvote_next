@@ -1,6 +1,6 @@
 import { Backdrop } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
-import openAIRepository from '@repositories/openai';
+import openAIRepository from '@repositories/llm';
 import { useKoreanDateFormat } from '@utils/tools/date';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';

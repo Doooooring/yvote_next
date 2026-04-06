@@ -10,7 +10,7 @@ interface Response<T> {
 
 class OpenAIRepository {
   async getAIResult(message: any) {
-    const response: Response<string> = await axios.post(`${HOST_URL}/openai`, {
+    const response: Response<string> = await axios.post(`${HOST_URL}/llm`, {
       message,
       model: 'grok-3-mini',
 

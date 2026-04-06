@@ -1,4 +1,4 @@
-import openAIRepository from '@repositories/openai';
+import openAIRepository from '@repositories/llm';
 import { Article, NewsState } from '@utils/interface/news';
 import { RgbToRgba } from '@utils/tools';
 import Link from 'next/link';
