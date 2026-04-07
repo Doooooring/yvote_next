@@ -1,8 +1,8 @@
 import { CommonIconButton } from '@components/common/commonStyles';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
-import Image from 'next/image';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import { sortComment } from '@utils/interface/news/comment';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CommentBodyCommon from '../commentBodyCommon';
@@ -35,12 +35,7 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
                       setCommentSelected(commentType);
                     }}
                   >
-                    <Image
-                      src={commentTypeImg(commentType)}
-                      alt={commentType}
-                      width="20"
-                      height="20"
-                    />
+                    <CommentTypeIcon type={commentType} size={16} />
                   </CommentButton>
                 );
               })}

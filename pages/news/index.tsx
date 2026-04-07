@@ -300,7 +300,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 80px;
+  padding: 32px 0 80px;
+
+  @media (max-width: 768px) {
+    padding-top: 0;
+  }
   background-color: ${({ theme }) => theme.colors.yvote02};
 `;
 

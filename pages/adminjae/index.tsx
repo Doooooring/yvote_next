@@ -373,7 +373,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 80px;
+  padding: 32px 0 80px;
+
+  @media (max-width: 768px) {
+    padding-top: 0;
+  }
   background-color: ${({ theme }) => theme.colors.yvote02};
 
   .main-contents {
@@ -424,11 +428,7 @@ const SectionContainer = styled.section`
   margin-bottom: 24px;
   position: relative;
 
-  &:first-child {
-    border-top: none;
-  }
-
-  @media screen and (max-width: 768px) {
+@media screen and (max-width: 768px) {
     padding: 12px 0;
     margin-bottom: 16px;
   }

@@ -1,8 +1,9 @@
-import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
+import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import Link from 'next/link';
 import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
-import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
+import { sortComment } from '@utils/interface/news/comment';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineBell, AiFillBell } from 'react-icons/ai';
@@ -197,16 +198,13 @@ const _CommentButtons = ({
 
   return (
     <SummaryButtons>
-      {sortComment([...comments]).map((commentType, index) => (
-        <SummaryButton
+      {sortComment([...comments]).map((ct, index) => (
+        <CommentTypeIcon
           key={index}
-          zindex={10 - index}
-          image={commentTypeImg(commentType)}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            (e.nativeEvent as any).stopImmediatePropagation?.();
-            openComments(commentType);
+          type={ct as commentType}
+          size={14}
+          onClick={() => {
+            openComments(ct);
           }}
         />
       ))}
@@ -524,26 +522,3 @@ const SummaryButtons = styled.div`
   margin-bottom: 0px;
 `;
 
-const SummaryButton = styled(CommonIconButton)<{
-  image: string;
-  zindex: number;
-}>`
-  margin-left: -8px;
-
-  &:first-child {
-    margin-left: 0px;
-  }
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
-  background-color: ${({ theme }) => theme.colors.yvote02} !important;
-  background-image: url(${({ image }) => image});
-  background-size: 16px 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  outline: none;
-  box-sizing: border-box;
-  z-index: ${({ zindex }) => zindex};
-`; // 여기선 이거 클릭해도 그냥 프리뷰 클릭한 것처럼 뉴스 디테일로 이동

@@ -5,8 +5,9 @@ import { INF } from '@public/assets/resource';
 import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { commentType, recentArticleType } from '@utils/interface/news';
-import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
+import { commentTypeColor } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
 import { Suspense, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -37,6 +38,10 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
     setCurView(0);
     setExpandedId(null);
   }, [commentType]);
+
+  useEffect(() => {
+    setCurView(0);
+  }, [numToShow]);
   const isAll = commentType === '전체';
   const lastPage = filteredArticles.length > 0
     ? Math.ceil(filteredArticles.length / numToShow) - 1
@@ -51,12 +56,7 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
               backgroundColor: `${RgbToRgba(commentTypeColor(commentType)!, 0.1)}`,
             }}
           >
-            <span
-              className="logo"
-              style={{
-                backgroundImage: `url(${commentTypeImg(commentType as commentType)})`,
-              }}
-            />
+            <CommentTypeIcon type={commentType as commentType} size={14} />
           </LogoColumn>
         )}
         {filteredArticles.length !== 0 ? (
@@ -86,7 +86,7 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
             ‹ 이전
           </SlideNavButton>
           <SlideNavIndicator>{curView + 1} / {lastPage + 1}</SlideNavIndicator>
-          <SlideNavButton onClick={onSlideRight} disabled={curView === lastPage}>
+          <SlideNavButton onClick={onSlideRight} disabled={curView >= lastPage}>
             다음 ›
           </SlideNavButton>
         </SlideNav>
@@ -160,7 +160,7 @@ const Wrapper = styled(CommonLayoutBox)`
   position: relative;
   -webkit-text-size-adjust: none;
   color: #666;
-  padding: 24px 0;
+  padding: 0 0 24px;
   font: inherit;
   box-sizing: border-box;
   width: 100%;
@@ -288,22 +288,9 @@ const LogoColumn = styled.div`
   background-color: rgba(148, 163, 184, 0.12);
   border-radius: 6px;
   margin-right: 8px;
-  .logo {
-    width: 18px;
-    height: 18px;
-    border-radius: 8px;
-    background-size: 14px 14px;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
 
   @media screen and (max-width: 768px) {
     width: 28px;
-    .logo {
-      width: 16px;
-      height: 16px;
-      background-size: 12px 12px;
-    }
   }
 `;
 

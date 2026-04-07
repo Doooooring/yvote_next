@@ -51,29 +51,22 @@ export default function NewsListSection({
       const start = pageIndex * PREVIEWS_PAGES_LIMIT;
       const serverNewsType = newsTypeFilter !== 'all' ? newsTypeFilter : undefined;
       const serverEndDate = dateFilter || undefined;
-      const needsClientFilter = (isAdmin) || normalizedTitleSearch;
+      const serverTitle = normalizedTitleSearch || undefined;
+      // Only need client-side loop when admin filtering (to hide pending items across pages)
+      const needsClientFilter = isAdmin;
 
       // Fast path: no client-side filtering needed → single API call at exact offset
       if (!needsClientFilter) {
-        const previews = isAdmin
-          ? await newsRepository.getPreviewsAdmin(
-              start,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              undefined,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            )
-          : await newsRepository.getPreviews(
-              start,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              NewsState.Published,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            );
+        const previews = await newsRepository.getPreviews(
+          start,
+          PREVIEWS_PAGES_LIMIT,
+          keywordFilter,
+          NewsState.Published,
+          undefined,
+          serverEndDate,
+          serverNewsType,
+          serverTitle,
+        );
 
         return {
           items: previews,
@@ -81,7 +74,7 @@ export default function NewsListSection({
         };
       }
 
-      // Slow path: client-side filtering required → loop until page is filled
+      // Slow path: admin client-side filtering (hide pending items) → loop until page is filled
       const end = start + PREVIEWS_PAGES_LIMIT;
       const aggregated: Array<Preview> = [];
       let offset = 0;
@@ -91,10 +84,6 @@ export default function NewsListSection({
 
       const shouldInclude = (preview: Preview) => {
         if (isAdmin && preview.state === NewsState.Pending) return false;
-        if (normalizedTitleSearch) {
-          const title = preview.title?.toLowerCase() ?? '';
-          if (!title.includes(normalizedTitleSearch)) return false;
-        }
         return true;
       };
 
@@ -104,25 +93,16 @@ export default function NewsListSection({
           break;
         }
 
-        const previews = isAdmin
-          ? await newsRepository.getPreviewsAdmin(
-              offset,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              undefined,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            )
-          : await newsRepository.getPreviews(
-              offset,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              NewsState.Published,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            );
+        const previews = await newsRepository.getPreviewsAdmin(
+          offset,
+          PREVIEWS_PAGES_LIMIT,
+          keywordFilter,
+          undefined,
+          undefined,
+          serverEndDate,
+          serverNewsType,
+          serverTitle,
+        );
 
         const filtered = previews.filter(shouldInclude);
         aggregated.push(...filtered);

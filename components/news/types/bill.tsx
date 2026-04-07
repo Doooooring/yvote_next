@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
+import { getCommentTypeRank } from '@utils/interface/news/comment';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { NewsTypeLayoutProps } from './default';
 import { customTheme } from '@public/assets/theme';
-import SharedTimelineList, { CommentTypeIcon as SharedCommentTypeIcon } from '@components/news/timeline';
+import SharedTimelineList from '@components/news/timeline';
 
 type BillArticle = { title: string; contentHtml: string };
 
@@ -105,42 +106,43 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
 
   return (
     <Wrapper>
-      <Content>
         <Header>
-          <div className="header-text">
-            <h1>{news.title}</h1>
-            {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-            <div className="meta">
-              {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-              {commentTypes.length ? (
-                <CommentIcons>
-                  {commentTypes.map((type, index) => (
-                    <CommentIconButton
-                      key={`${type}-${index}`}
-                      image={commentTypeImg(type as commentType)}
-                      onClick={() => showCommentModal(news.id, type as commentType)}
-                      aria-label={`${type} 평론 보기`}
-                    />
-                  ))}
-                </CommentIcons>
-              ) : null}
-            </div>
+          <h1>{news.title}</h1>
+          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+          <div className="meta">
+            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+            {commentTypes.length ? (
+              <CommentIcons>
+                {commentTypes.map((type, index) => (
+                  <CommentTypeIcon
+                    key={`${type}-${index}`}
+                    type={type as commentType}
+                    size={12}
+                    onClick={() => showCommentModal(news.id, type as commentType)}
+                  />
+                ))}
+              </CommentIcons>
+            ) : null}
           </div>
         </Header>
 
-        <Grid>
-          <Card>
+          <Section>
             <SectionTitle>타임라인</SectionTitle>
-            <SharedTimelineList timeline={timelineGroups} flat />
-          </Card>
+            <SectionBody>
+              <SharedTimelineList timeline={timelineGroups} flat />
+            </SectionBody>
+          </Section>
 
-          <Card>
+          <Section>
             <SectionTitle>법안 요약</SectionTitle>
-            <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
-          </Card>
+            <SectionBody>
+              <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
+            </SectionBody>
+          </Section>
 
-          <Card>
+          <Section>
             <SectionTitle>본회의 표결 및 토론</SectionTitle>
+            <SectionBody>
 
             {totalVotes > 0 && (
               <VoteSummarySection>
@@ -244,54 +246,45 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                 dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
               />
             </MobileDebateWrapper>
-          </Card>
+            </SectionBody>
+          </Section>
 
           {billArticles.length > 0 && (
-            <Card>
+            <Section>
               <SectionTitle>법안 상세보기</SectionTitle>
-              <BillArticleGroups>
-                {billArticles.map((article, idx) => (
-                  <BillArticleGroup key={idx}>
-                    <summary>
-                      <span dangerouslySetInnerHTML={{ __html: article.title }} />
-                    </summary>
-                    <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                  </BillArticleGroup>
-                ))}
-              </BillArticleGroups>
-            </Card>
+              <SectionBody>
+                <BillArticleGroups>
+                  {billArticles.map((article, idx) => (
+                    <BillArticleGroup key={idx}>
+                      <summary>
+                        <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                      </summary>
+                      <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+                    </BillArticleGroup>
+                  ))}
+                </BillArticleGroups>
+              </SectionBody>
+            </Section>
           )}
 
-          <Card>
+          <Section>
             <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SummaryList>
-              {(news.summaries ?? []).filter(s => s.summary?.replace(/<[^>]*>/g, '').trim()).map((summary, idx) => (
-                <SummaryListItem key={summary.commentType + idx}>
-                  <CommentTypeIcon type={summary.commentType} />
-                  <SummaryHtml
-                    dangerouslySetInnerHTML={{ __html: summary.summary }}
-                  />
-                </SummaryListItem>
-              ))}
-            </SummaryList>
-          </Card>
-        </Grid>
-      </Content>
+            <SectionBody>
+              <SummaryList>
+                {(news.summaries ?? []).filter(s => s.summary?.replace(/<[^>]*>/g, '').trim()).map((summary, idx) => (
+                  <SummaryListItem key={summary.commentType + idx}>
+                    <CommentTypeIcon type={summary.commentType} />
+                    <SummaryHtml
+                      dangerouslySetInnerHTML={{ __html: summary.summary }}
+                    />
+                  </SummaryListItem>
+                ))}
+              </SummaryList>
+            </SectionBody>
+          </Section>
     </Wrapper>
   );
 }
-
-// --- CommentTypeIcon ---
-
-const CommentTypeIcon = ({ type }: { type: commentType }) => (
-  <CommentTypeIconWrapper>
-    <img
-      src={commentTypeImg(type)}
-      alt={type}
-      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
-    />
-  </CommentTypeIconWrapper>
-);
 
 // --- Styled Components ---
 
@@ -300,38 +293,42 @@ const Wrapper = styled.div`
   min-height: 100vh;
   background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
-  justify-content: center;
-  padding: 16px 0 40px;
-`;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 60px;
 
-const Content = styled.div`
-  width: 98%;
-  max-width: 1120px;
-  color: ${({ theme }) => theme.colors.yvote13};
-
-  @media screen and (max-width: 768px) {
-    max-width: none;
+  @media (max-width: 768px) {
+    padding: 12px 0 40px;
   }
 `;
 
-const Header = styled.section`
-  background: ${({ theme }) => theme.colors.yvote01};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  padding: 22px;
-  display: block;
-  box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
+const Header = styled.header`
+  width: 92%;
+  max-width: 1200px;
+  padding: 0 0 16px;
 
-  .header-text h1 {
-    margin: 8px 0 6px;
-    font-size: 1.6rem;
+  @media (max-width: 768px) {
+    width: 96%;
+  }
+
+  h1 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
     line-height: 1.4;
+    letter-spacing: -0.02em;
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
   }
 
   .subtitle {
     color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
+    font-size: 14px;
   }
 
   .meta {
@@ -340,7 +337,7 @@ const Header = styled.section`
     flex-wrap: wrap;
     gap: 8px;
     color: ${({ theme }) => theme.colors.yvote08};
-    font-size: 0.9rem;
+    font-size: 13px;
   }
 `;
 
@@ -350,54 +347,38 @@ const CommentIcons = styled.div`
   gap: 6px;
 `;
 
-const CommentIconButton = styled.button<{ image: string }>`
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  background-color: ${({ theme }) => theme.colors.yvote01};
-  background-image: url(${({ image }) => image});
-  background-size: 14px 14px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  padding: 0;
-`;
+const Section = styled.section`
+  width: 92%;
+  max-width: 1200px;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0 0;
+  margin-bottom: 40px;
 
-const Grid = styled.div`
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-`;
-
-const Card = styled.section`
-  background: ${({ theme }) => theme.colors.yvote01};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(21, 21, 21, 0.06);
+  @media (max-width: 768px) {
+    width: 96%;
+    margin-bottom: 32px;
+  }
 `;
 
 const SectionTitle = styled.h2`
-  margin: 0 0 8px;
-  font-size: 1.05rem;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.yvote13};
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
-const CommentTypeIconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  margin-left: 4px;
-  border-radius: 50%;
-  border: 1.5px solid ${({ theme }) => theme.colors.yvote04};
-  background: ${({ theme }) => theme.colors.yvote01};
-  box-sizing: border-box;
+const SectionBody = styled.div`
+  padding: 0 6px;
+
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
 `;
 
 // Bill article styles
@@ -506,10 +487,7 @@ const DebateGrid = styled.div`
 `;
 
 const DebateSide = styled.div`
-  padding: 14px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  background: ${({ theme }) => theme.colors.yvote01};
+  padding: 14px 0;
 `;
 
 const DebateLabel = styled.div`
@@ -527,14 +505,8 @@ const DebateLabel = styled.div`
 const AmendmentBox = styled.div<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   margin-bottom: 16px;
-  padding: 14px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  background: ${({ theme }) => theme.colors.yvote01};
-
-  @media screen and (max-width: 768px) {
-    display: ${({ $show }) => ($show ? 'block' : 'none')};
-  }
+  padding: 14px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote05};
 `;
 
 const DebateContent = styled.div`
@@ -552,10 +524,8 @@ const DebateContent = styled.div`
 
 const VoteSummarySection = styled.div`
   margin-bottom: 20px;
-  padding: 16px;
-  background: ${({ theme }) => theme.colors.yvote01};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
+  padding: 16px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote05};
 `;
 
 const VoteResultBadge = styled.div`
@@ -666,21 +636,18 @@ const DebateTabs = styled.div`
 const DebateTab = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 8px 0;
-  border: 1.5px solid ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote05)};
-  border-radius: 999px;
-  background: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : 'transparent')};
-  color: ${({ $active, theme }) => ($active ? theme.colors.yvote01 : theme.colors.yvote12)};
+  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
+  border-radius: 2px;
+  background: transparent;
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote08)};
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.15s, border-color 0.15s;
 `;
 
 const DebateTabContent = styled.div`
-  padding: 14px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  background: ${({ theme }) => theme.colors.yvote01};
+  padding: 14px 0;
   color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 0.95rem;
@@ -706,11 +673,11 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 8px;
   padding: 4px 0 20px;
-  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote05};
 
   &:first-child {
     border-top: none;
-    padding-top: 24px;
+    padding-top: 8px;
   }
 `;
 

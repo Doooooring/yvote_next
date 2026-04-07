@@ -2,12 +2,13 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
+import { getCommentTypeRank } from '@utils/interface/news/comment';
 
 import { getDotDateForm } from '@utils/tools/date';
 import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { NewsTypeLayoutProps } from './default';
-import TimelineList, { CommentTypeIcon } from '@components/news/timeline';
+import TimelineList from '@components/news/timeline';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -84,120 +85,117 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
   ];
 
   return (
-    <CabinetWrapper>
-      <CabinetContent>
-        <CabinetHeader>
-          <div className="header-text">
-            <h1>{news.title}</h1>
-            {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-            <div className="meta">
-              {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-              {commentTypes.length ? (
-                <CommentIcons>
-                  {commentTypes.map((type, index) => (
-                    <CommentIconButton
-                      key={`${type}-${index}`}
-                      image={commentTypeImg(type as commentType)}
-                      onClick={() => showCommentModal(news.id, type as commentType)}
-                      aria-label={`${type} 평론 보기`}
-                    />
-                  ))}
-                </CommentIcons>
-              ) : null}
-            </div>
+    <Wrapper>
+        <Header>
+          <h1>{news.title}</h1>
+          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+          <div className="meta">
+            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+            {commentTypes.length ? (
+              <CommentIcons>
+                {commentTypes.map((type, index) => (
+                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType)} />
+                ))}
+              </CommentIcons>
+            ) : null}
           </div>
-        </CabinetHeader>
+        </Header>
 
-        <CabinetGrid>
-          <CabinetCard>
+          <Section>
             <SectionTitle>타임라인</SectionTitle>
-            <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
-          </CabinetCard>
+            <SectionBody>
+              <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
+            </SectionBody>
+          </Section>
 
-          <CabinetCard>
+          <Section>
             <SectionTitle>안건 목록</SectionTitle>
-            {agendaGroups.length ? (
-              <AgendaGroups>
-                {agendaGroups.map((group) => (
-                  <AgendaGroup key={group.title}>
-                    <summary>
-                      <span>{group.title}</span>
-                      <span className="count">{group.items.length}건</span>
-                    </summary>
-                    <AgendaItems>
-                      {group.items.map((item, idx) => (
-                        <li key={`${group.title}-${idx}`}>
-                          <p>{item}</p>
-                        </li>
-                      ))}
-                    </AgendaItems>
-                  </AgendaGroup>
-                ))}
-              </AgendaGroups>
-            ) : (
-              <AgendaGroups>
-                {dummyAgenda.map((group) => (
-                  <AgendaGroup key={group.title}>
-                    <summary>
-                      <span>{group.title}</span>
-                      <span className="count">{group.items.length}건</span>
-                    </summary>
-                    <AgendaItems>
-                      {group.items.map((item, idx) => (
-                        <li key={`${group.title}-dummy-${idx}`}>
-                          <p>{item}</p>
-                        </li>
-                      ))}
-                    </AgendaItems>
-                  </AgendaGroup>
-                ))}
-              </AgendaGroups>
-            )}
-          </CabinetCard>
+            <SectionBody>
+              {agendaGroups.length ? (
+                <AgendaGroups>
+                  {agendaGroups.map((group) => (
+                    <AgendaGroup key={group.title}>
+                      <summary>
+                        <span>{group.title}</span>
+                        <span className="count">{group.items.length}건</span>
+                      </summary>
+                      <AgendaItems>
+                        {group.items.map((item, idx) => (
+                          <li key={`${group.title}-${idx}`}>
+                            <p>{item}</p>
+                          </li>
+                        ))}
+                      </AgendaItems>
+                    </AgendaGroup>
+                  ))}
+                </AgendaGroups>
+              ) : (
+                <AgendaGroups>
+                  {dummyAgenda.map((group) => (
+                    <AgendaGroup key={group.title}>
+                      <summary>
+                        <span>{group.title}</span>
+                        <span className="count">{group.items.length}건</span>
+                      </summary>
+                      <AgendaItems>
+                        {group.items.map((item, idx) => (
+                          <li key={`${group.title}-dummy-${idx}`}>
+                            <p>{item}</p>
+                          </li>
+                        ))}
+                      </AgendaItems>
+                    </AgendaGroup>
+                  ))}
+                </AgendaGroups>
+              )}
+            </SectionBody>
+          </Section>
 
-          <CabinetCard>
+          <Section>
             <SectionTitle>주요 발언 내용</SectionTitle>
-            {speechGroups.length ? (
-              <SpeechGroupsLayout>
-                {speechGroups.map((group, gidx) => (
-                  <SpeechGroup key={group.title + gidx}>
-                    <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                    {group.items.map((item, idx) => (
-                      <SpeechQuote key={idx}>{item}</SpeechQuote>
-                    ))}
-                  </SpeechGroup>
-                ))}
-              </SpeechGroupsLayout>
-            ) : (
-              <SpeechGroupsLayout>
-                {dummySpeechGroups.map((group, gidx) => (
-                  <SpeechGroup key={group.title + gidx}>
-                    <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                    {group.items.map((item, idx) => (
-                      <SpeechQuote key={idx}>{item}</SpeechQuote>
-                    ))}
-                  </SpeechGroup>
-                ))}
-              </SpeechGroupsLayout>
-            )}
-          </CabinetCard>
+            <SectionBody>
+              {speechGroups.length ? (
+                <SpeechGroupsLayout>
+                  {speechGroups.map((group, gidx) => (
+                    <SpeechGroup key={group.title + gidx}>
+                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                      {group.items.map((item, idx) => (
+                        <SpeechQuote key={idx}>{item}</SpeechQuote>
+                      ))}
+                    </SpeechGroup>
+                  ))}
+                </SpeechGroupsLayout>
+              ) : (
+                <SpeechGroupsLayout>
+                  {dummySpeechGroups.map((group, gidx) => (
+                    <SpeechGroup key={group.title + gidx}>
+                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                      {group.items.map((item, idx) => (
+                        <SpeechQuote key={idx}>{item}</SpeechQuote>
+                      ))}
+                    </SpeechGroup>
+                  ))}
+                </SpeechGroupsLayout>
+              )}
+            </SectionBody>
+          </Section>
 
-          <CabinetCard>
+          <Section>
             <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SummaryList>
-              {(news.summaries ?? []).map((summary, idx) => (
-                <SummaryListItem key={summary.commentType + idx}>
-                  <CommentTypeIcon type={summary.commentType} />
-                  <SummaryHtml
-                    dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
-                  />
-                </SummaryListItem>
-              ))}
-            </SummaryList>
-          </CabinetCard>
-        </CabinetGrid>
-      </CabinetContent>
-    </CabinetWrapper>
+            <SectionBody>
+              <SummaryList>
+                {(news.summaries ?? []).map((summary, idx) => (
+                  <SummaryListItem key={summary.commentType + idx}>
+                    <CommentTypeIcon type={summary.commentType} />
+                    <SummaryHtml
+                      dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
+                    />
+                  </SummaryListItem>
+                ))}
+              </SummaryList>
+            </SectionBody>
+          </Section>
+    </Wrapper>
   );
 }
 
@@ -271,43 +269,47 @@ function parseAgendaGroups(raw: string): AgendaGroupShape[] {
   return groups;
 }
 
-const CabinetWrapper = styled.div`
+const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
   background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
-  justify-content: center;
-  padding: 16px 0 40px;
-`;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 60px;
 
-const CabinetContent = styled.div`
-  width: 98%;
-  max-width: 1120px;
-  color: ${({ theme }) => theme.colors.yvote13};
-
-  @media screen and (max-width: 768px) {
-    max-width: none;
+  @media (max-width: 768px) {
+    padding: 12px 0 40px;
   }
 `;
 
-const CabinetHeader = styled.section`
-  background: ${({ theme }) => theme.colors.yvote01};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  padding: 22px;
-  display: block;
-  box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
+const Header = styled.header`
+  width: 92%;
+  max-width: 1200px;
+  padding: 0 0 16px;
 
-  .header-text h1 {
-    margin: 8px 0 6px;
-    font-size: 1.6rem;
+  @media (max-width: 768px) {
+    width: 96%;
+  }
+
+  h1 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
     line-height: 1.4;
+    letter-spacing: -0.02em;
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
   }
 
   .subtitle {
     color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
+    font-size: 14px;
   }
 
   .meta {
@@ -316,7 +318,7 @@ const CabinetHeader = styled.section`
     flex-wrap: wrap;
     gap: 8px;
     color: ${({ theme }) => theme.colors.yvote08};
-    font-size: 0.9rem;
+    font-size: 13px;
   }
 `;
 
@@ -326,47 +328,40 @@ const CommentIcons = styled.div`
   gap: 6px;
 `;
 
-const CommentIconButton = styled.button<{ image: string }>`
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  background-color: ${({ theme }) => theme.colors.yvote01};
-  background-image: url(${({ image }) => image});
-  background-size: 14px 14px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  padding: 0;
-`;
 
-const CabinetGrid = styled.div`
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-`;
+const Section = styled.section`
+  width: 92%;
+  max-width: 1200px;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0 0;
+  margin-bottom: 40px;
 
-const CabinetCard = styled.section`
-  background: ${({ theme }) => theme.colors.yvote01};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 5px;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(21, 21, 21, 0.06);
+  @media (max-width: 768px) {
+    width: 96%;
+    margin-bottom: 32px;
+  }
 `;
 
 const SectionTitle = styled.h2`
-  margin: 0 0 8px;
-  font-size: 1.05rem;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.yvote13};
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
-const Paragraph = styled.p`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.yvote09};
-  line-height: 1.7;
-`;
+const SectionBody = styled.div`
+  padding: 0 6px;
 
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
+`;
 
 const AgendaGroups = styled.div`
   display: flex;
@@ -458,11 +453,11 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 8px;
   padding: 4px 0 20px;
-  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote05};
 
   &:first-child {
     border-top: none;
-    padding-top: 24px;
+    padding-top: 8px;
   }
 `;
 
@@ -494,100 +489,6 @@ const SummaryHtml = styled.div`
 
   p strong {
     font-weight: 400;
-  }
-`;
-
-const SummarySelector = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const SummaryButtons = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-`;
-
-const SummaryButton = styled.button<{ image: string }>`
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  background-color: ${({ theme }) => theme.colors.yvote01};
-  background-image: url(${({ image }) => image});
-  background-size: 16px 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  padding: 0;
-
-  &[data-active='true'] {
-    border-color: ${({ theme }) => theme.colors.yvote13};
-    box-shadow: 0 0 0 2px rgba(21, 21, 21, 0.12);
-  }
-`;
-
-const SummaryContent = styled.div`
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-
-  .label {
-    display: inline-block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: ${({ theme }) => theme.colors.yvote13};
-    background: ${({ theme }) => theme.colors.yvote04};
-    padding: 4px 8px;
-    border-radius: 999px;
-    margin-bottom: 8px;
-    margin-bottom: 6px;
-  }
-
-  .summary-html {
-    color: ${({ theme }) => theme.colors.yvote09};
-    line-height: 1.6;
-    font-size: 1rem;
-
-    p {
-      margin: 4px 0 4px;
-    }
-
-    p:last-child {
-      margin-bottom: 0;
-    }
-
-    ul,
-    ol {
-      margin: 4px 0 4px 18px;
-      padding: 0;
-    }
-
-    p + ul,
-    p + ol {
-      margin: 20px 0 4px 18px;
-    }
-
-    p:has(strong) {
-      margin: 12px 0 4px;
-    }
-    word-break: break-word;
-
-    strong {
-      font-weight: 400;
-      color: ${({ theme }) => theme.colors.yvote12};
-    }
-
-    em {
-      font-style: normal;
-    }
-
-    a {
-      color: ${({ theme }) => theme.colors.yvote12};
-      text-decoration: underline;
-    }
   }
 `;
 

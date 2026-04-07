@@ -2,7 +2,9 @@ import { newsRepository } from '@repositories/news';
 
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import HeadMeta from '@components/common/HeadMeta';
-import { NewsInView, NewsState, NewsType } from '@utils/interface/news';
+import { NewsInView, NewsState, NewsType, newsTypesToKor } from '@utils/interface/news';
+import styled from 'styled-components';
+import Link from 'next/link';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -96,7 +98,16 @@ export default function NewsDetailPage({ data }: pageProps) {
         }}
       />
       {news.state === NewsState.Published ? (
-        renderByType()
+        <>
+          <ArticleNav>
+            <BackLink href="/news">← 뉴스 모아보기</BackLink>
+            <NavSep aria-hidden>›</NavSep>
+            <NavLabel>{newsTypesToKor(news.newsType)}</NavLabel>
+          </ArticleNav>
+          <ArticleFrame>
+            {renderByType()}
+          </ArticleFrame>
+        </>
       ) : (
         <CommonErrorView>
           <ErrorHead>현재 준비 중인 뉴스입니다.</ErrorHead>
@@ -122,3 +133,44 @@ export default function NewsDetailPage({ data }: pageProps) {
     </>
   );
 }
+
+const ArticleNav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 4% 12px;
+  font-size: 13px;
+
+  @media (max-width: 768px) {
+    padding: 14px 2% 10px;
+    font-size: 12px;
+  }
+`;
+
+const BackLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.yvote08};
+  text-decoration: none;
+  transition: color 0.15s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote12};
+  }
+`;
+
+const NavSep = styled.span`
+  color: ${({ theme }) => theme.colors.yvote06};
+`;
+
+const NavLabel = styled.span`
+  color: ${({ theme }) => theme.colors.yvote09};
+  font-weight: 500;
+`;
+
+const ArticleFrame = styled.article`
+  width: 100%;
+  border-top: 3px solid ${({ theme }) => theme.colors.yvote12};
+
+  @media (max-width: 768px) {
+    border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  }
+`;

@@ -1,10 +1,10 @@
 import openAIRepository from '@repositories/llm';
 import { Article, NewsState } from '@utils/interface/news';
+import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { commentTypeColor, commentTypeImg } from '../../../../utils/interface/news/comment';
 
 interface ArticleBoxProps {
   article: Article;
@@ -256,14 +256,10 @@ const LinkWrapper = styled.div`
       }
       @media screen and (max-width: 768px) {
         width: 36px;
-        overflow: hidden;
         p {
           font-size: 10px;
           width: 28px;
           height: 28px;
-          margin: 0;
-          line-height: 1;
-          overflow: hidden;
         }
         .logo {
           width: 16px;
@@ -315,13 +311,7 @@ function useAISummary(explain: string) {
     if (isLoading) return;
     try {
       setIsLoading(true);
-      const response = await openAIRepository.getAIResult([
-        {
-          role: 'system',
-          content: '글에서 뉴스 독자들이 읽을만한 부분을 쉽고 짧게 요약해 줘. 내용과 관계 없는 쓸데 없는 말은 빼고.',
-        },
-        { role: 'user', content: explain },
-      ]);
+      const response = await openAIRepository.summarize(explain);
       setSummary(response);
     } catch (e) {
       console.error('Failed to summarize comment', e);

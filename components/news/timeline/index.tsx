@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg } from '@utils/interface/news/comment';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import styled from 'styled-components';
 
 // --- Types ---
@@ -11,16 +11,7 @@ export type TimelineListProps = {
   flat?: boolean;
 };
 
-// --- CommentTypeIcon ---
-export const CommentTypeIcon = ({ type }: { type: commentType }) => (
-  <CommentTypeIconWrapper>
-    <img
-      src={commentTypeImg(type)}
-      alt={type}
-      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
-    />
-  </CommentTypeIconWrapper>
-);
+export { CommentTypeIcon };
 
 // --- TimelineList ---
 const TimelineList = ({ timeline, flat }: TimelineListProps) => {
@@ -110,21 +101,6 @@ const TimelineList = ({ timeline, flat }: TimelineListProps) => {
 export default TimelineList;
 
 // --- Styled Components ---
-
-const CommentTypeIconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  margin-left: 4px;
-  border-radius: 50%;
-  border: 1.5px solid ${({ theme }) => theme.colors.yvote04};
-  background: ${({ theme }) => theme.colors.yvote01};
-  box-sizing: border-box;
-`;
 
 const TimelineListLayout = styled.ul`
   list-style: none;

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import Header from '@components/common/header';
 
 import { ModalProvider } from '@utils/hook/useModal';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
@@ -19,7 +18,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <ToastMessageProvider>
           <ModalProvider>
             <Wrapper>
-              <Header />
               <GlobalErrorBoundary>
                 <Body>{children}</Body>
               </GlobalErrorBoundary>

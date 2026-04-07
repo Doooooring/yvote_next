@@ -50,6 +50,7 @@ class NewsRepository {
     startDate?: string,
     endDate?: string,
     newsType?: string,
+    title?: string,
   ): Promise<Array<Preview>> {
     const params = {
       offset: curNum,
@@ -59,6 +60,7 @@ class NewsRepository {
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),
+      ...(title ? { title } : {}),
     };
     console.log('newsRepository.getPreviews params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
@@ -86,6 +88,7 @@ class NewsRepository {
     startDate?: string,
     endDate?: string,
     newsType?: string,
+    title?: string,
   ): Promise<Array<Preview>> {
     const params = {
       isAdmin: true,
@@ -96,6 +99,7 @@ class NewsRepository {
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),
       ...(state !== undefined ? { state } : {}),
+      ...(title ? { title } : {}),
     };
     console.log('newsRepository.getPreviewsAdmin params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {

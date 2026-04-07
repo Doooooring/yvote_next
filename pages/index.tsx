@@ -1,6 +1,7 @@
 import HeadMeta from '@components/common/HeadMeta';
-import { commentTypeImg } from '@utils/interface/news/comment';
-import Image from 'next/image';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import { commentType } from '@utils/interface/news';
+
 import { useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
@@ -163,7 +164,7 @@ function PartyCard({ party }: { party: { party: string; summary: string } }) {
   return (
     <PartyColumn>
       <PartyHeader>
-        <PartyIcon src={commentTypeImg(party.party as any)} alt={party.party} width={16} height={16} />
+        <CommentTypeIcon type={party.party as commentType} size={14} />
         <PartyName>{party.party}</PartyName>
       </PartyHeader>
       <PartySummary ref={ref} $expanded={expanded}>{party.summary}</PartySummary>
@@ -317,7 +318,7 @@ function PartySectionComponent() {
           {partyConversation.map((msg, i) => (
             <ConversationBubble key={i} $party={msg.party}>
               <BubbleParty>
-                <PartyIcon src={commentTypeImg(msg.party as any)} alt={msg.party} width={14} height={14} />
+                <CommentTypeIcon type={msg.party as commentType} size={12} />
                 {msg.party}
               </BubbleParty>
               <BubbleText>{msg.text}</BubbleText>
@@ -483,7 +484,7 @@ export default function Home() {
                   <CommentTypeBadges>
                     {item.added.map((a, i) => (
                       <CommentTypeBadge key={i}>
-                        <CommentTypeIconImg src={commentTypeImg(a.type as any)} alt={a.type} width={14} height={14} />
+                        <CommentTypeIcon type={a.type as commentType} size={12} />
                         <span>+{a.count}</span>
                       </CommentTypeBadge>
                     ))}
@@ -996,9 +997,6 @@ const PartyHeader = styled.div`
   margin-bottom: 6px;
 `;
 
-const PartyIcon = styled(Image)`
-  object-fit: contain;
-`;
 
 const PartyName = styled.span`
   font-size: 13px;
@@ -1118,9 +1116,6 @@ const CommentTypeBadge = styled.span`
   white-space: nowrap;
 `;
 
-const CommentTypeIconImg = styled(Image)`
-  object-fit: contain;
-`;
 
 const StatusBadge = styled.span`
   font-size: 11px;

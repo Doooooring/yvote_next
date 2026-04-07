@@ -64,14 +64,7 @@ function useAISummary(explain: string) {
   const fetchSummary = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await openAIRepository.getAIResult([
-        {
-          role: 'system',
-          content:
-            '글에서 뉴스 독자들이 읽을만한 부분을 쉽고 짧게 요약해 줘. 내용과 관계 없는 쓸데 없는 말은 빼고.',
-        },
-        { role: 'user', content: explain },
-      ]);
+      const response = await openAIRepository.summarize(explain);
       setSummary(response);
     } catch (e) {
       console.error('Failed to summarize comment', e);
