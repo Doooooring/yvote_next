@@ -23,6 +23,7 @@ export enum NewsType {
   debate = 'debate',
   election = 'election',
   weekly = 'weekly',
+  investigation = 'investigation',
   others = 'others',
   //헌재 종류별 만들 것
 }
@@ -51,6 +52,8 @@ export const newsTypesToKor = (newsType: NewsType) => {
       return '특검';
     case NewsType.northkorea:
       return '북한';
+    case NewsType.investigation:
+      return '국조';
     case NewsType.others:
       return '기타';
     default:
@@ -108,7 +111,8 @@ export interface Comment {
 }
 
 export interface Article
-  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'comment' | 'date'> {
+  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'date'> {
+  comment?: string;
   news: {
     id: number;
     state: NewsState;

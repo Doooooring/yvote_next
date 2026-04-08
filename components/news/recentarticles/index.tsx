@@ -3,13 +3,13 @@ import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErro
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { INF } from '@public/assets/resource';
 import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { commentType, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
@@ -22,12 +22,13 @@ interface SlideContentProps {
 
 function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight, setCurView] = useSlide();
-  const [numToShow, setNumToShow] = useState(10);
+  const [numToShow, setNumToShow] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 769px)').matches ? 10 : 5
+  );
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 769px)');
     const update = () => setNumToShow(mql.matches ? 10 : 5);
-    update();
     mql.addEventListener('change', update);
     return () => mql.removeEventListener('change', update);
   }, []);
@@ -120,18 +121,9 @@ const VacantWrapper = styled.div`
   align-items: center;
 `;
 
-function NewArticles({ category }: { category: recentArticleType }) {
-  const { data: recentArticles } = useSuspenseQuery(RecentArticleQueryOption(category, 0, INF));
-
-  return (
-    <div className="body-wrapper">
-      <SlideContent commentType={category} filteredArticles={recentArticles} />
-    </div>
-  );
-}
-
 export default function NewsArticlesSection() {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
+  const { data: recentArticles = [], isFetching } = useQuery(RecentArticleQueryOption(activeCategory, 0, 100));
 
   return (
     <Wrapper>
@@ -148,9 +140,13 @@ export default function NewsArticlesSection() {
           ))}
         </CategoryNavigation>
       </Header>
-      <Suspense fallback={<NewArticlesFallback />}>
-        <NewArticles category={activeCategory} />
-      </Suspense>
+      {isFetching && recentArticles.length === 0 ? (
+        <NewArticlesFallback />
+      ) : (
+        <div className="body-wrapper">
+          <SlideContent commentType={activeCategory} filteredArticles={recentArticles} />
+        </div>
+      )}
     </Wrapper>
   );
 }

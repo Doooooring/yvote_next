@@ -1,9 +1,10 @@
 import openAIRepository from '@repositories/llm';
+import { newsRepository } from '@repositories/news';
 import { Article, NewsState } from '@utils/interface/news';
 import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface ArticleBoxProps {
@@ -15,8 +16,23 @@ interface ArticleBoxProps {
 }
 
 export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle, column }: ArticleBoxProps) {
-  const { news, commentType, title, comment, date } = article;
-  const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(comment);
+  const { news, commentType, title, date } = article;
+  const [body, setBody] = useState<string | undefined>(article.comment);
+  const [bodyLoading, setBodyLoading] = useState(false);
+  const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (isExpanded && body === undefined && !fetchedRef.current) {
+      fetchedRef.current = true;
+      setBodyLoading(true);
+      newsRepository.getCommentBody(article.id)
+        .then((text) => setBody(text ?? ''))
+        .catch(() => setBody(''))
+        .finally(() => setBodyLoading(false));
+    }
+  }, [isExpanded]);
+
+  const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(body ?? '');
 
   const formatDate = (d: string): string => {
     const s = String(d).slice(0, 10);
@@ -52,22 +68,26 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
           </div>
         </div>
       </LinkWrapper>
-      {isExpanded && comment && (
+      {isExpanded && (
         <Dropdown $column={column}>
           <DropdownHeader>
             <DropdownTitle>{title}</DropdownTitle>
           </DropdownHeader>
-          <SummaryButtonRow>
-            <SummarizeButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
-              {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
-            </SummarizeButton>
-          </SummaryButtonRow>
+          {!bodyLoading && body !== undefined && (
+            <SummaryButtonRow>
+              <SummarizeButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
+                {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
+              </SummarizeButton>
+            </SummaryButtonRow>
+          )}
           <DropdownContent>
-            {summary !== null
+            {bodyLoading ? (
+              <p style={{ color: 'inherit', opacity: 0.5 }}>불러오는 중...</p>
+            ) : summary !== null
               ? (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
                   .split('\n')
                   .map((paragraph, idx) => <p key={idx}>{paragraph}</p>)
-              : comment.split('$').map((paragraph, idx) => (
+              : (body ?? '').split('$').map((paragraph, idx) => (
                   <p key={idx}>{paragraph}</p>
                 ))}
           </DropdownContent>

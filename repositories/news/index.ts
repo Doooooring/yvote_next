@@ -150,6 +150,16 @@ class NewsRepository {
   }
 
   /**
+   * 평론 본문 단건 조회 API
+   */
+  async getCommentBody(commentId: number): Promise<string | null> {
+    const response: Response<{ id: number; comment: string }> = await axios.get(
+      `${HOST_URL}/news/comment/${commentId}/body`,
+    );
+    return response.data.result?.comment ?? null;
+  }
+
+  /**
    * 해당 뉴스의 평론 정보 조회 API
    * @param id 뉴스 아이디
    * @param type 평론 타입

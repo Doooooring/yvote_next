@@ -19,6 +19,7 @@ import BillNewsLayout from '@components/news/types/bill';
 import ConstitutionNewsLayout from '@components/news/types/constitution';
 import ExecutiveNewsLayout from '@components/news/types/executive';
 import CabinetNewsLayout from '@components/news/types/cabinet';
+import InvestigationNewsLayout from '@components/news/types/investigation';
 import DiplomatNewsLayout from '@components/news/types/diplomat';
 import GovernNewsLayout from '@components/news/types/govern';
 import DebateNewsLayout from '@components/news/types/debate';
@@ -77,6 +78,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.constitution) return <ConstitutionNewsLayout news={news} />;
     if (news.newsType === NewsType.executive) return <ExecutiveNewsLayout news={news} />;
     if (news.newsType === NewsType.cabinet) return <CabinetNewsLayout news={news} />;
+    if (news.newsType === NewsType.investigation) return <InvestigationNewsLayout news={news} />;
     if (news.newsType === NewsType.diplomat) return <DiplomatNewsLayout news={news} />;
     if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;
     if (news.newsType === NewsType.debate) return <DebateNewsLayout news={news} />;

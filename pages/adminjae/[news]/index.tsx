@@ -9,6 +9,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import BillNewsLayout from '@components/news/types/bill';
 import CabinetNewsLayout from '@components/news/types/cabinet';
+import InvestigationNewsLayout from '@components/news/types/investigation';
 import WeeklyNewsLayout from '@components/news/types/weekly';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
@@ -63,6 +64,8 @@ export default function NewsDetailPage({ data }: pageProps) {
           <WeeklyNewsLayout news={news} />
         ) : news.newsType === NewsType.cabinet ? (
           <CabinetNewsLayout news={news} />
+        ) : news.newsType === NewsType.investigation ? (
+          <InvestigationNewsLayout news={news} />
         ) : (
           <Wrapper>
             <div className="main-contents">
