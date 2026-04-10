@@ -2,8 +2,12 @@ import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErro
 import IsShow from '@components/common/isShow';
 import { Comment, commentType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
-import { getDateHidingCurrentYear } from '@utils/tools/date';
+import { getDateHidingCurrentYear, getDotDateForm } from '@utils/tools/date';
+import { useMemo, useState } from 'react';
+import { AiOutlineDown } from 'react-icons/ai';
 import styled from 'styled-components';
+
+const BRIEFING_PATTERN = /정례\s?브리핑/;
 
 interface CommentBodyListProps {
   commentType: commentType;
@@ -11,42 +15,91 @@ interface CommentBodyListProps {
   clickComment: (comment: Comment) => void;
 }
 
+function isBriefing(title: string) {
+  return BRIEFING_PATTERN.test(title);
+}
+
 export default function CommentBodyList({
   commentType,
   comments,
   clickComment,
 }: CommentBodyListProps) {
-  return comments.length > 0 ? (
+  const [openDates, setOpenDates] = useState<Record<string, boolean>>({});
+
+  const groupedByDate = useMemo(() => {
+    const dateMap: Record<string, { briefing: Comment[]; others: Comment[] }> = {};
+    comments.forEach((c) => {
+      const dateKey = c.date ? getDotDateForm(c.date) : '날짜 미상';
+      if (!dateMap[dateKey]) dateMap[dateKey] = { briefing: [], others: [] };
+      if (isBriefing(c.title)) {
+        dateMap[dateKey].briefing.push(c);
+      } else {
+        dateMap[dateKey].others.push(c);
+      }
+    });
+    return Object.entries(dateMap);
+  }, [comments]);
+
+  const toggleDate = (dateKey: string) => {
+    setOpenDates((prev) => ({ ...prev, [dateKey]: !prev[dateKey] }));
+  };
+
+  if (comments.length === 0) {
+    return (
+      <VacantWrapper>
+        <ErrorComment>
+          <span style={{ color: commentTypeColor(commentType) }}>
+            {commentType}
+          </span>{' '}
+          관련 최신 자료가 존재하지 않습니다.
+        </ErrorComment>
+      </VacantWrapper>
+    );
+  }
+
+  return (
     <ModalList>
-      {comments.map((comment, idx) => {
-        return (
-          <BodyBlock
-            key={comment.comment + idx}
-            onClick={() => {
-              clickComment(comment);
-            }}
-          >
-            <span>{comment.title}</span>
-            <IsShow state={comment.date != null}>
-              <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
-            </IsShow>
-          </BodyBlock>
-        );
-      })}{' '}
+      {groupedByDate.map(([dateKey, { briefing, others }]) => (
+        <div key={dateKey}>
+          {briefing.length > 0 && (
+            <>
+              <BodyBlock onClick={() => toggleDate(dateKey)}>
+                <BriefingTitle>
+                  <span>정례브리핑 ({briefing.length}건)</span>
+                  <DropdownArrow $open={!!openDates[dateKey]}>
+                    <AiOutlineDown size="11px" />
+                  </DropdownArrow>
+                </BriefingTitle>
+                <span className="date">{getDateHidingCurrentYear(briefing[0].date)}</span>
+              </BodyBlock>
+              {openDates[dateKey] && (
+                <BriefingChildren>
+                  {briefing.map((comment, idx) => (
+                    <BodyBlock
+                      key={comment.comment + idx}
+                      onClick={() => clickComment(comment)}
+                    >
+                      <span>{comment.title}</span>
+                    </BodyBlock>
+                  ))}
+                </BriefingChildren>
+              )}
+            </>
+          )}
+          {others.map((comment, idx) => (
+            <BodyBlock
+              key={comment.comment + idx}
+              onClick={() => clickComment(comment)}
+            >
+              <span>{comment.title}</span>
+              <IsShow state={comment.date != null}>
+                <span className="date">{getDateHidingCurrentYear(comment.date)}</span>
+              </IsShow>
+            </BodyBlock>
+          ))}
+        </div>
+      ))}
     </ModalList>
-  ) : (
-    <VacantWrapper>
-      <ErrorComment>
-        <span
-          style={{
-            color: commentTypeColor(commentType),
-          }}
-        >
-          {commentType}
-        </span>{' '}
-        관련 최신 자료가 존재하지 않습니다.
-      </ErrorComment>
-    </VacantWrapper>
   );
 }
 
@@ -91,6 +144,34 @@ const BodyBlock = styled.div`
     font-weight: 400;
     color: ${({ theme }) => theme.colors.yvote06};
   }
+`;
+
+const BriefingTitle = styled.div`
+  display: flex;
+  align-items: center;
+  min-width: 0;
+
+  > span {
+    font-size: 13.5px;
+    font-weight: 400;
+    color: ${({ theme }) => theme.colors.text};
+    line-height: 1.4;
+  }
+`;
+
+const DropdownArrow = styled.span<{ $open: boolean }>`
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+  transform: rotate(${({ $open }) => ($open ? '180deg' : '0deg')});
+  color: ${({ theme }) => theme.colors.yvote06};
+`;
+
+const BriefingChildren = styled.div`
+  border-left: 2px solid ${({ theme }) => theme.colors.yvote03};
+  margin-left: 8px;
 `;
 
 const VacantWrapper = styled.div`

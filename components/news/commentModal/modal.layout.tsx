@@ -28,6 +28,7 @@ export default function ModalLayout({
 }
 
 const Wrapper = styled(CommonLayoutBox)`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
