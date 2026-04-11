@@ -194,21 +194,19 @@ const _CommentButtons = ({
   comments: Preview['comments'];
   openComments: (commentType: commentType) => void;
 }) => {
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const sorted = sortComment([...comments]);
+  const visible = sorted.slice(0, 3);
+  const overflow = sorted.length - 3;
 
   return (
-    <SummaryButtons>
-      {sortComment([...comments]).map((ct, index) => (
-        <CommentTypeIcon
-          key={index}
-          type={ct as commentType}
-          size={14}
-          onClick={() => {
-            openComments(ct);
-          }}
-        />
+    <StackedIcons onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (sorted.length) openComments(sorted[0]); }}>
+      {visible.map((ct, index) => (
+        <StackedIcon key={index} $index={index}>
+          <CommentTypeIcon type={ct as commentType} size={14} />
+        </StackedIcon>
       ))}
-    </SummaryButtons>
+      {overflow > 0 && <OverflowCount>+{overflow}</OverflowCount>}
+    </StackedIcons>
   );
 };
 
@@ -516,9 +514,23 @@ const PendingHead = styled(CommonLayoutBox)`
   align-items: center;
 `;
 
-const SummaryButtons = styled.div`
+const StackedIcons = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0px;
+  cursor: pointer;
+`;
+
+const StackedIcon = styled.div<{ $index: number }>`
+  margin-left: ${({ $index }) => ($index === 0 ? 0 : -4)}px;
+  z-index: ${({ $index }) => $index};
+  border-radius: 50%;
+  line-height: 0;
+`;
+
+const OverflowCount = styled.span`
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.yvote12 ?? '#888'};
 `;
 

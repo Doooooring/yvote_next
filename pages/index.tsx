@@ -8,89 +8,82 @@ import styled, { keyframes } from 'styled-components';
 /* ===== Dummy Data ===== */
 
 const onAirNews = [
+  { id: 959, title: '4월 2주차', tag: '자료 수집' },
   { id: 914, title: '26년 추가경정예산', tag: '국회 심의' },
-  { id: 950, title: '중대범죄수사청법', tag: '본회의 통과' },
-  { id: 453, title: '대법원 증원', tag: '법사위 심사' },
-  { id: 905, title: '프랑스 국빈 방한', tag: '진행 중' },
+  { id: 1136, title: '제14회 국무회의', tag: '진행 중' },
+  { id: 950, title: '중대범죄수사청법', tag: '법안 공포' },
+  { id: 915, title: '공소청 설치법안', tag: '법안 공포' },
+  { id: 958, title: '도서관법 개정안', tag: '본회의 가결' },
   { id: 906, title: '인도네시아 국빈 방한', tag: '진행 중' },
-  { id: 665, title: '헌재법 개정', tag: '국회 심사' },
-  { id: 887, title: '상법 개정', tag: '법사위' },
 ];
 
 const dbUpdates = {
-  date: '4월 2일',
-  summary: '뉴스 2건 생성 · 발행 1건 · 자료 17건 추가',
+  date: '4월 9일',
+  summary: '자료 3건 추가',
   details: [
-    { action: '뉴스 생성', items: ['#955 제13회 국무회의', '#956 2026년도 1분기 경제지표'] },
-    { action: '뉴스 발행', items: ['#955 제13회 국무회의'] },
     { action: '자료 추가', items: [
-      '#914 추경 — 청와대 +1',
-      '#905 프랑스 국빈방한 — 청와대 +1',
-      '#955 국무회의 — 행정부 +1',
-      '#956 경제지표 — 행정부 +1',
-      '#953 4월 1주차 — 청와대 +3, 행정부 +7',
-      '#906 인도네시아 방한 — 청와대 +3',
+      '#959 4월 2주차 — 청와대 +1, 행정부 +2',
     ]},
   ],
 };
 
 const todayNews = [
-  { summary: '이재명 대통령, 국회에서 2026 추가경정예산안 시정연설', newsTitle: '26년 추가경정예산', newsId: 914 },
-  { summary: '중동 사태 장기화에 공공부문 차량 5부제 시행, 전 국민 에너지 절약 실천 요청', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '프랑스 대통령 국빈방한 친교 만찬 개최', newsTitle: '프랑스 국빈 방한', newsId: 905 },
-  { summary: '교육부, 라이즈(RISE) 재구조화 방안 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '광명 신안산선 터널 붕괴사고 조사결과 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '트럼프 대통령 대국민 담화 관련 청와대 브리핑', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '국가데이터처, 2026년 3월 소비자물가동향 발표', newsTitle: '2026년도 1분기 경제지표', newsId: 956 },
-  { summary: '법제처, 4월의 주요 시행법령 안내', newsTitle: '제13회 국무회의', newsId: 955 },
-  { summary: '김혜경 여사, 한복생활 유네스코 등재추진단 차담회', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '국민권익위, 다자녀주택 주차 관련 제도개선 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
+  { summary: '대통령 주재 수석·보좌관 회의 관련 전은수 대변인 브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '외교부 대변인 정례브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '국방부 일일 정례 브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '이시바 시게루 전 일본 총리 오찬 관련 수석대변인 서면 브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '화물운송·물류업계 종사자와의 대화 관련 대변인 서면 브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '에이치디씨(주)의 부당지원행위 제재', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '중동전쟁 관련 기자간담회 강훈식 비서실장 모두발언', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '보건복지부 의료제품 수급대응 관계부처 합동브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '이주노동자 에어건 인권침해 관련 홍보소통수석 서면브리핑', newsTitle: '4월 2주차', newsId: 959 },
+  { summary: '제14회 국무회의 모두말씀', newsTitle: '제14회 국무회의', newsId: 1136 },
 ];
 
 const partyPositions = [
   {
     party: '국민의힘',
-    summary: '민주당의 상임위 100% 독식 선언을 의회민주주의 파괴로 규탄. 국내 비축유 해외 반출을 \'4월 에너지 대란설\' 속 모럴 해저드로 비판. 유엔 북한인권결의안 불참 검토를 비굴한 유화책으로 지적.',
+    summary: '정부의 중동 전쟁 대응이 허둥대며 국민 불안을 키운다고 비판. 10배 강력해진 북핵 위협은 이재명 정부 굴종 외교의 결과라 지적. 의료 소모품 대란에 정부 총력 대응을 촉구.',
   },
   {
     party: '더불어민주당',
-    summary: '중동발 경제 위기에 당정 협력으로 실행력 있는 대응 강조. 국민의힘이 일을 안 하면 다수당이 해내야 한다며 상임위 구성 정당화. 오보에도 탄압 타령하는 언론 성역론을 적반하장으로 비판.',
+    summary: '국민의힘의 안보장사를 비판하며 한반도 평화에 초당적 협력을 요구. 추경 관련 지방 부담 증가 주장은 사실 왜곡을 넘어선 정치 선동이라 반박. 식목일에 탄소중립 실천 강조.',
   },
 ];
 
 const partyConversation = [
-  { party: '국민의힘', text: '상임위까지 독식하겠다는 건 의회민주주의를 삼키겠다는 겁니다.' },
-  { party: '더불어민주당', text: '국민의힘이 일을 하지 않으니 누군가는 해내야 합니다. 다수 의석은 민심입니다.' },
-  { party: '국민의힘', text: '비축유를 해외에 반출하면서 에너지 대란은 누가 책임집니까? 심각한 모럴 해저드입니다.' },
-  { party: '더불어민주당', text: '불안만 부추기지 마시고 책임 있는 대안과 협력으로 답해주시기 바랍니다.' },
+  { party: '국민의힘', text: '정부가 허둥댈수록 전쟁 충격에 따른 국민 불안은 더욱 커집니다.' },
+  { party: '더불어민주당', text: '선거 앞두고 또 안보장사입니까? 초당적으로 협력해야 합니다.' },
+  { party: '국민의힘', text: '물약통도 주사기도 없다, 의료 소모품 대란에 정부는 총력 대응에 나서야 합니다.' },
+  { party: '더불어민주당', text: '지방 부담 증가 주장은 사실 왜곡을 넘어선 정치 선동입니다.' },
 ];
 
 const revivedNews = [
-  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', lastUpdate: '2026-03-30', originalDate: '2023-01-29',
-    added: [{ type: '행정부', count: 1 }] },
-  { id: 944, title: '중대재해처벌법', lastUpdate: '2026-03-30', originalDate: '2022-11-20',
-    added: [{ type: '행정부', count: 1 }] },
-  { id: 462, title: '화물연대 총파업', lastUpdate: '2026-03-30', originalDate: '2022-12-09',
-    added: [{ type: '청와대', count: 1 }, { type: '국민의힘', count: 9 }, { type: '더불어민주당', count: 10 }] },
+  { id: 902, title: '윤석열 임기 검찰 기소 관련 국정조사', lastUpdate: '2026-04-05', originalDate: '2026-03-05',
+    added: [{ type: '국민의힘', count: 3 }, { type: '더불어민주당', count: 6 }] },
+  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', lastUpdate: '2026-04-05', originalDate: '2026-01-29',
+    added: [{ type: '국민의힘', count: 3 }, { type: '더불어민주당', count: 1 }] },
+  { id: 531, title: '제22대 국회 노란봉투법 (노조법 2, 3조 개정안)', lastUpdate: '2026-04-04', originalDate: '2025-08-24',
+    added: [{ type: '국민의힘', count: 2 }, { type: '더불어민주당', count: 1 }] },
 ];
 
 
 
 const ongoingVotes = [
-  { id: 501, title: '간호법 재의결', status: '본회의 표결 예정', chamber: '국회', date: '2026-04-02' },
-  { id: 502, title: '전세사기 특별법 개정안', status: '법사위 심사 중', chamber: '국회', date: '2026-04-01' },
+  { id: 887, title: '3차 상법개정안', status: '필리버스터 진행', chamber: '국회', date: '2026-03-06' },
+  { id: 665, title: '재판소원제도', status: '필리버스터 진행', chamber: '국회', date: '2026-03-12' },
 ];
 
 const nextElection = {
   name: '제9회 전국동시지방선거',
   date: '2026-06-03',
-  dday: 64,
+  dday: 54,
 };
 
 const upcomingNews = [
-  { id: 940, type: 'weekly', typeLabel: '주간', title: '2026년 3월 4주차', date: '2026-03-29', status: '작성 중' },
-  { id: 615, type: 'weekly', typeLabel: '주간', title: '2022년 11월 5주차', date: '2022-12-04', status: '작성 중' },
-  { id: 483, type: 'constitution', typeLabel: '헌재', title: '낙태죄 헌법불합치 결정', date: '2019-04-11', status: '작성 중' },
+  { id: 959, type: 'weekly', typeLabel: '주간', title: '4월 2주차', date: '2026-04-12', status: '자료 수집' },
+  { id: 1136, type: 'cabinet', typeLabel: '국무회의', title: '제14회 국무회의', date: '2026-04-06', status: '작성 중' },
+  { id: 956, type: 'original', typeLabel: '기타', title: '2026년도 1분기 경제지표', date: '2026-04-01', status: '작성 중' },
 ];
 
 /* ===== Components ===== */
@@ -1144,7 +1137,7 @@ const TwoColumn = styled.div`
   @media (max-width: 768px) {
     width: 96%;
     flex-direction: column;
-    gap: 12px;
+    gap: 0px;
     margin-bottom: 24px;
   }
 `;
