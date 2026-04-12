@@ -22,12 +22,11 @@ interface SlideContentProps {
 
 function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight, setCurView] = useSlide();
-  const [numToShow, setNumToShow] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia('(min-width: 769px)').matches ? 10 : 5
-  );
+  const [numToShow, setNumToShow] = useState(5);
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 769px)');
+    setNumToShow(mql.matches ? 10 : 5);
     const update = () => setNumToShow(mql.matches ? 10 : 5);
     mql.addEventListener('change', update);
     return () => mql.removeEventListener('change', update);

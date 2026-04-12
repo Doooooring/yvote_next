@@ -206,7 +206,7 @@ function TodayNewsSection() {
   const [mode, setMode] = useState<'list' | 'summary'>('list');
   const [page, setPage] = useState(0);
   const [shuffled, setShuffled] = useState(todayNews);
-  const [dice, setDice] = useState(() => Math.floor(Math.random() * 6) + 1);
+  const [dice, setDice] = useState(1);
   const [read, setRead] = useState<Set<number>>(new Set());
   const totalPages = Math.ceil(shuffled.length / TODAY_PER_PAGE);
   const touchStart = useRef(0);

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "yvote-next",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/.bin/next", "dev", "-p", "3001"],
       "port": 3001
     }
   ]
