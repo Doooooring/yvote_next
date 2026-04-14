@@ -18,9 +18,10 @@ const categories = ['전체', ...Object.values(commentType).filter((c) => c !== 
 interface SlideContentProps {
   commentType: recentArticleType;
   filteredArticles: any[];
+  onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void;
 }
 
-function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
+function SlideContent({ commentType, filteredArticles, onExpandedContent }: SlideContentProps) {
   const [curView, onSlideLeft, onSlideRight, setCurView] = useSlide();
   const [numToShow, setNumToShow] = useState(5);
 
@@ -71,6 +72,7 @@ function SlideContent({ commentType, filteredArticles }: SlideContentProps) {
                     showLogo={isAll}
                     isExpanded={expandedId === article.id}
                     onToggle={() => setExpandedId(expandedId === article.id ? null : article.id)}
+                    onExpandedContent={onExpandedContent}
                     column={idx < 5 ? 'left' : 'right'}
                   />
                 );
@@ -120,7 +122,7 @@ const VacantWrapper = styled.div`
   align-items: center;
 `;
 
-export default function NewsArticlesSection() {
+export default function NewsArticlesSection({ onExpandedContent }: { onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void } = {}) {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
   const { data: recentArticles = [], isFetching } = useQuery(RecentArticleQueryOption(activeCategory, 0, 100));
 
@@ -143,7 +145,7 @@ export default function NewsArticlesSection() {
         <NewArticlesFallback />
       ) : (
         <div className="body-wrapper">
-          <SlideContent commentType={activeCategory} filteredArticles={recentArticles} />
+          <SlideContent commentType={activeCategory} filteredArticles={recentArticles} onExpandedContent={onExpandedContent} />
         </div>
       )}
     </Wrapper>

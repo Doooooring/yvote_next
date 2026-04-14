@@ -7,6 +7,7 @@ import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
+import { useNewsAI } from '@/utils/context/newsAIContext';
 import { Comment, commentType } from '@utils/interface/news';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
@@ -23,12 +24,15 @@ export default function CommentBodyCommon({
   id,
   commentType,
   close,
+  initialCommentId,
 }: {
   id: number;
   commentType: commentType;
   close: () => void;
+  initialCommentId?: number;
 }) {
   const device = useDevice();
+  const { setModalCommentTitles, setModalActiveComment } = useNewsAI();
 
   const { show: showToastMessage } = useToastMessage();
 
@@ -37,6 +41,7 @@ export default function CommentBodyCommon({
     commentType,
   );
   const [curComment, setCurComment] = useState<Comment | null>(null);
+  const initialApplied = useRef(false);
   const commentIndex = curComment ? curComments.findIndex((c) => c.id === curComment.id) : null;
 
   const {
@@ -90,6 +95,35 @@ export default function CommentBodyCommon({
       }
     }
   };
+
+  useEffect(() => {
+    if (curComments.length > 0) {
+      setModalCommentTitles(curComments.map(c => ({ commentType: c.commentType, title: c.title })));
+      if (initialCommentId && !initialApplied.current) {
+        const match = curComments.find(c => c.id === initialCommentId);
+        if (match) {
+          initialApplied.current = true;
+          setCurComment(match);
+          moveToScrollHeight(0);
+        }
+      }
+    }
+  }, [curComments]);
+
+  useEffect(() => {
+    if (curComment) {
+      setModalActiveComment({ commentType: curComment.commentType, title: curComment.title, body: curComment.comment });
+    } else {
+      setModalActiveComment(null);
+    }
+  }, [curComment]);
+
+  useEffect(() => {
+    return () => {
+      setModalCommentTitles([]);
+      setModalActiveComment(null);
+    };
+  }, []);
 
   // === Refs for history/popstate ===
   const curCommentRef = useRef(curComment);

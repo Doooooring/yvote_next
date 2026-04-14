@@ -5,17 +5,18 @@ import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment'
 import { RgbToRgba } from '@utils/tools';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface ArticleBoxProps {
   article: Article;
   showLogo?: boolean;
   isExpanded?: boolean;
   onToggle?: () => void;
+  onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void;
   column?: 'left' | 'right';
 }
 
-export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle, column }: ArticleBoxProps) {
+export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle, onExpandedContent, column }: ArticleBoxProps) {
   const { news, commentType, title, date } = article;
   const [body, setBody] = useState<string | undefined>(article.comment);
   const [bodyLoading, setBodyLoading] = useState(false);
@@ -32,7 +33,21 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
     }
   }, [isExpanded]);
 
+  useEffect(() => {
+    if (!onExpandedContent) return;
+    if (isExpanded && body !== undefined) {
+      onExpandedContent({ title, commentType, body });
+    } else if (!isExpanded) {
+      onExpandedContent(null);
+    }
+  }, [isExpanded, body]);
+
   const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(body ?? '');
+  const [showSummary, setShowSummary] = useState(true);
+
+  useEffect(() => {
+    if (summary !== null) setShowSummary(true);
+  }, [summary]);
 
   const formatDate = (d: string): string => {
     const s = String(d).slice(0, 10);
@@ -41,9 +56,80 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
     return s;
   };
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
+  // Gesture handling for mobile
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const lastTapTime = useRef(0);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
+      if (dx < 0 && summary !== null) {
+        setShowSummary(true);
+      } else if (dx > 0 && summary !== null) {
+        setShowSummary(false);
+      }
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastTapTime.current < 350) {
+      lastTapTime.current = 0;
+      fetchSummary();
+    } else {
+      lastTapTime.current = now;
+    }
+  }, [summary, fetchSummary]);
+
+  const renderBody = () => {
+    if (bodyLoading) {
+      return <p style={{ color: 'inherit', opacity: 0.5 }}>불러오는 중...</p>;
+    }
+
+    if (isMobile) {
+      const showingOriginal = summary === null || !showSummary;
+      const text = showingOriginal
+        ? (body ?? '').split('$').map((p, i) => <p key={i}>{p}</p>)
+        : (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
+            .split('\n').map((p, i) => <p key={i}>{p}</p>);
+
+      return (
+        <MobileBodyWrapper
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {summary !== null && (
+            <SwipeDots>
+              <span className={!showSummary ? 'active' : ''} />
+              <span className={showSummary ? 'active' : ''} />
+            </SwipeDots>
+          )}
+          <ShimmerText $loading={isLoading}>
+            {text}
+          </ShimmerText>
+        </MobileBodyWrapper>
+      );
+    }
+
+    if (summary !== null) {
+      return (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
+        .split('\n').map((p, i) => <p key={i}>{p}</p>);
+    }
+    return (body ?? '').split('$').map((p, i) => <p key={i}>{p}</p>);
+  };
+
   return (
     <ArticleRow>
-      <LinkWrapper onClick={onToggle}>
+      <LinkWrapper $expanded={isExpanded} onClick={onToggle}>
         <div className="wrapper">
           <div className="text-wrapper">
             <div className={`writer-wrapper ${showLogo ? '' : 'hidden'}`}>
@@ -61,7 +147,7 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
                 />
               </p>
             </div>
-            <LinkTitleWrapper>
+            <LinkTitleWrapper $expanded={isExpanded}>
               <p className="title">{title}</p>
               <p className="date">{formatDate(date)}</p>
             </LinkTitleWrapper>
@@ -69,11 +155,8 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
         </div>
       </LinkWrapper>
       {isExpanded && (
-        <Dropdown $column={column}>
-          <DropdownHeader>
-            <DropdownTitle>{title}</DropdownTitle>
-          </DropdownHeader>
-          {!bodyLoading && body !== undefined && (
+        <Dropdown $column={column} $compact={!showLogo}>
+          {!isMobile && !bodyLoading && body !== undefined && (
             <SummaryButtonRow>
               <SummarizeButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
                 {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
@@ -81,15 +164,7 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
             </SummaryButtonRow>
           )}
           <DropdownContent>
-            {bodyLoading ? (
-              <p style={{ color: 'inherit', opacity: 0.5 }}>불러오는 중...</p>
-            ) : summary !== null
-              ? (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
-                  .split('\n')
-                  .map((paragraph, idx) => <p key={idx}>{paragraph}</p>)
-              : (body ?? '').split('$').map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
-                ))}
+            {renderBody()}
           </DropdownContent>
           {news?.state === NewsState.Published && (
             <DropdownFooter>
@@ -106,11 +181,11 @@ const ArticleRow = styled.div`
   position: relative;
 `;
 
-const Dropdown = styled.div<{ $column?: 'left' | 'right' }>`
+const Dropdown = styled.div<{ $column?: 'left' | 'right'; $compact?: boolean }>`
   background-color: ${({ theme }) => theme.colors.yvote02};
   border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-top: none;
-  padding: 12px 14px;
+  padding: 6px 14px 12px;
   max-height: 60vh;
   overflow-y: auto;
   scrollbar-width: none;
@@ -119,25 +194,21 @@ const Dropdown = styled.div<{ $column?: 'left' | 'right' }>`
     display: none;
   }
 
+  @media screen and (max-width: 768px) {
+    ${({ $compact }) => $compact ? `
+      padding-left: 6px;
+      padding-right: 6px;
+    ` : ''}
+  }
+
   @media screen and (min-width: 769px) {
     width: 180%;
     ${({ $column }) => $column === 'right' ? 'margin-left: -80%;' : ''}
   }
 `;
 
-const DropdownHeader = styled.div`
-  margin-bottom: 4px;
-`;
-
 const SummaryButtonRow = styled.div`
   margin-bottom: 8px;
-`;
-
-const DropdownTitle = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.yvote13};
-  word-break: break-word;
 `;
 
 const SummarizeButton = styled.button`
@@ -190,7 +261,7 @@ const DropdownFooter = styled.div`
   }
 `;
 
-const LinkWrapper = styled.div`
+const LinkWrapper = styled.div<{ $expanded?: boolean }>`
   display: block;
   text-decoration: none;
   width: 100%;
@@ -229,9 +300,9 @@ const LinkWrapper = styled.div`
     width: 100%;
     height: 100%;
     max-height: 100%;
-    overflow: hidden;
+    overflow: ${({ $expanded }) => $expanded ? 'visible' : 'hidden'};
     justify-content: start;
-    align-items: center;
+    align-items: ${({ $expanded }) => $expanded ? 'flex-start' : 'center'};
     color: rgb(50, 50, 50);
     vertical-align: baseline;
     display: flex;
@@ -291,7 +362,7 @@ const LinkWrapper = styled.div`
   }
 `;
 
-const LinkTitleWrapper = styled.div`
+const LinkTitleWrapper = styled.div<{ $expanded?: boolean }>`
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
@@ -301,7 +372,7 @@ const LinkTitleWrapper = styled.div`
 
   text-align: left;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: ${({ $expanded }) => $expanded ? '500' : '400'};
   color: rgb(120, 120, 120);
 
   @media screen and (max-width: 768px) {
@@ -309,10 +380,15 @@ const LinkTitleWrapper = styled.div`
   }
 
   .title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     min-width: 0;
+    ${({ $expanded }) => $expanded ? `
+      white-space: normal;
+      word-break: break-word;
+    ` : `
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `}
   }
 
   .date {
@@ -320,6 +396,63 @@ const LinkTitleWrapper = styled.div`
     font-size: 11px;
     color: rgb(120, 120, 120);
     white-space: nowrap;
+  }
+`;
+
+// Mobile gesture UI
+const MobileBodyWrapper = styled.div`
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+`;
+
+const SwipeDots = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 8px;
+
+  span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.colors.yvote07};
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0.4;
+
+    &.active {
+      background: ${({ theme }) => theme.colors.yvote10};
+      opacity: 1;
+    }
+  }
+`;
+
+const shimmerSweep = keyframes`
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+`;
+
+const ShimmerText = styled.div<{ $loading?: boolean }>`
+  position: relative;
+  overflow: hidden;
+  ${({ $loading }) => $loading ? `
+    opacity: 0.4;
+    pointer-events: none;
+  ` : ''}
+
+  &::after {
+    content: '';
+    display: ${({ $loading }) => $loading ? 'block' : 'none'};
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 100%
+    );
+    animation: ${shimmerSweep} 1.5s infinite ease-in-out;
   }
 `;
 

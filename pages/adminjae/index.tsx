@@ -5,7 +5,7 @@ import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
 // import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { NewsType, Preview, newsTypesToKor, NewsState } from '@utils/interface/news';
+import { NewsType, Preview, newsTypesToKor, newsTypesToKorFull, NewsState } from '@utils/interface/news';
 import { GetStaticProps } from 'next';
 import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
 import { AiOutlineCalendar, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
@@ -116,7 +116,7 @@ export default function NewsPage(props: pageProps) {
                                   startTransition(() => setHiddenSelectedType(type));
                                 }}
                               >
-                                {newsTypesToKor(type)}
+                                {newsTypesToKorFull(type)}
                               </TypeFilterItem>
                             ))}
                           </TypeFilterMenu>
@@ -189,7 +189,7 @@ export default function NewsPage(props: pageProps) {
                                   startTransition(() => setWritingSelectedType(type));
                                 }}
                               >
-                                {newsTypesToKor(type)}
+                                {newsTypesToKorFull(type)}
                               </TypeFilterItem>
                             ))}
                           </TypeFilterMenu>
@@ -257,7 +257,7 @@ export default function NewsPage(props: pageProps) {
                               startTransition(() => setSelectedType(type));
                             }}
                           >
-                            {newsTypesToKor(type)}
+                            {newsTypesToKorFull(type)}
                           </TypeFilterItem>
                         ))}
                       </TypeFilterMenu>

@@ -4,9 +4,11 @@ import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
 import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
+import { NewsType, NewsState, Preview, newsTypesToKor, newsTypesToKorFull, commentType } from '@utils/interface/news';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import { GetStaticProps } from 'next';
-import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
+import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { NewsAIProvider, useNewsAI } from '@/utils/context/newsAIContext';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import styled from 'styled-components';
 
@@ -22,10 +24,38 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 };
 
 export default function NewsPage(props: pageProps) {
+  return (
+    <NewsAIProvider>
+      <NewsPageInner {...props} />
+    </NewsAIProvider>
+  );
+}
+
+function NewsPageInner(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
+
+  const [expandedContent, setExpandedContent] = useState<{ title: string; commentType: string; body: string } | null>(null);
+
+  const { showCommentModal } = useCommentModal_Preview();
+  const deepLinkApplied = useRef(false);
+
+  useEffect(() => {
+    if (deepLinkApplied.current) return;
+    const newsId = searchParams.get('newsId');
+    const cType = searchParams.get('commentType');
+    const commentId = searchParams.get('commentId');
+    if (newsId && cType) {
+      deepLinkApplied.current = true;
+      showCommentModal(
+        Number(newsId),
+        [cType as commentType],
+        commentId ? Number(commentId) : undefined,
+      );
+    }
+  }, [searchParams]);
 
   const showNewsContent = useNewsNavigate();
   const [typeFilterOpen, setTypeFilterOpen] = useState(false);
@@ -76,7 +106,7 @@ export default function NewsPage(props: pageProps) {
         </PageHeader> */}
 
         <ArticlesWrapper>
-          <NewsArticlesSection />
+          <NewsArticlesSection onExpandedContent={setExpandedContent} />
         </ArticlesWrapper>
 
         <MainContent ref={ref}>
@@ -116,7 +146,7 @@ export default function NewsPage(props: pageProps) {
                                 startTransition(() => setWritingSelectedType(type));
                               }}
                             >
-                              {newsTypesToKor(type)}
+                              {newsTypesToKorFull(type)}
                             </TypeFilterItem>
                           ))}
                         </TypeFilterMenu>
@@ -184,7 +214,7 @@ export default function NewsPage(props: pageProps) {
                             startTransition(() => setSelectedType(type));
                           }}
                         >
-                          {newsTypesToKor(type)}
+                          {newsTypesToKorFull(type)}
                         </TypeFilterItem>
                       ))}
                     </TypeFilterMenu>

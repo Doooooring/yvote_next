@@ -21,6 +21,13 @@ export const ScrollWrapper = styled.div`
     background: ${({ theme }) => theme.colors.yvote05};
   }
   scrollbar-width: thin;
+
+  @media screen and (max-width: 768px) {
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export const ModalBodyWrapper = styled.div`

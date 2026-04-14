@@ -2,7 +2,7 @@ import { Backdrop } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import openAIRepository from '@repositories/llm';
 import { useKoreanDateFormat } from '@utils/tools/date';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useToastMessage } from '../../../utils/hook/useToastMessage';
 import { DefaultMessageBox } from '../../common/messageBox';
@@ -15,10 +15,15 @@ interface CommentBodyExplainProps {
 }
 
 export default function CommentBodyExplain({ id, title, explain, date }: CommentBodyExplainProps) {
-  const { summary, fetchSummary, clearSummary, isLoading } = useAISummary(explain);
+  const { summary, fetchSummary, isLoading } = useAISummary(explain);
+  const [showSummary, setShowSummary] = useState(true);
+
+  useEffect(() => {
+    if (summary !== null) setShowSummary(true);
+  }, [summary]);
 
   const _explain = useMemo(() => {
-    if (summary !== null) {
+    if (summary !== null && showSummary) {
       const summaryText =
         typeof summary === 'string'
           ? summary
@@ -31,7 +36,7 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
         .split('$')
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
     }
-  }, [summary, explain]);
+  }, [summary, showSummary, explain]);
 
   return (
     <Wrapper>
@@ -41,9 +46,20 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
           <IsShow state={date != null}>
             <DateText>{useKoreanDateFormat(date)}</DateText>
           </IsShow>
-          <GrokButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
-            {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
-          </GrokButton>
+          {summary === null ? (
+            <GrokButton onClick={fetchSummary} disabled={isLoading}>
+              {isLoading ? '요약 중...' : '요약하기'}
+            </GrokButton>
+          ) : (
+            <>
+              <GrokButton onClick={() => setShowSummary(!showSummary)}>
+                {showSummary ? '원문보기' : '요약보기'}
+              </GrokButton>
+              <GrokButton onClick={fetchSummary} disabled={isLoading}>
+                {isLoading ? '요약 중...' : '다시 요약하기'}
+              </GrokButton>
+            </>
+          )}
         </DateButtonWrapper>
       </ContentTitle>
       <ContentBody>

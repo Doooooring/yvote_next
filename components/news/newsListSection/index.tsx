@@ -5,7 +5,7 @@ import { useToastMessage } from '@/utils/hook/useToastMessage';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
@@ -22,6 +22,7 @@ export default function NewsListSection({
   dateFilter = '',
   isAdmin = false,
   showId,
+  onVisibleItems,
 }: {
   keywordFilter: string;
   clickPreviews: (id: number) => void;
@@ -30,6 +31,7 @@ export default function NewsListSection({
   dateFilter?: string;
   isAdmin?: boolean;
   showId?: boolean;
+  onVisibleItems?: (items: Array<Preview>) => void;
 }) {
   const router = useRouter();
   const { page } = getCachedInfo();
@@ -151,6 +153,10 @@ export default function NewsListSection({
   useEffect(() => {
     setPageIndex(0);
   }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
+
+  useEffect(() => {
+    onVisibleItems?.(data.items);
+  }, [data.items]);
 
   const hasNextPage = data.hasNextPage;
   const wrapperRef = useRef<HTMLDivElement>(null);

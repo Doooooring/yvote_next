@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import styled from 'styled-components';
 
-const BRIEFING_PATTERN = /정례\s?브리핑/;
+const BRIEFING_PATTERN = /정례\s?(e-)?브리핑|주간\s?홍보계획\s?브리핑/;
 
 interface CommentBodyListProps {
   commentType: commentType;

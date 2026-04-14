@@ -1,13 +1,15 @@
 import { newsRepository } from '@repositories/news';
 
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
+import { useChatContext } from '@/utils/context/chatContext';
 import HeadMeta from '@components/common/HeadMeta';
-import { NewsInView, NewsState, NewsType, newsTypesToKor } from '@utils/interface/news';
+import { NewsInView, NewsState, NewsType, newsTypesToKorFull } from '@utils/interface/news';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import {
   CommonErrorView,
   ErrorComment,
@@ -26,6 +28,7 @@ import DebateNewsLayout from '@components/news/types/debate';
 import ElectionNewsLayout from '@components/news/types/election';
 import WeeklyNewsLayout from '@components/news/types/weekly';
 import OthersNewsLayout from '@components/news/types/others';
+import BudgetNewsLayout from '@components/news/types/budget';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -72,6 +75,20 @@ export default function NewsDetailPage({ data }: pageProps) {
   const router = useRouter();
   const {} = useRouterUtils();
   const { id, news, description } = data;
+  const { setActiveContent } = useChatContext();
+
+  useEffect(() => {
+    if (!news) return;
+    const parts = [
+      `[뉴스${id}] ${news.title}`,
+      news.subTitle ? `부제: ${news.subTitle}` : '',
+      `날짜: ${news.date} | 타입: ${news.newsType}`,
+      news.summary ? `요약: ${news.summary.slice(0, 500)}` : '',
+      news.summaries?.length ? `코멘트 타입: ${news.summaries.map((s: any) => s.commentType).join(', ')}` : '',
+    ].filter(Boolean);
+    setActiveContent(parts.join('\n'));
+    return () => setActiveContent(null);
+  }, [id, news]);
 
   const renderByType = () => {
     if (news.newsType === NewsType.bill) return <BillNewsLayout news={news} />;
@@ -85,6 +102,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.election) return <ElectionNewsLayout news={news} />;
     if (news.newsType === NewsType.weekly) return <WeeklyNewsLayout news={news} />;
     if (news.newsType === NewsType.others) return <OthersNewsLayout news={news} />;
+    if (news.newsType === NewsType.budget) return <BudgetNewsLayout news={news} />;
     return <DefaultNewsLayout news={news} />;
   };
 
@@ -104,7 +122,7 @@ export default function NewsDetailPage({ data }: pageProps) {
           <ArticleNav>
             <BackLink href="/news">← 뉴스 모아보기</BackLink>
             <NavSep aria-hidden>›</NavSep>
-            <NavLabel>{newsTypesToKor(news.newsType)}</NavLabel>
+            <NavLabel>{newsTypesToKorFull(news.newsType)}</NavLabel>
           </ArticleNav>
           <ArticleFrame>
             {renderByType()}

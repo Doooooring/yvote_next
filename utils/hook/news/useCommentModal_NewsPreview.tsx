@@ -7,8 +7,8 @@ export function useCommentModal_Preview() {
   const { show, close } = useModal();
 
   const showCommentModal = useCallback(
-    (newsId: number, commentTypes: Array<commentType>) => {
-      show(<CommentModal_NewsPreview id={newsId} commentTypes={commentTypes} close={close} />);
+    (newsId: number, commentTypes: Array<commentType>, initialCommentId?: number) => {
+      show(<CommentModal_NewsPreview id={newsId} commentTypes={commentTypes} close={close} initialCommentId={initialCommentId} />);
     },
     [show],
   );
