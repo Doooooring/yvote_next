@@ -23,7 +23,7 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
   const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [aiModel, setAiModel] = useState<'grok' | 'gpt' | 'claude'>('grok');
+  const [aiModel, setAiModel] = useState<'gpt' | 'grok' | 'claude'>('gpt');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLButtonElement>(null);
@@ -53,12 +53,9 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
     setInput('');
     setLoading(true);
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60000);
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
         body: JSON.stringify({
           messages: [...messages.filter(m => m.role !== 'ai' || messages.indexOf(m) > 0).map(m => ({
             role: m.role === 'ai' ? 'assistant' : 'user',
@@ -68,7 +65,6 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
           context: screenContext,
         }),
       });
-      clearTimeout(timeout);
       const data = await res.json();
       const result = data?.result;
       const text = typeof result === 'string' ? result
@@ -90,14 +86,19 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
       {open && (
         <ChatPanel ref={panelRef}>
           <ChatHeader>
-            <ChatHeaderTitle>yVote AI</ChatHeaderTitle>
+            <ChatHeaderLeft>
+              <ChatHeaderTitle>yVote AI</ChatHeaderTitle>
+              <ClearBtn onClick={() => { setMessages([]); setInput(''); }} disabled={loading} title="Clear chat">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.26.32 4.46L9.06 8c1.2-.9 2.93-.75 4.46.32l5.84-5.6zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z"/></svg>
+              </ClearBtn>
+            </ChatHeaderLeft>
             <ChatHeaderRight>
               <ModelSelect>
-                <ModelBtn $active={aiModel === 'grok'} onClick={() => setAiModel('grok')} title="Grok">
-                  <ModelIcon src="/icons/grok.svg" alt="Grok" width={14} height={14} />
-                </ModelBtn>
                 <ModelBtn $active={aiModel === 'gpt'} onClick={() => setAiModel('gpt')} title="GPT">
                   <ModelIcon src="/icons/openai.svg" alt="GPT" width={14} height={14} />
+                </ModelBtn>
+                <ModelBtn $active={aiModel === 'grok'} onClick={() => setAiModel('grok')} title="Grok">
+                  <ModelIcon src="/icons/grok.svg" alt="Grok" width={14} height={14} />
                 </ModelBtn>
                 <ModelBtn $active={aiModel === 'claude'} onClick={() => setAiModel('claude')} title="Claude">
                   <ModelIcon src="/icons/anthropic.svg" alt="Claude" width={14} height={14} />
@@ -131,7 +132,7 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
             <ChatInput
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSend()}
               placeholder="질문을 입력하세요"
             />
             <ChatSendBtn onClick={handleSend} disabled={loading || !input.trim()}>{'\u2192'}</ChatSendBtn>
@@ -178,7 +179,7 @@ const ChatPanel = styled.div`
   bottom: 84px;
   right: 24px;
   width: 320px;
-  max-height: 420px;
+  max-height: 85vh;
   background: ${({ theme }) => theme.colors.yvote01};
   border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 14px;
@@ -208,6 +209,25 @@ const ChatHeaderTitle = styled.span`
   font-size: 13px;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.yvote12};
+`;
+
+const ChatHeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const ClearBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.yvote07};
+  padding: 2px;
+  display: flex;
+  align-items: center;
+
+  &:hover { opacity: 0.7; }
+  &:disabled { opacity: 0.2; cursor: default; }
 `;
 
 const ChatHeaderRight = styled.div`
