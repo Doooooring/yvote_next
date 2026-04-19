@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 export const ScrollWrapper = styled.div`
-  width: 100%;
   height: 100%;
+  margin-right: -1.25rem;
   padding-left: 0.25rem;
-  padding-right: 0.25rem;
+  padding-right: 1.25rem;
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -23,6 +23,8 @@ export const ScrollWrapper = styled.div`
   scrollbar-width: thin;
 
   @media screen and (max-width: 768px) {
+    margin-right: 0;
+    padding-right: 0.25rem;
     scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;

@@ -1,42 +1,39 @@
-import { createContext, useCallback, useContext, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useRef, useState, ReactNode } from 'react';
 
 interface ChatContextType {
   activeContent: string | null;
-  viewedHistory: string[];
   setActiveContent: (content: string | null) => void;
-  addToHistory: (summary: string) => void;
+  consumePendingActions: () => string[];
 }
 
 const ChatContext = createContext<ChatContextType>({
   activeContent: null,
-  viewedHistory: [],
   setActiveContent: () => {},
-  addToHistory: () => {},
+  consumePendingActions: () => [],
 });
 
 export function ChatContextProvider({ children }: { children: ReactNode }) {
-  const [activeContent, setActiveContentRaw] = useState<string | null>(null);
-  const [viewedHistory, setViewedHistory] = useState<string[]>([]);
+  const [activeContent, setActiveContent] = useState<string | null>(null);
+  const pendingActions = useRef<string[]>([]);
+  const lastContent = useRef<string | null>(null);
 
-  const addToHistory = useCallback((summary: string) => {
-    setViewedHistory(prev => {
-      if (prev.includes(summary)) return prev;
-      return [...prev.slice(-9), summary];
-    });
+  const setActiveContentWrapped = useCallback((content: string | null) => {
+    setActiveContent(content);
+    if (content && content !== lastContent.current) {
+      pendingActions.current.push(content);
+      lastContent.current = content;
+      console.log('[ChatContext] action queued:', content.slice(0, 80));
+    }
   }, []);
 
-  const setActiveContent = useCallback((content: string | null) => {
-    setActiveContentRaw(prev => {
-      if (prev && !content) {
-        const firstLine = prev.split('\n')[0].slice(0, 80);
-        addToHistory(firstLine);
-      }
-      return content;
-    });
-  }, [addToHistory]);
+  const consumePendingActions = useCallback(() => {
+    const actions = [...pendingActions.current];
+    pendingActions.current = [];
+    return actions;
+  }, []);
 
   return (
-    <ChatContext.Provider value={{ activeContent, viewedHistory, setActiveContent, addToHistory }}>
+    <ChatContext.Provider value={{ activeContent, setActiveContent: setActiveContentWrapped, consumePendingActions }}>
       {children}
     </ChatContext.Provider>
   );

@@ -157,7 +157,7 @@ export default function NewsPage(props: pageProps) {
               {(isOpen: boolean, initialHeight: number) => (
                 <>
                   <SectionHeader>
-                    <SectionTitle>대기 중...</SectionTitle>
+                    <SectionTitle>한조, 대기 중...</SectionTitle>
                     <HeaderControls>
                       <TypeFilter>
                         <TypeFilterButton

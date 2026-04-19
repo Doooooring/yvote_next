@@ -7,8 +7,8 @@ export function useCommentModal() {
   const { show, close } = useModal();
 
   const showCommentModal = useCallback(
-    (newsId: number, commentType: commentType) => {
-      show(<CommentModal id={newsId} commentType={commentType} close={close} />);
+    (newsId: number, commentType: commentType, newsTitle?: string) => {
+      show(<CommentModal id={newsId} commentType={commentType} close={close} newsTitle={newsTitle} />);
     },
     [show, close],
   );

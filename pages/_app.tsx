@@ -9,38 +9,26 @@ import { ThemeProvider } from 'styled-components';
 import { customTheme } from '../public/assets/theme';
 import GlobalStyle from '../styles/globalStyle';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 
 function AppInner({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const { activeContent, viewedHistory } = useChatContext();
+  const { setActiveContent } = useChatContext();
 
-  const pageContext = useMemo(() => {
-    const parts: string[] = [];
-
-    const path = router.pathname;
-    if (path === '/') parts.push('홈 페이지.');
-    else if (path === '/news') parts.push('/news 페이지. 섹션: 최신 코멘트, 대기중 뉴스, 발행완료 뉴스.');
-    else if (path.startsWith('/news/')) parts.push(`뉴스 상세 페이지.`);
-    else parts.push(`${path} 페이지.`);
-
-    if (activeContent) {
-      parts.push(`현재 보고 있는 내용:\n${activeContent}`);
-    }
-
-    if (viewedHistory.length > 0) {
-      parts.push(`이전에 본 내용: ${viewedHistory.join(', ')}`);
-    }
-
-    return parts.join('\n');
-  }, [router.pathname, activeContent, viewedHistory]);
+  useEffect(() => {
+    const path = router.asPath.split('?')[0];
+    if (path.startsWith('/news/')) return;
+    if (path === '/') setActiveContent('/ (홈 페이지) 이동');
+    else if (path === '/news') setActiveContent('/news (뉴스 목록 페이지) 이동');
+    else setActiveContent(`${path} 이동`);
+  }, [router.asPath]);
 
   return (
     <>
       <Layout>
         <Component {...pageProps} />
       </Layout>
-      <ChatAssistant screenContext={pageContext} />
+      {router.pathname !== '/chatbot' && <ChatAssistant />}
     </>
   );
 }

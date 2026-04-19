@@ -1,4 +1,5 @@
 import { HTMLAttributes, ReactNode } from 'react';
+import { AiOutlineShareAlt } from 'react-icons/ai';
 import styled from 'styled-components';
 import { CommonLayoutBox, Row } from '../../common/commonStyles';
 
@@ -7,6 +8,7 @@ interface ModalBodyLayoutProps extends HTMLAttributes<HTMLDivElement> {
   bodyView: ReactNode;
   footerView: ReactNode;
   close: () => void;
+  onShare?: () => void;
 }
 
 export default function ModalLayout({
@@ -14,12 +16,20 @@ export default function ModalLayout({
   headView,
   bodyView,
   footerView,
+  onShare,
 }: ModalBodyLayoutProps) {
   return (
     <Wrapper>
-      <div className="close-button" onClick={close}>
-        &times;
-      </div>
+      <TopButtons>
+        {onShare && (
+          <div className="share-button" onClick={onShare}>
+            <AiOutlineShareAlt />
+          </div>
+        )}
+        <div className="close-button" onClick={close}>
+          &times;
+        </div>
+      </TopButtons>
       <ModalHead>{headView}</ModalHead>
       <ModalBody>{bodyView}</ModalBody>
       <ModalFooter>{footerView}</ModalFooter>
@@ -43,19 +53,37 @@ const Wrapper = styled(CommonLayoutBox)`
     padding: 0.75rem 0.75rem;
   }
 
+`;
+
+const TopButtons = styled.div`
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  div.share-button,
   div.close-button {
-    position: absolute;
-    top: 6px;
-    right: 10px;
     cursor: pointer;
-    text-indent: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.yvote06};
     &:hover {
       color: ${({ theme }) => theme.colors.yvote08};
     }
+  }
+
+  div.share-button {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+
+  div.close-button {
+    font-size: 1.4rem;
+    line-height: 1;
     @media screen and (max-width: 768px) {
       font-size: 1.2rem;
     }

@@ -8,6 +8,7 @@ import LoadingCommon from '@components/common/loading';
 import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
 import { useNewsAI } from '@/utils/context/newsAIContext';
+import { useChatContext } from '@/utils/context/chatContext';
 import { Comment, commentType } from '@utils/interface/news';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
@@ -25,16 +26,24 @@ export default function CommentBodyCommon({
   commentType,
   close,
   initialCommentId,
+  newsTitle,
 }: {
   id: number;
   commentType: commentType;
   close: () => void;
   initialCommentId?: number;
+  newsTitle?: string;
 }) {
   const device = useDevice();
   const { setModalCommentTitles, setModalActiveComment } = useNewsAI();
+  const { setActiveContent } = useChatContext();
 
   const { show: showToastMessage } = useToastMessage();
+
+  useEffect(() => {
+    const newsLabel = newsTitle ? `"${newsTitle}" (뉴스 ${id})` : `뉴스 ${id}`;
+    setActiveContent(`${commentType} 코멘트 모달 열림 (${newsLabel})`);
+  }, []);
 
   const { page, curComments, isRequesting, hasMore, getPageBefore, getPageAfter } = useFetchNewsComment(
     id,
@@ -99,6 +108,11 @@ export default function CommentBodyCommon({
   useEffect(() => {
     if (curComments.length > 0) {
       setModalCommentTitles(curComments.map(c => ({ commentType: c.commentType, title: c.title })));
+      if (!curComment) {
+        const titles = curComments.map(c => c.title).join(', ');
+        const newsLabel = newsTitle ? `"${newsTitle}" (뉴스 ${id})` : `뉴스 ${id}`;
+        setActiveContent(`${commentType} 코멘트 목록 열람 중 (${newsLabel}, ${curComments.length}건)\n제목: ${titles}`);
+      }
       if (initialCommentId && !initialApplied.current) {
         const match = curComments.find(c => c.id === initialCommentId);
         if (match) {
@@ -113,6 +127,8 @@ export default function CommentBodyCommon({
   useEffect(() => {
     if (curComment) {
       setModalActiveComment({ commentType: curComment.commentType, title: curComment.title, body: curComment.comment });
+      const newsLabel = newsTitle ? `"${newsTitle}" (뉴스 ${id})` : `뉴스 ${id}`;
+      setActiveContent(`코멘트 "${curComment.title}" 클릭함 (${newsLabel}, ${curComment.commentType}, 코멘트 ${curComment.id})`);
     } else {
       setModalActiveComment(null);
     }
@@ -122,6 +138,7 @@ export default function CommentBodyCommon({
     return () => {
       setModalCommentTitles([]);
       setModalActiveComment(null);
+      setActiveContent(null);
     };
   }, []);
 
@@ -253,9 +270,30 @@ export default function CommentBodyCommon({
     };
   }, [id, commentType, setCurComment]);
 
+  const handleShare = async () => {
+    const path = curComment
+      ? `/news/c/${id}/${commentType}/${curComment.id}`
+      : `/news/c/${id}/${commentType}`;
+    const url = `${window.location.origin}${path}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      showToastMessage(
+        <DefaultMessageBox><p>링크가 복사되었습니다</p></DefaultMessageBox>,
+        2000,
+      );
+    } catch {
+      showToastMessage(
+        <DefaultMessageBox><p>링크 복사에 실패했습니다</p></DefaultMessageBox>,
+        2000,
+      );
+    }
+  };
+
   return (
     <ModalLayout
       close={close}
+      onShare={handleShare}
       headView={<CommentHead comment={commentType} />}
       bodyView={
         <>

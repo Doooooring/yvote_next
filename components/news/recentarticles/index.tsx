@@ -18,7 +18,7 @@ const categories = ['전체', ...Object.values(commentType).filter((c) => c !== 
 interface SlideContentProps {
   commentType: recentArticleType;
   filteredArticles: any[];
-  onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void;
+  onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void;
 }
 
 function SlideContent({ commentType, filteredArticles, onExpandedContent }: SlideContentProps) {
@@ -122,7 +122,7 @@ const VacantWrapper = styled.div`
   align-items: center;
 `;
 
-export default function NewsArticlesSection({ onExpandedContent }: { onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void } = {}) {
+export default function NewsArticlesSection({ onExpandedContent }: { onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void } = {}) {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
   const { data: recentArticles = [], isFetching } = useQuery(RecentArticleQueryOption(activeCategory, 0, 100));
 

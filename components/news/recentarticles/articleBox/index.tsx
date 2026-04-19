@@ -12,7 +12,7 @@ interface ArticleBoxProps {
   showLogo?: boolean;
   isExpanded?: boolean;
   onToggle?: () => void;
-  onExpandedContent?: (info: { title: string; commentType: string; body: string } | null) => void;
+  onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void;
   column?: 'left' | 'right';
 }
 
@@ -35,9 +35,9 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
 
   useEffect(() => {
     if (!onExpandedContent) return;
-    if (isExpanded && body !== undefined) {
-      onExpandedContent({ title, commentType, body });
-    } else if (!isExpanded) {
+    if (isExpanded) {
+      onExpandedContent({ newsId: article.news.id, newsTitle: article.news.title || '', commentId: article.id, title, commentType, body: body ?? '' });
+    } else {
       onExpandedContent(null);
     }
   }, [isExpanded, body]);
@@ -302,7 +302,7 @@ const LinkWrapper = styled.div<{ $expanded?: boolean }>`
     max-height: 100%;
     overflow: ${({ $expanded }) => $expanded ? 'visible' : 'hidden'};
     justify-content: start;
-    align-items: ${({ $expanded }) => $expanded ? 'flex-start' : 'center'};
+    align-items: center;
     color: rgb(50, 50, 50);
     vertical-align: baseline;
     display: flex;
@@ -383,7 +383,8 @@ const LinkTitleWrapper = styled.div<{ $expanded?: boolean }>`
     min-width: 0;
     ${({ $expanded }) => $expanded ? `
       white-space: normal;
-      word-break: break-word;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     ` : `
       white-space: nowrap;
       overflow: hidden;

@@ -135,6 +135,7 @@ export interface Article
   comment?: string;
   news: {
     id: number;
+    title?: string;
     state: NewsState;
   };
 }

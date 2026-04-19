@@ -121,7 +121,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                       <div
                         className="comment_box_footer_text"
                         onClick={() => {
-                          showCommentModal(id, activeWriter);
+                          showCommentModal(id, activeWriter, title);
                         }}
                       >
                         자료 보기

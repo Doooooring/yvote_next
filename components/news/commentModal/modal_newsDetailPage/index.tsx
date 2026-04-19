@@ -8,15 +8,17 @@ export function CommentModal({
   id,
   commentType,
   close,
+  newsTitle,
 }: {
   id: number;
   commentType: commentType;
   close: () => void;
+  newsTitle?: string;
 }) {
   return (
     <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-        <CommentBodyCommon id={id} commentType={commentType} close={close} />
+        <CommentBodyCommon id={id} commentType={commentType} close={close} newsTitle={newsTitle} />
       </ModalBodyWrapper>
     </CommonModalLayout>
   );

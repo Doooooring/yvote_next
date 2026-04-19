@@ -5,12 +5,25 @@ const nextConfig = {
     styledComponents: true,
   },
   async rewrites() {
-    return [
-      {
-        source: '/proxy-api/:path*',
-        destination: `${process.env.INTERNAL_API_URL || 'http://localhost:3000'}/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/news/c/:newsId/:commentType/:commentId',
+          destination: '/news?newsId=:newsId&commentType=:commentType&commentId=:commentId',
+        },
+        {
+          source: '/news/c/:newsId/:commentType',
+          destination: '/news?newsId=:newsId&commentType=:commentType',
+        },
+      ],
+      afterFiles: [],
+      fallback: [
+        {
+          source: '/proxy-api/:path*',
+          destination: `${process.env.INTERNAL_API_URL || 'http://localhost:3000'}/:path*`,
+        },
+      ],
+    };
   },
   images: {
     // limit of 25 deviceSizes values

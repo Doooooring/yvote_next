@@ -80,11 +80,11 @@ export default function NewsDetailPage({ data }: pageProps) {
   useEffect(() => {
     if (!news) return;
     const parts = [
-      `[뉴스${id}] ${news.title}`,
+      `[${news.title}](/news/${id}) 열람 중`,
       news.subTitle ? `부제: ${news.subTitle}` : '',
       `날짜: ${news.date} | 타입: ${news.newsType}`,
       news.summary ? `요약: ${news.summary.slice(0, 500)}` : '',
-      news.summaries?.length ? `코멘트 타입: ${news.summaries.map((s: any) => s.commentType).join(', ')}` : '',
+      news.comments?.length ? `코멘트 타입: ${(news.comments as any[]).join(', ')}` : '',
     ].filter(Boolean);
     setActiveContent(parts.join('\n'));
     return () => setActiveContent(null);

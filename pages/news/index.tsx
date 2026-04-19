@@ -6,20 +6,24 @@ import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, NewsState, Preview, newsTypesToKor, newsTypesToKorFull, commentType } from '@utils/interface/news';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { NewsAIProvider, useNewsAI } from '@/utils/context/newsAIContext';
+import { useChatContext } from '@/utils/context/chatContext';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import styled from 'styled-components';
 
 interface pageProps {
   data: Array<Preview>;
+  origin: string;
 }
 
-export const getStaticProps: GetStaticProps<pageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<pageProps> = async (context) => {
+  const proto = (context.req.headers['x-forwarded-proto'] as string) || 'https';
+  const host = context.req.headers.host || 'yvoting.com';
   return {
-    props: { data: [] },
-    revalidate: 300,
+    props: { data: [], origin: `${proto}://${host}` },
   };
 };
 
@@ -37,25 +41,37 @@ function NewsPageInner(props: pageProps) {
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
 
-  const [expandedContent, setExpandedContent] = useState<{ title: string; commentType: string; body: string } | null>(null);
+  const { setActiveContent } = useChatContext();
+  const handleArticleExpand = (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => {
+    if (info) {
+      const newsLabel = info.newsTitle ? `"${info.newsTitle}" (뉴스 ${info.newsId})` : `뉴스 ${info.newsId}`;
+      setActiveContent(`코멘트 "${info.title}" 클릭함 (${newsLabel}, ${info.commentType}, 코멘트 ${info.commentId})`);
+    } else {
+      setActiveContent(null);
+    }
+  };
 
   const { showCommentModal } = useCommentModal_Preview();
   const deepLinkApplied = useRef(false);
 
+  const router = useRouter();
   useEffect(() => {
     if (deepLinkApplied.current) return;
-    const newsId = searchParams.get('newsId');
-    const cType = searchParams.get('commentType');
-    const commentId = searchParams.get('commentId');
+    const newsId = (router.query.newsId as string) || searchParams.get('newsId');
+    const rawCType = (router.query.commentType as string) || searchParams.get('commentType');
+    const cType = rawCType ? decodeURIComponent(rawCType) : null;
+    const commentId = (router.query.commentId as string) || searchParams.get('commentId');
     if (newsId && cType) {
       deepLinkApplied.current = true;
+      const newsTitle = (router.query.newsTitle as string) || searchParams.get('newsTitle') || undefined;
       showCommentModal(
         Number(newsId),
         [cType as commentType],
         commentId ? Number(commentId) : undefined,
+        newsTitle,
       );
     }
-  }, [searchParams]);
+  }, [router.query, searchParams]);
 
   const showNewsContent = useNewsNavigate();
   const [typeFilterOpen, setTypeFilterOpen] = useState(false);
@@ -96,7 +112,8 @@ function NewsPageInner(props: pageProps) {
       <HeadMeta
         {...{
           title: '뉴스 모아보기',
-          url: `https://yvoting.com/news`,
+          url: `${props.origin}/news`,
+          image: `/assets/img/og_trump.jpg`,
         }}
       />
       <Wrapper>
@@ -106,7 +123,7 @@ function NewsPageInner(props: pageProps) {
         </PageHeader> */}
 
         <ArticlesWrapper>
-          <NewsArticlesSection onExpandedContent={setExpandedContent} />
+          <NewsArticlesSection onExpandedContent={handleArticleExpand} />
         </ArticlesWrapper>
 
         <MainContent ref={ref}>
@@ -114,7 +131,7 @@ function NewsPageInner(props: pageProps) {
             {(isOpen: boolean, initialHeight: number) => (
               <>
                 <SectionHeader>
-                  <SectionTitle>대기 중...</SectionTitle>
+                  <SectionTitle>한조, 대기 중...</SectionTitle>
                   <HeaderControls>
                     <TypeFilter>
                       <TypeFilterButton

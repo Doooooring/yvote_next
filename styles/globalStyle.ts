@@ -66,8 +66,9 @@ html::-webkit-scrollbar {
 body {
   line-height: 1.65em;
   font-weight: 300;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
+  background-color: #f0f0ee;
 
   overflow-x: hidden;
   overflow-y: scroll;
@@ -82,6 +83,13 @@ q {
 
 body {
   -webkit-text-size-adjust: none;
+  transition: padding-right 0.3s ease;
+}
+
+body.chat-open {
+  @media (min-width: 1200px) {
+    padding-right: 22%;
+  }
 }
 
 mark {

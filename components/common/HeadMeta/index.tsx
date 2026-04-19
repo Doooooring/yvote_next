@@ -15,6 +15,7 @@ function HeadMeta({
   url = `https://yvoting.com`,
   type = 'website',
 }: HeadMetaProps) {
+  const resolvedImage = image.startsWith('http') ? image : `${new URL(url).origin}${image}`;
   return (
     <Head>
       <title>{title}</title>
@@ -27,7 +28,7 @@ function HeadMeta({
       <meta name="apple-mobile-web-app-title" content={title} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={resolvedImage} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content={type} />
       <meta property="og:article:author" content={'와이보트'} />

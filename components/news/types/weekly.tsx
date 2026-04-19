@@ -99,7 +99,7 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
                   key={`${type}-${index}`}
                   type={type as commentType}
                   size={12}
-                  onClick={() => showCommentModal(news.id, type as commentType)}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
                 />
               ))}
             </CommentIcons>

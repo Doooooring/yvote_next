@@ -94,7 +94,7 @@ export default function InvestigationNewsLayout({ news }: NewsTypeLayoutProps) {
             {commentTypes.length ? (
               <CommentIcons>
                 {commentTypes.map((type, index) => (
-                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType)} />
+                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType, news.title)} />
                 ))}
               </CommentIcons>
             ) : null}

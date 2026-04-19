@@ -41,8 +41,8 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {
-    showCommentModal(id, comments);
-  }, [id, comments]);
+    showCommentModal(id, comments, undefined, title);
+  }, [id, comments, title]);
 
   switch (state) {
     case NewsState.Published:

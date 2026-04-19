@@ -1,24 +1,26 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useChatContext } from '@/utils/context/chatContext';
 
 function renderMessageText(text: string | any) {
   if (typeof text !== 'string') text = String(text || '');
   const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
-  return parts.map((part, i) => {
+  return parts.map((part: string, i: number) => {
     const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (match) {
-      return <Link key={i} href={match[2]} style={{ color: 'inherit', textDecoration: 'underline' }}>{match[1]}</Link>;
+      let href = match[2];
+      const cm = href.match(/^\/news\/c\/(\d+)\/([^/]+)\/(\d+)$/);
+      if (cm) {
+        href = `/news?newsId=${cm[1]}&commentType=${encodeURIComponent(cm[2])}&commentId=${cm[3]}`;
+      }
+      return <Link key={i} href={href} style={{ color: 'inherit', textDecoration: 'underline' }}>{match[1]}</Link>;
     }
     return <span key={i}>{part}</span>;
   });
 }
 
-interface ChatAssistantProps {
-  screenContext: string;
-}
-
-export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
+export default function ChatAssistant() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>([]);
   const [input, setInput] = useState('');
@@ -27,23 +29,28 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLButtonElement>(null);
+  const { consumePendingActions } = useChatContext();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
-    if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (
-        panelRef.current && !panelRef.current.contains(e.target as Node) &&
-        fabRef.current && !fabRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
+    const mql = window.matchMedia('(min-width: 1200px)');
+    if (open && mql.matches) {
+      document.body.classList.add('chat-open');
+    } else {
+      document.body.classList.remove('chat-open');
+    }
+    const onChange = () => {
+      if (open && mql.matches) document.body.classList.add('chat-open');
+      else document.body.classList.remove('chat-open');
     };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    mql.addEventListener('change', onChange);
+    return () => {
+      mql.removeEventListener('change', onChange);
+      document.body.classList.remove('chat-open');
+    };
   }, [open]);
 
   const handleSend = useCallback(async () => {
@@ -53,6 +60,12 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
     setInput('');
     setLoading(true);
     try {
+      const actions = consumePendingActions();
+      const lastAction = actions.length > 0 ? actions[actions.length - 1] : null;
+      const userText = lastAction
+        ? `[현재 보고 있는 항목: ${lastAction}]\n${q}`
+        : q;
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,23 +73,31 @@ export default function ChatAssistant({ screenContext }: ChatAssistantProps) {
           messages: [...messages.filter(m => m.role !== 'ai' || messages.indexOf(m) > 0).map(m => ({
             role: m.role === 'ai' ? 'assistant' : 'user',
             text: m.text,
-          })), { role: 'user', text: q }],
+          })), { role: 'user', text: userText }],
           model: aiModel,
-          context: screenContext,
         }),
       });
       const data = await res.json();
       const result = data?.result;
-      const text = typeof result === 'string' ? result
-        : typeof result === 'object' ? (result?.error || result?.message || JSON.stringify(result) || '응답을 받지 못했습니다.')
-        : String(result || '응답을 받지 못했습니다.');
+      const extractText = (r: any): string => {
+        if (typeof r === 'string') return r;
+        if (r == null) return '응답을 받지 못했습니다.';
+        if (typeof r === 'object') {
+          if (typeof r.error === 'string') return r.error;
+          if (typeof r.error?.message === 'string') return r.error.message;
+          if (typeof r.message === 'string') return r.message;
+          return JSON.stringify(r);
+        }
+        return String(r);
+      };
+      const text = extractText(result);
       setMessages((prev) => [...prev, { role: 'ai', text, model: aiModel }]);
     } catch {
       setMessages((prev) => [...prev, { role: 'ai', text: '서버에 연결할 수 없습니다.', model: aiModel }]);
     } finally {
       setLoading(false);
     }
-  }, [input, loading, messages, aiModel, screenContext]);
+  }, [input, loading, messages, aiModel, consumePendingActions]);
 
   return (
     <>
@@ -177,8 +198,9 @@ const ChatFab = styled.button<{ $open: boolean }>`
 const ChatPanel = styled.div`
   position: fixed;
   bottom: 84px;
-  right: 24px;
-  width: 320px;
+  right: 8px;
+  width: calc(23vw - 8px);
+  min-width: 268px;
   max-height: 85vh;
   background: ${({ theme }) => theme.colors.yvote01};
   border: 1px solid ${({ theme }) => theme.colors.yvote04};

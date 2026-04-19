@@ -59,30 +59,6 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
     ? news.summaries?.find((summary) => summary.commentType === activeSummaryType)
     : undefined;
 
-  // Dummy data for fallback (match real timeline item shape: { title, type })
-  const dummyTimeline = [
-    ['2020.02.01', [{ title: '국무회의 타임라인 없음', type: commentType.기타 }]],
-  ] as [string, { title: string; type: commentType }[]][];
-  const dummyAgenda: AgendaGroupShape[] = [
-    { title: '법률공포안', items: ['법률공포안1', '법률공포안2'] },
-    { title: '대통령령안', items: ['시행령1', '시행령2'] },
-  ];
-  const dummySpeechGroups: AgendaGroupShape[] = [
-    {
-      title: '총리 발언',
-      items: [
-        '국무회의의 중요성을 강조하며, 각 부처의 협력을 요청했습니다.',
-        '경제 활성화 방안에 대해 논의하였습니다.'
-      ]
-    },
-    {
-      title: '장관 발언',
-      items: [
-        '교육 정책의 변화와 미래 방향에 대해 설명했습니다.',
-        '환경 보호를 위한 새로운 정책을 제안하였습니다.'
-      ]
-    }
-  ];
 
   return (
     <Wrapper>
@@ -94,7 +70,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
             {commentTypes.length ? (
               <CommentIcons>
                 {commentTypes.map((type, index) => (
-                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType)} />
+                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType, news.title)} />
                 ))}
               </CommentIcons>
             ) : null}
@@ -104,7 +80,11 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
           <Section>
             <SectionTitle>타임라인</SectionTitle>
             <SectionBody>
-              <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
+              {timelineGroups.length ? (
+                <TimelineList timeline={timelineGroups} flat />
+              ) : (
+                <EmptyMessage>타임라인이 없습니다.</EmptyMessage>
+              )}
             </SectionBody>
           </Section>
 
@@ -130,23 +110,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
                   ))}
                 </AgendaGroups>
               ) : (
-                <AgendaGroups>
-                  {dummyAgenda.map((group) => (
-                    <AgendaGroup key={group.title}>
-                      <summary>
-                        <span>{group.title}</span>
-                        <span className="count">{group.items.length}건</span>
-                      </summary>
-                      <AgendaItems>
-                        {group.items.map((item, idx) => (
-                          <li key={`${group.title}-dummy-${idx}`}>
-                            <p>{item}</p>
-                          </li>
-                        ))}
-                      </AgendaItems>
-                    </AgendaGroup>
-                  ))}
-                </AgendaGroups>
+                <EmptyMessage>국무회의 안건이 없습니다.</EmptyMessage>
               )}
             </SectionBody>
           </Section>
@@ -166,16 +130,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
                   ))}
                 </SpeechGroupsLayout>
               ) : (
-                <SpeechGroupsLayout>
-                  {dummySpeechGroups.map((group, gidx) => (
-                    <SpeechGroup key={group.title + gidx}>
-                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                      {group.items.map((item, idx) => (
-                        <SpeechQuote key={idx}>{item}</SpeechQuote>
-                      ))}
-                    </SpeechGroup>
-                  ))}
-                </SpeechGroupsLayout>
+                <EmptyMessage>주요 발언 내용이 없습니다.</EmptyMessage>
               )}
             </SectionBody>
           </Section>
@@ -490,6 +445,13 @@ const SummaryHtml = styled.div`
   p strong {
     font-weight: 400;
   }
+`;
+
+const EmptyMessage = styled.p`
+  color: ${({ theme }) => theme.colors.yvote07};
+  font-size: 0.85rem;
+  padding: 8px 0;
+  margin: 0;
 `;
 
 const SpeechGroupsLayout = styled.div`
