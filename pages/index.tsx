@@ -1,9 +1,11 @@
 import HeadMeta from '@components/common/HeadMeta';
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
-import { commentType } from '@utils/interface/news';
+import { commentType, NewsType, newsTypesToKorFull } from '@utils/interface/news';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { prepare, layout } from '@chenglou/pretext';
 
-import { useEffect, useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 
 /* ===== Dummy Data ===== */
 
@@ -342,9 +344,27 @@ const PAGE_CONTEXT = [
 ].join('\n');
 
 export default function Home() {
+  const [mode, setMode] = useState<'classic' | 'newspaper'>('classic');
+
   return (
     <>
       <HeadMeta />
+      <ModeToggleBar>
+        <ModeToggleBtn $active={mode === 'classic'} onClick={() => setMode('classic')}>
+          오리지널
+        </ModeToggleBtn>
+        <ModeToggleBtn $active={mode === 'newspaper'} onClick={() => setMode('newspaper')}>
+          신문
+        </ModeToggleBtn>
+      </ModeToggleBar>
+      {mode === 'newspaper' ? <NewspaperMode /> : <ClassicMode />}
+    </>
+  );
+}
+
+function ClassicMode() {
+  return (
+    <>
       <Wrapper>
         {/* DB 업데이트 */}
         <DbUpdateSection />
@@ -446,7 +466,1114 @@ export default function Home() {
   );
 }
 
+/* ===== Newspaper Mode ===== */
+
+type NewspaperItem = {
+  id: number;
+  title: string;
+  subTitle?: string;
+  date: string;
+  newsType: NewsType;
+  comments?: string[];
+};
+
+const NEWSPAPER_ITEMS: NewspaperItem[] = [
+  { id: 1146, title: '2026년 4월 3주차', subTitle: '호르무즈 통항 국제연대 · 북 탄도미사일 도발 · 4·19 정신 · 세월호 12주기 국가책임', date: '2026-04-19', newsType: NewsType.weekly, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
+  { id: 1148, title: '인도·베트남 국빈방문', subTitle: '이재명 대통령 순방 공동성명, 포괄적 전략 동반자 관계 격상', date: '2026-04-19', newsType: NewsType.diplomat, comments: ['청와대'] },
+  { id: 914, title: '26년 추가경정예산', subTitle: '국채 없는 26조 2천억 원 추경, 민생지원금·K-패스·에너지 지원 확대', date: '2026-04-15', newsType: NewsType.govern, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
+  { id: 950, title: '중대범죄수사청법', subTitle: '본회의 통과, 검찰청 해체 후속 수사권 재편 본격화', date: '2026-04-17', newsType: NewsType.bill, comments: ['입법부','국민의힘','더불어민주당'] },
+  { id: 649, title: '공직자 조사 TF / 기강 확립', subTitle: '헌법존중 정부혁신 TF 출범 · 공무원 복종의무 폐지 · 서훈 취소 후속 조치', date: '2026-04-19', newsType: NewsType.govern, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
+  { id: 905, title: '프랑스 국빈 방한', subTitle: '마크롱 대통령 국빈방한 공동선언, 방산·에너지 협력 합의', date: '2026-04-10', newsType: NewsType.diplomat, comments: ['청와대'] },
+  { id: 906, title: '한-인도네시아 정상회담', subTitle: '포괄적 방산 협력 확대, 핵심광물 MOU 개정', date: '2026-04-01', newsType: NewsType.diplomat, comments: ['청와대'] },
+  { id: 1147, title: '제16회 국무회의', subTitle: '제5차 비상경제점검회의 병행, 중동 공급망 대응 논의', date: '2026-04-14', newsType: NewsType.cabinet, comments: ['청와대','행정부'] },
+  { id: 955, title: '제13회 국무회의', subTitle: '추경안 심의·RISE 재구조화 보고', date: '2026-04-02', newsType: NewsType.cabinet, comments: ['청와대','행정부'] },
+  { id: 953, title: '2026년 4월 1주차', subTitle: '추경 시정연설 · 공공차량 5부제 · 프랑스 친교 만찬', date: '2026-04-05', newsType: NewsType.weekly, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
+  { id: 665, title: '헌재법 개정', subTitle: '재판관 선출 방식 재조정, 여야 충돌', date: '2026-03-28', newsType: NewsType.bill, comments: ['입법부','국민의힘','더불어민주당'] },
+  { id: 887, title: '상법 개정', subTitle: '이사 충실의무 확대, 경영계 반발', date: '2026-03-20', newsType: NewsType.bill, comments: ['입법부','국민의힘'] },
+  { id: 453, title: '대법원 증원', subTitle: '재판 지연 해소 위한 대법관 정원 확대 논의', date: '2026-03-15', newsType: NewsType.bill, comments: ['입법부'] },
+  { id: 956, title: '2026년도 1분기 경제지표', subTitle: '소비자물가 상승률 확대, 고용동향 둔화', date: '2026-04-02', newsType: NewsType.govern, comments: ['행정부'] },
+  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', date: '2026-03-30', newsType: NewsType.govern, comments: ['행정부'] },
+  { id: 944, title: '중대재해처벌법', subTitle: '시행 3년 평가, 개정안 발의 움직임', date: '2026-03-30', newsType: NewsType.bill, comments: ['행정부'] },
+  { id: 462, title: '화물연대 총파업', subTitle: '안전운임제 연장 요구, 정부 업무개시명령', date: '2026-03-30', newsType: NewsType.govern, comments: ['청와대','국민의힘','더불어민주당'] },
+  { id: 531, title: '공무원 모범사용자 책임', date: '2026-04-15', newsType: NewsType.govern, comments: ['더불어민주당'] },
+  { id: 686, title: '지역인재 성장엔진', subTitle: '교육부·지자체 라이즈 재구조화 후속', date: '2026-04-15', newsType: NewsType.govern, comments: ['행정부'] },
+  { id: 630, title: '기후·에너지 국제협력', date: '2026-04-17', newsType: NewsType.govern, comments: ['행정부'] },
+  { id: 902, title: '국정조사 쌍방울·대장동', subTitle: '조작기소 의혹 집중 청문, 검찰 수사권 존폐 논의', date: '2026-04-19', newsType: NewsType.investigation, comments: ['국민의힘','더불어민주당'] },
+  { id: 348, title: '특검 활동 점검', date: '2026-04-18', newsType: NewsType.specialcounsel, comments: ['더불어민주당','국민의힘'] },
+  { id: 739, title: '윤석열 부부 수감 논란', date: '2026-04-18', newsType: NewsType.investigation, comments: ['국민의힘'] },
+  { id: 713, title: '선거 허위사실 공표 논쟁', date: '2026-04-16', newsType: NewsType.bill, comments: ['국민의힘'] },
+];
+
+function formatNpDate(d: string) {
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return d;
+  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}`;
+}
+
+type RhythmedItem = NewspaperItem & {
+  _size: 'feature' | 'medium' | 'compact';
+  _tone: 'paper' | 'thick' | 'quote';
+  _showSub: boolean;
+  _colSpan: number;
+  _rowSpan: number;
+  _showImage: boolean;
+  _colBody: number;
+};
+
+// Seeded pseudo-random (mulberry32) — keeps layout stable per render but feels random.
+function seededRandom(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Korean-flavored filler so cards read like newspaper articles rather than blank cards.
+// Seeded by id so the same card keeps the same filler across renders.
+const FILLER_FRAGMENTS = [
+  '정부 관계자는 이번 조치가 민생 안정을 위한 필수 대응이라며 후속 점검을 예고했다.',
+  '여야는 각각 찬반 입장을 내며 향후 국회 논의 과정에서 세부 쟁점을 정리하기로 했다.',
+  '전문가들은 중장기 영향보다 단기 변동성에 주목해야 한다는 의견을 밝혔다.',
+  '관계 부처는 피해 최소화를 위해 관련 법령 개정과 지원 예산 집행을 서두를 방침이다.',
+  '시장은 정책 발표 직후 단기적으로 혼조세를 보였으나 후속 성명이 이어질 경우 반등 여지가 남아있다는 분석이다.',
+  '당초 예상보다 긴 협의 끝에 발표된 이번 조치는 이해관계자 간의 조율 과정을 반영한 결과라는 평가다.',
+  '향후 6개월간 이행 상황을 점검하기로 하였으며, 추가 보완 조치는 다음 회의에서 논의된다.',
+  '국제 동향과 연계한 대응 기조가 유지되는 가운데, 국내 현장에서도 관련 매뉴얼이 순차적으로 반영될 예정이다.',
+];
+
+function buildBodyFiller(seed: number): string {
+  const rand = seededRandom(seed + 7);
+  const n = 2 + Math.floor(rand() * 3); // 2-4 fragments
+  const out: string[] = [];
+  const used = new Set<number>();
+  while (out.length < n) {
+    const idx = Math.floor(rand() * FILLER_FRAGMENTS.length);
+    if (used.has(idx)) continue;
+    used.add(idx);
+    out.push(FILLER_FRAGMENTS[idx]);
+  }
+  return out.join(' ');
+}
+
+// Font strings must match the CSS in the card styled components.
+// Keep these here so pretext measurements stay in sync with render output.
+const TITLE_FONTS: Record<RhythmedItem['_size'], { font: string; lineHeight: number }> = {
+  feature: { font: "900 22px 'Noto Serif KR', Georgia, serif", lineHeight: 22 * 1.15 },
+  medium: { font: "800 15px 'Noto Serif KR', Georgia, serif", lineHeight: 15 * 1.25 },
+  compact: { font: "700 12px 'Noto Serif KR', Georgia, serif", lineHeight: 12 * 1.3 },
+};
+const LEDE_FONT = { font: "600 12px 'Noto Serif KR', Georgia, serif", lineHeight: 12 * 1.45 };
+const BODY_FONT = { font: "400 11px 'Noto Serif KR', Georgia, serif", lineHeight: 11 * 1.6 };
+const META_HEIGHT = 18;
+const CATEGORY_HEIGHT = 14;
+
+function NewspaperCard({
+  item,
+  onNavigate,
+  containerWidth,
+  gridCols,
+  rowHeight,
+  colGap,
+  rowGap,
+  cardPadX,
+  cardPadY,
+}: {
+  item: RhythmedItem;
+  onNavigate: (id: number) => void;
+  containerWidth: number;
+  gridCols: number;
+  rowHeight: number;
+  colGap: number;
+  rowGap: number;
+  cardPadX: number;
+  cardPadY: number;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  // Compute extraRows needed via pretext (pure math, no DOM reflow).
+  // Memoized per-item + container dimensions, so resize re-runs layout()
+  // arithmetic only, not prepare().
+  const extraRows = useMemo(() => {
+    if (!containerWidth) return 0;
+    if (item._tone === 'quote') return 0;
+
+    // Effective colSpan after mobile snap (3 or 6 on mobile, native on desktop).
+    const effectiveSpan =
+      gridCols === 6 ? (item._colSpan >= 5 ? 6 : 3) : item._colSpan;
+    const colUnit = (containerWidth - colGap * (gridCols - 1)) / gridCols;
+    const cellWidth =
+      effectiveSpan * colUnit + (effectiveSpan - 1) * colGap;
+    const contentWidth = Math.max(0, cellWidth - cardPadX * 2);
+    if (contentWidth <= 0) return 0;
+
+    const titleSpec = TITLE_FONTS[item._size];
+    let needed = CATEGORY_HEIGHT;
+
+    const titleH = layout(
+      prepare(item.title, titleSpec.font),
+      contentWidth,
+      titleSpec.lineHeight,
+    ).height;
+    needed += titleH;
+
+    if (item._showImage) {
+      needed += contentWidth * (2 / 3) + 8; // aspect-ratio 3/2 image + margin
+    }
+
+    if (item._showSub && item.subTitle) {
+      const ledeH = layout(
+        prepare(item.subTitle, LEDE_FONT.font),
+        contentWidth,
+        LEDE_FONT.lineHeight,
+      ).height;
+      needed += ledeH + 6;
+    }
+
+    if (item._size === 'feature' || item._size === 'medium') {
+      const body = buildBodyFiller(item.id);
+      // Mobile forces single-column body (CSS media query); match that here
+      // so predicted height stays accurate.
+      const effectiveCols = gridCols === 6 ? 1 : item._colBody;
+      const bodyWidth =
+        effectiveCols > 1
+          ? (contentWidth - 10) / effectiveCols
+          : contentWidth;
+      const bodyH = layout(
+        prepare(body, BODY_FONT.font),
+        bodyWidth,
+        BODY_FONT.lineHeight,
+      ).height;
+      // Multi-col text wraps into N columns, so total visual height ≈ bodyH / cols
+      const visualBodyH = bodyH / effectiveCols;
+      needed += visualBodyH + 6;
+    }
+
+    needed += META_HEIGHT + cardPadY * 2;
+    // Safety buffer — pretext measures via canvas, which can be a couple px
+    // tighter than actual browser rendering for Korean + serif. Pad to be safe
+    // so dates don't clip on the edges.
+    needed += 10;
+
+    const allocated = item._rowSpan * rowHeight + (item._rowSpan - 1) * rowGap;
+    if (needed <= allocated) return 0;
+    const overflow = needed - allocated;
+    return Math.ceil(overflow / (rowHeight + rowGap));
+  }, [
+    item, containerWidth, gridCols, rowHeight, colGap, rowGap, cardPadX, cardPadY,
+  ]);
+
+  const handleCardClick = () => setExpanded(true);
+
+  return (
+    <>
+      <NpCard
+        $size={item._size}
+        $tone={item._tone}
+        $colSpan={item._colSpan}
+        $rowSpan={item._rowSpan + extraRows}
+        onClick={handleCardClick}
+      >
+        {item._tone === 'quote' ? (
+          <NpPullQuote>
+            <NpQuoteMark>“</NpQuoteMark>
+            <NpQuoteBody>{item.subTitle || item.title}</NpQuoteBody>
+            <NpCardMeta $tone={item._tone}>
+              <span>— {item.title}</span>
+            </NpCardMeta>
+          </NpPullQuote>
+        ) : (
+          <>
+            <NpCardCategory $tone={item._tone}>{newsTypesToKorFull(item.newsType)}</NpCardCategory>
+            <NpCardTitle $size={item._size} $tone={item._tone}>{item.title}</NpCardTitle>
+            {item._showImage && <NpImagePlaceholder />}
+            {item._showSub && item.subTitle && (
+              <NpCardLede>{item.subTitle}</NpCardLede>
+            )}
+            {(item._size === 'feature' || item._size === 'medium') && (
+              <NpCardBody $cols={item._colBody}>
+                {buildBodyFiller(item.id)}
+              </NpCardBody>
+            )}
+            <NpCardMeta $tone={item._tone}>
+              <span>{formatNpDate(item.date)}</span>
+              <IconRow comments={item.comments} />
+            </NpCardMeta>
+          </>
+        )}
+      </NpCard>
+
+      {expanded && (
+        <NpExpandOverlay
+          onClick={() => setExpanded(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <NpExpandSheet onClick={(e) => e.stopPropagation()}>
+            <NpExpandClose onClick={() => setExpanded(false)} aria-label="닫기">×</NpExpandClose>
+            <NpExpandCategory>{newsTypesToKorFull(item.newsType)}</NpExpandCategory>
+            <NpExpandTitle>{item.title}</NpExpandTitle>
+            {item.subTitle && <NpExpandLede>{item.subTitle}</NpExpandLede>}
+            {item._showImage && <NpExpandImage />}
+            <NpExpandBody>{buildBodyFiller(item.id)}</NpExpandBody>
+            <NpExpandMeta>
+              <span>{formatNpDate(item.date)}</span>
+              <IconRow comments={item.comments} />
+              <NpExpandOpenLink onClick={(e) => { e.stopPropagation(); onNavigate(item.id); }}>
+                기사로 이동 →
+              </NpExpandOpenLink>
+            </NpExpandMeta>
+          </NpExpandSheet>
+        </NpExpandOverlay>
+      )}
+    </>
+  );
+}
+
+// Shared icon row rendering (used both in cards and the expand overlay).
+function IconRow({ comments }: { comments?: string[] }) {
+  if (!comments || comments.length === 0) return null;
+  return (
+    <NpIconRow>
+      {comments.map((c, i) => (
+        <CommentTypeIcon key={i} type={c as commentType} size={12} />
+      ))}
+    </NpIconRow>
+  );
+}
+
+function useContainerWidth() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const update = () => setWidth(el.clientWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, width] as const;
+}
+
+function NewspaperMode() {
+  const showNewsContent = useNewsNavigate();
+  const items = NEWSPAPER_ITEMS;
+  const hero = items[0];
+  const [gridRef, containerWidth] = useContainerWidth();
+  const isMobile = containerWidth > 0 && containerWidth < 768;
+  const gridCols = isMobile ? 6 : 12;
+  const rowHeight = isMobile ? 38 : 42;
+  const colGap = isMobile ? 10 : 14;
+  const rowGap = isMobile ? 8 : 10;
+
+  // Each item gets a randomized size + tone + column/row spans so the mosaic
+  // has variable widths AND heights (true magazine scatter, not fixed columns).
+  // Seeded by item id so the same news always looks the same across renders.
+  // Idx 0 is always a feature to anchor the page.
+  const rhythmedItems = useMemo(() => {
+    return items.map((item, idx) => {
+      const rand = seededRandom(item.id);
+      const sizeRoll = rand();
+      let size: 'feature' | 'medium' | 'compact';
+      if (idx === 0) size = 'feature';
+      else if (sizeRoll < 0.18 && item.subTitle) size = 'feature';
+      else if (sizeRoll < 0.50) size = 'compact';
+      else size = 'medium';
+
+      // Only one occasional "quote" block — the rest use plain paper styling.
+      const toneRoll = rand();
+      let tone: 'paper' | 'thick' | 'quote';
+      if (size === 'feature') {
+        tone = toneRoll < 0.25 ? 'thick' : 'paper';
+      } else if (size === 'medium') {
+        tone = toneRoll < 0.08 ? 'quote' : 'paper';
+      } else {
+        tone = 'paper';
+      }
+
+      const showSub =
+        size === 'feature'
+          ? !!item.subTitle
+          : size === 'medium' && !!item.subTitle && rand() < 0.4;
+
+      // Col/row spans — base on size, then jitter. 12-col grid at wide, halves at mobile.
+      const colJitter = rand();
+      const rowJitter = rand();
+      let colSpan: number;
+      let rowSpan: number;
+      if (size === 'feature') {
+        // idx 0 gets the biggest footprint
+        colSpan = idx === 0 ? 8 : colJitter < 0.5 ? 6 : 5;
+        rowSpan = idx === 0 ? 5 : rowJitter < 0.5 ? 4 : 3;
+      } else if (size === 'medium') {
+        colSpan = colJitter < 0.3 ? 5 : colJitter < 0.7 ? 4 : 3;
+        rowSpan = rowJitter < 0.5 ? 2 : rowJitter < 0.85 ? 3 : 1;
+      } else {
+        colSpan = colJitter < 0.4 ? 3 : colJitter < 0.8 ? 4 : 2;
+        rowSpan = rowJitter < 0.7 ? 1 : 2;
+      }
+
+      // Feature articles get an image placeholder ~60% of the time.
+      const showImage = size === 'feature' && rand() < 0.6;
+
+      // Feature and some medium articles use multi-column body.
+      const colBody = size === 'feature' ? 2 : size === 'medium' && colSpan >= 4 ? 2 : 1;
+
+      return {
+        ...item,
+        _size: size,
+        _tone: tone,
+        _showSub: showSub,
+        _colSpan: colSpan,
+        _rowSpan: rowSpan,
+        _showImage: showImage,
+        _colBody: colBody,
+      };
+    });
+  }, [items]);
+
+  return (
+    <NpWrapper>
+      <NpContent>
+        <NpMosaicGrid ref={gridRef}>
+          {rhythmedItems.map((item) => {
+            const cardPadX = item._size === 'feature' ? 10 : item._size === 'medium' ? 8 : 6;
+            const cardPadY = cardPadX;
+            return (
+              <NewspaperCard
+                key={item.id}
+                item={item}
+                onNavigate={showNewsContent}
+                containerWidth={containerWidth}
+                gridCols={gridCols}
+                rowHeight={rowHeight}
+                colGap={colGap}
+                rowGap={rowGap}
+                cardPadX={cardPadX}
+                cardPadY={cardPadY}
+              />
+            );
+          })}
+        </NpMosaicGrid>
+      </NpContent>
+    </NpWrapper>
+  );
+}
+
 /* ===== Styles ===== */
+
+/* Mode toggle */
+
+const ModeToggleBar = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0 0;
+  background: ${({ theme }) => theme.colors.yvote02};
+`;
+
+const ModeToggleBtn = styled.button<{ $active: boolean }>`
+  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.yvote12 : theme.colors.yvote05)};
+  background: ${({ theme, $active }) => ($active ? theme.colors.yvote12 : 'transparent')};
+  color: ${({ theme, $active }) => ($active ? theme.colors.yvote01 : theme.colors.yvote11)};
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: ${({ theme, $active }) => ($active ? theme.colors.yvote01 : theme.colors.yvote13)};
+    border-color: ${({ theme }) => theme.colors.yvote12};
+  }
+`;
+
+/* Newspaper styles */
+
+const NpWrapper = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  background: ${({ theme }) => theme.colors.yvote01};
+`;
+
+const NpMasthead = styled.header`
+  width: 92%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0 0;
+
+  @media (max-width: 768px) {
+    width: 96%;
+    padding: 16px 0 0;
+  }
+`;
+
+const NpMastheadInner = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 12px;
+`;
+
+const NpMastheadTitle = styled.h1`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin: 0;
+  line-height: 0.9;
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
+`;
+
+const NpMastheadYvote = styled.span`
+  color: #1f6fb5;
+  font-style: italic;
+  letter-spacing: -0.06em;
+  margin-right: 6px;
+`;
+
+const NpMastheadWord = styled.span`
+  color: ${({ theme }) => theme.colors.yvote13};
+`;
+
+const NpMastheadDate = styled.span`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote08};
+  letter-spacing: 0.04em;
+`;
+
+const NpMastheadRule = styled.div`
+  height: 3px;
+  background: ${({ theme }) => theme.colors.yvote12};
+`;
+
+const NpContent = styled.main`
+  width: 92%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0 80px;
+
+  @media (max-width: 768px) {
+    width: 96%;
+    padding: 16px 0 80px;
+  }
+
+`;
+
+const NpRule = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 20px 0;
+
+  @media (max-width: 768px) {
+    margin: 16px 0;
+  }
+`;
+
+const NpIconRow = styled.div`
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  filter: saturate(0.3) brightness(1.15);
+`;
+
+const NpHeroSection = styled.div`
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const NpHeroArticle = styled.article`
+  cursor: pointer;
+  padding-right: 24px;
+  border-right: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  @media (max-width: 768px) {
+    padding: 0 0 14px;
+    border-right: none;
+    border-bottom: 2px solid ${({ theme }) => theme.colors.yvote12};
+    margin-bottom: 14px;
+  }
+`;
+
+const NpHeroCategory = styled.span`
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: ${({ theme }) => theme.colors.yvote08};
+`;
+
+const NpHeroTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.colors.yvote13};
+  line-height: 1.3;
+  margin: 6px 0 10px;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 768px) {
+    font-size: 21px;
+  }
+`;
+
+const NpHeroSub = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.yvote08};
+  line-height: 1.55;
+  margin: 0 0 12px;
+`;
+
+const NpHeroMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.yvote06};
+`;
+
+const NpSecondaryColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-flow: dense;
+    gap: 10px 12px;
+  }
+`;
+
+const NpSecondaryArticle = styled.article`
+  cursor: pointer;
+  padding: 12px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 0 10px;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+    grid-column: span 3;
+
+    &:first-child { grid-column: span 4; }
+    &:nth-child(2) { grid-column: span 2; }
+  }
+`;
+
+const NpSecCategory = styled.span`
+  font-size: 10px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
+
+const NpSecTitle = styled.h3`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote13};
+  line-height: 1.35;
+  margin: 3px 0 6px;
+`;
+
+const NpSecMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote06};
+`;
+
+const NpTertiaryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-flow: dense;
+    gap: 10px 12px;
+  }
+`;
+
+const NpTertiaryArticle = styled.article`
+  cursor: pointer;
+  padding: 0 16px;
+  border-right: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child,
+  &:nth-child(3n) {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 0 10px;
+    border-right: none;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+    grid-column: span 3;
+
+    &:nth-child(1) { grid-column: span 6; }
+    &:nth-child(2) { grid-column: span 2; }
+    &:nth-child(3) { grid-column: span 4; }
+    &:nth-child(4) { grid-column: span 3; }
+    &:nth-child(5) { grid-column: span 3; }
+    &:nth-child(6) { grid-column: span 6; border-bottom: none; }
+  }
+`;
+
+const NpTerCategory = styled.span`
+  font-size: 10px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
+
+const NpTerTitle = styled.h3`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote13};
+  line-height: 1.35;
+  margin: 3px 0 4px;
+`;
+
+const NpTerSub = styled.p`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.yvote07};
+  line-height: 1.4;
+  margin: 0 0 6px;
+`;
+
+const NpTerMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote06};
+`;
+
+const NpSectionBlock = styled.section``;
+
+const NpSectionTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.colors.yvote12};
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.yvote12};
+  display: inline-block;
+`;
+
+const NpSectionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px 16px;
+  margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-flow: dense;
+    gap: 8px 12px;
+  }
+`;
+
+const NpCompactArticle = styled.article`
+  cursor: pointer;
+  padding: 8px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  @media (max-width: 768px) {
+    grid-column: span 3;
+
+    &:nth-child(3n+1) { grid-column: span 4; }
+    &:nth-child(3n+2) { grid-column: span 2; }
+    &:nth-child(5n) { grid-column: span 6; }
+  }
+`;
+
+const NpCompactTitle = styled.h3`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote13};
+  line-height: 1.35;
+  margin: 0;
+`;
+
+const NpCompactMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.yvote06};
+  margin-top: 3px;
+`;
+
+/* Mosaic newspaper cards */
+
+type CardSize = 'feature' | 'medium' | 'compact';
+type CardTone = 'paper' | 'thick' | 'quote';
+
+const cardSizeStyles = {
+  feature: css`
+    padding: 10px 10px 10px;
+  `,
+  medium: css`
+    padding: 8px 8px 8px;
+  `,
+  compact: css`
+    padding: 6px 6px;
+  `,
+};
+
+const cardToneStyles = {
+  paper: css`
+    background: transparent;
+    border-top: 1px solid ${({ theme }) => theme.colors.yvote12};
+  `,
+  thick: css`
+    background: transparent;
+    border-top: 4px solid ${({ theme }) => theme.colors.yvote12};
+  `,
+  quote: css`
+    background: transparent;
+    border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+  `,
+};
+
+const NpMosaicGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 42px;
+  grid-auto-flow: dense;
+  gap: 10px 14px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 38px;
+    gap: 8px 10px;
+  }
+`;
+
+/**
+ * Mobile col-span snaps to either 3 (half) or 6 (full) so the 6-col grid
+ * tiles cleanly (3+3 rows or full 6 rows). Desktop keeps finer 12-col spans
+ * for the richer mosaic, but mobile sticks to magazine-style two-up rows
+ * which prevents the stair-step gaps that appear on small screens.
+ */
+const mobileColSpan = (desktopSpan: number) => (desktopSpan >= 5 ? 6 : 3);
+
+const NpCard = styled.article<{ $size: CardSize; $tone: CardTone; $colSpan: number; $rowSpan: number }>`
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  ${({ $size }) => cardSizeStyles[$size]}
+  ${({ $tone }) => cardToneStyles[$tone]}
+  grid-column: span ${({ $colSpan }) => $colSpan};
+  grid-row: span ${({ $rowSpan }) => $rowSpan};
+
+  @media (max-width: 768px) {
+    grid-column: span ${({ $colSpan }) => mobileColSpan($colSpan)};
+  }
+`;
+
+const NpCardCategory = styled.span<{ $tone: CardTone }>`
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
+
+const titleSizes = {
+  feature: css`
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 4px 0 8px;
+  `,
+  medium: css`
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 2px 0 5px;
+  `,
+  compact: css`
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+  `,
+};
+
+const NpCardTitle = styled.h3<{ $size: CardSize; $tone: CardTone }>`
+  color: ${({ theme }) => theme.colors.yvote13};
+  ${({ $size }) => titleSizes[$size]}
+`;
+
+const NpCardLede = styled.p`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: ${({ theme }) => theme.colors.yvote12};
+`;
+
+const NpCardBody = styled.p<{ $cols: number }>`
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0 0 6px;
+  color: ${({ theme }) => theme.colors.yvote09};
+  column-count: ${({ $cols }) => $cols};
+  column-gap: 10px;
+  column-rule: ${({ $cols, theme }) => ($cols > 1 ? `1px solid ${theme.colors.yvote04}` : 'none')};
+  flex: 1;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    column-count: 1;
+    column-rule: none;
+  }
+`;
+
+const NpImagePlaceholder = styled.div`
+  width: 100%;
+  aspect-ratio: 3/2;
+  background: ${({ theme }) => theme.colors.yvote03};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 0 0 8px;
+`;
+
+const NpCardMeta = styled.div<{ $tone: CardTone }>`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+  color: ${({ theme }) => theme.colors.yvote06};
+  flex-shrink: 0;
+  min-height: 16px;
+`;
+
+const NpPullQuote = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 8px 6px;
+`;
+
+const NpQuoteMark = styled.span`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 40px;
+  line-height: 0.8;
+  color: ${({ theme }) => theme.colors.yvote07};
+  margin-bottom: 4px;
+`;
+
+const NpQuoteBody = styled.blockquote`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.4;
+  color: ${({ theme }) => theme.colors.yvote12};
+  margin: 0 0 8px;
+  max-width: 320px;
+`;
+
+/* Per-card expand ("펼쳐보기") button + overlay */
+
+const NpExpandBtn = styled.button`
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  background: ${({ theme }) => theme.colors.yvote01};
+  color: ${({ theme }) => theme.colors.yvote10};
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+
+  article:hover > &,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote13};
+    border-color: ${({ theme }) => theme.colors.yvote12};
+  }
+
+  @media (max-width: 768px) {
+    opacity: 1;
+  }
+`;
+
+const NpExpandOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 200;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+`;
+
+const NpExpandSheet = styled.div`
+  position: relative;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border-top: 6px solid ${({ theme }) => theme.colors.yvote12};
+  max-width: 720px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 32px 28px 28px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+
+  @media (max-width: 768px) {
+    padding: 24px 18px 22px;
+  }
+`;
+
+const NpExpandClose = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  color: ${({ theme }) => theme.colors.yvote09};
+  cursor: pointer;
+  padding: 4px 8px;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote13};
+  }
+`;
+
+const NpExpandCategory = styled.span`
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
+
+const NpExpandTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: ${({ theme }) => theme.colors.yvote13};
+  margin: 8px 0 14px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+`;
+
+const NpExpandLede = styled.p`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.colors.yvote12};
+  margin: 0 0 16px;
+`;
+
+const NpExpandImage = styled.div`
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: ${({ theme }) => theme.colors.yvote03};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 0 0 16px;
+`;
+
+const NpExpandBody = styled.p`
+  font-size: 14px;
+  line-height: 1.75;
+  color: ${({ theme }) => theme.colors.yvote10};
+  margin: 0 0 20px;
+  column-count: 2;
+  column-gap: 22px;
+  column-rule: 1px solid ${({ theme }) => theme.colors.yvote04};
+
+  @media (max-width: 768px) {
+    column-count: 1;
+  }
+`;
+
+const NpExpandMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.yvote07};
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  padding-top: 10px;
+`;
+
+const NpExpandOpenLink = styled.button`
+  margin-left: auto;
+  border: 1px solid ${({ theme }) => theme.colors.yvote12};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote12};
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.yvote12};
+    color: ${({ theme }) => theme.colors.yvote01};
+  }
+`;
 
 /* DB Update */
 
