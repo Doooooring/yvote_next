@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async (context)
   return { props: { origin: `${proto}://${host}` } };
 };
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string | undefined) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
