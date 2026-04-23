@@ -6,6 +6,8 @@ import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
 import { NewsType, NewsState, Preview, newsTypesToKor, newsTypesToKorFull, commentType } from '@utils/interface/news';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
+import { newsRepository } from '@repositories/news';
+import { getTextContentFromHtmlText } from '@utils/tools';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState, useTransition } from 'react';
@@ -14,16 +16,113 @@ import { useChatContext } from '@/utils/context/chatContext';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import styled from 'styled-components';
 
+interface PageMeta {
+  title: string;
+  description: string;
+  image?: string;
+  url: string;
+}
+
+// Kakao link cards cap title at ~2 lines; beyond ~55 Korean chars the
+// card starts hiding the description to fit the overflowing title.
+// Truncate server-side so description stays visible.
+const MAX_OG_TITLE_CHARS = 37;
+function truncateTitle(s: string, max: number = MAX_OG_TITLE_CHARS): string {
+  const trimmed = (s || '').trim();
+  if (trimmed.length <= max) return trimmed;
+  return trimmed.slice(0, max - 3).trimEnd() + '...';
+}
+
 interface pageProps {
   data: Array<Preview>;
   origin: string;
+  meta: PageMeta | null;
 }
 
 export const getServerSideProps: GetServerSideProps<pageProps> = async (context) => {
   const proto = (context.req.headers['x-forwarded-proto'] as string) || 'https';
   const host = context.req.headers.host || 'yvoting.com';
+  const origin = `${proto}://${host}`;
+
+  // Deep-link OG tags: `/news/c/{newsId}/{commentType}[/{commentId}]` rewrites
+  // to this page with query params. Fetch the news to emit item-specific
+  // og:title / og:description so share unfurls show meaningful info.
+  const q = context.query;
+  const newsId = typeof q.newsId === 'string' ? q.newsId : null;
+  const commentTypeRaw = typeof q.commentType === 'string' ? q.commentType : null;
+  const commentId = typeof q.commentId === 'string' ? q.commentId : null;
+
+  let meta: PageMeta | null = null;
+  if (newsId) {
+    try {
+      const news = await newsRepository.getNewsContent(Number(newsId), null);
+      if (news) {
+        const cType = commentTypeRaw ? decodeURIComponent(commentTypeRaw) : null;
+        const baseTitle = news.title ?? '';
+        const sub = news.subTitle ?? getTextContentFromHtmlText(news.summary ?? '')?.split('.')[0] ?? '';
+
+        let title = baseTitle;
+        let description = sub;
+
+        if (cType) {
+          // Fetch the commentType's comment list once — used for both the
+          // single-comment (find one by id) and commentType-level (build a
+          // titles description) cases.
+          let comments: Array<{ id: number; title: string; comment: string }> = [];
+          try {
+            const res = await newsRepository.getNewsComment(
+              Number(newsId), cType as commentType, 0, 1000,
+            );
+            comments = res ?? [];
+          } catch {
+            // ignore — fall back to news-level meta
+          }
+
+          if (commentId) {
+            const match = comments.find((c) => c.id === Number(commentId));
+            if (match) {
+              title = match.title || baseTitle;
+              const body = getTextContentFromHtmlText(match.comment ?? '') || '';
+              // Replace DB paragraph separator `$` with space, collapse runs.
+              const flattened = body.replace(/\$/g, ' ').replace(/\s+/g, ' ').trim();
+              description = (flattened || baseTitle).slice(0, 200);
+            } else {
+              title = baseTitle ? `${baseTitle} · ${cType} 논평` : `${cType} 논평`;
+              description = sub || baseTitle;
+            }
+          } else {
+            title = baseTitle ? `${baseTitle} · ${cType} 자료` : `${cType} 자료`;
+            const titles = comments.map((c) => c.title).filter(Boolean);
+            if (titles.length > 0) {
+              // Join titles into a single description. OG descriptions
+              // typically render ~160–200 chars; over-truncated tail gets
+              // trimmed on the receiving side.
+              description = titles.join(' | ').slice(0, 300);
+            } else {
+              description = sub || baseTitle;
+            }
+          }
+        }
+
+        // Build the canonical URL for the share link (reverse the rewrite).
+        let path = `/news/${newsId}`;
+        if (cType && commentId) path = `/news/c/${newsId}/${encodeURIComponent(cType)}/${commentId}`;
+        else if (cType) path = `/news/c/${newsId}/${encodeURIComponent(cType)}`;
+
+        meta = {
+          title: truncateTitle(title),
+          description,
+          // Keep existing image behavior (site default for /news/c/* shares).
+          url: `${origin}${path}`,
+        };
+      }
+    } catch {
+      // Swallow SSR fetch errors — fall back to default site OG.
+    }
+  }
+
   return {
-    props: { data: [], origin: `${proto}://${host}` },
+    props: { data: [], origin, meta },
   };
 };
 
@@ -110,11 +209,19 @@ function NewsPageInner(props: pageProps) {
   return (
     <>
       <HeadMeta
-        {...{
-          title: '뉴스 모아보기',
-          url: `${props.origin}/news`,
-          image: `/assets/img/og_trump.jpg`,
-        }}
+        {...(props.meta
+          ? {
+              title: props.meta.title,
+              description: props.meta.description,
+              image: props.meta.image ?? `/assets/img/og_trump.jpg`,
+              url: props.meta.url,
+              type: 'article',
+            }
+          : {
+              title: '뉴스 모아보기',
+              url: `${props.origin}/news`,
+              image: `/assets/img/og_trump.jpg`,
+            })}
       />
       <Wrapper>
         {/* <PageHeader>
