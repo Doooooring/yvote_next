@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
-import { commentType } from '@utils/interface/news';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BillItem, commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
@@ -42,13 +42,85 @@ function parseBillArticles(html: string): BillArticle[] {
   return articles;
 }
 
+function toEffectiveBills(news: NewsTypeLayoutProps['news']): BillItem[] {
+  if (news.bills && news.bills.length > 0) return news.bills;
+  // Legacy single-bill fallback — wrap flat fields into one pseudo-item.
+  const hasAny =
+    !!(news.billDetail ?? '').trim() ||
+    !!(news.billVoteResult ?? '') ||
+    !!(news.billVoteTotal ?? 0) ||
+    (news.billVoteByParty ?? []).length > 0;
+  if (!hasAny) return [];
+  return [{
+    billNo: '',
+    billName: '',
+    detail: news.billDetail,
+    voteResult: news.billVoteResult,
+    voteTotal: news.billVoteTotal,
+    voteByParty: news.billVoteByParty,
+  }];
+}
+
 export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
 
+  const effectiveBills = useMemo(() => toEffectiveBills(news), [news]);
+  const [billIndex, setBillIndex] = useState(0);
+  useEffect(() => {
+    setBillIndex((i) => (i >= effectiveBills.length ? 0 : i));
+  }, [effectiveBills.length]);
+
+  const currentBill: BillItem | null = effectiveBills[billIndex] ?? null;
+  const hasMultipleBills = effectiveBills.length > 1;
+
+  const gotoPrev = useCallback(() => {
+    setBillIndex((i) => (i <= 0 ? effectiveBills.length - 1 : i - 1));
+  }, [effectiveBills.length]);
+  const gotoNext = useCallback(() => {
+    setBillIndex((i) => (i >= effectiveBills.length - 1 ? 0 : i + 1));
+  }, [effectiveBills.length]);
+
+  // Keyboard: left/right arrows navigate between bills.
+  // Ignored when focus is in a form field or contenteditable area.
+  useEffect(() => {
+    if (!hasMultipleBills) return;
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); gotoPrev(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); gotoNext(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [hasMultipleBills, gotoPrev, gotoNext]);
+
+  // Touch swipe handlers (mobile).
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!hasMultipleBills) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, [hasMultipleBills]);
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current == null || touchStartY.current == null) return;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const dx = endX - touchStartX.current;
+    const dy = endY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    // Require mostly-horizontal swipe >60px to avoid false positives during scroll.
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) gotoNext();
+      else gotoPrev();
+    }
+  }, [gotoPrev, gotoNext]);
+
   const [billArticles, setBillArticles] = useState<BillArticle[]>([]);
   useEffect(() => {
-    setBillArticles(parseBillArticles(news.billDetail ?? ''));
-  }, [news.billDetail]);
+    setBillArticles(parseBillArticles(currentBill?.detail ?? ''));
+  }, [currentBill?.detail]);
 
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
@@ -75,8 +147,8 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
     [news.comments],
   );
 
-  // Vote summary — computed from billVoteByParty
-  const partyVotes = news.billVoteByParty ?? [];
+  // Vote summary — per-bill, derived from currentBill.voteByParty
+  const partyVotes = currentBill?.voteByParty ?? [];
   const voteTotals = useMemo(() => {
     const sums = { for: 0, against: 0, abstain: 0, absent: 0 };
     partyVotes.forEach((pv) => {
@@ -87,15 +159,13 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
     });
     return sums;
   }, [partyVotes]);
-  const totalVotes = news.billVoteTotal ?? 0;
+  const totalVotes = currentBill?.voteTotal ?? 0;
 
   // Vote detail toggle
   const [showVoteDetail, setShowVoteDetail] = useState(false);
 
   // Mobile tab state
   const [activeTab, setActiveTab] = useState(0);
-
-  const showAmendment = !!(news.billAmendment?.replace(/<[^>]*>/g, '').trim());
 
   const debateSlides = useMemo(() => {
     return [
@@ -145,9 +215,20 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
             <SectionBody>
 
             {totalVotes > 0 && (
+              <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+                {hasMultipleBills && (
+                  <BillNav>
+                    <NavButton onClick={gotoPrev} aria-label="이전 법안">◀</NavButton>
+                    <BillNavLabel>
+                      <span className="index">{billIndex + 1} / {effectiveBills.length}</span>
+                      <span className="name">{currentBill?.billName ?? ''}</span>
+                    </BillNavLabel>
+                    <NavButton onClick={gotoNext} aria-label="다음 법안">▶</NavButton>
+                  </BillNav>
+                )}
               <VoteSummarySection>
-                {news.billVoteResult && (
-                  <VoteResultBadge>{news.billVoteResult}</VoteResultBadge>
+                {currentBill?.voteResult && (
+                  <VoteResultBadge>{currentBill.voteResult}</VoteResultBadge>
                 )}
                 <VoteNumbers>
                   <VoteItem>
@@ -208,13 +289,7 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                   </>
                 )}
               </VoteSummarySection>
-            )}
-
-            {showAmendment && (
-              <AmendmentBox $show>
-                <DebateLabel>수정안 내용</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
-              </AmendmentBox>
+              </BillSwipeBlock>
             )}
 
             {/* PC: side by side */}
@@ -249,20 +324,36 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
             </SectionBody>
           </Section>
 
-          {billArticles.length > 0 && (
+          {effectiveBills.length > 0 && (
             <Section>
               <SectionTitle>법안 상세보기</SectionTitle>
               <SectionBody>
-                <BillArticleGroups>
-                  {billArticles.map((article, idx) => (
-                    <BillArticleGroup key={idx}>
-                      <summary>
-                        <span dangerouslySetInnerHTML={{ __html: article.title }} />
-                      </summary>
-                      <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                    </BillArticleGroup>
-                  ))}
-                </BillArticleGroups>
+                <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+                  {hasMultipleBills && (
+                    <BillNav>
+                      <NavButton onClick={gotoPrev} aria-label="이전 법안">◀</NavButton>
+                      <BillNavLabel>
+                        <span className="index">{billIndex + 1} / {effectiveBills.length}</span>
+                        <span className="name">{currentBill?.billName ?? ''}</span>
+                      </BillNavLabel>
+                      <NavButton onClick={gotoNext} aria-label="다음 법안">▶</NavButton>
+                    </BillNav>
+                  )}
+                  {billArticles.length > 0 ? (
+                    <BillArticleGroups>
+                      {billArticles.map((article, idx) => (
+                        <BillArticleGroup key={idx}>
+                          <summary>
+                            <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                          </summary>
+                          <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+                        </BillArticleGroup>
+                      ))}
+                    </BillArticleGroups>
+                  ) : (
+                    <EmptyBillDetail>상세 내용이 등록되지 않았습니다.</EmptyBillDetail>
+                  )}
+                </BillSwipeBlock>
               </SectionBody>
             </Section>
           )}
@@ -379,6 +470,78 @@ const SectionBody = styled.div`
   @media (max-width: 768px) {
     padding: 0 10px;
   }
+`;
+
+// Per-bill swipe navigation
+
+const BillSwipeBlock = styled.div`
+  touch-action: pan-y;
+`;
+
+const BillNav = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 4px 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin-bottom: 12px;
+`;
+
+const NavButton = styled.button`
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  color: ${({ theme }) => theme.colors.yvote12};
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.yvote03};
+  }
+`;
+
+const BillNavLabel = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+
+  .index {
+    font-size: 11px;
+    color: ${({ theme }) => theme.colors.yvote08};
+    letter-spacing: 0.04em;
+  }
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.yvote12};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .name { font-size: 13px; }
+  }
+`;
+
+const EmptyBillDetail = styled.div`
+  padding: 16px 0;
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 0.9rem;
+  text-align: center;
 `;
 
 // Bill article styles
@@ -500,13 +663,6 @@ const DebateLabel = styled.div`
   padding: 3px 10px;
   border-radius: 999px;
   margin-bottom: 10px;
-`;
-
-const AmendmentBox = styled.div<{ $show: boolean }>`
-  display: ${({ $show }) => ($show ? 'block' : 'none')};
-  margin-bottom: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote05};
 `;
 
 const DebateContent = styled.div`
