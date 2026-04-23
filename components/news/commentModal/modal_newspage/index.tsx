@@ -1,6 +1,7 @@
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { Article, NewsState } from '@utils/interface/news';
+import { shareLink } from '@utils/tools/share';
 import Link from 'next/link';
 import { MouseEvent } from 'react';
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
@@ -29,10 +30,10 @@ export default function CommentModal({
 
   const handleShare = async () => {
     const url = `${window.location.origin}/news/c/${news.id}/${commentType}/${id}`;
-    try {
-      await navigator.clipboard.writeText(url);
+    const result = await shareLink({ url });
+    if (result === 'copied') {
       show(<DefaultMessageBox><p>링크가 복사되었습니다</p></DefaultMessageBox>, 2000);
-    } catch {
+    } else if (result === 'failed') {
       show(<DefaultMessageBox><p>링크 복사에 실패했습니다</p></DefaultMessageBox>, 2000);
     }
   };
@@ -51,7 +52,7 @@ export default function CommentModal({
                 maxScrollHeight={maxScrollHeight}
                 moveToScrollHeight={moveToScrollHeight}
               />
-              <CommentBodyExplain id={news.id} title={title} explain={comment} date={date} />
+              <CommentBodyExplain id={news.id} title={title} explain={comment ?? ''} date={date} />
             </ScrollWrapper>
           }
           footerView={

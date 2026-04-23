@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import CommentBodyExplain from './commentBodyExplain';
 import CommentBodyList from './commentBodyList';
 import CommentHead from './commentHead';
+import { shareLink } from '@utils/tools/share';
 import { useFetchNewsComment, useListScrollheight, useScrollInfo } from './commentModal.hook';
 // import CommentProgressBar from './commentProgressBar';
 import { ScrollWrapper } from './figure';
@@ -276,13 +277,13 @@ export default function CommentBodyCommon({
       : `/news/c/${id}/${commentType}`;
     const url = `${window.location.origin}${path}`;
 
-    try {
-      await navigator.clipboard.writeText(url);
+    const result = await shareLink({ url });
+    if (result === 'copied') {
       showToastMessage(
         <DefaultMessageBox><p>링크가 복사되었습니다</p></DefaultMessageBox>,
         2000,
       );
-    } catch {
+    } else if (result === 'failed') {
       showToastMessage(
         <DefaultMessageBox><p>링크 복사에 실패했습니다</p></DefaultMessageBox>,
         2000,
