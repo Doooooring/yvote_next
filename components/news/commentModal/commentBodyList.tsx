@@ -3,11 +3,24 @@ import IsShow from '@components/common/isShow';
 import { Comment, commentType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
 import { getDateHidingCurrentYear, getDotDateForm } from '@utils/tools/date';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import styled from 'styled-components';
 
-const BRIEFING_PATTERN = /정례\s?(e-)?브리핑|주간\s?홍보계획\s?브리핑/;
+// Per-date collapsible categories. Order here is render order.
+// Test against the comment's title; first match wins. Anything that
+// matches none falls to a flat list at the bottom.
+const CATEGORY_DEFS: Array<{ key: string; label: string; test: RegExp }> = [
+  { key: 'briefing', label: '정례브리핑', test: /정례\s?(e-)?브리핑|주간\s?홍보계획\s?브리핑/ },
+  { key: 'reports', label: '심사보고', test: /심사보고|제안설명|검토보고/ },
+  { key: 'debates', label: '본회의 토론', test: /(찬성|반대)?토론(?!회)/ },
+  { key: 'freespeeches', label: '자유발언', test: /자유발언/ },
+];
+
+function categorize(title: string): string {
+  for (const def of CATEGORY_DEFS) if (def.test.test(title)) return def.key;
+  return '__others__';
+}
 
 interface CommentBodyListProps {
   commentType: commentType;
@@ -15,33 +28,27 @@ interface CommentBodyListProps {
   clickComment: (comment: Comment) => void;
 }
 
-function isBriefing(title: string) {
-  return BRIEFING_PATTERN.test(title);
-}
-
 export default function CommentBodyList({
   commentType,
   comments,
   clickComment,
 }: CommentBodyListProps) {
-  const [openDates, setOpenDates] = useState<Record<string, boolean>>({});
+  const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
 
   const groupedByDate = useMemo(() => {
-    const dateMap: Record<string, { briefing: Comment[]; others: Comment[] }> = {};
+    const dateMap: Record<string, Record<string, Comment[]>> = {};
     comments.forEach((c) => {
       const dateKey = c.date ? getDotDateForm(c.date) : '날짜 미상';
-      if (!dateMap[dateKey]) dateMap[dateKey] = { briefing: [], others: [] };
-      if (isBriefing(c.title)) {
-        dateMap[dateKey].briefing.push(c);
-      } else {
-        dateMap[dateKey].others.push(c);
-      }
+      const cat = categorize(c.title);
+      if (!dateMap[dateKey]) dateMap[dateKey] = {};
+      if (!dateMap[dateKey][cat]) dateMap[dateKey][cat] = [];
+      dateMap[dateKey][cat].push(c);
     });
     return Object.entries(dateMap);
   }, [comments]);
 
-  const toggleDate = (dateKey: string) => {
-    setOpenDates((prev) => ({ ...prev, [dateKey]: !prev[dateKey] }));
+  const toggle = (key: string) => {
+    setOpenKeys((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   if (comments.length === 0) {
@@ -59,34 +66,39 @@ export default function CommentBodyList({
 
   return (
     <ModalList>
-      {groupedByDate.map(([dateKey, { briefing, others }]) => (
+      {groupedByDate.map(([dateKey, cats]) => (
         <div key={dateKey}>
-          {briefing.length > 0 && (
-            <>
-              <BodyBlock onClick={() => toggleDate(dateKey)}>
-                <BriefingTitle>
-                  <span>정례브리핑 ({briefing.length}건)</span>
-                  <DropdownArrow $open={!!openDates[dateKey]}>
-                    <AiOutlineDown size="11px" />
-                  </DropdownArrow>
-                </BriefingTitle>
-                <span className="date">{getDateHidingCurrentYear(briefing[0].date)}</span>
-              </BodyBlock>
-              {openDates[dateKey] && (
-                <BriefingChildren>
-                  {briefing.map((comment, idx) => (
-                    <BodyBlock
-                      key={comment.comment + idx}
-                      onClick={() => clickComment(comment)}
-                    >
-                      <span>{comment.title}</span>
-                    </BodyBlock>
-                  ))}
-                </BriefingChildren>
-              )}
-            </>
-          )}
-          {others.map((comment, idx) => (
+          {CATEGORY_DEFS.map((def) => {
+            const list = cats[def.key];
+            if (!list?.length) return null;
+            const openKey = `${dateKey}-${def.key}`;
+            return (
+              <Fragment key={def.key}>
+                <BodyBlock onClick={() => toggle(openKey)}>
+                  <BriefingTitle>
+                    <span>{def.label} ({list.length}건)</span>
+                    <DropdownArrow $open={!!openKeys[openKey]}>
+                      <AiOutlineDown size="11px" />
+                    </DropdownArrow>
+                  </BriefingTitle>
+                  <span className="date">{getDateHidingCurrentYear(list[0].date)}</span>
+                </BodyBlock>
+                {openKeys[openKey] && (
+                  <BriefingChildren>
+                    {list.map((comment, idx) => (
+                      <BodyBlock
+                        key={comment.comment + idx}
+                        onClick={() => clickComment(comment)}
+                      >
+                        <span>{comment.title}</span>
+                      </BodyBlock>
+                    ))}
+                  </BriefingChildren>
+                )}
+              </Fragment>
+            );
+          })}
+          {(cats['__others__'] || []).map((comment, idx) => (
             <BodyBlock
               key={comment.comment + idx}
               onClick={() => clickComment(comment)}
