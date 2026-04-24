@@ -2,6 +2,8 @@ import HeadMeta from '@components/common/HeadMeta';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
+import TrackedLane from '@components/admin/trackedLane';
+import ProposedActionsLane from '@components/admin/proposedActionsLane';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
 // import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
@@ -79,6 +81,8 @@ export default function NewsPage(props: pageProps) {
       <Wrapper>
         <div className="main-contents">
           <div className="main-contents-body" ref={ref}>
+            <ProposedActionsLane />
+            <TrackedLane />
             <ToggleContainer initialHeight={200}>
               {(isOpen: boolean, initialHeight: number) => (
                 <>
