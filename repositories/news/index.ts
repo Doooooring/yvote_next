@@ -51,6 +51,7 @@ class NewsRepository {
     endDate?: string,
     newsType?: string,
     title?: string,
+    tracked?: boolean,
   ): Promise<Array<Preview>> {
     const params = {
       offset: curNum,
@@ -61,6 +62,7 @@ class NewsRepository {
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),
       ...(title ? { title } : {}),
+      ...(tracked !== undefined ? { tracked: tracked ? 'true' : 'false' } : {}),
     };
     console.log('newsRepository.getPreviews params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
