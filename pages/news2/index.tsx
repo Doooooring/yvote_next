@@ -24,6 +24,7 @@ const TYPE_ORDER: NewsType[] = [
   NewsType.executive,
   NewsType.election,
   NewsType.budget,
+  NewsType.economics,
   NewsType.specialcounsel,
   NewsType.northkorea,
   NewsType.investigation,
