@@ -32,8 +32,12 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
         .split('\n')
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
     } else {
+      // Split on either newlines (new format — paragraphs separated by
+      // \n\n in storage) or `$` (legacy separator from older comments).
       return explain
-        .split('$')
+        .split(/\n+|\$/)
+        .map((p) => p.trim())
+        .filter(Boolean)
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
     }
   }, [summary, showSummary, explain]);
