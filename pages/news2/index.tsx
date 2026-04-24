@@ -18,6 +18,7 @@ const TYPE_ORDER: NewsType[] = [
   NewsType.govern,
   NewsType.bill,
   NewsType.cabinet,
+  NewsType.plenary,
   NewsType.diplomat,
   NewsType.debate,
   NewsType.executive,

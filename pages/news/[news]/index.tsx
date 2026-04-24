@@ -119,6 +119,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.constitution) return <ConstitutionNewsLayout news={news} />;
     if (news.newsType === NewsType.executive) return <ExecutiveNewsLayout news={news} />;
     if (news.newsType === NewsType.cabinet) return <CabinetNewsLayout news={news} />;
+    if (news.newsType === NewsType.plenary) return <CabinetNewsLayout news={news} />;
     if (news.newsType === NewsType.investigation) return <InvestigationNewsLayout news={news} />;
     if (news.newsType === NewsType.diplomat) return <DiplomatNewsLayout news={news} />;
     if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;

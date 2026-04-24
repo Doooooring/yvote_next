@@ -64,6 +64,8 @@ export default function NewsDetailPage({ data }: pageProps) {
           <WeeklyNewsLayout news={news} />
         ) : news.newsType === NewsType.cabinet ? (
           <CabinetNewsLayout news={news} />
+        ) : news.newsType === NewsType.plenary ? (
+          <CabinetNewsLayout news={news} />
         ) : news.newsType === NewsType.investigation ? (
           <InvestigationNewsLayout news={news} />
         ) : (
