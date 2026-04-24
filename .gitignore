@@ -13,3 +13,5 @@ node_modules
 .idea
 *.code-workspace
 build-menifest.json
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
