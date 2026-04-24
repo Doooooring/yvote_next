@@ -25,6 +25,7 @@ export enum NewsType {
   weekly = 'weekly',
   investigation = 'investigation',
   budget = 'budget',
+  plenary = 'plenary',
   others = 'others',
   //헌재 종류별 만들 것
 }
@@ -57,6 +58,8 @@ export const newsTypesToKor = (newsType: NewsType) => {
       return '조사';
     case NewsType.budget:
       return '예산';
+    case NewsType.plenary:
+      return '본회의';
     case NewsType.others:
       return '기타';
     default:
@@ -76,6 +79,8 @@ export const newsTypesToKorFull = (newsType: NewsType) => {
       return '헌법재판소';
     case NewsType.specialcounsel:
       return '특별검사';
+    case NewsType.plenary:
+      return '본회의';
     default:
       return newsTypesToKor(newsType);
   }
@@ -188,6 +193,8 @@ export interface News {
   opinionLeft: string;
   opinionRight: string;
   comments: Array<Comment>;
+  tracked?: boolean;
+  trackedNote?: string | null;
   votes: {
     left: number;
     right: number;
@@ -213,6 +220,8 @@ export interface Preview
     | 'date'
     | 'keywords'
     | 'state'
+    | 'tracked'
+    | 'trackedNote'
   > {
   comments: Array<commentType>;
 }
