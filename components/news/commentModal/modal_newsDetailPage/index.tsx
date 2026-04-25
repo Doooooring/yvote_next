@@ -9,16 +9,18 @@ export function CommentModal({
   commentType,
   close,
   newsTitle,
+  disableCategorize,
 }: {
   id: number;
   commentType: commentType;
   close: () => void;
   newsTitle?: string;
+  disableCategorize?: boolean;
 }) {
   return (
     <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-        <CommentBodyCommon id={id} commentType={commentType} close={close} newsTitle={newsTitle} />
+        <CommentBodyCommon id={id} commentType={commentType} close={close} newsTitle={newsTitle} disableCategorize={disableCategorize} />
       </ModalBodyWrapper>
     </CommonModalLayout>
   );

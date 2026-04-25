@@ -111,7 +111,7 @@ export default function News2Page(props: pageProps) {
                         {item.comments && item.comments.length > 0 && (
                           <CardIcons onClick={(e) => {
                             e.stopPropagation();
-                            showCommentModal(item.id, item.comments as commentType[], undefined, item.title);
+                            showCommentModal(item.id, item.comments as commentType[], undefined, item.title, { disableCategorize: item.newsType === 'budget' });
                           }}>
                             {item.comments.map((c, ci) => (
                               <CommentTypeIcon key={ci} type={c as commentType} size={13} />

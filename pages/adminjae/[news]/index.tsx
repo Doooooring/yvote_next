@@ -8,8 +8,11 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useState } from 'react';
 import styled from 'styled-components';
 import BillNewsLayout from '@components/news/types/bill';
+import BudgetNewsLayout from '@components/news/types/budget';
 import CabinetNewsLayout from '@components/news/types/cabinet';
+import ExecutiveNewsLayout from '@components/news/types/executive';
 import InvestigationNewsLayout from '@components/news/types/investigation';
+import PlenaryNewsLayout from '@components/news/types/plenary';
 import WeeklyNewsLayout from '@components/news/types/weekly';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
@@ -60,12 +63,16 @@ export default function NewsDetailPage({ data }: pageProps) {
       {news ? (
         news.newsType === NewsType.bill ? (
           <BillNewsLayout news={news} />
+        ) : news.newsType === NewsType.budget ? (
+          <BudgetNewsLayout news={news} />
+        ) : news.newsType === NewsType.executive ? (
+          <ExecutiveNewsLayout news={news} />
         ) : news.newsType === NewsType.weekly ? (
           <WeeklyNewsLayout news={news} />
         ) : news.newsType === NewsType.cabinet ? (
           <CabinetNewsLayout news={news} />
         ) : news.newsType === NewsType.plenary ? (
-          <CabinetNewsLayout news={news} />
+          <PlenaryNewsLayout news={news} />
         ) : news.newsType === NewsType.investigation ? (
           <InvestigationNewsLayout news={news} />
         ) : (

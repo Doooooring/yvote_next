@@ -41,8 +41,8 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {
-    showCommentModal(id, comments, undefined, title);
-  }, [id, comments, title]);
+    showCommentModal(id, comments, undefined, title, { disableCategorize: newsType === 'budget' });
+  }, [id, comments, title, newsType]);
 
   switch (state) {
     case NewsState.Published:

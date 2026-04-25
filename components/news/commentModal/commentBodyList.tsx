@@ -26,12 +26,14 @@ interface CommentBodyListProps {
   commentType: commentType;
   comments: Comment[];
   clickComment: (comment: Comment) => void;
+  disableCategorize?: boolean;
 }
 
 export default function CommentBodyList({
   commentType,
   comments,
   clickComment,
+  disableCategorize = false,
 }: CommentBodyListProps) {
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
 
@@ -39,13 +41,13 @@ export default function CommentBodyList({
     const dateMap: Record<string, Record<string, Comment[]>> = {};
     comments.forEach((c) => {
       const dateKey = c.date ? getDotDateForm(c.date) : '날짜 미상';
-      const cat = categorize(c.title);
+      const cat = disableCategorize ? '__others__' : categorize(c.title);
       if (!dateMap[dateKey]) dateMap[dateKey] = {};
       if (!dateMap[dateKey][cat]) dateMap[dateKey][cat] = [];
       dateMap[dateKey][cat].push(c);
     });
     return Object.entries(dateMap);
-  }, [comments]);
+  }, [comments, disableCategorize]);
 
   const toggle = (key: string) => {
     setOpenKeys((prev) => ({ ...prev, [key]: !prev[key] }));

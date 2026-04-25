@@ -41,7 +41,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
   const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);
-  const [activeWriter, setActiveWriter] = useState<commentType>(summaries[0].commentType);
+  const [activeWriter, setActiveWriter] = useState<commentType | null>(summaries?.[0]?.commentType ?? null);
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -121,7 +121,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                       <div
                         className="comment_box_footer_text"
                         onClick={() => {
-                          showCommentModal(id, activeWriter, title);
+                          if (activeWriter) showCommentModal(id, activeWriter, title);
                         }}
                       >
                         자료 보기
@@ -132,7 +132,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                 <div
                   className="writer"
                   dangerouslySetInnerHTML={{
-                    __html: summaries.filter((s) => s.commentType === activeWriter)[0].summary,
+                    __html: summaries.filter((s) => s.commentType === activeWriter)[0]?.summary ?? '',
                   }}
                 />
                 <div className="keyword-wrapper content">

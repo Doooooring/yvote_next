@@ -160,6 +160,7 @@ function NewsPageInner(props: pageProps) {
     const rawCType = (router.query.commentType as string) || searchParams.get('commentType');
     const cType = rawCType ? decodeURIComponent(rawCType) : null;
     const commentId = (router.query.commentId as string) || searchParams.get('commentId');
+    const newsType = (router.query.newsType as string) || searchParams.get('newsType') || undefined;
     if (newsId && cType) {
       deepLinkApplied.current = true;
       const newsTitle = (router.query.newsTitle as string) || searchParams.get('newsTitle') || undefined;
@@ -168,6 +169,7 @@ function NewsPageInner(props: pageProps) {
         [cType as commentType],
         commentId ? Number(commentId) : undefined,
         newsTitle,
+        { disableCategorize: newsType === 'budget' },
       );
     }
   }, [router.query, searchParams]);

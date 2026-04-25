@@ -14,9 +14,10 @@ interface Modal_NewsPreviewProp {
   close: () => void;
   initialCommentId?: number;
   newsTitle?: string;
+  disableCategorize?: boolean;
 }
 
-export function CommentModal_NewsPreview({ id, commentTypes, close, initialCommentId, newsTitle }: Modal_NewsPreviewProp) {
+export function CommentModal_NewsPreview({ id, commentTypes, close, initialCommentId, newsTitle, disableCategorize }: Modal_NewsPreviewProp) {
   const commentTypesSorted = useMemo(() => {
     return sortComment(commentTypes);
   }, [commentTypes]);
@@ -42,7 +43,7 @@ export function CommentModal_NewsPreview({ id, commentTypes, close, initialComme
                 );
               })}
             </CommentButtons>
-            <CommentBodyCommon id={id} commentType={commentSelected} close={close} initialCommentId={initialCommentId} newsTitle={newsTitle} />
+            <CommentBodyCommon id={id} commentType={commentSelected} close={close} initialCommentId={initialCommentId} newsTitle={newsTitle} disableCategorize={disableCategorize} />
           </>
         )}
       </ModalBodyWrapper>

@@ -28,12 +28,14 @@ export default function CommentBodyCommon({
   close,
   initialCommentId,
   newsTitle,
+  disableCategorize,
 }: {
   id: number;
   commentType: commentType;
   close: () => void;
   initialCommentId?: number;
   newsTitle?: string;
+  disableCategorize?: boolean;
 }) {
   const device = useDevice();
   const { setModalCommentTitles, setModalActiveComment } = useNewsAI();
@@ -303,6 +305,7 @@ export default function CommentBodyCommon({
               <CommentBodyList
                 commentType={commentType}
                 comments={curComments}
+                disableCategorize={disableCategorize}
                 clickComment={(comment: Comment) => {
                   saveScrollHeight();
                   setCurComment(comment);

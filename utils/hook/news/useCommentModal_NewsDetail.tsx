@@ -7,8 +7,8 @@ export function useCommentModal() {
   const { show, close } = useModal();
 
   const showCommentModal = useCallback(
-    (newsId: number, commentType: commentType, newsTitle?: string) => {
-      show(<CommentModal id={newsId} commentType={commentType} close={close} newsTitle={newsTitle} />);
+    (newsId: number, commentType: commentType, newsTitle?: string, opts?: { disableCategorize?: boolean }) => {
+      show(<CommentModal id={newsId} commentType={commentType} close={close} newsTitle={newsTitle} disableCategorize={opts?.disableCategorize} />);
     },
     [show, close],
   );

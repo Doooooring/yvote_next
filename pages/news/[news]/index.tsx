@@ -23,6 +23,7 @@ import BillNewsLayout from '@components/news/types/bill';
 import ConstitutionNewsLayout from '@components/news/types/constitution';
 import ExecutiveNewsLayout from '@components/news/types/executive';
 import CabinetNewsLayout from '@components/news/types/cabinet';
+import PlenaryNewsLayout from '@components/news/types/plenary';
 import InvestigationNewsLayout from '@components/news/types/investigation';
 import DiplomatNewsLayout from '@components/news/types/diplomat';
 import GovernNewsLayout from '@components/news/types/govern';
@@ -31,6 +32,7 @@ import ElectionNewsLayout from '@components/news/types/election';
 import WeeklyNewsLayout from '@components/news/types/weekly';
 import OthersNewsLayout from '@components/news/types/others';
 import BudgetNewsLayout from '@components/news/types/budget';
+import EconomicsNewsLayout from '@components/news/types/economics';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -119,7 +121,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.constitution) return <ConstitutionNewsLayout news={news} />;
     if (news.newsType === NewsType.executive) return <ExecutiveNewsLayout news={news} />;
     if (news.newsType === NewsType.cabinet) return <CabinetNewsLayout news={news} />;
-    if (news.newsType === NewsType.plenary) return <CabinetNewsLayout news={news} />;
+    if (news.newsType === NewsType.plenary) return <PlenaryNewsLayout news={news} />;
     if (news.newsType === NewsType.investigation) return <InvestigationNewsLayout news={news} />;
     if (news.newsType === NewsType.diplomat) return <DiplomatNewsLayout news={news} />;
     if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;
@@ -128,6 +130,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     if (news.newsType === NewsType.weekly) return <WeeklyNewsLayout news={news} />;
     if (news.newsType === NewsType.others) return <OthersNewsLayout news={news} />;
     if (news.newsType === NewsType.budget) return <BudgetNewsLayout news={news} />;
+    if (news.newsType === NewsType.economics) return <EconomicsNewsLayout news={news} />;
     return <DefaultNewsLayout news={news} />;
   };
 

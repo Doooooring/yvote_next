@@ -70,7 +70,7 @@ export default function News3Page(props: pageProps) {
   const onIcons = (e: React.MouseEvent, item: Preview) => {
     e.stopPropagation();
     if (item.comments?.length) {
-      showCommentModal(item.id, item.comments as commentType[], undefined, item.title);
+      showCommentModal(item.id, item.comments as commentType[], undefined, item.title, { disableCategorize: item.newsType === 'budget' });
     }
   };
 
