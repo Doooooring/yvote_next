@@ -3,17 +3,21 @@ import styled from 'styled-components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ProposedAction,
+  ProposedActionStatus,
   ProposedActionType,
 } from '@utils/interface/proposedAction';
 import { proposedActionRepository } from '@repositories/proposedAction';
+import PayloadEditor from './PayloadEditor';
 
 const TYPE_LABEL: Record<ProposedActionType, string> = {
   [ProposedActionType.CreateNews]: '📰 create news',
   [ProposedActionType.RouteComment]: '✉️ route comment',
-  [ProposedActionType.FinishNews]: '🏁 finish news',
   [ProposedActionType.Publish]: '🚀 publish',
+  [ProposedActionType.PromoteType]: '🔁 promote type',
   [ProposedActionType.Track]: '👁️ track',
   [ProposedActionType.Untrack]: '🚪 untrack',
+  [ProposedActionType.EditComment]: '✏️ edit comment',
+  [ProposedActionType.FillNews]: '✨ fill news',
 };
 
 function describePayload(action: ProposedAction): string {
@@ -23,13 +27,19 @@ function describePayload(action: ProposedAction): string {
       return `"${p.title as string}" (${p.newsType as string})`;
     case ProposedActionType.RouteComment:
       return `→ news ${p.targetNewsId} as ${p.commentType}`;
-    case ProposedActionType.FinishNews:
-      return `news ${action.newsId} (${(p.newsType as string) ?? 'generic'})`;
     case ProposedActionType.Publish:
       return `news ${action.newsId}`;
+    case ProposedActionType.PromoteType:
+      return `news ${action.newsId}: ${p.fromType ?? '?'} → ${p.toType ?? '?'}`;
     case ProposedActionType.Track:
     case ProposedActionType.Untrack:
       return `news ${action.newsId}${p.trackedNote ? ` — ${p.trackedNote}` : ''}`;
+    case ProposedActionType.FillNews: {
+      const hasFastPath = !!(p.generatedContent as Record<string, unknown> | undefined);
+      return `news ${action.newsId}${hasFastPath ? ' (fast-path)' : ''}`;
+    }
+    case ProposedActionType.EditComment:
+      return `news ${action.newsId}: ${p.commentType ?? '?'}`;
     default:
       return JSON.stringify(p).slice(0, 100);
   }
@@ -59,7 +69,10 @@ export default function ProposedActionRow({
         <Describe>{describePayload(action)}</Describe>
         {action.note && <Note>💬 {action.note}</Note>}
         {showPayload && (
-          <PayloadJSON>{JSON.stringify(action.payload, null, 2)}</PayloadJSON>
+          <PayloadEditor
+            action={action}
+            editable={action.status === ProposedActionStatus.Pending}
+          />
         )}
         <SmallBtns>
           <SmallBtn onClick={() => setShowPayload((s) => !s)}>
@@ -113,15 +126,6 @@ const Describe = styled.div`
 const Note = styled.div`
   font-size: 12px;
   color: #666;
-`;
-const PayloadJSON = styled.pre`
-  margin: 4px 0 0 0;
-  padding: 8px;
-  background: #fafafa;
-  border-radius: 4px;
-  font-size: 11px;
-  max-height: 280px;
-  overflow: auto;
 `;
 const SmallBtns = styled.div`
   display: flex;

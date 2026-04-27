@@ -19,8 +19,13 @@ const nextConfig = {
       afterFiles: [],
       fallback: [
         {
+          // Internal rewrite to the auto-auth proxy handler at
+          // pages/api/_proxy/[[...path]].ts. The handler forwards to
+          // INTERNAL_API_URL and (in dev only, if YVOTE_ADMIN_TOKEN is
+          // present) injects an Authorization: Bearer header so
+          // AdminGuard auto-passes — no cookie/login dance.
           source: '/proxy-api/:path*',
-          destination: `${process.env.INTERNAL_API_URL || 'http://localhost:3000'}/:path*`,
+          destination: '/api/_proxy/:path*',
         },
       ],
     };

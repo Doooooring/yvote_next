@@ -2,7 +2,9 @@ import axios from 'axios';
 import { HOST_URL } from '@url';
 import {
   ProposedAction,
+  ProposedActionSource,
   ProposedActionStatus,
+  ProposedActionType,
 } from '@utils/interface/proposedAction';
 
 const BASE = `${HOST_URL}/proposed-action`;
@@ -14,6 +16,14 @@ interface ListOptions {
   limit?: number;
 }
 
+export interface ProposedActionCreate {
+  actionType: ProposedActionType;
+  newsId?: number | null;
+  payload: Record<string, unknown>;
+  source: ProposedActionSource;
+  note?: string;
+}
+
 interface Response<T> {
   data: {
     success: boolean;
@@ -22,6 +32,15 @@ interface Response<T> {
 }
 
 class ProposedActionRepository {
+  async create(body: ProposedActionCreate): Promise<ProposedAction> {
+    const res: Response<ProposedAction> = await axios.post(
+      BASE,
+      body,
+      { withCredentials: true },
+    );
+    return res.data.result;
+  }
+
   async list(opts: ListOptions = {}): Promise<ProposedAction[]> {
     const params: Record<string, string | number> = {};
     if (opts.status) params.status = opts.status;
@@ -32,10 +51,19 @@ class ProposedActionRepository {
       { success: boolean; result: ProposedAction[] } | ProposedAction[]
     >(BASE, { params, withCredentials: true });
     const data = res.data as
-      | { success: boolean; result: ProposedAction[] }
+      | { success: boolean; result: unknown }
       | ProposedAction[];
     if (Array.isArray(data)) return data;
-    return data.result ?? [];
+    // RespInterceptor wraps thrown server errors as
+    // {success:false, result:<error>} — guard against that shape so a
+    // broken endpoint doesn't crash the lane with `.map is not a fn`.
+    const r = data?.result;
+    if (Array.isArray(r)) return r as ProposedAction[];
+    if (data && data.success === false) {
+      // eslint-disable-next-line no-console
+      console.warn('[proposedActionRepository.list] server error:', r);
+    }
+    return [];
   }
 
   async getById(id: number): Promise<ProposedAction | null> {

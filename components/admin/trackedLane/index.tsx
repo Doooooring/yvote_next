@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import PreviewBox from '@components/news/previewBox';
 import { newsRepository } from '@repositories/news';
 import { NewsState } from '@utils/interface/news';
+import PublishButton from './PublishButton';
+import UntrackButton from './UntrackButton';
+import FillButton from './FillButton';
 
 const PREVIEW_LIMIT = 100;
 
@@ -42,6 +45,11 @@ export default function TrackedLane() {
             <TrackedRow key={item.id}>
               <PreviewBox preview={item} />
               {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
+              <ButtonRow>
+                <FillButton newsId={item.id} />
+                <PublishButton newsId={item.id} />
+                <UntrackButton newsId={item.id} />
+              </ButtonRow>
             </TrackedRow>
           ))}
         </Grid>
@@ -106,4 +114,11 @@ const Note = styled.div`
   background: #fffcf0;
   border-left: 3px solid #e8c547;
   border-radius: 2px;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
 `;
