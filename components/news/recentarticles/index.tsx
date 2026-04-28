@@ -6,7 +6,7 @@ import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption'
 import { useQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
-import { commentType, recentArticleType } from '@utils/interface/news';
+import { commentType, CURRENT_COMMENT_TYPES, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
 import { useEffect, useState } from 'react';
@@ -14,7 +14,16 @@ import styled from 'styled-components';
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
-const categories = ['전체', ...Object.values(commentType).filter((c) => c !== commentType.와이보트)] as Array<recentArticleType>;
+// Recent-articles category tabs only show the *current* commentTypes — past
+// lineage names (한나라당/민주당/etc.) are hidden from this top-level filter
+// per owner direction (the tabs are a snapshot of what's live now). Past
+// commentTypes still render inside individual news rows where they exist.
+const categories = [
+  '전체',
+  ...Object.values(commentType).filter(
+    (c) => c !== commentType.와이보트 && CURRENT_COMMENT_TYPES.has(c),
+  ),
+] as Array<recentArticleType>;
 interface SlideContentProps {
   commentType: recentArticleType;
   filteredArticles: any[];

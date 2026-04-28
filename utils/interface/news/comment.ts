@@ -36,7 +36,16 @@ export const typeQualification = (type: commentType) => {
     //   return CommentQualification.YVOTETYPE;
     case commentType.더불어민주당:
     case commentType.국민의힘:
+    case commentType.한나라당:
+    case commentType.새누리당:
+    case commentType.자유한국당:
+    case commentType.미래통합당:
+    case commentType.통합민주당:
+    case commentType.민주당:
+    case commentType.민주통합당:
+    case commentType.새정치민주연합:
     case commentType.청와대:
+    case commentType.대통령실:
     case commentType.입법부:
     case commentType.행정부:
     case commentType.헌법재판소:
@@ -67,7 +76,22 @@ export const commentTypeColor = (type: commentType) => {
       return 'rgb(11, 104, 179)';
     case commentType.국민의힘:
       return 'rgb(230, 30, 43)';
+    // 한나라당 lineage — conservative, blue→red shift in 2012.
+    case commentType.한나라당:
+      return 'rgb(0, 75, 156)';
+    case commentType.새누리당:
+    case commentType.자유한국당:
+    case commentType.미래통합당:
+      return 'rgb(230, 30, 43)';
+    // 민주당 lineage — green family pre-2014, blue from 새정연 onward.
+    case commentType.통합민주당:
+    case commentType.민주당:
+      return 'rgb(73, 170, 78)';
+    case commentType.민주통합당:
+    case commentType.새정치민주연합:
+      return 'rgb(11, 104, 179)';
     case commentType.청와대:
+    case commentType.대통령실:
       return 'rgb(0, 32, 92)';
     case commentType.입법부:
       return 'rgb(76, 182, 153)';
@@ -88,8 +112,26 @@ export const commentTypeImg = (type: commentType) => {
       return '/assets/img/더불어민주당.png';
     case commentType.국민의힘:
       return '/assets/img/국민의힘.png';
+    case commentType.한나라당:
+      return '/assets/img/한나라당.png';
+    case commentType.새누리당:
+      return '/assets/img/새누리당.png';
+    case commentType.자유한국당:
+      return '/assets/img/자유한국당.png';
+    case commentType.미래통합당:
+      return '/assets/img/미래통합당.png';
+    case commentType.통합민주당:
+      return '/assets/img/통합민주당.png';
+    case commentType.민주당:
+      return '/assets/img/민주당.png';
+    case commentType.민주통합당:
+      return '/assets/img/민주통합당.png';
+    case commentType.새정치민주연합:
+      return '/assets/img/새정치민주연합.png';
     case commentType.청와대:
       return '/assets/img/청와대.png';
+    case commentType.대통령실:
+      return '/assets/img/대통령실.png';
     case commentType.입법부:
       return '/assets/img/입법부.png';
     case commentType.행정부:
@@ -106,18 +148,36 @@ export const commentTypeImg = (type: commentType) => {
 };
 
 export const getCommentTypeRank = (type: commentType) => {
+  // Conservative lineage variants share the conservative slot;
+  // progressive lineage variants share the progressive slot. Within
+  // a slot, individual rows are ordered by date.
   const rankQueue = [
     commentType.와이보트,
     commentType.입법부,
     commentType.헌법재판소,
+    // 청와대 lineage shares one slot; 대통령실 sits adjacent so columns
+    // for an era-spanning aggregate news still group together.
     commentType.청와대,
+    commentType.대통령실,
     commentType.행정부,
+    // Conservative lineage (oldest → newest)
+    commentType.한나라당,
+    commentType.새누리당,
+    commentType.자유한국당,
+    commentType.미래통합당,
     commentType.국민의힘,
+    // Progressive lineage (oldest → newest)
+    commentType.통합민주당,
+    commentType.민주당,
+    commentType.민주통합당,
+    commentType.새정치민주연합,
     commentType.더불어민주당,
     commentType.기타,
   ];
 
-  return rankQueue.length - rankQueue.indexOf(type);
+  const idx = rankQueue.indexOf(type);
+  // Unknown types sort to the very end.
+  return idx < 0 ? 0 : rankQueue.length - idx;
 };
 
 // 코멘트 순서 정렬

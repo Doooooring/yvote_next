@@ -47,8 +47,16 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
     };
 
     const SUMMARY_ORDER: string[] = [
-      commentType.와이보트, commentType.헌법재판소, commentType.청와대,
-      commentType.행정부, commentType.국민의힘, commentType.더불어민주당, commentType.기타,
+      commentType.와이보트, commentType.헌법재판소,
+      commentType.청와대, commentType.대통령실,
+      commentType.행정부,
+      // Conservative lineage (oldest → newest)
+      commentType.한나라당, commentType.새누리당, commentType.자유한국당,
+      commentType.미래통합당, commentType.국민의힘,
+      // Progressive lineage (oldest → newest)
+      commentType.통합민주당, commentType.민주당, commentType.민주통합당,
+      commentType.새정치민주연합, commentType.더불어민주당,
+      commentType.기타,
     ];
 
     return (news.summaries ?? [])
