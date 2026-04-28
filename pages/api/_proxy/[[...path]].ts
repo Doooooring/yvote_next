@@ -4,9 +4,8 @@
  * In production this passes through verbatim. In dev, if YVOTE_ADMIN_TOKEN
  * is set in `.env.development`, every forwarded request gets an
  * `Authorization: Bearer <token>` header so AdminGuard.checkAuthToken
- * passes without a JWT cookie. Lets us hit /adminjae2 from any hostname
- * (localhost, trycloudflare tunnel, LAN IP) without logging in or
- * fiddling with cookies.
+ * passes without a JWT cookie. The /adminjae2 endpoints are excluded:
+ * they use the page-local password gate instead of the old auth system.
  *
  * Wired in via `next.config.js`: the public path stays `/proxy-api/:path*`
  * (so HOST_URL config doesn't change) and the rewrite forwards to
@@ -24,6 +23,7 @@ const INTERNAL_API_URL =
 const ADMIN_TOKEN = process.env.YVOTE_ADMIN_TOKEN;
 const IS_DEV = process.env.NODE_ENV !== 'production';
 const SHOULD_INJECT = IS_DEV && !!ADMIN_TOKEN;
+const ADMINJAE2_OPEN_PATHS = ['proposed-action', 'incident'];
 
 const HOP_BY_HOP = new Set([
   'connection',
@@ -45,6 +45,23 @@ function readBody(req: NextApiRequest): Promise<Buffer> {
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
+}
+
+function isAdminJae2OpenPath(path: string) {
+  const firstSegment = path.split('/')[0];
+  return ADMINJAE2_OPEN_PATHS.includes(firstSegment);
+}
+
+export function shouldInjectAdminToken(
+  path: string,
+  headers: Record<string, string>,
+) {
+  return (
+    SHOULD_INJECT &&
+    !isAdminJae2OpenPath(path) &&
+    !headers.authorization &&
+    !headers.Authorization
+  );
 }
 
 export default async function handler(
@@ -72,7 +89,13 @@ export default async function handler(
     if (typeof v === 'string') headers[k] = v;
     else if (Array.isArray(v)) headers[k] = v.join(', ');
   }
-  if (SHOULD_INJECT && !headers.authorization && !headers.Authorization) {
+  if (isAdminJae2OpenPath(path)) {
+    delete headers.authorization;
+    delete headers.Authorization;
+    delete headers.cookie;
+    delete headers.Cookie;
+  }
+  if (shouldInjectAdminToken(path, headers)) {
     headers.authorization = `Bearer ${ADMIN_TOKEN}`;
   }
 

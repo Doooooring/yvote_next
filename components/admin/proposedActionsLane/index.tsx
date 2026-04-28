@@ -5,7 +5,12 @@ import { ProposedActionStatus } from '@utils/interface/proposedAction';
 import ProposedActionRow from './Row';
 
 export default function ProposedActionsLane() {
-  const { data: pending = [], isFetching } = useQuery({
+  const {
+    data: pending = [],
+    error,
+    isError,
+    isFetching,
+  } = useQuery({
     queryKey: ['proposedActions', 'pending'],
     queryFn: () =>
       proposedActionRepository.list({
@@ -23,7 +28,15 @@ export default function ProposedActionsLane() {
         <span className="count">{pending.length}</span>
         {isFetching && <span className="loading">...</span>}
       </Heading>
-      {pending.length === 0 ? (
+      {isError ? (
+        <ErrorHint>
+          Proposed Actions API를 불러오지 못했습니다. 큐가 비어있는 것이
+          아니라 관리자 API/proxy 오류일 수 있습니다.
+          <code>
+            {error instanceof Error ? error.message : 'unknown error'}
+          </code>
+        </ErrorHint>
+      ) : pending.length === 0 ? (
         <EmptyHint>
           대기 중인 제안이 없습니다. conductor가 새 queue 파일을 처리하거나
           tracked news의 finished 여부를 감지하면 여기에 나타납니다.
@@ -65,6 +78,25 @@ const EmptyHint = styled.p`
   padding: 12px 16px;
   background: #fafafa;
   border-radius: 6px;
+`;
+
+const ErrorHint = styled.p`
+  color: #8a2d1d;
+  font-size: 13px;
+  padding: 12px 16px;
+  background: #fff4ef;
+  border: 1px solid #f0c7b8;
+  border-radius: 6px;
+  code {
+    display: block;
+    margin-top: 6px;
+    color: #5f1d12;
+    background: #ffe8df;
+    padding: 4px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    white-space: pre-wrap;
+  }
 `;
 
 const List = styled.div`

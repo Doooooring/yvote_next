@@ -6,6 +6,7 @@ import {
   ProposedActionStatus,
   ProposedActionType,
 } from '@utils/interface/proposedAction';
+import { parseProposedActionListResponse } from './parseListResponse';
 
 const BASE = `${HOST_URL}/proposed-action`;
 
@@ -33,11 +34,7 @@ interface Response<T> {
 
 class ProposedActionRepository {
   async create(body: ProposedActionCreate): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.post(
-      BASE,
-      body,
-      { withCredentials: true },
-    );
+    const res: Response<ProposedAction> = await axios.post(BASE, body);
     return res.data.result;
   }
 
@@ -49,28 +46,12 @@ class ProposedActionRepository {
     if (opts.limit !== undefined) params.limit = opts.limit;
     const res = await axios.get<
       { success: boolean; result: ProposedAction[] } | ProposedAction[]
-    >(BASE, { params, withCredentials: true });
-    const data = res.data as
-      | { success: boolean; result: unknown }
-      | ProposedAction[];
-    if (Array.isArray(data)) return data;
-    // RespInterceptor wraps thrown server errors as
-    // {success:false, result:<error>} — guard against that shape so a
-    // broken endpoint doesn't crash the lane with `.map is not a fn`.
-    const r = data?.result;
-    if (Array.isArray(r)) return r as ProposedAction[];
-    if (data && data.success === false) {
-      // eslint-disable-next-line no-console
-      console.warn('[proposedActionRepository.list] server error:', r);
-    }
-    return [];
+    >(BASE, { params });
+    return parseProposedActionListResponse(res.data) as ProposedAction[];
   }
 
   async getById(id: number): Promise<ProposedAction | null> {
-    const res: Response<ProposedAction | null> = await axios.get(
-      `${BASE}/${id}`,
-      { withCredentials: true },
-    );
+    const res: Response<ProposedAction | null> = await axios.get(`${BASE}/${id}`);
     return res.data.result ?? null;
   }
 
@@ -78,7 +59,6 @@ class ProposedActionRepository {
     const res: Response<ProposedAction> = await axios.patch(
       `${BASE}/${id}/approve`,
       {},
-      { withCredentials: true },
     );
     return res.data.result;
   }
@@ -87,7 +67,6 @@ class ProposedActionRepository {
     const res: Response<ProposedAction> = await axios.patch(
       `${BASE}/${id}/reject`,
       {},
-      { withCredentials: true },
     );
     return res.data.result;
   }
@@ -96,7 +75,6 @@ class ProposedActionRepository {
     const res: Response<ProposedAction> = await axios.patch(
       `${BASE}/${id}/applied`,
       {},
-      { withCredentials: true },
     );
     return res.data.result;
   }
@@ -108,7 +86,6 @@ class ProposedActionRepository {
     const res: Response<ProposedAction> = await axios.patch(
       `${BASE}/${id}`,
       patch,
-      { withCredentials: true },
     );
     return res.data.result;
   }

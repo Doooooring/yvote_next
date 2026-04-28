@@ -34,7 +34,7 @@ class IncidentRepository {
     if (opts.limit !== undefined) params.limit = opts.limit;
     const res = await axios.get<
       { success: boolean; result: Incident[] } | Incident[]
-    >(BASE, { params, withCredentials: true });
+    >(BASE, { params });
     const data = res.data as
       | { success: boolean; result: unknown }
       | Incident[];
@@ -52,10 +52,7 @@ class IncidentRepository {
   }
 
   async getById(id: number): Promise<Incident | null> {
-    const res: Response<Incident | null> = await axios.get(
-      `${BASE}/${id}`,
-      { withCredentials: true },
-    );
+    const res: Response<Incident | null> = await axios.get(`${BASE}/${id}`);
     return res.data.result ?? null;
   }
 
@@ -63,7 +60,6 @@ class IncidentRepository {
     const res: Response<Incident> = await axios.patch(
       `${BASE}/${id}/dismiss`,
       {},
-      { withCredentials: true },
     );
     return res.data.result;
   }
@@ -72,17 +68,12 @@ class IncidentRepository {
     const res: Response<Incident> = await axios.patch(
       `${BASE}/${id}/resolve`,
       {},
-      { withCredentials: true },
     );
     return res.data.result;
   }
 
   async update(id: number, patch: IncidentUpdate): Promise<Incident> {
-    const res: Response<Incident> = await axios.patch(
-      `${BASE}/${id}`,
-      patch,
-      { withCredentials: true },
-    );
+    const res: Response<Incident> = await axios.patch(`${BASE}/${id}`, patch);
     return res.data.result;
   }
 }
