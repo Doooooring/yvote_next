@@ -22,10 +22,10 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  *   1. window.confirm()
  *   2. proposedActionRepository.create({ Publish, source=User,
  *        payload:{ newsId } })
- *   3. proposedActionRepository.approve(returnedId)
- *   4. invalidate ['trackedNews'] — conductor's owner-approval Monitor
- *      picks up the APPROVED row within ~30s and applies; news state
- *      flips '1' → '0' and the row drops out of TrackedLane
+ *   3. proposedActionRepository.approve(returnedId) — approves and
+ *      immediately calls the local Python apply entrypoint.
+ *   4. invalidate ['trackedNews']; news state flips '1' → '0' and the
+ *      row drops out of TrackedLane
  *      (TrackedLane only shows state='1').
  *
  * Phase 6.2 of 2026-04-27-news-lifecycle-cross-repo.md.

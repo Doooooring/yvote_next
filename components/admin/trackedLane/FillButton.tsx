@@ -34,12 +34,11 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  *   1. window.confirm()
  *   2. proposedActionRepository.create({ FillNews, source=User,
  *        payload:{ newsId } })
- *   3. proposedActionRepository.approve(returnedId)
- *   4. invalidate ['trackedNews', 'proposedActions'] — conductor's
- *      owner-approval Monitor picks up the APPROVED row within ~30s
- *      and applies. The TrackedLane row stays put (Fill doesn't move
- *      it) — the user sees the refreshed PreviewBox after react-query
- *      refetch.
+ *   3. proposedActionRepository.approve(returnedId) — approves and
+ *      immediately calls the local Python apply entrypoint.
+ *   4. invalidate ['trackedNews', 'proposedActions']. The TrackedLane
+ *      row stays put (Fill doesn't move it) — the user sees the
+ *      refreshed PreviewBox after react-query refetch.
  *
  * Phase 8.5 of 2026-04-27-news-lifecycle-cross-repo.md.
  *

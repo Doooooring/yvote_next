@@ -14,10 +14,10 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  * Flow:
  *   1. window.confirm()
  *   2. proposedActionRepository.create({ Untrack, source=User, payload:{} })
- *   3. proposedActionRepository.approve(returnedId)
- *   4. invalidate ['trackedNews'] — conductor's owner-approval Monitor
- *      picks up the APPROVED row within ~30s and applies; the news
- *      drops out of TrackedLane on next refresh.
+ *   3. proposedActionRepository.approve(returnedId) — approves and
+ *      immediately calls the local Python apply entrypoint.
+ *   4. invalidate ['trackedNews']; the news drops out of TrackedLane
+ *      on next refresh.
  *
  * Phase 6.2 of 2026-04-27-news-lifecycle-cross-repo.md.
  *

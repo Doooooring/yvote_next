@@ -32,13 +32,26 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
         .split('\n')
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
     } else {
-      // Split on either newlines (new format — paragraphs separated by
-      // \n\n in storage) or `$` (legacy separator from older comments).
-      return explain
-        .split(/\n+|\$/)
-        .map((p) => p.trim())
-        .filter(Boolean)
-        .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);
+      // `$$` is a section break (cabinet 의사일정 categories etc.) —
+      // the first paragraph after it gets a slightly larger top margin
+      // so sections feel separated without inserting a full blank row.
+      // Single `$` and newlines are regular paragraph breaks.
+      const blocks = explain.split(/\$\$/);
+      const out: { text: string; sectionStart: boolean }[] = [];
+      blocks.forEach((block, blockIdx) => {
+        const inner = block
+          .split(/\n+|\$/)
+          .map((p) => p.trim())
+          .filter(Boolean);
+        inner.forEach((p, i) => {
+          out.push({ text: p, sectionStart: blockIdx > 0 && i === 0 });
+        });
+      });
+      return out.map(({ text, sectionStart }, idx) => (
+        <ContentLine key={idx} $sectionStart={sectionStart}>
+          {text}
+        </ContentLine>
+      ));
     }
   }, [summary, showSummary, explain]);
 
@@ -127,12 +140,13 @@ const ContentBody = styled.div`
   line-height: 1.7;
 `;
 
-const ContentLine = styled.p`
+const ContentLine = styled.p<{ $sectionStart?: boolean }>`
   margin: 0;
   padding: 0;
 
   color: black;
   margin-bottom: 0.5rem;
+  margin-top: ${({ $sectionStart }) => ($sectionStart ? '1.4rem' : '0')};
   min-height: 10px;
   cursor: text;
 `;

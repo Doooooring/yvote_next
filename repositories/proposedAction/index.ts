@@ -32,6 +32,21 @@ interface Response<T> {
   };
 }
 
+interface ApplyApprovedNowResult {
+  ok?: boolean;
+  detail?: string;
+}
+
+function immediateApplyErrorMessage(e: unknown) {
+  if (axios.isAxiosError(e)) {
+    const data = e.response?.data as
+      | { result?: ApplyApprovedNowResult; error?: string }
+      | undefined;
+    return data?.result?.detail || data?.error || e.message;
+  }
+  return e instanceof Error ? e.message : String(e);
+}
+
 class ProposedActionRepository {
   async create(body: ProposedActionCreate): Promise<ProposedAction> {
     const res: Response<ProposedAction> = await axios.post(BASE, body);
@@ -60,6 +75,13 @@ class ProposedActionRepository {
       `${BASE}/${id}/approve`,
       {},
     );
+    try {
+      await axios.post('/api/adminjae2/apply-approved', { id });
+    } catch (e: unknown) {
+      throw new Error(
+        `approved, but immediate apply failed: ${immediateApplyErrorMessage(e)}`,
+      );
+    }
     return res.data.result;
   }
 

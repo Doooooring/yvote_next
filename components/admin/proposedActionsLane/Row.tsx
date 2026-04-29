@@ -25,8 +25,25 @@ function describePayload(action: ProposedAction): string {
   switch (action.actionType) {
     case ProposedActionType.CreateNews:
       return `"${p.title as string}" (${p.newsType as string})`;
-    case ProposedActionType.RouteComment:
+    case ProposedActionType.RouteComment: {
+      const batch = p.commentPayloads;
+      if (Array.isArray(batch)) {
+        const types = Array.from(
+          new Set(
+            batch
+              .map((c) =>
+                c && typeof c === 'object'
+                  ? (c as Record<string, unknown>).commentType
+                  : null,
+              )
+              .filter(Boolean),
+          ),
+        );
+        const typeText = types.length ? ` as ${types.join(', ')}` : '';
+        return `→ news ${p.targetNewsId}: ${batch.length} comments${typeText}`;
+      }
       return `→ news ${p.targetNewsId} as ${p.commentType}`;
+    }
     case ProposedActionType.Publish:
       return `news ${action.newsId}`;
     case ProposedActionType.PromoteType:
@@ -68,6 +85,13 @@ export default function ProposedActionRow({
         <TypeTag>{TYPE_LABEL[action.actionType] ?? action.actionType}</TypeTag>
         <Describe>{describePayload(action)}</Describe>
         {action.note && <Note>💬 {action.note}</Note>}
+        {approveMut.isError && (
+          <ErrorNote>
+            {approveMut.error instanceof Error
+              ? approveMut.error.message
+              : 'approve failed'}
+          </ErrorNote>
+        )}
         {showPayload && (
           <PayloadEditor
             action={action}
@@ -126,6 +150,14 @@ const Describe = styled.div`
 const Note = styled.div`
   font-size: 12px;
   color: #666;
+`;
+const ErrorNote = styled.div`
+  font-size: 12px;
+  color: #8a2d1d;
+  background: #fff4ef;
+  border: 1px solid #f0c7b8;
+  border-radius: 4px;
+  padding: 4px 6px;
 `;
 const SmallBtns = styled.div`
   display: flex;
