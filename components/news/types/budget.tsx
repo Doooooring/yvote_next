@@ -204,7 +204,7 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
           </Section>
 
           <Section>
-            <SectionTitle>법안 요약</SectionTitle>
+            <SectionTitle>예산안 요약</SectionTitle>
             <SectionBody>
               <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
             </SectionBody>
@@ -326,7 +326,7 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
 
           {effectiveBills.length > 0 && (
             <Section>
-              <SectionTitle>법안 상세보기</SectionTitle>
+              <SectionTitle>예산안 상세보기</SectionTitle>
               <SectionBody>
                 <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
                   {hasMultipleBills && (
