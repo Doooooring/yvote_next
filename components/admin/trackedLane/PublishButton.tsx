@@ -5,6 +5,7 @@ import {
   ProposedActionSource,
   ProposedActionType,
 } from '@utils/interface/proposedAction';
+import { NewsState } from '@utils/interface/news';
 import { proposedActionRepository } from '@repositories/proposedAction';
 
 /**
@@ -24,17 +25,24 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  *        payload:{ newsId } })
  *   3. proposedActionRepository.approve(returnedId) — approves and
  *      immediately calls the local Python apply entrypoint.
- *   4. invalidate ['trackedNews']; news state flips '1' → '0' and the
- *      row drops out of TrackedLane
- *      (TrackedLane only shows state='1').
+ *   4. invalidate ['trackedNews']; news state flips '1' → '0'. The row
+ *      stays in TrackedLane (tracked=true survives publish) — only
+ *      Untrack removes it from this lane.
  *
  * Phase 6.2 of 2026-04-27-news-lifecycle-cross-repo.md.
  *
  * Mirrors the Telegram `publish <id>` command (Phase 7).
  */
-export default function PublishButton({ newsId }: { newsId: number }) {
+export default function PublishButton({
+  newsId,
+  state,
+}: {
+  newsId: number;
+  state?: NewsState | string;
+}) {
   const qc = useQueryClient();
   const [stage, setStage] = useState<'idle' | 'publishing'>('idle');
+  const alreadyPublished = state === NewsState.Published;
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -69,6 +77,13 @@ export default function PublishButton({ newsId }: { newsId: number }) {
     mutation.mutate();
   }
 
+  if (alreadyPublished) {
+    return (
+      <Btn disabled title="Already published">
+        ✅ published
+      </Btn>
+    );
+  }
   if (stage === 'publishing') {
     return <Btn disabled>publishing…</Btn>;
   }

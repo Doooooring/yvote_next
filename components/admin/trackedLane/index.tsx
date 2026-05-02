@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 import PreviewBox from '@components/news/previewBox';
 import { newsRepository } from '@repositories/news';
-import { NewsState } from '@utils/interface/news';
 import PublishButton from './PublishButton';
 import UntrackButton from './UntrackButton';
 import FillButton from './FillButton';
@@ -10,6 +9,10 @@ import FillButton from './FillButton';
 const PREVIEW_LIMIT = 100;
 
 export default function TrackedLane() {
+  // No state filter: tracked rows stay visible after Publish (state 1→0).
+  // Publishing is not the same as untracking — we want long-running tracked
+  // topics (debate threads, ongoing budgets) to remain in this lane until
+  // the owner explicitly clicks Untrack.
   const { data: tracked = [], isFetching } = useQuery({
     queryKey: ['trackedNews'],
     queryFn: () =>
@@ -17,7 +20,7 @@ export default function TrackedLane() {
         0,
         PREVIEW_LIMIT,
         '',
-        NewsState.Pending,
+        undefined,
         undefined,
         undefined,
         undefined,
@@ -47,7 +50,7 @@ export default function TrackedLane() {
               {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
               <ButtonRow>
                 <FillButton newsId={item.id} />
-                <PublishButton newsId={item.id} />
+                <PublishButton newsId={item.id} state={item.state} />
                 <UntrackButton newsId={item.id} />
               </ButtonRow>
             </TrackedRow>
