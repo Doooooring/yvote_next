@@ -95,7 +95,7 @@ export default function ProposedActionRow({
         {showPayload && (
           <PayloadEditor
             action={action}
-            editable={action.status === ProposedActionStatus.Pending}
+            editable={action.status === ProposedActionStatus.Waiting}
           />
         )}
         <SmallBtns>

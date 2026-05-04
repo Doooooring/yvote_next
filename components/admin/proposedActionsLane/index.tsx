@@ -6,15 +6,15 @@ import ProposedActionRow from './Row';
 
 export default function ProposedActionsLane() {
   const {
-    data: pending = [],
+    data: waiting = [],
     error,
     isError,
     isFetching,
   } = useQuery({
-    queryKey: ['proposedActions', 'pending'],
+    queryKey: ['proposedActions', 'waiting'],
     queryFn: () =>
       proposedActionRepository.list({
-        status: ProposedActionStatus.Pending,
+        status: ProposedActionStatus.Waiting,
         limit: 100,
       }),
     staleTime: 10_000,
@@ -25,7 +25,7 @@ export default function ProposedActionsLane() {
     <Wrapper>
       <Heading>
         제안 중인 작업 (Proposed Actions)
-        <span className="count">{pending.length}</span>
+        <span className="count">{waiting.length}</span>
         {isFetching && <span className="loading">...</span>}
       </Heading>
       {isError ? (
@@ -36,14 +36,14 @@ export default function ProposedActionsLane() {
             {error instanceof Error ? error.message : 'unknown error'}
           </code>
         </ErrorHint>
-      ) : pending.length === 0 ? (
+      ) : waiting.length === 0 ? (
         <EmptyHint>
           대기 중인 제안이 없습니다. conductor가 새 queue 파일을 처리하거나
           tracked news의 finished 여부를 감지하면 여기에 나타납니다.
         </EmptyHint>
       ) : (
         <List>
-          {pending.map((action) => (
+          {waiting.map((action) => (
             <ProposedActionRow key={action.id} action={action} />
           ))}
         </List>

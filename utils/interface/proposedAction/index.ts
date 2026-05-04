@@ -20,7 +20,11 @@ export enum ProposedActionType {
 // row's `state` (works on draft state=1 AND already-published state=0).
 
 export enum ProposedActionStatus {
-  Pending = 'pending',
+  // Renamed 2026-05-04: 'pending' → 'waiting' to disambiguate from
+  // News.state 'pending' (= draft). Backend migration
+  // RenameProposedActionPendingToWaiting1777822084423 rewrote existing
+  // rows in lockstep with this rename.
+  Waiting = 'waiting',
   Approved = 'approved',
   Rejected = 'rejected',
   Applied = 'applied',
