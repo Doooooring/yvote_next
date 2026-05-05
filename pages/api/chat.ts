@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { apiBaseUrl } from '@/utils/server/apiBaseUrl';
+
 export const config = {
   api: {
     responseLimit: false,
@@ -12,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiUrl = process.env.INTERNAL_API_URL || 'http://localhost:3000';
+  const apiUrl = apiBaseUrl();
 
   try {
     const controller = new AbortController();

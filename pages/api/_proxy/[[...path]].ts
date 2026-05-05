@@ -16,10 +16,11 @@
  */
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { apiBaseUrl } from '@/utils/server/apiBaseUrl';
+
 export const config = { api: { bodyParser: false } };
 
-const INTERNAL_API_URL =
-  process.env.INTERNAL_API_URL || 'http://localhost:3000';
+const INTERNAL_API_URL = apiBaseUrl();
 const ADMIN_TOKEN = process.env.YVOTE_ADMIN_TOKEN;
 const IS_DEV = process.env.NODE_ENV !== 'production';
 const SHOULD_INJECT = IS_DEV && !!ADMIN_TOKEN;
