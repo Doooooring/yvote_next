@@ -78,6 +78,7 @@ export default function ProposedActionRow({
     mutationFn: () => proposedActionRepository.reject(action.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['proposedActions'] }),
   });
+  const actionPending = approveMut.isPending || rejectMut.isPending;
 
   return (
     <Row>
@@ -90,6 +91,13 @@ export default function ProposedActionRow({
             {approveMut.error instanceof Error
               ? approveMut.error.message
               : 'approve failed'}
+          </ErrorNote>
+        )}
+        {rejectMut.isError && (
+          <ErrorNote>
+            {rejectMut.error instanceof Error
+              ? rejectMut.error.message
+              : 'reject failed'}
           </ErrorNote>
         )}
         {showPayload && (
@@ -108,14 +116,18 @@ export default function ProposedActionRow({
       </Main>
       <Actions>
         <ApproveBtn
-          onClick={() => approveMut.mutate()}
-          disabled={approveMut.isPending}
+          onClick={() => {
+            if (!actionPending) approveMut.mutate();
+          }}
+          disabled={actionPending}
         >
           {approveMut.isPending ? '...' : '✓ approve'}
         </ApproveBtn>
         <RejectBtn
-          onClick={() => rejectMut.mutate()}
-          disabled={rejectMut.isPending}
+          onClick={() => {
+            if (!actionPending) rejectMut.mutate();
+          }}
+          disabled={actionPending}
         >
           {rejectMut.isPending ? '...' : '✗ reject'}
         </RejectBtn>
