@@ -33,9 +33,11 @@ export default function TrackedLane() {
   return (
     <Wrapper>
       <Heading>
-        추적 중 (Tracked) <span className="count">{tracked.length}</span>
+        추적 중
+        <span className="count">{tracked.length}</span>
         {isFetching && <span className="loading">...</span>}
       </Heading>
+      <SectionRule />
       {tracked.length === 0 ? (
         <EmptyHint>
           추적 중인 뉴스가 없습니다. conductor가 새로 스크랩한 항목을 기존
@@ -49,7 +51,7 @@ export default function TrackedLane() {
               <PreviewBox preview={item} />
               {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
               <ButtonRow>
-                <FillButton newsId={item.id} />
+                <FillButton newsId={item.id} newsType={item.newsType} />
                 <PublishButton newsId={item.id} state={item.state} />
                 <UntrackButton newsId={item.id} />
               </ButtonRow>
@@ -62,23 +64,41 @@ export default function TrackedLane() {
 }
 
 const Wrapper = styled.section`
-  margin: 16px 0;
+  background: transparent;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0;
+  margin-bottom: 24px;
 `;
 
 const Heading = styled.h2`
-  font-size: 16px;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 20px;
   font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote12};
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   .count {
-    color: #888;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-weight: 400;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
   }
   .loading {
-    color: #aaa;
+    color: ${({ theme }) => theme.colors.yvote07};
     font-size: 12px;
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 17px;
+  }
+`;
+
+const SectionRule = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 6px 0 12px;
 `;
 
 const EmptyHint = styled.p`

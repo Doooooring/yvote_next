@@ -31,12 +31,14 @@ export default function IncidentsLane() {
   return (
     <Wrapper>
       <Heading>
-        인시던트 (Incidents) <span className="count">{incidents.length}</span>
+        인시던트
+        <span className="count">{incidents.length}</span>
         {isFetching && <span className="loading">...</span>}
         <FilterToggle onClick={() => setShowAll((s) => !s)}>
           {showAll ? 'open만 보기' : '전체 보기'}
         </FilterToggle>
       </Heading>
+      <SectionRule />
       {incidents.length === 0 ? (
         <EmptyHint>
           {showAll
@@ -55,37 +57,61 @@ export default function IncidentsLane() {
 }
 
 const Wrapper = styled.section`
-  margin: 16px 0;
+  background: transparent;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0;
+  margin-bottom: 24px;
 `;
 
 const Heading = styled.h2`
-  font-size: 16px;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 20px;
   font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote12};
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   .count {
-    color: #888;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-weight: 400;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
   }
   .loading {
-    color: #aaa;
+    color: ${({ theme }) => theme.colors.yvote07};
     font-size: 12px;
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 17px;
+    flex-wrap: wrap;
+  }
+`;
+
+const SectionRule = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 6px 0 0;
 `;
 
 const FilterToggle = styled.button`
   margin-left: auto;
-  padding: 3px 10px;
+  padding: 5px 10px;
   font-size: 12px;
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #555;
-  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote09};
+  border-radius: 2px;
   cursor: pointer;
   font-weight: 400;
   &:hover {
-    background: #f5f5f5;
+    color: ${({ theme }) => theme.colors.yvote13};
+    border-color: ${({ theme }) => theme.colors.yvote12};
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
   }
 `;
 
@@ -100,5 +126,4 @@ const EmptyHint = styled.p`
 const List = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
 `;

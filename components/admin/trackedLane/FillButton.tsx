@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  ProposedActionSource,
-  ProposedActionType,
-} from '@utils/interface/proposedAction';
+
 import { proposedActionRepository } from '@repositories/proposedAction';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
@@ -33,7 +31,7 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  * Flow:
  *   1. window.confirm()
  *   2. proposedActionRepository.create({ FillNews, source=User,
- *        payload:{ newsId } })
+ *        payload:{ newsId, newsType } })
  *   3. proposedActionRepository.approve(returnedId) — approves and
  *      immediately calls the local Python apply entrypoint.
  *   4. invalidate ['trackedNews', 'proposedActions']. The TrackedLane
@@ -44,7 +42,7 @@ import { proposedActionRepository } from '@repositories/proposedAction';
  *
  * Mirrors the Telegram `fill <id>` command (Phase 7).
  */
-export default function FillButton({ newsId }: { newsId: number }) {
+export default function FillButton({ newsId, newsType }: { newsId: number; newsType: string }) {
   const qc = useQueryClient();
   const [stage, setStage] = useState<'idle' | 'filling'>('idle');
 
@@ -53,7 +51,7 @@ export default function FillButton({ newsId }: { newsId: number }) {
       const created = await proposedActionRepository.create({
         actionType: ProposedActionType.FillNews,
         newsId,
-        payload: { newsId },
+        payload: { newsId, newsType },
         source: ProposedActionSource.User,
       });
       if (typeof created?.id !== 'number') {

@@ -62,8 +62,8 @@ export default function AdminJae2() {
                   </button>
                 </div>
                 <ProposedActionsLane />
-                <IncidentsLane />
                 <TrackedLane />
+                <IncidentsLane />
               </>
             ) : (
               <form className="adminjae2-login" onSubmit={handleSubmit}>

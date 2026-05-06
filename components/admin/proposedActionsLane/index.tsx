@@ -24,10 +24,11 @@ export default function ProposedActionsLane() {
   return (
     <Wrapper>
       <Heading>
-        제안 중인 작업 (Proposed Actions)
+        제안 중인 작업
         <span className="count">{waiting.length}</span>
         {isFetching && <span className="loading">...</span>}
       </Heading>
+      <SectionRule />
       {isError ? (
         <ErrorHint>
           Proposed Actions API를 불러오지 못했습니다. 큐가 비어있는 것이
@@ -53,23 +54,41 @@ export default function ProposedActionsLane() {
 }
 
 const Wrapper = styled.section`
-  margin: 16px 0;
+  background: transparent;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0;
+  margin-bottom: 24px;
 `;
 
 const Heading = styled.h2`
-  font-size: 16px;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 20px;
   font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote12};
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   .count {
-    color: #888;
+    color: ${({ theme }) => theme.colors.yvote08};
     font-weight: 400;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
   }
   .loading {
-    color: #aaa;
+    color: ${({ theme }) => theme.colors.yvote07};
     font-size: 12px;
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 17px;
+  }
+`;
+
+const SectionRule = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 6px 0 0;
 `;
 
 const EmptyHint = styled.p`
@@ -102,5 +121,4 @@ const ErrorHint = styled.p`
 const List = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
 `;

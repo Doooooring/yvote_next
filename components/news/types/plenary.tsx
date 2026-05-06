@@ -1,24 +1,22 @@
-import Image from 'next/image';
-import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import TimelineList from '@components/news/timeline';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
-
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import TimelineList from '@components/news/timeline';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 export default function PlenaryNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
-  // Hydration fix: Only parse agenda/speech on client
+  // Hydration fix: Only parse agenda on client
   const [agendaGroups, setAgendaGroups] = useState<AgendaGroupShape[]>([]);
-  const [speechGroups, setSpeechGroups] = useState<AgendaGroupShape[]>([]);
   useEffect(() => {
     setAgendaGroups(parseAgendaGroups(news?.agendaList ?? ''));
-    setSpeechGroups(parseAgendaGroups(news?.speechContent ?? ''));
-  }, [news?.agendaList, news?.speechContent]);
+  }, [news?.agendaList]);
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
     (news.timeline ?? []).forEach((tl) => {
@@ -30,7 +28,7 @@ export default function PlenaryNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -43,113 +41,79 @@ export default function PlenaryNewsLayout({ news }: NewsTypeLayoutProps) {
       ),
     [news.comments],
   );
-  const summaryTypes = useMemo(() => {
-    const unique = new Set<commentType>();
-    (news.summaries ?? []).forEach((summary) => unique.add(summary.commentType));
-    return Array.from(unique).sort(
-      (a, b) => getCommentTypeRank(b as commentType) - getCommentTypeRank(a as commentType),
-    );
-  }, [news.summaries]);
-  const [activeSummaryType, setActiveSummaryType] = useState<commentType | null>(null);
-
-  useEffect(() => {
-    setActiveSummaryType(summaryTypes[0] ?? null);
-  }, [summaryTypes]);
-  const activeSummary = activeSummaryType
-    ? news.summaries?.find((summary) => summary.commentType === activeSummaryType)
-    : undefined;
-
-
   return (
     <Wrapper>
-        <Header>
-          <h1>{news.title}</h1>
-          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-          <div className="meta">
-            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-            {commentTypes.length ? (
-              <CommentIcons>
-                {commentTypes.map((type, index) => (
-                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType, news.title)} />
-                ))}
-              </CommentIcons>
-            ) : null}
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
-          <Section>
-            <SectionTitle>타임라인</SectionTitle>
-            <SectionBody>
-              {timelineGroups.length ? (
-                <TimelineList timeline={timelineGroups} flat />
-              ) : (
-                <EmptyMessage>타임라인이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          {timelineGroups.length ? (
+            <TimelineList timeline={timelineGroups} flat />
+          ) : (
+            <EmptyMessage>타임라인이 없습니다.</EmptyMessage>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>안건 목록</SectionTitle>
-            <SectionBody>
-              {agendaGroups.length ? (
-                <AgendaGroups>
-                  {agendaGroups.map((group) => (
-                    <AgendaGroup key={group.title}>
-                      <summary>
-                        <span>{group.title}</span>
-                        <span className="count">{group.items.length}건</span>
-                      </summary>
-                      <AgendaItems>
-                        {group.items.map((item, idx) => (
-                          <li key={`${group.title}-${idx}`}>
-                            <p>{item}</p>
-                          </li>
-                        ))}
-                      </AgendaItems>
-                    </AgendaGroup>
-                  ))}
-                </AgendaGroups>
-              ) : (
-                <EmptyMessage>국무회의 안건이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>안건 목록</SectionTitle>
+        <SectionBody>
+          {agendaGroups.length ? (
+            <AgendaGroups>
+              {agendaGroups.map((group) => (
+                <AgendaGroup key={group.title}>
+                  <summary>
+                    <span>{group.title}</span>
+                    <span className="count">{group.items.length}건</span>
+                  </summary>
+                  <AgendaItems>
+                    {group.items.map((item, idx) => (
+                      <li key={`${group.title}-${idx}`}>
+                        <p>{item}</p>
+                      </li>
+                    ))}
+                  </AgendaItems>
+                </AgendaGroup>
+              ))}
+            </AgendaGroups>
+          ) : (
+            <EmptyMessage>본회의 안건이 없습니다.</EmptyMessage>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>주요 발언 내용</SectionTitle>
-            <SectionBody>
-              {speechGroups.length ? (
-                <SpeechGroupsLayout>
-                  {speechGroups.map((group, gidx) => (
-                    <SpeechGroup key={group.title + gidx}>
-                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                      {group.items.map((item, idx) => (
-                        <SpeechQuote key={idx}>{item}</SpeechQuote>
-                      ))}
-                    </SpeechGroup>
-                  ))}
-                </SpeechGroupsLayout>
-              ) : (
-                <EmptyMessage>주요 발언 내용이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
-
-          <Section>
-            <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SectionBody>
-              <SummaryList>
-                {(news.summaries ?? []).map((summary, idx) => (
-                  <SummaryListItem key={summary.commentType + idx}>
-                    <CommentTypeIcon type={summary.commentType} />
-                    <SummaryHtml
-                      dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
-                    />
-                  </SummaryListItem>
-                ))}
-              </SummaryList>
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>정당별 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? []).map((summary, idx) => (
+              <SummaryListItem key={summary.commentType + idx}>
+                <CommentTypeIcon type={summary.commentType} />
+                <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }} />
+              </SummaryListItem>
+            ))}
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
@@ -253,7 +217,7 @@ const Header = styled.header`
     font-size: 24px;
     font-weight: 700;
     line-height: 1.4;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
 
     @media (max-width: 768px) {
       font-size: 20px;
@@ -283,7 +247,6 @@ const CommentIcons = styled.div`
   gap: 6px;
 `;
 
-
 const Section = styled.section`
   width: 92%;
   max-width: 1200px;
@@ -302,7 +265,7 @@ const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.yvote13};
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 0 0 8px;
 
   @media (max-width: 768px) {
@@ -452,47 +415,4 @@ const EmptyMessage = styled.p`
   font-size: 0.85rem;
   padding: 8px 0;
   margin: 0;
-`;
-
-const SpeechGroupsLayout = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const SpeechGroup = styled.div`
-  margin-bottom: 4px;
-`;
-
-const SpeechGroupTitle = styled.div`
-  font-weight: 500;
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-  color: ${({ theme }) => theme.colors.yvote08};
-`;
-
-const SpeechQuote = styled.blockquote`
-  position: relative;
-  padding: 10px 14px;
-  margin: 8px 0;
-  color: ${({ theme }) => theme.colors.yvote12};
-  background: ${({ theme }) => theme.colors.yvote02};
-  border: 1px solid ${({ theme }) => theme.colors.yvote04};
-  border-radius: 10px;
-  line-height: 1.7;
-  font-size: 0.9rem;
-  font-style: normal;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    left: -7px;
-    width: 12px;
-    height: 12px;
-    background: ${({ theme }) => theme.colors.yvote02};
-    border-left: 1px solid ${({ theme }) => theme.colors.yvote04};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
-    transform: rotate(45deg);
-  }
 `;

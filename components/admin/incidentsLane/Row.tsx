@@ -95,12 +95,24 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
 
 const Row = styled.div`
   display: flex;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  background: #fff;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  background: transparent;
   align-items: flex-start;
+
+  &:first-child {
+    border-top: none;
+  }
+
+  &:last-child {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 const Main = styled.div`
   flex: 1;
@@ -122,16 +134,15 @@ const SeverityTag = styled.span<{ color: string }>`
 `;
 const SourceTag = styled.span`
   font-size: 11px;
-  font-family: monospace;
-  padding: 1px 6px;
-  background: #eef;
-  border-radius: 3px;
-  color: #336;
+  padding: 2px 6px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  border-radius: 2px;
+  color: ${({ theme }) => theme.colors.yvote08};
 `;
 const StatusTag = styled.span<{ status: IncidentStatus }>`
   font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 3px;
+  padding: 2px 6px;
+  border-radius: 2px;
   background: ${(p) =>
     p.status === IncidentStatus.Resolved ? '#e0f5e0' : '#eee'};
   color: ${(p) =>
@@ -139,15 +150,16 @@ const StatusTag = styled.span<{ status: IncidentStatus }>`
 `;
 const RefTag = styled.span`
   font-size: 11px;
-  padding: 1px 6px;
-  background: #f5f5f5;
-  border-radius: 3px;
-  color: #555;
+  padding: 2px 6px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
+  border-radius: 2px;
+  color: ${({ theme }) => theme.colors.yvote08};
 `;
 const Message = styled.div`
   font-size: 13px;
-  color: #333;
+  color: ${({ theme }) => theme.colors.yvote11};
   word-break: break-word;
+  line-height: 1.45;
 `;
 const SmallBtns = styled.div`
   display: flex;
@@ -158,21 +170,26 @@ const SmallBtns = styled.div`
   margin-top: 2px;
 `;
 const SmallBtn = styled.button`
-  padding: 1px 6px;
+  padding: 3px 8px;
   font-size: 11px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  background: #fff;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  border-radius: 2px;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote09};
   cursor: pointer;
   &:hover {
-    background: #f5f5f5;
+    color: ${({ theme }) => theme.colors.yvote13};
+    border-color: ${({ theme }) => theme.colors.yvote12};
   }
 `;
-const Created = styled.span``;
+const Created = styled.span`
+  color: ${({ theme }) => theme.colors.yvote07};
+`;
 const DetailsBox = styled.pre`
   margin: 4px 0 0 0;
   padding: 8px;
-  background: #fafafa;
+  background: ${({ theme }) => theme.colors.yvote01};
+  border: 1px solid ${({ theme }) => theme.colors.yvote04};
   border-radius: 4px;
   font-size: 11px;
   max-height: 280px;
@@ -181,15 +198,20 @@ const DetailsBox = styled.pre`
 const Actions = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 100px;
+  gap: 6px;
+  min-width: 104px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    flex-direction: row;
+  }
 `;
 const ResolveBtn = styled.button`
-  padding: 6px 10px;
-  border: 1px solid #2a7a3e;
-  background: #2a7a3e;
+  padding: 7px 10px;
+  border: 1px solid #2d6a3d;
+  background: #2d6a3d;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 12px;
   cursor: pointer;
   &:hover:not(:disabled) {
@@ -201,11 +223,11 @@ const ResolveBtn = styled.button`
   }
 `;
 const DismissBtn = styled.button`
-  padding: 6px 10px;
+  padding: 7px 10px;
   border: 1px solid #888;
   background: #fff;
   color: #555;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 12px;
   cursor: pointer;
   &:hover:not(:disabled) {
