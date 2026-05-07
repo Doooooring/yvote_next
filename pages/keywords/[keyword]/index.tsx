@@ -1,3 +1,10 @@
+import { Suspense } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import styled from 'styled-components';
+
+import LoadingCommon from '@/components/common/loading';
+import NewsListSection from '@/components/news/newsListSection';
+import { CommonLayoutBox } from '@components/common/commonStyles';
 import HeadMeta from '@components/common/HeadMeta';
 import ExplanationComp from '@components/keywords/explainBox';
 import keywordRepository from '@repositories/keywords';
@@ -5,14 +12,8 @@ import { useFetchNewsPreviews } from '@utils/hook/useFetchInfinitePreviews';
 import { useMount } from '@utils/hook/useMount';
 import { KeywordOnDetail } from '@utils/interface/keywords';
 import { Preview } from '@utils/interface/news';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import styled from 'styled-components';
-
-import LoadingCommon from '@/components/common/loading';
-import NewsListSection from '@/components/news/newsListSection';
-import { CommonLayoutBox } from '@components/common/commonStyles';
 import { getTextContentFromHtmlText } from '@utils/tools';
-import { Suspense } from 'react';
+
 import { useNewsNavigate } from '../../../utils/hook/useNewsNavigate';
 
 interface pageProps {
@@ -92,8 +93,8 @@ export default function KeyExplanation({ data }: pageProps) {
           id={keyword.id!}
           category={keyword.category!}
           keywordImage={keyword.keywordImage ?? ''}
-          keyword={keyword?.keyword!}
-          explain={keyword?.explain!}
+          keyword={keyword.keyword ?? ''}
+          explain={keyword.explain ?? ''}
         />
       </KeywordWrapper>
       <div className="main-contents">

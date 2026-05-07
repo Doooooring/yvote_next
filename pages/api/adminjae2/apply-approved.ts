@@ -1,6 +1,6 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { execFile } from 'child_process';
 import path from 'path';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 type ApplyApprovedResult = {
   ok?: boolean;
@@ -15,18 +15,13 @@ type ApplyApprovedResult = {
 
 function parseActionId(body: unknown): number | null {
   const raw =
-    body && typeof body === 'object' && 'id' in body
-      ? (body as { id?: unknown }).id
-      : null;
+    body && typeof body === 'object' && 'id' in body ? (body as { id?: unknown }).id : null;
   const id = typeof raw === 'number' ? raw : Number(raw);
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 function automationDir() {
-  return (
-    process.env.YVOTE_AUTOMATION_DIR ||
-    path.resolve(process.cwd(), '../yvote_automation')
-  );
+  return process.env.YVOTE_AUTOMATION_DIR || path.resolve(process.cwd(), '../yvote_automation');
 }
 
 function runImmediateApply(actionId: number): Promise<ApplyApprovedResult> {
@@ -46,8 +41,7 @@ function runImmediateApply(actionId: number): Promise<ApplyApprovedResult> {
           parsed = JSON.parse(stdout.trim() || '{}') as ApplyApprovedResult;
         } catch (parseError) {
           reject({
-            message:
-              parseError instanceof Error ? parseError.message : String(parseError),
+            message: parseError instanceof Error ? parseError.message : String(parseError),
             stderr,
             stdout,
           });
@@ -68,10 +62,7 @@ function runImmediateApply(actionId: number): Promise<ApplyApprovedResult> {
   });
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     res.status(405).json({ success: false, error: 'method not allowed' });

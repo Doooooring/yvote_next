@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  ProposedActionSource,
-  ProposedActionType,
-} from '@utils/interface/proposedAction';
-import { NewsState } from '@utils/interface/news';
+
 import { proposedActionRepository } from '@repositories/proposedAction';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { NewsState } from '@utils/interface/news';
+import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
@@ -70,9 +68,7 @@ export default function PublishButton({
 
   function onClick() {
     if (mutation.isPending || stage === 'publishing') return;
-    const ok = window.confirm(
-      `Publish news ${newsId}? It will become visible on the live site.`,
-    );
+    const ok = window.confirm(`Publish news ${newsId}? It will become visible on the live site.`);
     if (!ok) return;
     mutation.mutate();
   }

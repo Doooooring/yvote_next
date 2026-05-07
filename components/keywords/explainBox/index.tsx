@@ -1,11 +1,12 @@
-import { CommonLayoutBox } from '@components/common/commonStyles';
-import icoClose from '@images/ico_close.png';
-import { KeywordCategory } from '@utils/interface/keywords';
+import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Suspense } from 'react';
 import styled from 'styled-components';
+
+import { CommonLayoutBox } from '@components/common/commonStyles';
+import icoClose from '@images/ico_close.png';
+import { KeywordCategory } from '@utils/interface/keywords';
 
 const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
 

@@ -1,12 +1,12 @@
-import { getKeywordsGroupByCategoryAndRecent } from '@/controller';
-import HeadMeta from '@components/common/HeadMeta';
-import { CommonLayoutBox } from '@components/common/commonStyles';
-import CategoryGrid from '@components/keywords/categoryGrid';
-
-import { INF } from '@public/assets/resource';
-import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
+
+import { getKeywordsGroupByCategoryAndRecent } from '@/controller';
+import { CommonLayoutBox } from '@components/common/commonStyles';
+import HeadMeta from '@components/common/HeadMeta';
+import CategoryGrid from '@components/keywords/categoryGrid';
+import { INF } from '@public/assets/resource';
+import { KeywordCategory, KeywordToView } from '@utils/interface/keywords';
 
 interface pageProps {
   data: Array<{
@@ -36,7 +36,7 @@ export default function KeywordsPage({ data }: pageProps) {
 
       <GridContainer>
         {data.map(({ category, data }) => {
-          return <CategoryGrid category={category} keywords={data} />;
+          return <CategoryGrid key={category} category={category} keywords={data} />;
         })}
       </GridContainer>
     </Wrapper>

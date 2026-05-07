@@ -1,9 +1,10 @@
-import { Center } from '@components/common/commonStyles';
-import Modal from '@components/common/modal';
+import { useEffect, useRef } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+
+import { Center } from '@components/common/commonStyles';
+import Modal from '@components/common/modal';
 
 interface ModalProps {
   show: boolean;

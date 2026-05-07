@@ -1,5 +1,6 @@
-import { Backdrop, FallbackBox } from '@components/common/commonStyles';
 import styled from 'styled-components';
+
+import { Backdrop, FallbackBox } from '@components/common/commonStyles';
 
 export function NewArticlesFallback() {
   return (

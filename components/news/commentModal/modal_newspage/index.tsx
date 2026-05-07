@@ -1,9 +1,11 @@
+import { MouseEvent } from 'react';
+import Link from 'next/link';
+
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { Article, NewsState } from '@utils/interface/news';
 import { shareLink } from '@utils/tools/share';
-import Link from 'next/link';
-import { MouseEvent } from 'react';
+
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
 import { CommonMessageBox, DefaultMessageBox } from '../../../common/messageBox';
@@ -32,15 +34,29 @@ export default function CommentModal({
     const url = `${window.location.origin}/news/c/${news.id}/${commentType}/${id}`;
     const result = await shareLink({ url });
     if (result === 'copied') {
-      show(<DefaultMessageBox><p>링크가 복사되었습니다</p></DefaultMessageBox>, 2000);
+      show(
+        <DefaultMessageBox>
+          <p>링크가 복사되었습니다</p>
+        </DefaultMessageBox>,
+        2000,
+      );
     } else if (result === 'failed') {
-      show(<DefaultMessageBox><p>링크 복사에 실패했습니다</p></DefaultMessageBox>, 2000);
+      show(
+        <DefaultMessageBox>
+          <p>링크 복사에 실패했습니다</p>
+        </DefaultMessageBox>,
+        2000,
+      );
     }
   };
 
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper onClick={(e: React.MouseEvent<HTMLDivElement>) => { if (e.target === e.currentTarget) close(); }}>
+      <ModalBodyWrapper
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          if (e.target === e.currentTarget) close();
+        }}
+      >
         <ModalLayout
           close={close}
           onShare={handleShare}

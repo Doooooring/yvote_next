@@ -92,7 +92,7 @@ export function getChar(char: string) {
 
 export function formatChar(w: string) {
   let res = '';
-  let unit = w.charCodeAt(0);
+  const unit = w.charCodeAt(0);
   if (unit < GA_ASKI) {
     res = `1${w}`;
     return res;
@@ -132,7 +132,7 @@ export function searchWordIncluded(
   target: string,
   wordListOrg: string[],
   limit: number,
-  wordListConverted: boolean = false,
+  wordListConverted = false,
 ) {
   let wordList = wordListOrg;
   if (!wordListConverted) {
@@ -140,7 +140,7 @@ export function searchWordIncluded(
   }
   const targetAble = wordToCharAble(target);
   const result = [];
-  for (let i in wordList) {
+  for (const i in wordList) {
     const w = wordList[i];
     const is = targetAble.filter((t) => w.includes(t)).length > 0;
 

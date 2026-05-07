@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  ProposedActionSource,
-  ProposedActionType,
-} from '@utils/interface/proposedAction';
+
 import { proposedActionRepository } from '@repositories/proposedAction';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
@@ -53,9 +51,7 @@ export default function UntrackButton({ newsId }: { newsId: number }) {
 
   function onClick() {
     if (mutation.isPending || stage === 'untracking') return;
-    const ok = window.confirm(
-      `Untrack news ${newsId}? New comments will stop routing here.`,
-    );
+    const ok = window.confirm(`Untrack news ${newsId}? New comments will stop routing here.`);
     if (!ok) return;
     mutation.mutate();
   }

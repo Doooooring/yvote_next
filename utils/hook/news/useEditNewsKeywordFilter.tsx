@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
+
 import EditKeywordFiltersTopSheet from '@components/news/editKeywordFiltersTopSheet';
 import { KeyTitle } from '@utils/interface/keywords';
-import { useCallback } from 'react';
+
 import { useModal } from '../useModal';
 
 export default function useEditNewsKeywordFilters() {

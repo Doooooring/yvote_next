@@ -1,6 +1,7 @@
-import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 import { ReactNode } from 'react';
 import styled, { CSSProperties } from 'styled-components';
+
+import { useHorizontalScroll } from '@utils/hook/useHorizontalScroll';
 
 export default function HorizontalScroll({
   children,

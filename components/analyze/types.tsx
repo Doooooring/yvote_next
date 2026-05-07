@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import typesData from './types.json';
+
 import ImageFallback from '@components/common/imageFallback';
+
+import typesData from './types.json';
 
 interface Section {
   heading?: string;

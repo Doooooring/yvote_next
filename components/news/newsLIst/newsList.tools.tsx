@@ -20,7 +20,7 @@ export const useUpdateNewsPreviews = (fetchNewsPreviews: () => Promise<void>) =>
 export const useNewsInfiniteScroll = (
   isOnScreen: boolean,
   fetch: () => Promise<void>,
-  state: boolean = true,
+  state = true,
 ) => {
   const [trigger, setTrigger] = useState<boolean>(false);
 

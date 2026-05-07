@@ -1,11 +1,12 @@
+import { Fragment, useMemo, useState } from 'react';
+import { AiOutlineDown } from 'react-icons/ai';
+import styled from 'styled-components';
+
 import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import IsShow from '@components/common/isShow';
 import { Comment, commentType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
 import { getDateHidingCurrentYear, getDotDateForm } from '@utils/tools/date';
-import { Fragment, useMemo, useState } from 'react';
-import { AiOutlineDown } from 'react-icons/ai';
-import styled from 'styled-components';
 
 // Per-date collapsible categories. Order here is render order.
 // Test against the comment's title; first match wins. Anything that
@@ -57,10 +58,8 @@ export default function CommentBodyList({
     return (
       <VacantWrapper>
         <ErrorComment>
-          <span style={{ color: commentTypeColor(commentType) }}>
-            {commentType}
-          </span>{' '}
-          관련 최신 자료가 존재하지 않습니다.
+          <span style={{ color: commentTypeColor(commentType) }}>{commentType}</span> 관련 최신
+          자료가 존재하지 않습니다.
         </ErrorComment>
       </VacantWrapper>
     );
@@ -78,7 +77,9 @@ export default function CommentBodyList({
               <Fragment key={def.key}>
                 <BodyBlock onClick={() => toggle(openKey)}>
                   <BriefingTitle>
-                    <span>{def.label} ({list.length}건)</span>
+                    <span>
+                      {def.label} ({list.length}건)
+                    </span>
                     <DropdownArrow $open={!!openKeys[openKey]}>
                       <AiOutlineDown size="11px" />
                     </DropdownArrow>
@@ -88,10 +89,7 @@ export default function CommentBodyList({
                 {openKeys[openKey] && (
                   <BriefingChildren>
                     {list.map((comment, idx) => (
-                      <BodyBlock
-                        key={comment.comment + idx}
-                        onClick={() => clickComment(comment)}
-                      >
+                      <BodyBlock key={comment.comment + idx} onClick={() => clickComment(comment)}>
                         <span>{comment.title}</span>
                       </BodyBlock>
                     ))}
@@ -101,10 +99,7 @@ export default function CommentBodyList({
             );
           })}
           {(cats['__others__'] || []).map((comment, idx) => (
-            <BodyBlock
-              key={comment.comment + idx}
-              onClick={() => clickComment(comment)}
-            >
+            <BodyBlock key={comment.comment + idx} onClick={() => clickComment(comment)}>
               <span>{comment.title}</span>
               <IsShow state={comment.date != null}>
                 <span className="date">{getDateHidingCurrentYear(comment.date)}</span>

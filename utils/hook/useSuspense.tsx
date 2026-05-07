@@ -31,17 +31,17 @@ class PromiseCache {
   }
 }
 
-export const useSuspense = <t extends {}>(key: string, fetch: () => Promise<t>) => {
+export const useSuspense = <T,>(key: string, fetch: () => Promise<T>) => {
   const promiseCache = PromiseCache.getInstance();
 
   const read = () => {
     promiseCache.keyList();
-    const data = promiseCache.getData(key) as { status: Status; data: Promise<t> | t };
+    const data = promiseCache.getData(key) as { status: Status; data: Promise<T> | T };
     switch (data.status) {
       case Status.success:
-        return data.data as t;
+        return data.data as T;
       default:
-        throw data.data as Promise<t>;
+        throw data.data as Promise<T>;
     }
   };
 

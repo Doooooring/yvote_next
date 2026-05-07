@@ -1,38 +1,38 @@
-import { newsRepository } from '@repositories/news';
+import { useCallback, useEffect } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
-import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { useChatContext } from '@/utils/context/chatContext';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
 import HeadMeta from '@components/common/HeadMeta';
+import BillNewsLayout from '@components/news/types/bill';
+import BudgetNewsLayout from '@components/news/types/budget';
+import CabinetNewsLayout from '@components/news/types/cabinet';
+import ConstitutionNewsLayout from '@components/news/types/constitution';
+import DebateNewsLayout from '@components/news/types/debate';
+import DefaultNewsLayout from '@components/news/types/default';
+import DiplomatNewsLayout from '@components/news/types/diplomat';
+import EconomicsNewsLayout from '@components/news/types/economics';
+import ElectionNewsLayout from '@components/news/types/election';
+import ExecutiveNewsLayout from '@components/news/types/executive';
+import GovernNewsLayout from '@components/news/types/govern';
+import InvestigationNewsLayout from '@components/news/types/investigation';
+import OthersNewsLayout from '@components/news/types/others';
+import PlenaryNewsLayout from '@components/news/types/plenary';
+import WeeklyNewsLayout from '@components/news/types/weekly';
+import { newsRepository } from '@repositories/news';
 import { NewsInView, NewsState, NewsType, newsTypesToKorFull } from '@utils/interface/news';
-import styled from 'styled-components';
-import Link from 'next/link';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { shareLink } from '@utils/tools/share';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
+
 import {
   CommonErrorView,
   ErrorComment,
   ErrorHead,
 } from '../../../components/common/commonErrorBounbdary/commonErrorView';
 import { Row, TextButton } from '../../../components/common/commonStyles';
-import DefaultNewsLayout from '@components/news/types/default';
-import BillNewsLayout from '@components/news/types/bill';
-import ConstitutionNewsLayout from '@components/news/types/constitution';
-import ExecutiveNewsLayout from '@components/news/types/executive';
-import CabinetNewsLayout from '@components/news/types/cabinet';
-import PlenaryNewsLayout from '@components/news/types/plenary';
-import InvestigationNewsLayout from '@components/news/types/investigation';
-import DiplomatNewsLayout from '@components/news/types/diplomat';
-import GovernNewsLayout from '@components/news/types/govern';
-import DebateNewsLayout from '@components/news/types/debate';
-import ElectionNewsLayout from '@components/news/types/election';
-import WeeklyNewsLayout from '@components/news/types/weekly';
-import OthersNewsLayout from '@components/news/types/others';
-import BudgetNewsLayout from '@components/news/types/budget';
-import EconomicsNewsLayout from '@components/news/types/economics';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 
@@ -85,15 +85,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function NewsDetailPage({ data }: pageProps) {
   const router = useRouter();
-  const {} = useRouterUtils();
   const { id, news, description } = data;
   const { setActiveContent } = useChatContext();
   const { show: showToast } = useToastMessage();
 
   const handleShare = useCallback(async () => {
-    const url = typeof window !== 'undefined'
-      ? window.location.href
-      : `https://yvoting.com/news/${id}`;
+    const url =
+      typeof window !== 'undefined' ? window.location.href : `https://yvoting.com/news/${id}`;
     // URL only — no title/subtitle in share payload.
     const result = await shareLink({ url });
     if (result === 'copied') {
@@ -170,9 +168,7 @@ export default function NewsDetailPage({ data }: pageProps) {
               <span>공유</span>
             </ShareButton>
           </ArticleNav>
-          <ArticleFrame>
-            {renderByType()}
-          </ArticleFrame>
+          <ArticleFrame>{renderByType()}</ArticleFrame>
         </>
       ) : (
         <CommonErrorView>

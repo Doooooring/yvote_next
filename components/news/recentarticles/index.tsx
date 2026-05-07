@@ -1,16 +1,18 @@
 //////////////////////////////////////////////////////////*import ArticleBox from '@components/news/recentarticles/articleBox';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { ErrorComment } from '@components/common/commonErrorBounbdary/commonErrorView';
 import { CommonLayoutBox } from '@components/common/commonStyles';
 import { INF } from '@public/assets/resource';
 import { RecentArticleQueryOption } from '@queryOption/recentArticleQueryOption';
 import { useQuery } from '@tanstack/react-query';
 import { useSlide } from '@utils/hook/useSlide';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { commentType, CURRENT_COMMENT_TYPES, recentArticleType } from '@utils/interface/news';
 import { commentTypeColor } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+
 import ArticleBox from './articleBox';
 import { NewArticlesFallback } from './index.fallback';
 
@@ -27,7 +29,16 @@ const categories = [
 interface SlideContentProps {
   commentType: recentArticleType;
   filteredArticles: any[];
-  onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void;
+  onExpandedContent?: (
+    info: {
+      newsId: number;
+      newsTitle: string;
+      commentId: number;
+      title: string;
+      commentType: string;
+      body: string;
+    } | null,
+  ) => void;
 }
 
 function SlideContent({ commentType, filteredArticles, onExpandedContent }: SlideContentProps) {
@@ -53,9 +64,8 @@ function SlideContent({ commentType, filteredArticles, onExpandedContent }: Slid
     setCurView(0);
   }, [numToShow]);
   const isAll = commentType === '전체';
-  const lastPage = filteredArticles.length > 0
-    ? Math.ceil(filteredArticles.length / numToShow) - 1
-    : 0;
+  const lastPage =
+    filteredArticles.length > 0 ? Math.ceil(filteredArticles.length / numToShow) - 1 : 0;
 
   return (
     <>
@@ -96,7 +106,9 @@ function SlideContent({ commentType, filteredArticles, onExpandedContent }: Slid
           <SlideNavButton onClick={onSlideLeft} disabled={curView === 0}>
             ‹ 이전
           </SlideNavButton>
-          <SlideNavIndicator>{curView + 1} / {lastPage + 1}</SlideNavIndicator>
+          <SlideNavIndicator>
+            {curView + 1} / {lastPage + 1}
+          </SlideNavIndicator>
           <SlideNavButton onClick={onSlideRight} disabled={curView >= lastPage}>
             다음 ›
           </SlideNavButton>
@@ -131,9 +143,24 @@ const VacantWrapper = styled.div`
   align-items: center;
 `;
 
-export default function NewsArticlesSection({ onExpandedContent }: { onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void } = {}) {
+export default function NewsArticlesSection({
+  onExpandedContent,
+}: {
+  onExpandedContent?: (
+    info: {
+      newsId: number;
+      newsTitle: string;
+      commentId: number;
+      title: string;
+      commentType: string;
+      body: string;
+    } | null,
+  ) => void;
+} = {}) {
   const [activeCategory, setActiveCategory] = useState<recentArticleType>('전체');
-  const { data: recentArticles = [], isFetching } = useQuery(RecentArticleQueryOption(activeCategory, 0, 100));
+  const { data: recentArticles = [], isFetching } = useQuery(
+    RecentArticleQueryOption(activeCategory, 0, 100),
+  );
 
   return (
     <Wrapper>
@@ -154,7 +181,11 @@ export default function NewsArticlesSection({ onExpandedContent }: { onExpandedC
         <NewArticlesFallback />
       ) : (
         <div className="body-wrapper">
-          <SlideContent commentType={activeCategory} filteredArticles={recentArticles} onExpandedContent={onExpandedContent} />
+          <SlideContent
+            commentType={activeCategory}
+            filteredArticles={recentArticles}
+            onExpandedContent={onExpandedContent}
+          />
         </div>
       )}
     </Wrapper>
@@ -236,7 +267,8 @@ const CategoryItem = styled.div<CategoryItemProps>`
   font-size: 15px;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  border-bottom: ${(props) => (props.isActive ? '2px solid ${({ theme }) => theme.colors.yvote12}' : 'none')};
+  border-bottom: ${(props) =>
+    props.isActive ? '2px solid ${({ theme }) => theme.colors.yvote12}' : 'none'};
   padding-bottom: 5px;
   transition: color 0.2s ease, border-bottom 0.2s ease;
   &:hover {
@@ -268,12 +300,12 @@ const GridContainer = styled.div<GridContainerProps>`
   grid-row-gap: 4px;
   touch-action: pan-y;
   overscroll-behavior: none;
-  > :nth-child(n+6) {
+  > :nth-child(n + 6) {
     display: none;
   }
   ${({ $offset }) => ($offset ? 'padding-left: 0;' : '')}
   @media screen and (min-width: 769px) {
-    > :nth-child(n+6) {
+    > :nth-child(n + 6) {
       display: unset;
     }
     grid-template-rows: repeat(5, auto);

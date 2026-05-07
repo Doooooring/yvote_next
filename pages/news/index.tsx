@@ -1,20 +1,38 @@
-import HeadMeta from '@components/common/HeadMeta';
-import NewsListSection from '@/components/news/newsListSection';
-import { PreNewsList } from '@/components/news/preNewsList';
-import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
-import NewsArticlesSection from '@components/news/recentarticles';
-import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { NewsType, NewsState, Preview, newsTypesToKor, newsTypesToKorFull, commentType } from '@utils/interface/news';
-import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import { newsRepository } from '@repositories/news';
-import { getTextContentFromHtmlText } from '@utils/tools';
+import {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { NewsAIProvider, useNewsAI } from '@/utils/context/newsAIContext';
-import { useChatContext } from '@/utils/context/chatContext';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import styled from 'styled-components';
+
+import NewsListSection from '@/components/news/newsListSection';
+import { PreNewsList } from '@/components/news/preNewsList';
+import { useChatContext } from '@/utils/context/chatContext';
+import { NewsAIProvider, useNewsAI } from '@/utils/context/newsAIContext';
+import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
+import HeadMeta from '@components/common/HeadMeta';
+import NewsArticlesSection from '@components/news/recentarticles';
+import { newsRepository } from '@repositories/news';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import {
+  commentType,
+  NewsState,
+  NewsType,
+  newsTypesToKor,
+  newsTypesToKorFull,
+  Preview,
+} from '@utils/interface/news';
+import { getTextContentFromHtmlText } from '@utils/tools';
 
 interface PageMeta {
   title: string;
@@ -59,7 +77,8 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async (context)
       if (news) {
         const cType = commentTypeRaw ? decodeURIComponent(commentTypeRaw) : null;
         const baseTitle = news.title ?? '';
-        const sub = news.subTitle ?? getTextContentFromHtmlText(news.summary ?? '')?.split('.')[0] ?? '';
+        const sub =
+          news.subTitle ?? getTextContentFromHtmlText(news.summary ?? '')?.split('.')[0] ?? '';
 
         let title = baseTitle;
         let description = sub;
@@ -71,7 +90,10 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async (context)
           let comments: Array<{ id: number; title: string; comment: string }> = [];
           try {
             const res = await newsRepository.getNewsComment(
-              Number(newsId), cType as commentType, 0, 1000,
+              Number(newsId),
+              cType as commentType,
+              0,
+              1000,
             );
             comments = res ?? [];
           } catch {
@@ -106,7 +128,8 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async (context)
 
         // Build the canonical URL for the share link (reverse the rewrite).
         let path = `/news/${newsId}`;
-        if (cType && commentId) path = `/news/c/${newsId}/${encodeURIComponent(cType)}/${commentId}`;
+        if (cType && commentId)
+          path = `/news/c/${newsId}/${encodeURIComponent(cType)}/${commentId}`;
         else if (cType) path = `/news/c/${newsId}/${encodeURIComponent(cType)}`;
 
         meta = {
@@ -141,10 +164,23 @@ function NewsPageInner(props: pageProps) {
   const keywordFilter = searchParams.get('keyword') ?? null;
 
   const { setActiveContent } = useChatContext();
-  const handleArticleExpand = (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => {
+  const handleArticleExpand = (
+    info: {
+      newsId: number;
+      newsTitle: string;
+      commentId: number;
+      title: string;
+      commentType: string;
+      body: string;
+    } | null,
+  ) => {
     if (info) {
-      const newsLabel = info.newsTitle ? `"${info.newsTitle}" (뉴스 ${info.newsId})` : `뉴스 ${info.newsId}`;
-      setActiveContent(`코멘트 "${info.title}" 클릭함 (${newsLabel}, ${info.commentType}, 코멘트 ${info.commentId})`);
+      const newsLabel = info.newsTitle
+        ? `"${info.newsTitle}" (뉴스 ${info.newsId})`
+        : `뉴스 ${info.newsId}`;
+      setActiveContent(
+        `코멘트 "${info.title}" 클릭함 (${newsLabel}, ${info.commentType}, 코멘트 ${info.commentId})`,
+      );
     } else {
       setActiveContent(null);
     }
@@ -163,7 +199,8 @@ function NewsPageInner(props: pageProps) {
     const newsType = (router.query.newsType as string) || searchParams.get('newsType') || undefined;
     if (newsId && cType) {
       deepLinkApplied.current = true;
-      const newsTitle = (router.query.newsTitle as string) || searchParams.get('newsTitle') || undefined;
+      const newsTitle =
+        (router.query.newsTitle as string) || searchParams.get('newsTitle') || undefined;
       showCommentModal(
         Number(newsId),
         [cType as commentType],
@@ -289,7 +326,13 @@ function NewsPageInner(props: pageProps) {
                         }}
                         aria-label="작성 중 뉴스 제목 검색"
                       />
-                      <SearchButton type="button" onClick={() => startTransition(() => setWritingTitleSearch(writingTitleSearchInput))} aria-label="작성 중 뉴스 검색">
+                      <SearchButton
+                        type="button"
+                        onClick={() =>
+                          startTransition(() => setWritingTitleSearch(writingTitleSearchInput))
+                        }
+                        aria-label="작성 중 뉴스 검색"
+                      >
                         <SearchIcon src="/assets/img/ico_search.png" alt="" />
                       </SearchButton>
                     </InlineSearchBox>
@@ -374,11 +417,15 @@ function NewsPageInner(props: pageProps) {
                     type="text"
                     placeholder="YYYY-MM-DD"
                     value={dateInputValue}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleDateTextChange(event.target.value)}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      handleDateTextChange(event.target.value)
+                    }
                     onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
                       if (event.key === 'Enter') applyDateFilter();
                     }}
-                    onBlur={() => { if (dateInputValue === '') startTransition(() => setDateFilter('')); }}
+                    onBlur={() => {
+                      if (dateInputValue === '') startTransition(() => setDateFilter(''));
+                    }}
                     aria-label="날짜 필터"
                   />
                   <HiddenDateInput

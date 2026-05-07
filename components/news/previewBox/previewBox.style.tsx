@@ -34,7 +34,12 @@ interface PreviewBoxLayout_PendingProps extends HTMLAttributes<HTMLDivElement> {
   expanded?: boolean;
 }
 
-export function PreviewBoxLayout_Pending({ bodyView, sideView, expanded, ...rest }: PreviewBoxLayout_PendingProps) {
+export function PreviewBoxLayout_Pending({
+  bodyView,
+  sideView,
+  expanded,
+  ...rest
+}: PreviewBoxLayout_PendingProps) {
   return (
     <CompactWrapper $expanded={expanded} {...rest}>
       <InnerRow>
@@ -51,7 +56,14 @@ const Wrapper = styled.div<{ $expanded?: boolean }>`
   display: flex;
   flex-direction: column;
   border-bottom: 0.5px solid ${({ theme }) => theme.colors.yvote06};
-  border-image: linear-gradient(90deg, transparent, ${({ theme }) => theme.colors.yvote06} 15%, ${({ theme }) => theme.colors.yvote06} 85%, transparent) 1;
+  border-image: linear-gradient(
+      90deg,
+      transparent,
+      ${({ theme }) => theme.colors.yvote06} 15%,
+      ${({ theme }) => theme.colors.yvote06} 85%,
+      transparent
+    )
+    1;
   padding: 10px 4px;
   background-color: transparent;
   cursor: pointer;

@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import {
   Backdrop,
   Column,
@@ -5,7 +7,6 @@ import {
   FallbackBox,
   Row,
 } from '@components/common/commonStyles';
-import styled from 'styled-components';
 
 export default function ExplainFallback() {
   return (

@@ -1,6 +1,8 @@
-import { ResultAnswers } from '@components/analyze/result';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import { ResultAnswers } from '@components/analyze/result';
+
 import typedquestions from './questions.json';
 
 interface Question {

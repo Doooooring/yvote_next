@@ -1,7 +1,8 @@
-import ArrowUp from '@images/arrow_up.png';
-import Image from 'next/image';
 import { useState } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
+
+import ArrowUp from '@images/arrow_up.png';
 
 interface DropdownProps {
   title: string;

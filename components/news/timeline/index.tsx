@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { commentType } from '@utils/interface/news';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import { commentType } from '@utils/interface/news';
 
 // --- Types ---
 export type TimelineItem = { title: string; type: commentType };
@@ -15,13 +16,15 @@ export { CommentTypeIcon };
 
 // --- TimelineList ---
 const TimelineList = ({ timeline, flat }: TimelineListProps) => {
-  if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+
+  if (!timeline || timeline.length === 0)
+    return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
 
   const currentYear = new Date().getFullYear().toString();
 
   function formatKoreanDate(date: string) {
-    const match = date.match(/^(?:(\d{4})[.\-])?(\d{1,2})[.\-](\d{1,2})/);
+    const match = date.match(/^(?:(\d{4})[.-])?(\d{1,2})[.-](\d{1,2})/);
     if (!match) return date;
     const [, year, month, day] = match;
     if (year && year !== currentYear) {
@@ -75,9 +78,7 @@ const TimelineList = ({ timeline, flat }: TimelineListProps) => {
                   aria-label={isOpen ? '접기' : '펼치기'}
                 >
                   <TimelineIconButton aria-hidden="true">
-                    <TimelineCountText>
-                      {count}건
-                    </TimelineCountText>
+                    <TimelineCountText>{count}건</TimelineCountText>
                   </TimelineIconButton>
                 </TimelineTypeRow>
               </TimelineControls>

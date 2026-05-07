@@ -14,7 +14,10 @@ export type ShareResult = 'shared' | 'copied' | 'cancelled' | 'failed';
 // targets use to detect/unfurl the link.
 export async function shareLink(input: ShareInput): Promise<ShareResult> {
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-    const hasNonAscii = /[^\x00-\x7F]/.test(input.url);
+    const hasNonAscii = Array.from(input.url).some((char) => {
+      const codePoint = char.codePointAt(0);
+      return codePoint != null && codePoint > 0x7f;
+    });
     const payload = hasNonAscii ? { text: input.url } : { url: input.url };
     try {
       await navigator.share(payload);

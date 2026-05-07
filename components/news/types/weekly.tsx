@@ -1,12 +1,14 @@
-import styled from 'styled-components';
 import { useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import TimelineList from '@components/news/timeline';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import TimelineList from '@components/news/timeline';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -21,7 +23,7 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -47,15 +49,23 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
     };
 
     const SUMMARY_ORDER: string[] = [
-      commentType.와이보트, commentType.헌법재판소,
-      commentType.청와대, commentType.대통령실,
+      commentType.와이보트,
+      commentType.헌법재판소,
+      commentType.청와대,
+      commentType.대통령실,
       commentType.행정부,
       // Conservative lineage (oldest → newest)
-      commentType.한나라당, commentType.새누리당, commentType.자유한국당,
-      commentType.미래통합당, commentType.국민의힘,
+      commentType.한나라당,
+      commentType.새누리당,
+      commentType.자유한국당,
+      commentType.미래통합당,
+      commentType.국민의힘,
       // Progressive lineage (oldest → newest)
-      commentType.통합민주당, commentType.민주당, commentType.민주통합당,
-      commentType.새정치민주연합, commentType.더불어민주당,
+      commentType.통합민주당,
+      commentType.민주당,
+      commentType.민주통합당,
+      commentType.새정치민주연합,
+      commentType.더불어민주당,
       commentType.기타,
     ];
 
@@ -66,7 +76,9 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
           if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].date && parsed[0].summary) {
             return { commentType: s.commentType, entries: parsed };
           }
-        } catch {}
+        } catch {
+          return null;
+        }
         return null;
       })
       .filter((ps): ps is ParsedSummary => ps !== null && ps.entries.length > 0)
@@ -238,7 +250,6 @@ export default function WeeklyNewsLayout({ news }: NewsTypeLayoutProps) {
   );
 }
 
-
 const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
@@ -297,7 +308,6 @@ const CommentIcons = styled.div`
   align-items: center;
   gap: 6px;
 `;
-
 
 const Section = styled.section`
   width: 92%;
@@ -392,7 +402,8 @@ const MobileTypeTab = styled.button<{ $active: boolean }>`
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
+  border: 1px solid
+    ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
   border-radius: 2px;
   background: transparent;
   color: ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote08)};
@@ -468,14 +479,15 @@ function formatSummaryDate(date: string, withDay = false) {
   const [, year, month, day] = match;
   const m = parseInt(month, 10);
   const d = parseInt(day, 10);
-  const dayOfWeek = withDay ? ` (${DAY_NAMES[new Date(parseInt(year, 10), m - 1, d).getDay()]})` : '';
+  const dayOfWeek = withDay
+    ? ` (${DAY_NAMES[new Date(parseInt(year, 10), m - 1, d).getDay()]})`
+    : '';
   const currentYear = new Date().getFullYear().toString();
   if (year !== currentYear) {
     return `${year}년 ${m}월 ${d}일${dayOfWeek}`;
   }
   return `${m}월 ${d}일${dayOfWeek}`;
 }
-
 
 const SummaryList = styled.ul`
   list-style: none;
@@ -542,4 +554,3 @@ const MobileDateItem = styled.div`
     margin-left: 0;
   }
 `;
-

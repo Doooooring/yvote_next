@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Incident,
-  IncidentSeverity,
-  IncidentStatus,
-} from '@utils/interface/incident';
+
 import { incidentRepository } from '@repositories/incident';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Incident, IncidentSeverity, IncidentStatus } from '@utils/interface/incident';
 
 const SEVERITY_LABEL: Record<IncidentSeverity, string> = {
   [IncidentSeverity.Info]: 'ℹ️ info',
@@ -46,12 +43,8 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
           {incident.status !== IncidentStatus.Open && (
             <StatusTag status={incident.status}>{incident.status}</StatusTag>
           )}
-          {incident.newsId != null && (
-            <RefTag>news #{incident.newsId}</RefTag>
-          )}
-          {incident.proposedActionId != null && (
-            <RefTag>pa #{incident.proposedActionId}</RefTag>
-          )}
+          {incident.newsId != null && <RefTag>news #{incident.newsId}</RefTag>}
+          {incident.proposedActionId != null && <RefTag>pa #{incident.proposedActionId}</RefTag>}
         </HeaderRow>
         <Message>{incident.message}</Message>
         {incident.details && (
@@ -68,9 +61,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
           </SmallBtns>
         )}
         {showDetails && incident.details && (
-          <DetailsBox>
-            {JSON.stringify(incident.details, null, 2)}
-          </DetailsBox>
+          <DetailsBox>{JSON.stringify(incident.details, null, 2)}</DetailsBox>
         )}
       </Main>
       {isOpen && (
@@ -143,10 +134,8 @@ const StatusTag = styled.span<{ status: IncidentStatus }>`
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 2px;
-  background: ${(p) =>
-    p.status === IncidentStatus.Resolved ? '#e0f5e0' : '#eee'};
-  color: ${(p) =>
-    p.status === IncidentStatus.Resolved ? '#2a7a3e' : '#666'};
+  background: ${(p) => (p.status === IncidentStatus.Resolved ? '#e0f5e0' : '#eee')};
+  color: ${(p) => (p.status === IncidentStatus.Resolved ? '#2a7a3e' : '#666')};
 `;
 const RefTag = styled.span`
   font-size: 11px;

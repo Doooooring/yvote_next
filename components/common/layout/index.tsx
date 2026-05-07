@@ -1,11 +1,12 @@
+import { ReactNode } from 'react';
 import styled from 'styled-components';
-
 
 import { ModalProvider } from '@utils/hook/useModal';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
-import { ReactNode } from 'react';
+
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
 import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
+
 import LoadingIndicator from './loadingIndicator';
 import { QueryProvider } from './queryProvider';
 import RouteLoading from './routeLoading';

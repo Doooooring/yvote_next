@@ -1,15 +1,30 @@
-import HeadMeta from '@components/common/HeadMeta';
-import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
+import {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  ReactNode,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+import { GetStaticProps } from 'next';
+import { AiOutlineCalendar, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
+import styled from 'styled-components';
+
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
+import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
+import HeadMeta from '@components/common/HeadMeta';
 // import NewsArticlesSection from '@components/news/recentarticles';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { NewsType, Preview, newsTypesToKor, newsTypesToKorFull, NewsState } from '@utils/interface/news';
-import { GetStaticProps } from 'next';
-import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
-import { AiOutlineCalendar, AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
-import styled from 'styled-components';
+import {
+  NewsState,
+  NewsType,
+  newsTypesToKor,
+  newsTypesToKorFull,
+  Preview,
+} from '@utils/interface/news';
 
 interface pageProps {
   data: Array<Preview>;
@@ -66,7 +81,6 @@ export default function NewsPage(props: pageProps) {
       startTransition(() => setDateFilter(''));
     }
   };
-
 
   return (
     <>
@@ -133,7 +147,13 @@ export default function NewsPage(props: pageProps) {
                           }}
                           aria-label="숨겨진 뉴스 제목 검색"
                         />
-                        <SearchButton type="button" onClick={() => startTransition(() => setHiddenTitleSearch(hiddenTitleSearchInput))} aria-label="숨겨진 뉴스 검색">
+                        <SearchButton
+                          type="button"
+                          onClick={() =>
+                            startTransition(() => setHiddenTitleSearch(hiddenTitleSearchInput))
+                          }
+                          aria-label="숨겨진 뉴스 검색"
+                        >
                           <SearchIcon src="/assets/img/ico_search.png" alt="" />
                         </SearchButton>
                       </InlineSearchBox>
@@ -206,7 +226,13 @@ export default function NewsPage(props: pageProps) {
                           }}
                           aria-label="대기 중... 제목 검색"
                         />
-                        <SearchButton type="button" onClick={() => startTransition(() => setWritingTitleSearch(writingTitleSearchInput))} aria-label="대기 중... 검색">
+                        <SearchButton
+                          type="button"
+                          onClick={() =>
+                            startTransition(() => setWritingTitleSearch(writingTitleSearchInput))
+                          }
+                          aria-label="대기 중... 검색"
+                        >
                           <SearchIcon src="/assets/img/ico_search.png" alt="" />
                         </SearchButton>
                       </InlineSearchBox>
@@ -229,7 +255,7 @@ export default function NewsPage(props: pageProps) {
               <SectionHeader>
                 <SectionTitle>발행 완료</SectionTitle>
                 <HeaderControls>
-                    <TypeFilter>
+                  <TypeFilter>
                     <TypeFilterButton
                       onClick={() => {
                         setTypeFilterOpen((prev) => !prev);
@@ -291,11 +317,15 @@ export default function NewsPage(props: pageProps) {
                       type="text"
                       placeholder="YYYY-MM-DD"
                       value={dateInputValue}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleDateTextChange(event.target.value)}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        handleDateTextChange(event.target.value)
+                      }
                       onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === 'Enter') applyDateFilter();
                       }}
-                      onBlur={() => { if (dateInputValue === '') startTransition(() => setDateFilter('')); }}
+                      onBlur={() => {
+                        if (dateInputValue === '') startTransition(() => setDateFilter(''));
+                      }}
                       aria-label="날짜 필터"
                     />
                     <HiddenDateInput
@@ -428,7 +458,7 @@ const SectionContainer = styled.section`
   margin-bottom: 24px;
   position: relative;
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     padding: 12px 0;
     margin-bottom: 16px;
   }
@@ -588,7 +618,6 @@ const DatePickerButton = styled.button<DatePickerButtonProps>`
     box-sizing: border-box;
   }
 `;
-
 
 const SearchBox = styled.form`
   position: relative;

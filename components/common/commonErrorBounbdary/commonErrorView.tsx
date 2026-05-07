@@ -1,9 +1,10 @@
+import { ReactNode } from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+
 import logoImage from '@images/logo_image.png';
 
-import styled from 'styled-components';
 import { Column } from '../commonStyles';
-import Image from 'next/image';
-import { ReactNode } from 'react';
 
 export function CommonErrorView({ children }: { children: ReactNode }) {
   return (

@@ -1,10 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
+
 import PreviewBox from '@components/news/previewBox';
 import { newsRepository } from '@repositories/news';
+import { useQuery } from '@tanstack/react-query';
+
+import FillButton from './FillButton';
 import PublishButton from './PublishButton';
 import UntrackButton from './UntrackButton';
-import FillButton from './FillButton';
 
 const PREVIEW_LIMIT = 100;
 
@@ -33,16 +35,14 @@ export default function TrackedLane() {
   return (
     <Wrapper>
       <Heading>
-        추적 중
-        <span className="count">{tracked.length}</span>
+        추적 중<span className="count">{tracked.length}</span>
         {isFetching && <span className="loading">...</span>}
       </Heading>
       <SectionRule />
       {tracked.length === 0 ? (
         <EmptyHint>
-          추적 중인 뉴스가 없습니다. conductor가 새로 스크랩한 항목을 기존
-          뉴스에 붙이거나 새로 생성할 때 <code>track</code> proposed_action을
-          통해 이 레인이 채워집니다.
+          추적 중인 뉴스가 없습니다. conductor가 새로 스크랩한 항목을 기존 뉴스에 붙이거나 새로
+          생성할 때 <code>track</code> proposed_action을 통해 이 레인이 채워집니다.
         </EmptyHint>
       ) : (
         <Grid>

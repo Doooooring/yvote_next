@@ -1,4 +1,7 @@
+import { Suspense, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
@@ -9,9 +12,7 @@ import { useBool } from '@utils/hook/useBool';
 import { commentType, NewsInView } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
-import { Suspense, useMemo, useState } from 'react';
+
 import { sortComment } from './newsContents.util';
 
 interface NewsContentProps {
@@ -41,7 +42,9 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
   const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);
-  const [activeWriter, setActiveWriter] = useState<commentType | null>(summaries?.[0]?.commentType ?? null);
+  const [activeWriter, setActiveWriter] = useState<commentType | null>(
+    summaries?.[0]?.commentType ?? null,
+  );
 
   const commentToShow = useMemo(() => {
     return sortComment(newsContent?.comments ?? []);
@@ -80,7 +83,7 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                   <CommonHeadLine>타임라인 살펴보기</CommonHeadLine>
                   {timeline.map((timeline, idx) => {
                     return (
-                      <div className="timeline">
+                      <div className="timeline" key={`${timeline.date ?? 'timeline'}-${idx}`}>
                         <div className="timeline_sentence">
                           <p className="timeline_date">
                             {timeline.date ? getDotDateForm(timeline.date) : ''}
@@ -132,7 +135,8 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                 <div
                   className="writer"
                   dangerouslySetInnerHTML={{
-                    __html: summaries.filter((s) => s.commentType === activeWriter)[0]?.summary ?? '',
+                    __html:
+                      summaries.filter((s) => s.commentType === activeWriter)[0]?.summary ?? '',
                   }}
                 />
                 <div className="keyword-wrapper content">
@@ -183,7 +187,6 @@ const Wrapper = styled.div`
     padding: 0;
   }
 `;
-
 
 const Body = styled.div`
   width: 100%;
@@ -360,7 +363,6 @@ const BodyLeft = styled.div<BodyProps>`
   }
 `;
 
-
 const CommentBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -429,7 +431,6 @@ const SummaryButtons = styled.div`
   display: flex;
   gap: 8px;
 `;
-
 
 const SelectionContainer = styled.div`
   padding: 12px 0;

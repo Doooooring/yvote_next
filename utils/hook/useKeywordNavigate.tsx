@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
 import { useCallback } from 'react';
+import { useRouter } from 'next/router';
 
 export const useKeywordNavigate = () => {
   const router = useRouter();

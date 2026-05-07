@@ -169,8 +169,7 @@ export interface Comment {
   news: Partial<News>;
 }
 
-export interface Article
-  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'date'> {
+export interface Article extends Pick<Comment, 'id' | 'commentType' | 'title' | 'date'> {
   comment?: string;
   news: {
     id: number;

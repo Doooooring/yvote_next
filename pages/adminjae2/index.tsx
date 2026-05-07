@@ -1,14 +1,12 @@
 import { FormEvent, useEffect, useState } from 'react';
-import HeadMeta from '@components/common/HeadMeta';
-import TrackedLane from '@components/admin/trackedLane';
-import ProposedActionsLane from '@components/admin/proposedActionsLane';
-import IncidentsLane from '@components/admin/incidentsLane';
-import {
-  ADMINJAE2_STORAGE_KEY,
-  isAdminJae2Password,
-} from '@components/admin/adminjae2Auth';
 import { GetStaticProps } from 'next';
 import styled from 'styled-components';
+
+import { ADMINJAE2_STORAGE_KEY, isAdminJae2Password } from '@components/admin/adminjae2Auth';
+import IncidentsLane from '@components/admin/incidentsLane';
+import ProposedActionsLane from '@components/admin/proposedActionsLane';
+import TrackedLane from '@components/admin/trackedLane';
+import HeadMeta from '@components/common/HeadMeta';
 
 export const getStaticProps: GetStaticProps = async () => {
   return {

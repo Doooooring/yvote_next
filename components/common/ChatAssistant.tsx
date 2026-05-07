@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import styled, { keyframes } from 'styled-components';
+
 import { useChatContext } from '@/utils/context/chatContext';
 
 function renderMessageText(text: string | any) {
@@ -14,7 +15,11 @@ function renderMessageText(text: string | any) {
       if (cm) {
         href = `/news?newsId=${cm[1]}&commentType=${encodeURIComponent(cm[2])}&commentId=${cm[3]}`;
       }
-      return <Link key={i} href={href} style={{ color: 'inherit', textDecoration: 'underline' }}>{match[1]}</Link>;
+      return (
+        <Link key={i} href={href} style={{ color: 'inherit', textDecoration: 'underline' }}>
+          {match[1]}
+        </Link>
+      );
     }
     return <span key={i}>{part}</span>;
   });
@@ -22,7 +27,9 @@ function renderMessageText(text: string | any) {
 
 export default function ChatAssistant() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>(
+    [],
+  );
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [aiModel, setAiModel] = useState<'gpt' | 'grok' | 'claude'>('gpt');
@@ -62,18 +69,21 @@ export default function ChatAssistant() {
     try {
       const actions = consumePendingActions();
       const lastAction = actions.length > 0 ? actions[actions.length - 1] : null;
-      const userText = lastAction
-        ? `[현재 보고 있는 항목: ${lastAction}]\n${q}`
-        : q;
+      const userText = lastAction ? `[현재 보고 있는 항목: ${lastAction}]\n${q}` : q;
 
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages.filter(m => m.role !== 'ai' || messages.indexOf(m) > 0).map(m => ({
-            role: m.role === 'ai' ? 'assistant' : 'user',
-            text: m.text,
-          })), { role: 'user', text: userText }],
+          messages: [
+            ...messages
+              .filter((m) => m.role !== 'ai' || messages.indexOf(m) > 0)
+              .map((m) => ({
+                role: m.role === 'ai' ? 'assistant' : 'user',
+                text: m.text,
+              })),
+            { role: 'user', text: userText },
+          ],
           model: aiModel,
         }),
       });
@@ -93,7 +103,10 @@ export default function ChatAssistant() {
       const text = extractText(result);
       setMessages((prev) => [...prev, { role: 'ai', text, model: aiModel }]);
     } catch {
-      setMessages((prev) => [...prev, { role: 'ai', text: '서버에 연결할 수 없습니다.', model: aiModel }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'ai', text: '서버에 연결할 수 없습니다.', model: aiModel },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -102,15 +115,38 @@ export default function ChatAssistant() {
   return (
     <>
       <ChatFab ref={fabRef} onClick={() => setOpen(!open)} $open={open}>
-        {open ? <ChatIcon viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></ChatIcon> : <ChatIcon viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z" fill="currentColor"/></ChatIcon>}
+        {open ? (
+          <ChatIcon viewBox="0 0 24 24">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              fill="currentColor"
+            />
+          </ChatIcon>
+        ) : (
+          <ChatIcon viewBox="0 0 24 24">
+            <path
+              d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"
+              fill="currentColor"
+            />
+          </ChatIcon>
+        )}
       </ChatFab>
       {open && (
         <ChatPanel ref={panelRef}>
           <ChatHeader>
             <ChatHeaderLeft>
               <ChatHeaderTitle>yVote AI</ChatHeaderTitle>
-              <ClearBtn onClick={() => { setMessages([]); setInput(''); }} disabled={loading} title="Clear chat">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.26.32 4.46L9.06 8c1.2-.9 2.93-.75 4.46.32l5.84-5.6zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z"/></svg>
+              <ClearBtn
+                onClick={() => {
+                  setMessages([]);
+                  setInput('');
+                }}
+                disabled={loading}
+                title="Clear chat"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.26.32 4.46L9.06 8c1.2-.9 2.93-.75 4.46.32l5.84-5.6zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z" />
+                </svg>
               </ClearBtn>
             </ChatHeaderLeft>
             <ChatHeaderRight>
@@ -118,10 +154,18 @@ export default function ChatAssistant() {
                 <ModelBtn $active={aiModel === 'gpt'} onClick={() => setAiModel('gpt')} title="GPT">
                   <ModelIcon src="/icons/openai.svg" alt="GPT" width={14} height={14} />
                 </ModelBtn>
-                <ModelBtn $active={aiModel === 'grok'} onClick={() => setAiModel('grok')} title="Grok">
+                <ModelBtn
+                  $active={aiModel === 'grok'}
+                  onClick={() => setAiModel('grok')}
+                  title="Grok"
+                >
                   <ModelIcon src="/icons/grok.svg" alt="Grok" width={14} height={14} />
                 </ModelBtn>
-                <ModelBtn $active={aiModel === 'claude'} onClick={() => setAiModel('claude')} title="Claude">
+                <ModelBtn
+                  $active={aiModel === 'claude'}
+                  onClick={() => setAiModel('claude')}
+                  title="Claude"
+                >
                   <ModelIcon src="/icons/anthropic.svg" alt="Claude" width={14} height={14} />
                 </ModelBtn>
               </ModelSelect>
@@ -132,21 +176,42 @@ export default function ChatAssistant() {
             {messages.map((m, i) => (
               <BubbleRow key={i} $role={m.role}>
                 {m.role === 'ai' && m.model && (
-                  <BubbleModelIcon src={`/icons/${m.model === 'gpt' ? 'openai' : m.model === 'claude' ? 'anthropic' : 'grok'}.svg`} alt={m.model} width={12} height={12} />
+                  <BubbleModelIcon
+                    src={`/icons/${
+                      m.model === 'gpt' ? 'openai' : m.model === 'claude' ? 'anthropic' : 'grok'
+                    }.svg`}
+                    alt={m.model}
+                    width={12}
+                    height={12}
+                  />
                 )}
                 <ChatBubble
                   $role={m.role}
-                  onContextMenu={m.role === 'user' ? (e) => {
-                    e.preventDefault();
-                    setInput(m.text);
-                    setMessages((prev) => prev.slice(0, i));
-                  } : undefined}
+                  onContextMenu={
+                    m.role === 'user'
+                      ? (e) => {
+                          e.preventDefault();
+                          setInput(m.text);
+                          setMessages((prev) => prev.slice(0, i));
+                        }
+                      : undefined
+                  }
                 >
                   {renderMessageText(m.text)}
                 </ChatBubble>
               </BubbleRow>
             ))}
-            {loading && <BubbleRow $role="ai"><ChatBubble $role="ai"><TypingDots><span /><span /><span /></TypingDots></ChatBubble></BubbleRow>}
+            {loading && (
+              <BubbleRow $role="ai">
+                <ChatBubble $role="ai">
+                  <TypingDots>
+                    <span />
+                    <span />
+                    <span />
+                  </TypingDots>
+                </ChatBubble>
+              </BubbleRow>
+            )}
             <div ref={messagesEndRef} />
           </ChatMessages>
           <ChatInputRow>
@@ -156,7 +221,9 @@ export default function ChatAssistant() {
               onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSend()}
               placeholder="질문을 입력하세요"
             />
-            <ChatSendBtn onClick={handleSend} disabled={loading || !input.trim()}>{'\u2192'}</ChatSendBtn>
+            <ChatSendBtn onClick={handleSend} disabled={loading || !input.trim()}>
+              {'\u2192'}
+            </ChatSendBtn>
           </ChatInputRow>
         </ChatPanel>
       )}
@@ -186,7 +253,7 @@ const ChatFab = styled.button<{ $open: boolean }>`
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
   z-index: 10000;
   transition: transform 0.2s;
-  font-size: ${({ $open }) => $open ? '18px' : '14px'};
+  font-size: ${({ $open }) => ($open ? '18px' : '14px')};
   font-weight: 700;
   letter-spacing: 0;
 
@@ -248,8 +315,13 @@ const ClearBtn = styled.button`
   display: flex;
   align-items: center;
 
-  &:hover { opacity: 0.7; }
-  &:disabled { opacity: 0.2; cursor: default; }
+  &:hover {
+    opacity: 0.7;
+  }
+  &:disabled {
+    opacity: 0.2;
+    cursor: default;
+  }
 `;
 
 const ChatHeaderRight = styled.div`
@@ -275,8 +347,8 @@ const ModelBtn = styled.button<{ $active: boolean }>`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background: ${({ $active, theme }) => $active ? theme.colors.yvote01 : 'transparent'};
-  opacity: ${({ $active }) => $active ? 1 : 0.35};
+  background: ${({ $active, theme }) => ($active ? theme.colors.yvote01 : 'transparent')};
+  opacity: ${({ $active }) => ($active ? 1 : 0.35)};
   transition: all 0.15s;
 `;
 
@@ -308,7 +380,7 @@ const BubbleRow = styled.div<{ $role: 'user' | 'ai' }>`
   display: flex;
   align-items: flex-start;
   gap: 4px;
-  align-self: ${({ $role }) => $role === 'user' ? 'flex-end' : 'flex-start'};
+  align-self: ${({ $role }) => ($role === 'user' ? 'flex-end' : 'flex-start')};
   max-width: 85%;
 `;
 
@@ -321,8 +393,9 @@ const BubbleModelIcon = styled.img`
 `;
 
 const ChatBubble = styled.div<{ $role: 'user' | 'ai' }>`
-  background: ${({ $role, theme }) => $role === 'user' ? theme.colors.yvote12 : theme.colors.yvote03};
-  color: ${({ $role, theme }) => $role === 'user' ? theme.colors.yvote01 : theme.colors.yvote12};
+  background: ${({ $role, theme }) =>
+    $role === 'user' ? theme.colors.yvote12 : theme.colors.yvote03};
+  color: ${({ $role, theme }) => ($role === 'user' ? theme.colors.yvote01 : theme.colors.yvote12)};
   padding: 8px 12px;
   border-radius: 10px;
   font-size: 13px;
@@ -386,7 +459,11 @@ const TypingDots = styled.div`
     background: ${({ theme }) => theme.colors.yvote08};
     animation: ${typingBounce} 1.2s infinite ease-in-out;
 
-    &:nth-child(2) { animation-delay: 0.15s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
   }
 `;

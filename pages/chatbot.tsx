@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import styled, { keyframes } from 'styled-components';
 
 function renderMessageText(text: string | any) {
@@ -13,14 +13,20 @@ function renderMessageText(text: string | any) {
       if (cm) {
         href = `/news?newsId=${cm[1]}&commentType=${encodeURIComponent(cm[2])}&commentId=${cm[3]}`;
       }
-      return <Link key={i} href={href} style={{ color: 'inherit', textDecoration: 'underline' }}>{match[1]}</Link>;
+      return (
+        <Link key={i} href={href} style={{ color: 'inherit', textDecoration: 'underline' }}>
+          {match[1]}
+        </Link>
+      );
     }
     return <span key={i}>{part}</span>;
   });
 }
 
 export default function ChatbotPage() {
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string; model?: string }[]>(
+    [],
+  );
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [aiModel, setAiModel] = useState<'gpt' | 'grok' | 'claude'>('gpt');
@@ -46,10 +52,15 @@ export default function ChatbotPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages.filter(m => m.role !== 'ai' || messages.indexOf(m) > 0).map(m => ({
-            role: m.role === 'ai' ? 'assistant' : 'user',
-            text: m.text,
-          })), { role: 'user', text: q }],
+          messages: [
+            ...messages
+              .filter((m) => m.role !== 'ai' || messages.indexOf(m) > 0)
+              .map((m) => ({
+                role: m.role === 'ai' ? 'assistant' : 'user',
+                text: m.text,
+              })),
+            { role: 'user', text: q },
+          ],
           model: aiModel,
           context: '현재 위치: /chatbot (전용 채팅 페이지)',
         }),
@@ -70,7 +81,10 @@ export default function ChatbotPage() {
       const text = extractText(result);
       setMessages((prev) => [...prev, { role: 'ai', text, model: aiModel }]);
     } catch {
-      setMessages((prev) => [...prev, { role: 'ai', text: '서버에 연결할 수 없습니다.', model: aiModel }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'ai', text: '서버에 연결할 수 없습니다.', model: aiModel },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -82,8 +96,17 @@ export default function ChatbotPage() {
         <ChatHeader>
           <ChatHeaderLeft>
             <ChatHeaderTitle>yVote AI</ChatHeaderTitle>
-            <ClearBtn onClick={() => { setMessages([]); setInput(''); }} disabled={loading} title="Clear chat">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.26.32 4.46L9.06 8c1.2-.9 2.93-.75 4.46.32l5.84-5.6zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z"/></svg>
+            <ClearBtn
+              onClick={() => {
+                setMessages([]);
+                setInput('');
+              }}
+              disabled={loading}
+              title="Clear chat"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.26.32 4.46L9.06 8c1.2-.9 2.93-.75 4.46.32l5.84-5.6zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z" />
+              </svg>
             </ClearBtn>
           </ChatHeaderLeft>
           <ModelSelect>
@@ -93,33 +116,56 @@ export default function ChatbotPage() {
             <ModelBtn $active={aiModel === 'grok'} onClick={() => setAiModel('grok')} title="Grok">
               <ModelIcon src="/icons/grok.svg" alt="Grok" width={14} height={14} />
             </ModelBtn>
-            <ModelBtn $active={aiModel === 'claude'} onClick={() => setAiModel('claude')} title="Claude">
+            <ModelBtn
+              $active={aiModel === 'claude'}
+              onClick={() => setAiModel('claude')}
+              title="Claude"
+            >
               <ModelIcon src="/icons/anthropic.svg" alt="Claude" width={14} height={14} />
             </ModelBtn>
           </ModelSelect>
         </ChatHeader>
         <ChatMessages>
-          {messages.length === 0 && (
-            <EmptyState>yVote AI에게 질문하세요</EmptyState>
-          )}
+          {messages.length === 0 && <EmptyState>yVote AI에게 질문하세요</EmptyState>}
           {messages.map((m, i) => (
             <BubbleRow key={i} $role={m.role}>
               {m.role === 'ai' && m.model && (
-                <BubbleModelIcon src={`/icons/${m.model === 'gpt' ? 'openai' : m.model === 'claude' ? 'anthropic' : 'grok'}.svg`} alt={m.model} width={14} height={14} />
+                <BubbleModelIcon
+                  src={`/icons/${
+                    m.model === 'gpt' ? 'openai' : m.model === 'claude' ? 'anthropic' : 'grok'
+                  }.svg`}
+                  alt={m.model}
+                  width={14}
+                  height={14}
+                />
               )}
               <ChatBubble
                 $role={m.role}
-                onContextMenu={m.role === 'user' ? (e) => {
-                  e.preventDefault();
-                  setInput(m.text);
-                  setMessages((prev) => prev.slice(0, i));
-                } : undefined}
+                onContextMenu={
+                  m.role === 'user'
+                    ? (e) => {
+                        e.preventDefault();
+                        setInput(m.text);
+                        setMessages((prev) => prev.slice(0, i));
+                      }
+                    : undefined
+                }
               >
                 {renderMessageText(m.text)}
               </ChatBubble>
             </BubbleRow>
           ))}
-          {loading && <BubbleRow $role="ai"><ChatBubble $role="ai"><TypingDots><span /><span /><span /></TypingDots></ChatBubble></BubbleRow>}
+          {loading && (
+            <BubbleRow $role="ai">
+              <ChatBubble $role="ai">
+                <TypingDots>
+                  <span />
+                  <span />
+                  <span />
+                </TypingDots>
+              </ChatBubble>
+            </BubbleRow>
+          )}
           <div ref={messagesEndRef} />
         </ChatMessages>
         <ChatInputRow>
@@ -130,7 +176,9 @@ export default function ChatbotPage() {
             onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSend()}
             placeholder="질문을 입력하세요"
           />
-          <ChatSendBtn onClick={handleSend} disabled={loading || !input.trim()}>{'\u2192'}</ChatSendBtn>
+          <ChatSendBtn onClick={handleSend} disabled={loading || !input.trim()}>
+            {'\u2192'}
+          </ChatSendBtn>
         </ChatInputRow>
       </ChatContainer>
     </PageWrapper>
@@ -204,8 +252,13 @@ const ClearBtn = styled.button`
   display: flex;
   align-items: center;
 
-  &:hover { opacity: 0.7; }
-  &:disabled { opacity: 0.2; cursor: default; }
+  &:hover {
+    opacity: 0.7;
+  }
+  &:disabled {
+    opacity: 0.2;
+    cursor: default;
+  }
 `;
 
 const ModelSelect = styled.div`
@@ -225,8 +278,8 @@ const ModelBtn = styled.button<{ $active: boolean }>`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background: ${({ $active, theme }) => $active ? theme.colors.yvote01 : 'transparent'};
-  opacity: ${({ $active }) => $active ? 1 : 0.35};
+  background: ${({ $active, theme }) => ($active ? theme.colors.yvote01 : 'transparent')};
+  opacity: ${({ $active }) => ($active ? 1 : 0.35)};
   transition: all 0.15s;
 `;
 
@@ -257,7 +310,7 @@ const BubbleRow = styled.div<{ $role: 'user' | 'ai' }>`
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  align-self: ${({ $role }) => $role === 'user' ? 'flex-end' : 'flex-start'};
+  align-self: ${({ $role }) => ($role === 'user' ? 'flex-end' : 'flex-start')};
   max-width: 80%;
 `;
 
@@ -270,8 +323,9 @@ const BubbleModelIcon = styled.img`
 `;
 
 const ChatBubble = styled.div<{ $role: 'user' | 'ai' }>`
-  background: ${({ $role, theme }) => $role === 'user' ? theme.colors.yvote12 : theme.colors.yvote03};
-  color: ${({ $role, theme }) => $role === 'user' ? theme.colors.yvote01 : theme.colors.yvote12};
+  background: ${({ $role, theme }) =>
+    $role === 'user' ? theme.colors.yvote12 : theme.colors.yvote03};
+  color: ${({ $role, theme }) => ($role === 'user' ? theme.colors.yvote01 : theme.colors.yvote12)};
   padding: 10px 14px;
   border-radius: 12px;
   font-size: 14px;
@@ -335,7 +389,11 @@ const TypingDots = styled.div`
     background: ${({ theme }) => theme.colors.yvote08};
     animation: ${typingBounce} 1.2s infinite ease-in-out;
 
-    &:nth-child(2) { animation-delay: 0.15s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
   }
 `;

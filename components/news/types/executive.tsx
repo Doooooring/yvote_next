@@ -1,13 +1,15 @@
-import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import SharedTimelineList from '@components/news/timeline';
+import { customTheme } from '@public/assets/theme';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import { customTheme } from '@public/assets/theme';
-import SharedTimelineList from '@components/news/timeline';
 
 type BillArticle = { title: string; contentHtml: string };
 
@@ -61,7 +63,7 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -78,7 +80,7 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
   // Mobile tab state
   const [activeTab, setActiveTab] = useState(0);
 
-  const showAmendment = !!(news.billAmendment?.replace(/<[^>]*>/g, '').trim());
+  const showAmendment = !!news.billAmendment?.replace(/<[^>]*>/g, '').trim();
 
   const debateSlides = useMemo(() => {
     return [
@@ -89,115 +91,114 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
 
   return (
     <Wrapper>
-        <Header>
-          <h1>{news.title}</h1>
-          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-          <div className="meta">
-            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-            {commentTypes.length ? (
-              <CommentIcons>
-                {commentTypes.map((type, index) => (
-                  <CommentTypeIcon
-                    key={`${type}-${index}`}
-                    type={type as commentType}
-                    size={12}
-                    onClick={() => showCommentModal(news.id, type as commentType, news.title)}
-                  />
-                ))}
-              </CommentIcons>
-            ) : null}
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          <SharedTimelineList timeline={timelineGroups} flat />
+        </SectionBody>
+      </Section>
+
+      <Section>
+        <SectionTitle>주요 내용</SectionTitle>
+        <SectionBody>
+          <SummaryHtml
+            style={{ display: 'block', marginLeft: 0 }}
+            dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }}
+          />
+        </SectionBody>
+      </Section>
+
+      <Section>
+        <SectionTitle>토론</SectionTitle>
+        <SectionBody>
+          {showAmendment && (
+            <AmendmentBox $show>
+              <DebateLabel>수정안 내용</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
+            </AmendmentBox>
+          )}
+
+          {/* PC: side by side */}
+          <DebateGrid>
+            <DebateSide>
+              <DebateLabel>찬성</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
+            </DebateSide>
+            <DebateSide>
+              <DebateLabel>반대</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
+            </DebateSide>
+          </DebateGrid>
+
+          {/* Mobile: toggle tabs */}
+          <MobileDebateWrapper>
+            <DebateTabs>
+              {debateSlides.map((slide, i) => (
+                <DebateTab key={i} $active={i === activeTab} onClick={() => setActiveTab(i)}>
+                  {slide.label}
+                </DebateTab>
+              ))}
+            </DebateTabs>
+            <DebateTabContent
+              dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
+            />
+          </MobileDebateWrapper>
+        </SectionBody>
+      </Section>
+
+      {billArticles.length > 0 && (
         <Section>
-          <SectionTitle>타임라인</SectionTitle>
+          <SectionTitle>시행령 상세보기</SectionTitle>
           <SectionBody>
-            <SharedTimelineList timeline={timelineGroups} flat />
+            <BillArticleGroups>
+              {billArticles.map((article, idx) => (
+                <BillArticleGroup key={idx}>
+                  <summary>
+                    <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                  </summary>
+                  <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+                </BillArticleGroup>
+              ))}
+            </BillArticleGroups>
           </SectionBody>
         </Section>
+      )}
 
-        <Section>
-          <SectionTitle>주요 내용</SectionTitle>
-          <SectionBody>
-            <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
-          </SectionBody>
-        </Section>
-
-        <Section>
-          <SectionTitle>토론</SectionTitle>
-          <SectionBody>
-            {showAmendment && (
-              <AmendmentBox $show>
-                <DebateLabel>수정안 내용</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
-              </AmendmentBox>
-            )}
-
-            {/* PC: side by side */}
-            <DebateGrid>
-              <DebateSide>
-                <DebateLabel>찬성</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
-              </DebateSide>
-              <DebateSide>
-                <DebateLabel>반대</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
-              </DebateSide>
-            </DebateGrid>
-
-            {/* Mobile: toggle tabs */}
-            <MobileDebateWrapper>
-              <DebateTabs>
-                {debateSlides.map((slide, i) => (
-                  <DebateTab
-                    key={i}
-                    $active={i === activeTab}
-                    onClick={() => setActiveTab(i)}
-                  >
-                    {slide.label}
-                  </DebateTab>
-                ))}
-              </DebateTabs>
-              <DebateTabContent
-                dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
-              />
-            </MobileDebateWrapper>
-          </SectionBody>
-        </Section>
-
-        {billArticles.length > 0 && (
-          <Section>
-            <SectionTitle>시행령 상세보기</SectionTitle>
-            <SectionBody>
-              <BillArticleGroups>
-                {billArticles.map((article, idx) => (
-                  <BillArticleGroup key={idx}>
-                    <summary>
-                      <span dangerouslySetInnerHTML={{ __html: article.title }} />
-                    </summary>
-                    <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                  </BillArticleGroup>
-                ))}
-              </BillArticleGroups>
-            </SectionBody>
-          </Section>
-        )}
-
-        <Section>
-          <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-          <SectionBody>
-            <SummaryList>
-              {(news.summaries ?? []).filter(s => s.summary?.replace(/<[^>]*>/g, '').trim()).map((summary, idx) => (
+      <Section>
+        <SectionTitle>브리핑 및 기타 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? [])
+              .filter((s) => s.summary?.replace(/<[^>]*>/g, '').trim())
+              .map((summary, idx) => (
                 <SummaryListItem key={summary.commentType + idx}>
                   <CommentTypeIcon type={summary.commentType} />
-                  <SummaryHtml
-                    dangerouslySetInnerHTML={{ __html: summary.summary }}
-                  />
+                  <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary }} />
                 </SummaryListItem>
               ))}
-            </SummaryList>
-          </SectionBody>
-        </Section>
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
@@ -387,7 +388,6 @@ const BillArticleContent = styled.div`
   p.ql-align-center {
     text-align: center;
   }
-
 `;
 
 // Debate styles
@@ -455,7 +455,8 @@ const DebateTabs = styled.div`
 const DebateTab = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 8px 0;
-  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
+  border: 1px solid
+    ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
   border-radius: 2px;
   background: transparent;
   color: ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote08)};

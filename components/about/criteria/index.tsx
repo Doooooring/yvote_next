@@ -1,5 +1,6 @@
-import styled from 'styled-components';
 import Image from 'next/image';
+import styled from 'styled-components';
+
 import Pic01 from '@images/pic01.jpeg';
 import Pic02 from '@images/pic02.jpeg';
 import Pic03 from '@images/pic03.jpeg';
@@ -26,7 +27,7 @@ export function Criteria() {
               삼권분립 중 입법부의 역할을 수행하는 국회는 우리나라의 법률이 만들어지는 곳입니다.
               법률은 정부 정책의 범위나 법원의 판결에 사용될 수 있는 근거를 결정하기 때문에, 국회는
               우리 삶의 원칙을 만드는 가장 근원적인 기관입니다. 국회에는 총 300명의 국회의원이
-              있으며, 4년에 한 번씩 '총선'이라고 불리는 국회의원 선거를 통해 선출됩니다.
+              있으며, 4년에 한 번씩 &apos;총선&apos;이라고 불리는 국회의원 선거를 통해 선출됩니다.
             </p>
             <p>
               투표를 위한 최소한의 효율적인 뉴스를 제공하고자 하는 와이보트에서는, 국회에서 한 달에

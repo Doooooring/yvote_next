@@ -1,12 +1,14 @@
-import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import TimelineList from '@components/news/timeline';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import TimelineList from '@components/news/timeline';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 type IndicatorGroup = {
   title: string;
@@ -25,7 +27,10 @@ export default function EconomicsNewsLayout({ news }: NewsTypeLayoutProps) {
     const buckets: Record<string, Array<{ title: string; type: commentType }>> = {};
     (news.timeline ?? []).forEach((tl) => {
       const dateKey = tl.date ? getDotDateForm(tl.date) : '날짜 미상';
-      const titles = tl.title.split('$').map((t) => t.trim()).filter(Boolean);
+      const titles = tl.title
+        .split('$')
+        .map((t) => t.trim())
+        .filter(Boolean);
       if (!buckets[dateKey]) buckets[dateKey] = [];
       titles.forEach((title) => {
         buckets[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
@@ -115,7 +120,10 @@ export default function EconomicsNewsLayout({ news }: NewsTypeLayoutProps) {
 }
 
 function renderIndicator(raw: string) {
-  const parts = raw.split('·').map((p) => p.trim()).filter(Boolean);
+  const parts = raw
+    .split('·')
+    .map((p) => p.trim())
+    .filter(Boolean);
   if (parts.length <= 1) return <IndicatorLabel>{raw}</IndicatorLabel>;
   const [label, value, ...notes] = parts;
   return (

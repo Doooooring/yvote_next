@@ -1,22 +1,39 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import styled, { keyframes } from 'styled-components';
+
 import openAIRepository from '@repositories/llm';
 import { newsRepository } from '@repositories/news';
 import { Article, NewsState } from '@utils/interface/news';
 import { commentTypeColor, commentTypeImg } from '@utils/interface/news/comment';
 import { RgbToRgba } from '@utils/tools';
-import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
 
 interface ArticleBoxProps {
   article: Article;
   showLogo?: boolean;
   isExpanded?: boolean;
   onToggle?: () => void;
-  onExpandedContent?: (info: { newsId: number; newsTitle: string; commentId: number; title: string; commentType: string; body: string } | null) => void;
+  onExpandedContent?: (
+    info: {
+      newsId: number;
+      newsTitle: string;
+      commentId: number;
+      title: string;
+      commentType: string;
+      body: string;
+    } | null,
+  ) => void;
   column?: 'left' | 'right';
 }
 
-export default function ArticleBox({ article, showLogo = true, isExpanded = false, onToggle, onExpandedContent, column }: ArticleBoxProps) {
+export default function ArticleBox({
+  article,
+  showLogo = true,
+  isExpanded = false,
+  onToggle,
+  onExpandedContent,
+  column,
+}: ArticleBoxProps) {
   const { news, commentType, title, date } = article;
   const [body, setBody] = useState<string | undefined>(article.comment);
   const [bodyLoading, setBodyLoading] = useState(false);
@@ -26,7 +43,8 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
     if (isExpanded && body === undefined && !fetchedRef.current) {
       fetchedRef.current = true;
       setBodyLoading(true);
-      newsRepository.getCommentBody(article.id)
+      newsRepository
+        .getCommentBody(article.id)
         .then((text) => setBody(text ?? ''))
         .catch(() => setBody(''))
         .finally(() => setBodyLoading(false));
@@ -36,7 +54,14 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
   useEffect(() => {
     if (!onExpandedContent) return;
     if (isExpanded) {
-      onExpandedContent({ newsId: article.news.id, newsTitle: article.news.title || '', commentId: article.id, title, commentType, body: body ?? '' });
+      onExpandedContent({
+        newsId: article.news.id,
+        newsTitle: article.news.title || '',
+        commentId: article.id,
+        title,
+        commentType,
+        body: body ?? '',
+      });
     } else {
       onExpandedContent(null);
     }
@@ -68,27 +93,30 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
     touchStartY.current = e.touches[0].clientY;
   }, []);
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
 
-    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
-      if (dx < 0 && summary !== null) {
-        setShowSummary(true);
-      } else if (dx > 0 && summary !== null) {
-        setShowSummary(false);
+      if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
+        if (dx < 0 && summary !== null) {
+          setShowSummary(true);
+        } else if (dx > 0 && summary !== null) {
+          setShowSummary(false);
+        }
+        return;
       }
-      return;
-    }
 
-    const now = Date.now();
-    if (now - lastTapTime.current < 350) {
-      lastTapTime.current = 0;
-      fetchSummary();
-    } else {
-      lastTapTime.current = now;
-    }
-  }, [summary, fetchSummary]);
+      const now = Date.now();
+      if (now - lastTapTime.current < 350) {
+        lastTapTime.current = 0;
+        fetchSummary();
+      } else {
+        lastTapTime.current = now;
+      }
+    },
+    [summary, fetchSummary],
+  );
 
   const renderBody = () => {
     if (bodyLoading) {
@@ -100,29 +128,26 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
       const text = showingOriginal
         ? (body ?? '').split('$').map((p, i) => <p key={i}>{p}</p>)
         : (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
-            .split('\n').map((p, i) => <p key={i}>{p}</p>);
+            .split('\n')
+            .map((p, i) => <p key={i}>{p}</p>);
 
       return (
-        <MobileBodyWrapper
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
+        <MobileBodyWrapper onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {summary !== null && (
             <SwipeDots>
               <span className={!showSummary ? 'active' : ''} />
               <span className={showSummary ? 'active' : ''} />
             </SwipeDots>
           )}
-          <ShimmerText $loading={isLoading}>
-            {text}
-          </ShimmerText>
+          <ShimmerText $loading={isLoading}>{text}</ShimmerText>
         </MobileBodyWrapper>
       );
     }
 
     if (summary !== null) {
       return (typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2))
-        .split('\n').map((p, i) => <p key={i}>{p}</p>);
+        .split('\n')
+        .map((p, i) => <p key={i}>{p}</p>);
     }
     return (body ?? '').split('$').map((p, i) => <p key={i}>{p}</p>);
   };
@@ -158,14 +183,15 @@ export default function ArticleBox({ article, showLogo = true, isExpanded = fals
         <Dropdown $column={column} $compact={!showLogo}>
           {!isMobile && !bodyLoading && body !== undefined && (
             <SummaryButtonRow>
-              <SummarizeButton onClick={summary !== null ? clearSummary : fetchSummary} disabled={isLoading}>
+              <SummarizeButton
+                onClick={summary !== null ? clearSummary : fetchSummary}
+                disabled={isLoading}
+              >
                 {isLoading ? '요약 중...' : summary !== null ? '원문보기' : '요약하기'}
               </SummarizeButton>
             </SummaryButtonRow>
           )}
-          <DropdownContent>
-            {renderBody()}
-          </DropdownContent>
+          <DropdownContent>{renderBody()}</DropdownContent>
           {news?.state === NewsState.Published && (
             <DropdownFooter>
               <Link href={`/news/${news.id}`}>뉴스보기 →</Link>
@@ -195,15 +221,18 @@ const Dropdown = styled.div<{ $column?: 'left' | 'right'; $compact?: boolean }>`
   }
 
   @media screen and (max-width: 768px) {
-    ${({ $compact }) => $compact ? `
+    ${({ $compact }) =>
+      $compact
+        ? `
       padding-left: 6px;
       padding-right: 6px;
-    ` : ''}
+    `
+        : ''}
   }
 
   @media screen and (min-width: 769px) {
     width: 180%;
-    ${({ $column }) => $column === 'right' ? 'margin-left: -80%;' : ''}
+    ${({ $column }) => ($column === 'right' ? 'margin-left: -80%;' : '')}
   }
 `;
 
@@ -300,7 +329,7 @@ const LinkWrapper = styled.div<{ $expanded?: boolean }>`
     width: 100%;
     height: 100%;
     max-height: 100%;
-    overflow: ${({ $expanded }) => $expanded ? 'visible' : 'hidden'};
+    overflow: ${({ $expanded }) => ($expanded ? 'visible' : 'hidden')};
     justify-content: start;
     align-items: center;
     color: rgb(50, 50, 50);
@@ -372,7 +401,7 @@ const LinkTitleWrapper = styled.div<{ $expanded?: boolean }>`
 
   text-align: left;
   font-size: 14px;
-  font-weight: ${({ $expanded }) => $expanded ? '500' : '400'};
+  font-weight: ${({ $expanded }) => ($expanded ? '500' : '400')};
   color: rgb(120, 120, 120);
 
   @media screen and (max-width: 768px) {
@@ -381,11 +410,14 @@ const LinkTitleWrapper = styled.div<{ $expanded?: boolean }>`
 
   .title {
     min-width: 0;
-    ${({ $expanded }) => $expanded ? `
+    ${({ $expanded }) =>
+      $expanded
+        ? `
       white-space: normal;
       word-break: keep-all;
       overflow-wrap: break-word;
-    ` : `
+    `
+        : `
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -437,14 +469,17 @@ const shimmerSweep = keyframes`
 const ShimmerText = styled.div<{ $loading?: boolean }>`
   position: relative;
   overflow: hidden;
-  ${({ $loading }) => $loading ? `
+  ${({ $loading }) =>
+    $loading
+      ? `
     opacity: 0.4;
     pointer-events: none;
-  ` : ''}
+  `
+      : ''}
 
   &::after {
     content: '';
-    display: ${({ $loading }) => $loading ? 'block' : 'none'};
+    display: ${({ $loading }) => ($loading ? 'block' : 'none')};
     position: absolute;
     inset: 0;
     background: linear-gradient(

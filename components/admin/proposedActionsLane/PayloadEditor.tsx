@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+
+import { proposedActionRepository } from '@repositories/proposedAction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ProposedAction } from '@utils/interface/proposedAction';
-import { proposedActionRepository } from '@repositories/proposedAction';
 
 /**
  * Inline payload editor for /adminjae2 ProposedActionsLane.
@@ -56,9 +57,7 @@ export default function PayloadEditor({
       setParseError(null);
       return v as Record<string, unknown>;
     } catch (e) {
-      setParseError(
-        e instanceof Error ? e.message : 'invalid JSON',
-      );
+      setParseError(e instanceof Error ? e.message : 'invalid JSON');
       return null;
     }
   }
@@ -97,10 +96,7 @@ export default function PayloadEditor({
       {parseError && <ErrorLine>⚠ {parseError}</ErrorLine>}
       {updateMut.isError && (
         <ErrorLine>
-          ⚠ save failed:{' '}
-          {updateMut.error instanceof Error
-            ? updateMut.error.message
-            : 'unknown'}
+          ⚠ save failed: {updateMut.error instanceof Error ? updateMut.error.message : 'unknown'}
         </ErrorLine>
       )}
       <BtnRow>

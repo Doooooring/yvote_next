@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { PieChart } from 'react-minimal-pie-chart';
+import styled from 'styled-components';
+
 import typedquestions from './questions.json';
 import Types from './types.tsx';
 
@@ -23,7 +24,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
   };
 
   const calculateScores = () => {
-    let scores = [];
+    const scores = [];
     const detailScoreCount = 10;
     const answersPerDetailScore = 3;
 
@@ -31,7 +32,7 @@ const Result = ({ answers }: { answers: ResultAnswers }) => {
       const group = answers.slice(i, i + 30);
       const totalScore = group.reduce((acc, current) => acc + current, 0);
 
-      let detailScores = [];
+      const detailScores = [];
       for (let j = 0; j < detailScoreCount; j++) {
         const detailStart = j * answersPerDetailScore;
         const detailScore = group
@@ -193,7 +194,7 @@ const ChartWrapper = styled.div`
   text-align: center;
   margin: 50px 0;
   width: 15%;
-  min-width : 65px;
+  min-width: 65px;
   height: 15%;
 `;
 
@@ -204,11 +205,11 @@ const ChartTitle = styled.p`
   white-space: nowrap;
 
   @media screen and (max-width: 768px) {
-    font-size : 0.9rem;
+    font-size: 0.9rem;
   }
 
   @media screen and (max-width: 484px) {
-    font-size : 0.8rem;
+    font-size: 0.8rem;
   }
 `;
 
@@ -231,17 +232,16 @@ const Detail = styled.div`
   background-color: #f9f9f9;
 
   @media screen and (max-width: 760px) {
-    width : 42%;
-    padding : 15px 10px;
-    margin-bottom : 16px;
+    width: 42%;
+    padding: 15px 10px;
+    margin-bottom: 16px;
   }
 
   @media screen and (max-width: 440px) {
-    width : 100%;
-    padding : 15px 12px;
-    margin-bottom : 12px;
+    width: 100%;
+    padding: 15px 12px;
+    margin-bottom: 12px;
   }
-
 `;
 
 const DetailTitle = styled.h3`
@@ -250,11 +250,11 @@ const DetailTitle = styled.h3`
   white-space: nowrap;
 
   @media screen and (max-width: 768px) {
-    font-size : 0.9rem;
+    font-size: 0.9rem;
   }
 
   @media screen and (max-width: 484px) {
-    font-size : 0.8rem;
+    font-size: 0.8rem;
   }
   margin-bottom: 10px;
 `;
@@ -289,7 +289,7 @@ const ScoreLabel = styled.div`
   width: 60px;
   font-size: 0.8rem;
   @media screen and (max-width: 484px) {
-    font-size : 0.9rem;
+    font-size: 0.9rem;
   }
   color: #666;
   flex-shrink: 0;

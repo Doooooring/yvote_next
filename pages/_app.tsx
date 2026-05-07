@@ -1,15 +1,17 @@
+import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import { ThemeProvider } from 'styled-components';
 
+import { ChatContextProvider, useChatContext } from '@/utils/context/chatContext';
+import ChatAssistant from '@components/common/ChatAssistant';
 import HeadMeta from '@components/common/HeadMeta';
 import Layout from '@components/common/layout';
-import ChatAssistant from '@components/common/ChatAssistant';
-import { ChatContextProvider, useChatContext } from '@/utils/context/chatContext';
-import '@styles/globals.css';
-import { ThemeProvider } from 'styled-components';
+
 import { customTheme } from '../public/assets/theme';
 import GlobalStyle from '../styles/globalStyle';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+
+import '@styles/globals.css';
 
 function AppInner({ Component, pageProps }: AppProps) {
   const router = useRouter();

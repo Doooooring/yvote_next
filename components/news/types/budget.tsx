@@ -1,13 +1,15 @@
-import styled from 'styled-components';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import SharedTimelineList from '@components/news/timeline';
+import { customTheme } from '@public/assets/theme';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { BillItem, commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import { customTheme } from '@public/assets/theme';
-import SharedTimelineList from '@components/news/timeline';
 
 type BillArticle = { title: string; contentHtml: string };
 
@@ -51,14 +53,16 @@ function toEffectiveBills(news: NewsTypeLayoutProps['news']): BillItem[] {
     !!(news.billVoteTotal ?? 0) ||
     (news.billVoteByParty ?? []).length > 0;
   if (!hasAny) return [];
-  return [{
-    billNo: '',
-    billName: '',
-    detail: news.billDetail,
-    voteResult: news.billVoteResult,
-    voteTotal: news.billVoteTotal,
-    voteByParty: news.billVoteByParty,
-  }];
+  return [
+    {
+      billNo: '',
+      billName: '',
+      detail: news.billDetail,
+      voteResult: news.billVoteResult,
+      voteTotal: news.billVoteTotal,
+      voteByParty: news.billVoteByParty,
+    },
+  ];
 }
 
 export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
@@ -87,8 +91,13 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-      if (e.key === 'ArrowLeft') { e.preventDefault(); gotoPrev(); }
-      else if (e.key === 'ArrowRight') { e.preventDefault(); gotoNext(); }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        gotoPrev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        gotoNext();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -97,25 +106,31 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
   // Touch swipe handlers (mobile).
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (!hasMultipleBills) return;
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  }, [hasMultipleBills]);
-  const onTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (touchStartX.current == null || touchStartY.current == null) return;
-    const endX = e.changedTouches[0].clientX;
-    const endY = e.changedTouches[0].clientY;
-    const dx = endX - touchStartX.current;
-    const dy = endY - touchStartY.current;
-    touchStartX.current = null;
-    touchStartY.current = null;
-    // Require mostly-horizontal swipe >60px to avoid false positives during scroll.
-    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      if (dx < 0) gotoNext();
-      else gotoPrev();
-    }
-  }, [gotoPrev, gotoNext]);
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!hasMultipleBills) return;
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    },
+    [hasMultipleBills],
+  );
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current == null || touchStartY.current == null) return;
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const dx = endX - touchStartX.current;
+      const dy = endY - touchStartY.current;
+      touchStartX.current = null;
+      touchStartY.current = null;
+      // Require mostly-horizontal swipe >60px to avoid false positives during scroll.
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx < 0) gotoNext();
+        else gotoPrev();
+      }
+    },
+    [gotoPrev, gotoNext],
+  );
 
   const [billArticles, setBillArticles] = useState<BillArticle[]>([]);
   useEffect(() => {
@@ -133,7 +148,7 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -176,56 +191,68 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
 
   return (
     <Wrapper>
-        <Header>
-          <h1>{news.title}</h1>
-          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-          <div className="meta">
-            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-            {commentTypes.length ? (
-              <CommentIcons>
-                {commentTypes.map((type, index) => (
-                  <CommentTypeIcon
-                    key={`${type}-${index}`}
-                    type={type as commentType}
-                    size={12}
-                    onClick={() => showCommentModal(news.id, type as commentType, news.title, { disableCategorize: true })}
-                  />
-                ))}
-              </CommentIcons>
-            ) : null}
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() =>
+                    showCommentModal(news.id, type as commentType, news.title, {
+                      disableCategorize: true,
+                    })
+                  }
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
-          <Section>
-            <SectionTitle>타임라인</SectionTitle>
-            <SectionBody>
-              <SharedTimelineList timeline={timelineGroups} flat />
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          <SharedTimelineList timeline={timelineGroups} flat />
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>예산안 요약</SectionTitle>
-            <SectionBody>
-              <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>예산안 요약</SectionTitle>
+        <SectionBody>
+          <SummaryHtml
+            style={{ display: 'block', marginLeft: 0 }}
+            dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }}
+          />
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>본회의 표결 및 토론</SectionTitle>
-            <SectionBody>
-
-            {totalVotes > 0 && (
-              <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-                {hasMultipleBills && (
-                  <BillNav>
-                    <NavButton onClick={gotoPrev} aria-label="이전 법안">◀</NavButton>
-                    <BillNavLabel>
-                      <span className="index">{billIndex + 1} / {effectiveBills.length}</span>
-                      <span className="name">{currentBill?.billName ?? ''}</span>
-                    </BillNavLabel>
-                    <NavButton onClick={gotoNext} aria-label="다음 법안">▶</NavButton>
-                  </BillNav>
-                )}
+      <Section>
+        <SectionTitle>본회의 표결 및 토론</SectionTitle>
+        <SectionBody>
+          {totalVotes > 0 && (
+            <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              {hasMultipleBills && (
+                <BillNav>
+                  <NavButton onClick={gotoPrev} aria-label="이전 법안">
+                    ◀
+                  </NavButton>
+                  <BillNavLabel>
+                    <span className="index">
+                      {billIndex + 1} / {effectiveBills.length}
+                    </span>
+                    <span className="name">{currentBill?.billName ?? ''}</span>
+                  </BillNavLabel>
+                  <NavButton onClick={gotoNext} aria-label="다음 법안">
+                    ▶
+                  </NavButton>
+                </BillNav>
+              )}
               <VoteSummarySection>
                 {currentBill?.voteResult && (
                   <VoteResultBadge>{currentBill.voteResult}</VoteResultBadge>
@@ -249,130 +276,167 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
                   </VoteItem>
                 </VoteNumbers>
                 <VoteBar>
-                  <VoteBarSegment $width={(voteTotals.for / totalVotes) * 100} $color={customTheme.colors.yvote12} />
-                  <VoteBarSegment $width={(voteTotals.against / totalVotes) * 100} $color={customTheme.colors.yvote08} />
-                  <VoteBarSegment $width={(voteTotals.abstain / totalVotes) * 100} $color={customTheme.colors.yvote07} />
-                  <VoteBarSegment $width={(voteTotals.absent / totalVotes) * 100} $color={customTheme.colors.yvote04} />
+                  <VoteBarSegment
+                    $width={(voteTotals.for / totalVotes) * 100}
+                    $color={customTheme.colors.yvote12}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.against / totalVotes) * 100}
+                    $color={customTheme.colors.yvote08}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.abstain / totalVotes) * 100}
+                    $color={customTheme.colors.yvote07}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.absent / totalVotes) * 100}
+                    $color={customTheme.colors.yvote04}
+                  />
                 </VoteBar>
                 {partyVotes.length > 0 && (
                   <>
                     <VoteDetailToggle onClick={() => setShowVoteDetail(!showVoteDetail)}>
                       상세보기 {showVoteDetail ? '▴' : '▾'}
                     </VoteDetailToggle>
-                    {showVoteDetail && (() => {
-                      const sorted = [...partyVotes].sort((a, b) => {
-                        const denomA = a.for + a.against + a.abstain + a.absent;
-                        const denomB = b.for + b.against + b.abstain + b.absent;
-                        const ratioA = denomA > 0 ? a.for / denomA : 0;
-                        const ratioB = denomB > 0 ? b.for / denomB : 0;
-                        return ratioB - ratioA;
-                      });
-                      return (
-                        <VoteDetailTable>
-                          <thead>
-                            <tr>
-                              <th />
-                              {sorted.map((pv, idx) => (
-                                <th key={idx}>{pv.party}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr><td>찬성</td>{sorted.map((pv, i) => <td key={i}>{pv.for}</td>)}</tr>
-                            <tr><td>반대</td>{sorted.map((pv, i) => <td key={i}>{pv.against}</td>)}</tr>
-                            <tr><td>기권</td>{sorted.map((pv, i) => <td key={i}>{pv.abstain}</td>)}</tr>
-                            <tr><td>불참</td>{sorted.map((pv, i) => <td key={i}>{pv.absent}</td>)}</tr>
-                          </tbody>
-                        </VoteDetailTable>
-                      );
-                    })()}
+                    {showVoteDetail &&
+                      (() => {
+                        const sorted = [...partyVotes].sort((a, b) => {
+                          const denomA = a.for + a.against + a.abstain + a.absent;
+                          const denomB = b.for + b.against + b.abstain + b.absent;
+                          const ratioA = denomA > 0 ? a.for / denomA : 0;
+                          const ratioB = denomB > 0 ? b.for / denomB : 0;
+                          return ratioB - ratioA;
+                        });
+                        return (
+                          <VoteDetailTable>
+                            <thead>
+                              <tr>
+                                <th />
+                                {sorted.map((pv, idx) => (
+                                  <th key={idx}>{pv.party}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>찬성</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.for}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>반대</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.against}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>기권</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.abstain}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>불참</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.absent}</td>
+                                ))}
+                              </tr>
+                            </tbody>
+                          </VoteDetailTable>
+                        );
+                      })()}
                   </>
                 )}
               </VoteSummarySection>
-              </BillSwipeBlock>
-            )}
-
-            {/* PC: side by side */}
-            <DebateGrid>
-              <DebateSide>
-                <DebateLabel>찬성</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
-              </DebateSide>
-              <DebateSide>
-                <DebateLabel>반대</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
-              </DebateSide>
-            </DebateGrid>
-
-            {/* Mobile: toggle tabs */}
-            <MobileDebateWrapper>
-              <DebateTabs>
-                {debateSlides.map((slide, i) => (
-                  <DebateTab
-                    key={i}
-                    $active={i === activeTab}
-                    onClick={() => setActiveTab(i)}
-                  >
-                    {slide.label}
-                  </DebateTab>
-                ))}
-              </DebateTabs>
-              <DebateTabContent
-                dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
-              />
-            </MobileDebateWrapper>
-            </SectionBody>
-          </Section>
-
-          {effectiveBills.length > 0 && (
-            <Section>
-              <SectionTitle>예산안 상세보기</SectionTitle>
-              <SectionBody>
-                <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-                  {hasMultipleBills && (
-                    <BillNav>
-                      <NavButton onClick={gotoPrev} aria-label="이전 법안">◀</NavButton>
-                      <BillNavLabel>
-                        <span className="index">{billIndex + 1} / {effectiveBills.length}</span>
-                        <span className="name">{currentBill?.billName ?? ''}</span>
-                      </BillNavLabel>
-                      <NavButton onClick={gotoNext} aria-label="다음 법안">▶</NavButton>
-                    </BillNav>
-                  )}
-                  {billArticles.length > 0 ? (
-                    <BillArticleGroups>
-                      {billArticles.map((article, idx) => (
-                        <BillArticleGroup key={idx}>
-                          <summary>
-                            <span dangerouslySetInnerHTML={{ __html: article.title }} />
-                          </summary>
-                          <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                        </BillArticleGroup>
-                      ))}
-                    </BillArticleGroups>
-                  ) : (
-                    <EmptyBillDetail>상세 내용이 등록되지 않았습니다.</EmptyBillDetail>
-                  )}
-                </BillSwipeBlock>
-              </SectionBody>
-            </Section>
+            </BillSwipeBlock>
           )}
 
-          <Section>
-            <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SectionBody>
-              <SummaryList>
-                {(news.summaries ?? []).filter(s => s.summary?.replace(/<[^>]*>/g, '').trim()).map((summary, idx) => (
-                  <SummaryListItem key={summary.commentType + idx}>
-                    <CommentTypeIcon type={summary.commentType} />
-                    <SummaryHtml
-                      dangerouslySetInnerHTML={{ __html: summary.summary }}
-                    />
-                  </SummaryListItem>
-                ))}
-              </SummaryList>
-            </SectionBody>
-          </Section>
+          {/* PC: side by side */}
+          <DebateGrid>
+            <DebateSide>
+              <DebateLabel>찬성</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
+            </DebateSide>
+            <DebateSide>
+              <DebateLabel>반대</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
+            </DebateSide>
+          </DebateGrid>
+
+          {/* Mobile: toggle tabs */}
+          <MobileDebateWrapper>
+            <DebateTabs>
+              {debateSlides.map((slide, i) => (
+                <DebateTab key={i} $active={i === activeTab} onClick={() => setActiveTab(i)}>
+                  {slide.label}
+                </DebateTab>
+              ))}
+            </DebateTabs>
+            <DebateTabContent
+              dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
+            />
+          </MobileDebateWrapper>
+        </SectionBody>
+      </Section>
+
+      {effectiveBills.length > 0 && (
+        <Section>
+          <SectionTitle>예산안 상세보기</SectionTitle>
+          <SectionBody>
+            <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              {hasMultipleBills && (
+                <BillNav>
+                  <NavButton onClick={gotoPrev} aria-label="이전 법안">
+                    ◀
+                  </NavButton>
+                  <BillNavLabel>
+                    <span className="index">
+                      {billIndex + 1} / {effectiveBills.length}
+                    </span>
+                    <span className="name">{currentBill?.billName ?? ''}</span>
+                  </BillNavLabel>
+                  <NavButton onClick={gotoNext} aria-label="다음 법안">
+                    ▶
+                  </NavButton>
+                </BillNav>
+              )}
+              {billArticles.length > 0 ? (
+                <BillArticleGroups>
+                  {billArticles.map((article, idx) => (
+                    <BillArticleGroup key={idx}>
+                      <summary>
+                        <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                      </summary>
+                      <BillArticleContent
+                        dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+                      />
+                    </BillArticleGroup>
+                  ))}
+                </BillArticleGroups>
+              ) : (
+                <EmptyBillDetail>상세 내용이 등록되지 않았습니다.</EmptyBillDetail>
+              )}
+            </BillSwipeBlock>
+          </SectionBody>
+        </Section>
+      )}
+
+      <Section>
+        <SectionTitle>브리핑 및 기타 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? [])
+              .filter((s) => s.summary?.replace(/<[^>]*>/g, '').trim())
+              .map((summary, idx) => (
+                <SummaryListItem key={summary.commentType + idx}>
+                  <CommentTypeIcon type={summary.commentType} />
+                  <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary }} />
+                </SummaryListItem>
+              ))}
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
@@ -533,7 +597,9 @@ const BillNavLabel = styled.div`
   }
 
   @media (max-width: 768px) {
-    .name { font-size: 13px; }
+    .name {
+      font-size: 13px;
+    }
   }
 `;
 
@@ -634,7 +700,6 @@ const BillArticleContent = styled.div`
   p.ql-align-center {
     text-align: center;
   }
-
 `;
 
 // Debate styles
@@ -792,7 +857,8 @@ const DebateTabs = styled.div`
 const DebateTab = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 8px 0;
-  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
+  border: 1px solid
+    ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
   border-radius: 2px;
   background: transparent;
   color: ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote08)};

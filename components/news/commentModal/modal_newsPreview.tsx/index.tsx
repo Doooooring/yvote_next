@@ -1,10 +1,12 @@
+import { useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { CommonIconButton } from '@components/common/commonStyles';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { sortComment } from '@utils/interface/news/comment';
-import { useMemo, useState } from 'react';
-import styled from 'styled-components';
+
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
 
@@ -17,7 +19,14 @@ interface Modal_NewsPreviewProp {
   disableCategorize?: boolean;
 }
 
-export function CommentModal_NewsPreview({ id, commentTypes, close, initialCommentId, newsTitle, disableCategorize }: Modal_NewsPreviewProp) {
+export function CommentModal_NewsPreview({
+  id,
+  commentTypes,
+  close,
+  initialCommentId,
+  newsTitle,
+  disableCategorize,
+}: Modal_NewsPreviewProp) {
   const commentTypesSorted = useMemo(() => {
     return sortComment(commentTypes);
   }, [commentTypes]);
@@ -25,7 +34,11 @@ export function CommentModal_NewsPreview({ id, commentTypes, close, initialComme
 
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper onClick={(e: React.MouseEvent<HTMLDivElement>) => { if (e.target === e.currentTarget) close(); }}>
+      <ModalBodyWrapper
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          if (e.target === e.currentTarget) close();
+        }}
+      >
         {commentTypes.length > 0 && (
           <>
             <CommentButtons>
@@ -43,7 +56,14 @@ export function CommentModal_NewsPreview({ id, commentTypes, close, initialComme
                 );
               })}
             </CommentButtons>
-            <CommentBodyCommon id={id} commentType={commentSelected} close={close} initialCommentId={initialCommentId} newsTitle={newsTitle} disableCategorize={disableCategorize} />
+            <CommentBodyCommon
+              id={id}
+              commentType={commentSelected}
+              close={close}
+              initialCommentId={initialCommentId}
+              newsTitle={newsTitle}
+              disableCategorize={disableCategorize}
+            />
           </>
         )}
       </ModalBodyWrapper>
@@ -78,7 +98,8 @@ const CommentButtons = styled.div`
 const CommentButton = styled(CommonIconButton)<{ $selected: boolean }>`
   padding: 0.25rem;
   border-radius: 4px;
-  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.yvote02 : theme.colors.yvote01)} !important;
+  background-color: ${({ $selected, theme }) =>
+    $selected ? theme.colors.yvote02 : theme.colors.yvote01} !important;
   border: ${({ $selected, theme }) =>
     $selected ? `1px solid ${theme.colors.yvote06}` : `1px solid ${theme.colors.yvote04}`};
   filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.6)')};

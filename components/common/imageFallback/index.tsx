@@ -1,8 +1,10 @@
-import styles from './imageFallback.module.css';
-import defaultImg from '@images/default_image.png';
-import Image, { ImageProps } from 'next/image';
 import { use, useEffect, useState } from 'react';
+import Image, { ImageProps } from 'next/image';
 import { CSSProperties } from 'styled-components';
+
+import defaultImg from '@images/default_image.png';
+
+import styles from './imageFallback.module.css';
 
 interface ImageFallbackProps extends ImageProps {
   blurImg?: string;

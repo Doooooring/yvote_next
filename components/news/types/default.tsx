@@ -1,6 +1,7 @@
+import styled from 'styled-components';
+
 import NewsContent from '@components/news/newsContents';
 import { NewsInView } from '@utils/interface/news';
-import styled from 'styled-components';
 
 export type NewsTypeLayoutProps = {
   news: NewsInView;

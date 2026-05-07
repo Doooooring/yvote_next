@@ -1,5 +1,7 @@
-import { useEffect } from "react"
+import { useEffect } from 'react';
 
-export const useMount = (fn : () => void) => {
-    useEffect(() => {fn()}, []);
-}
+export const useMount = (fn: () => void) => {
+  useEffect(() => {
+    fn();
+  }, []);
+};

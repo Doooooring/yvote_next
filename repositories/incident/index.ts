@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { HOST_URL } from '@url';
 import {
   Incident,
@@ -32,12 +33,10 @@ class IncidentRepository {
     if (opts.newsId !== undefined) params.newsId = opts.newsId;
     if (opts.offset !== undefined) params.offset = opts.offset;
     if (opts.limit !== undefined) params.limit = opts.limit;
-    const res = await axios.get<
-      { success: boolean; result: Incident[] } | Incident[]
-    >(BASE, { params });
-    const data = res.data as
-      | { success: boolean; result: unknown }
-      | Incident[];
+    const res = await axios.get<{ success: boolean; result: Incident[] } | Incident[]>(BASE, {
+      params,
+    });
+    const data = res.data as { success: boolean; result: unknown } | Incident[];
     if (Array.isArray(data)) return data;
     // RespInterceptor wraps thrown server errors as
     // {success:false, result:<error>} — guard against that shape so a
@@ -57,18 +56,12 @@ class IncidentRepository {
   }
 
   async dismiss(id: number): Promise<Incident> {
-    const res: Response<Incident> = await axios.patch(
-      `${BASE}/${id}/dismiss`,
-      {},
-    );
+    const res: Response<Incident> = await axios.patch(`${BASE}/${id}/dismiss`, {});
     return res.data.result;
   }
 
   async resolve(id: number): Promise<Incident> {
-    const res: Response<Incident> = await axios.patch(
-      `${BASE}/${id}/resolve`,
-      {},
-    );
+    const res: Response<Incident> = await axios.patch(`${BASE}/${id}/resolve`, {});
     return res.data.result;
   }
 

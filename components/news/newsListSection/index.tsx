@@ -1,16 +1,18 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+
 import { CommonLayoutBox } from '@/components/common/commonStyles';
 import LoadingCommon from '@/components/common/loading';
 import { DefaultMessageBox } from '@/components/common/messageBox';
+import { newsRepository } from '@/repositories/news';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
+import { NewsState, Preview } from '@/utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
-import { NewsState, Preview } from '@/utils/interface/news';
-import { newsRepository } from '@/repositories/news';
 
 export const PREVIEWS_PAGES_LIMIT = 18;
 
@@ -210,10 +212,12 @@ export default function NewsListSection({
             다음
           </PageButton>
         </PaginationCenter>
-        <ScrollTopButton onClick={() => {
+        <ScrollTopButton
+          onClick={() => {
             const el = wrapperRef.current?.closest('[data-section]');
             el?.scrollIntoView({ behavior: 'smooth' });
-          }}>
+          }}
+        >
           맨 위로
         </ScrollTopButton>
       </PaginationBar>

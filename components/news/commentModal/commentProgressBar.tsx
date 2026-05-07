@@ -1,8 +1,10 @@
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { CommonIconButton } from '../../common/commonStyles';
-import logoImage from '@images/logo_image.png';
 import Image from 'next/image';
+import styled from 'styled-components';
+
+import logoImage from '@images/logo_image.png';
+
+import { CommonIconButton } from '../../common/commonStyles';
 
 interface ProgressBarProps {
   scrollHeight: number;
@@ -33,7 +35,7 @@ export default function CommentProgressBar({
       setProgressWidth('100%');
       return;
     }
-    let sh = Math.max(scrollHeight, 0);
+    const sh = Math.max(scrollHeight, 0);
     const rate = Math.min((sh / maxScrollHeight) * 100, 100);
     const rateFixed = rate >= 99 ? 100 : rate;
     return setProgressWidth(rateFixed + '%');

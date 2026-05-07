@@ -1,14 +1,22 @@
-import HeadMeta from '@components/common/HeadMeta';
-import LoadingCommon from '@/components/common/loading';
-import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import { NewsType, NewsState, Preview, newsTypesToKor, newsTypesToKorFull, commentType } from '@utils/interface/news';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
-import { newsRepository } from '@/repositories/news';
-import { GetServerSideProps } from 'next';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
+
+import LoadingCommon from '@/components/common/loading';
+import { newsRepository } from '@/repositories/news';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import HeadMeta from '@components/common/HeadMeta';
+import { useQuery } from '@tanstack/react-query';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import {
+  commentType,
+  NewsState,
+  NewsType,
+  newsTypesToKor,
+  newsTypesToKorFull,
+  Preview,
+} from '@utils/interface/news';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const AVAILABLE_YEARS = Array.from({ length: CURRENT_YEAR - 2021 }, (_, i) => CURRENT_YEAR - i);
@@ -51,8 +59,12 @@ export default function News2Page(props: pageProps) {
     queryKey: ['news2-spotlight', year],
     queryFn: async () => {
       const previews = await newsRepository.getPreviews(
-        0, 9999, '', NewsState.Published,
-        `${year}-01-01`, `${year}-12-31`,
+        0,
+        9999,
+        '',
+        NewsState.Published,
+        `${year}-01-01`,
+        `${year}-12-31`,
       );
       const map = new Map<NewsType, Preview[]>();
       for (const p of previews) {
@@ -68,7 +80,9 @@ export default function News2Page(props: pageProps) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(
+      d.getDate(),
+    ).padStart(2, '0')}`;
   };
 
   const activeTypes = TYPE_ORDER.filter((t) => grouped?.has(t));
@@ -82,14 +96,18 @@ export default function News2Page(props: pageProps) {
             <PageTitle>뉴스</PageTitle>
             <YearSelect value={year} onChange={(e) => setYear(Number(e.target.value))}>
               {AVAILABLE_YEARS.map((y) => (
-                <option key={y} value={y}>{y}</option>
+                <option key={y} value={y}>
+                  {y}
+                </option>
               ))}
             </YearSelect>
           </HeaderRow>
         </PageHeader>
 
         {isFetching && !grouped && (
-          <LoadingWrapper><LoadingCommon comment="" fontColor="black" /></LoadingWrapper>
+          <LoadingWrapper>
+            <LoadingCommon comment="" fontColor="black" />
+          </LoadingWrapper>
         )}
 
         {activeTypes.map((type) => {
@@ -109,10 +127,18 @@ export default function News2Page(props: pageProps) {
                       <CardFooter>
                         <CardDate>{formatDate(item.date)}</CardDate>
                         {item.comments && item.comments.length > 0 && (
-                          <CardIcons onClick={(e) => {
-                            e.stopPropagation();
-                            showCommentModal(item.id, item.comments as commentType[], undefined, item.title, { disableCategorize: item.newsType === 'budget' });
-                          }}>
+                          <CardIcons
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              showCommentModal(
+                                item.id,
+                                item.comments as commentType[],
+                                undefined,
+                                item.title,
+                                { disableCategorize: item.newsType === 'budget' },
+                              );
+                            }}
+                          >
                             {item.comments.map((c, ci) => (
                               <CommentTypeIcon key={ci} type={c as commentType} size={13} />
                             ))}

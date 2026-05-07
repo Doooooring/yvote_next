@@ -1,16 +1,17 @@
+import axios from 'axios';
+
 import { HOST_URL } from '@url';
 import {
   Article,
   Comment,
+  commentType,
   News,
   NewsInView,
   NewsState,
   Preview,
-  commentType,
 } from '@utils/interface/news';
-
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
-import axios from 'axios';
+
 import { getRecentUpdatedCommentsQueryOption } from './newsRepository.type';
 
 type AnswerState = 'left' | 'right' | 'none';
@@ -167,7 +168,7 @@ class NewsRepository {
    * @param type 평론 타입
    * @param page 불러온 평론 페이지 (현재 보여진 평론 개수)
    */
-  async getNewsComment(id: News['id'], type: commentType, page: number, limit: number = 20) {
+  async getNewsComment(id: News['id'], type: commentType, page: number, limit = 20) {
     const response: Response<Comment[]> = await axios.get(
       `${HOST_URL}/news/${id}/comment?type=${type}&offset=${page}&limit=${limit}`,
     );

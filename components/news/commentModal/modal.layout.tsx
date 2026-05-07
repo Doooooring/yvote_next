@@ -1,6 +1,7 @@
 import { HTMLAttributes, ReactNode } from 'react';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import styled from 'styled-components';
+
 import { CommonLayoutBox, Row } from '../../common/commonStyles';
 
 interface ModalBodyLayoutProps extends HTMLAttributes<HTMLDivElement> {
@@ -52,7 +53,6 @@ const Wrapper = styled(CommonLayoutBox)`
   @media screen and (max-width: 768px) {
     padding: 0.75rem 0.75rem;
   }
-
 `;
 
 const TopButtons = styled.div`

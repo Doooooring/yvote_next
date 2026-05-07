@@ -1,3 +1,9 @@
+import { useEffect, useRef, useState } from 'react';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import styled from 'styled-components';
+
+import { useChatContext } from '@/utils/context/chatContext';
+import { useNewsAI } from '@/utils/context/newsAIContext';
 import { useDevice } from '@/utils/hook/useDevice';
 import { RowSwipeCature } from '@/utils/hook/useSwipe';
 import { Device } from '@/utils/interface/common';
@@ -7,16 +13,12 @@ import IsShow from '@components/common/isShow';
 import LoadingCommon from '@components/common/loading';
 import { CommonMessageBox, DefaultMessageBox } from '@components/common/messageBox';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { useNewsAI } from '@/utils/context/newsAIContext';
-import { useChatContext } from '@/utils/context/chatContext';
 import { Comment, commentType } from '@utils/interface/news';
-import { useEffect, useRef, useState } from 'react';
-import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
-import styled from 'styled-components';
+import { shareLink } from '@utils/tools/share';
+
 import CommentBodyExplain from './commentBodyExplain';
 import CommentBodyList from './commentBodyList';
 import CommentHead from './commentHead';
-import { shareLink } from '@utils/tools/share';
 import { useFetchNewsComment, useListScrollheight, useScrollInfo } from './commentModal.hook';
 // import CommentProgressBar from './commentProgressBar';
 import { ScrollWrapper } from './figure';
@@ -48,10 +50,8 @@ export default function CommentBodyCommon({
     setActiveContent(`${commentType} 코멘트 모달 열림 (${newsLabel})`);
   }, []);
 
-  const { page, curComments, isRequesting, hasMore, getPageBefore, getPageAfter } = useFetchNewsComment(
-    id,
-    commentType,
-  );
+  const { page, curComments, isRequesting, hasMore, getPageBefore, getPageAfter } =
+    useFetchNewsComment(id, commentType);
   const [curComment, setCurComment] = useState<Comment | null>(null);
   const initialApplied = useRef(false);
   const commentIndex = curComment ? curComments.findIndex((c) => c.id === curComment.id) : null;
@@ -110,14 +110,18 @@ export default function CommentBodyCommon({
 
   useEffect(() => {
     if (curComments.length > 0) {
-      setModalCommentTitles(curComments.map(c => ({ commentType: c.commentType, title: c.title })));
+      setModalCommentTitles(
+        curComments.map((c) => ({ commentType: c.commentType, title: c.title })),
+      );
       if (!curComment) {
-        const titles = curComments.map(c => c.title).join(', ');
+        const titles = curComments.map((c) => c.title).join(', ');
         const newsLabel = newsTitle ? `"${newsTitle}" (뉴스 ${id})` : `뉴스 ${id}`;
-        setActiveContent(`${commentType} 코멘트 목록 열람 중 (${newsLabel}, ${curComments.length}건)\n제목: ${titles}`);
+        setActiveContent(
+          `${commentType} 코멘트 목록 열람 중 (${newsLabel}, ${curComments.length}건)\n제목: ${titles}`,
+        );
       }
       if (initialCommentId && !initialApplied.current) {
-        const match = curComments.find(c => c.id === initialCommentId);
+        const match = curComments.find((c) => c.id === initialCommentId);
         if (match) {
           initialApplied.current = true;
           setCurComment(match);
@@ -129,9 +133,15 @@ export default function CommentBodyCommon({
 
   useEffect(() => {
     if (curComment) {
-      setModalActiveComment({ commentType: curComment.commentType, title: curComment.title, body: curComment.comment });
+      setModalActiveComment({
+        commentType: curComment.commentType,
+        title: curComment.title,
+        body: curComment.comment,
+      });
       const newsLabel = newsTitle ? `"${newsTitle}" (뉴스 ${id})` : `뉴스 ${id}`;
-      setActiveContent(`코멘트 "${curComment.title}" 클릭함 (${newsLabel}, ${curComment.commentType}, 코멘트 ${curComment.id})`);
+      setActiveContent(
+        `코멘트 "${curComment.title}" 클릭함 (${newsLabel}, ${curComment.commentType}, 코멘트 ${curComment.id})`,
+      );
     } else {
       setModalActiveComment(null);
     }
@@ -248,15 +258,25 @@ export default function CommentBodyCommon({
       }
 
       if (curCommentRef.current !== null) {
-        if (e.key === 'ArrowLeft') { e.preventDefault(); getPrevComment(); }
-        else if (e.key === 'ArrowRight') { e.preventDefault(); getNextComment(); }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          getPrevComment();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          getNextComment();
+        }
       } else {
         if (e.key === 'ArrowLeft') {
           e.preventDefault();
-          getPageBefore().then((res) => { if (res) moveToScrollHeight(0); });
+          getPageBefore().then((res) => {
+            if (res) moveToScrollHeight(0);
+          });
         } else if (e.key === 'ArrowRight') {
           e.preventDefault();
-          if (hasMore) getPageAfter().then((res) => { if (res) moveToScrollHeight(0); });
+          if (hasMore)
+            getPageAfter().then((res) => {
+              if (res) moveToScrollHeight(0);
+            });
         }
       }
     };
@@ -282,12 +302,16 @@ export default function CommentBodyCommon({
     const result = await shareLink({ url });
     if (result === 'copied') {
       showToastMessage(
-        <DefaultMessageBox><p>링크가 복사되었습니다</p></DefaultMessageBox>,
+        <DefaultMessageBox>
+          <p>링크가 복사되었습니다</p>
+        </DefaultMessageBox>,
         2000,
       );
     } else if (result === 'failed') {
       showToastMessage(
-        <DefaultMessageBox><p>링크 복사에 실패했습니다</p></DefaultMessageBox>,
+        <DefaultMessageBox>
+          <p>링크 복사에 실패했습니다</p>
+        </DefaultMessageBox>,
         2000,
       );
     }
@@ -347,9 +371,7 @@ export default function CommentBodyCommon({
             )}
           </ScrollWrapper>
           <IsShow state={isRequesting}>
-            <LoadingWrapper
-              $solid={curComments.length === 0}
-            >
+            <LoadingWrapper $solid={curComments.length === 0}>
               <LoadingCommon comment="" fontColor="${({ theme }) => theme.colors.yvote08}" />
             </LoadingWrapper>
           </IsShow>
@@ -387,7 +409,10 @@ export default function CommentBodyCommon({
               <ButtonWrapper disabled={page === 0 && commentIndex === 0} onClick={getPrevComment}>
                 <AiOutlineLeft size="14px" />
               </ButtonWrapper>
-              <ButtonWrapper disabled={!hasMore && commentIndex === curComments.length - 1} onClick={getNextComment}>
+              <ButtonWrapper
+                disabled={!hasMore && commentIndex === curComments.length - 1}
+                onClick={getNextComment}
+              >
                 <AiOutlineRight size="14px" />
               </ButtonWrapper>
             </ArrowButtonsWrapper>
@@ -414,7 +439,8 @@ const LoadingWrapper = styled.div<{ $solid?: boolean }>`
   top: 0;
   left: 0;
   backdrop-filter: blur(2px);
-  background-color: ${({ $solid, theme }) => $solid ? theme.colors.yvote01 : `${theme.colors.yvote01}cc`};
+  background-color: ${({ $solid, theme }) =>
+    $solid ? theme.colors.yvote01 : `${theme.colors.yvote01}cc`};
 `;
 
 const Blink = styled.div`

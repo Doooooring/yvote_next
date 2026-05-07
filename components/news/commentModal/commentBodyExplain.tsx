@@ -1,9 +1,11 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
 import { Backdrop } from '@components/common/commonStyles';
 import IsShow from '@components/common/isShow';
 import openAIRepository from '@repositories/llm';
 import { useKoreanDateFormat } from '@utils/tools/date';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+
 import { useToastMessage } from '../../../utils/hook/useToastMessage';
 import { DefaultMessageBox } from '../../common/messageBox';
 
@@ -25,9 +27,7 @@ export default function CommentBodyExplain({ id, title, explain, date }: Comment
   const _explain = useMemo(() => {
     if (summary !== null && showSummary) {
       const summaryText =
-        typeof summary === 'string'
-          ? summary
-          : JSON.stringify(summary ?? '', null, 2);
+        typeof summary === 'string' ? summary : JSON.stringify(summary ?? '', null, 2);
       return summaryText
         .split('\n')
         .map((paragraph, idx) => <ContentLine key={idx}>{paragraph}</ContentLine>);

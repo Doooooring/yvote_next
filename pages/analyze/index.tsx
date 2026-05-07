@@ -1,11 +1,12 @@
+import { useState } from 'react';
+import styled from 'styled-components';
+
 import Questionnaire from '@components/analyze/questionnaire';
 import Result, { ResultAnswers } from '@components/analyze/result';
 import HeadMeta from '@components/common/HeadMeta';
 import { DefaultMessageBox } from '@components/common/messageBox';
 import { useMount } from '@utils/hook/useMount';
 import { useToastMessage } from '@utils/hook/useToastMessage';
-import { useState } from 'react';
-import styled from 'styled-components';
 
 const metaTagsProps = {
   title: '정치 성향 테스트',

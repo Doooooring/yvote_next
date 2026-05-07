@@ -1,14 +1,15 @@
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import TimelineList from '@components/news/timeline';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
-
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import TimelineList from '@components/news/timeline';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 export default function InvestigationNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -30,7 +31,7 @@ export default function InvestigationNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -72,129 +73,132 @@ export default function InvestigationNewsLayout({ news }: NewsTypeLayoutProps) {
       title: '총리 발언',
       items: [
         '국무회의의 중요성을 강조하며, 각 부처의 협력을 요청했습니다.',
-        '경제 활성화 방안에 대해 논의하였습니다.'
-      ]
+        '경제 활성화 방안에 대해 논의하였습니다.',
+      ],
     },
     {
       title: '장관 발언',
       items: [
         '교육 정책의 변화와 미래 방향에 대해 설명했습니다.',
-        '환경 보호를 위한 새로운 정책을 제안하였습니다.'
-      ]
-    }
+        '환경 보호를 위한 새로운 정책을 제안하였습니다.',
+      ],
+    },
   ];
 
   return (
     <Wrapper>
-        <Header>
-          <h1>{news.title}</h1>
-          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-          <div className="meta">
-            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-            {commentTypes.length ? (
-              <CommentIcons>
-                {commentTypes.map((type, index) => (
-                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType, news.title)} />
-                ))}
-              </CommentIcons>
-            ) : null}
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
-          <Section>
-            <SectionTitle>타임라인</SectionTitle>
-            <SectionBody>
-              <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          <TimelineList timeline={timelineGroups.length ? timelineGroups : dummyTimeline} flat />
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>안건 목록</SectionTitle>
-            <SectionBody>
-              {agendaGroups.length ? (
-                <AgendaGroups>
-                  {agendaGroups.map((group) => (
-                    <AgendaGroup key={group.title}>
-                      <summary>
-                        <span>{group.title}</span>
-                        <span className="count">{group.items.length}건</span>
-                      </summary>
-                      <AgendaItems>
-                        {group.items.map((item, idx) => (
-                          <li key={`${group.title}-${idx}`}>
-                            <p>{item}</p>
-                          </li>
-                        ))}
-                      </AgendaItems>
-                    </AgendaGroup>
-                  ))}
-                </AgendaGroups>
-              ) : (
-                <AgendaGroups>
-                  {dummyAgenda.map((group) => (
-                    <AgendaGroup key={group.title}>
-                      <summary>
-                        <span>{group.title}</span>
-                        <span className="count">{group.items.length}건</span>
-                      </summary>
-                      <AgendaItems>
-                        {group.items.map((item, idx) => (
-                          <li key={`${group.title}-dummy-${idx}`}>
-                            <p>{item}</p>
-                          </li>
-                        ))}
-                      </AgendaItems>
-                    </AgendaGroup>
-                  ))}
-                </AgendaGroups>
-              )}
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>안건 목록</SectionTitle>
+        <SectionBody>
+          {agendaGroups.length ? (
+            <AgendaGroups>
+              {agendaGroups.map((group) => (
+                <AgendaGroup key={group.title}>
+                  <summary>
+                    <span>{group.title}</span>
+                    <span className="count">{group.items.length}건</span>
+                  </summary>
+                  <AgendaItems>
+                    {group.items.map((item, idx) => (
+                      <li key={`${group.title}-${idx}`}>
+                        <p>{item}</p>
+                      </li>
+                    ))}
+                  </AgendaItems>
+                </AgendaGroup>
+              ))}
+            </AgendaGroups>
+          ) : (
+            <AgendaGroups>
+              {dummyAgenda.map((group) => (
+                <AgendaGroup key={group.title}>
+                  <summary>
+                    <span>{group.title}</span>
+                    <span className="count">{group.items.length}건</span>
+                  </summary>
+                  <AgendaItems>
+                    {group.items.map((item, idx) => (
+                      <li key={`${group.title}-dummy-${idx}`}>
+                        <p>{item}</p>
+                      </li>
+                    ))}
+                  </AgendaItems>
+                </AgendaGroup>
+              ))}
+            </AgendaGroups>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>주요 발언 내용</SectionTitle>
-            <SectionBody>
-              {speechGroups.length ? (
-                <SpeechGroupsLayout>
-                  {speechGroups.map((group, gidx) => (
-                    <SpeechGroup key={group.title + gidx}>
-                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                      {group.items.map((item, idx) => (
-                        <SpeechQuote key={idx}>{item}</SpeechQuote>
-                      ))}
-                    </SpeechGroup>
+      <Section>
+        <SectionTitle>주요 발언 내용</SectionTitle>
+        <SectionBody>
+          {speechGroups.length ? (
+            <SpeechGroupsLayout>
+              {speechGroups.map((group, gidx) => (
+                <SpeechGroup key={group.title + gidx}>
+                  <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                  {group.items.map((item, idx) => (
+                    <SpeechQuote key={idx}>{item}</SpeechQuote>
                   ))}
-                </SpeechGroupsLayout>
-              ) : (
-                <SpeechGroupsLayout>
-                  {dummySpeechGroups.map((group, gidx) => (
-                    <SpeechGroup key={group.title + gidx}>
-                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                      {group.items.map((item, idx) => (
-                        <SpeechQuote key={idx}>{item}</SpeechQuote>
-                      ))}
-                    </SpeechGroup>
+                </SpeechGroup>
+              ))}
+            </SpeechGroupsLayout>
+          ) : (
+            <SpeechGroupsLayout>
+              {dummySpeechGroups.map((group, gidx) => (
+                <SpeechGroup key={group.title + gidx}>
+                  <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                  {group.items.map((item, idx) => (
+                    <SpeechQuote key={idx}>{item}</SpeechQuote>
                   ))}
-                </SpeechGroupsLayout>
-              )}
-            </SectionBody>
-          </Section>
+                </SpeechGroup>
+              ))}
+            </SpeechGroupsLayout>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SectionBody>
-              <SummaryList>
-                {(news.summaries ?? []).map((summary, idx) => (
-                  <SummaryListItem key={summary.commentType + idx}>
-                    <CommentTypeIcon type={summary.commentType} />
-                    <SummaryHtml
-                      dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
-                    />
-                  </SummaryListItem>
-                ))}
-              </SummaryList>
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>브리핑 및 기타 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? []).map((summary, idx) => (
+              <SummaryListItem key={summary.commentType + idx}>
+                <CommentTypeIcon type={summary.commentType} />
+                <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }} />
+              </SummaryListItem>
+            ))}
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
@@ -327,7 +331,6 @@ const CommentIcons = styled.div`
   align-items: center;
   gap: 6px;
 `;
-
 
 const Section = styled.section`
   width: 92%;

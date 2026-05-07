@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
+
 import { incidentRepository } from '@repositories/incident';
+import { useQuery } from '@tanstack/react-query';
 import { IncidentStatus } from '@utils/interface/incident';
+
 import IncidentRow from './Row';
 
 const LIMIT = 100;

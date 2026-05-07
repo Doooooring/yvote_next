@@ -1,16 +1,13 @@
-import { ProposedAction, ProposedActionType } from '@utils/interface/proposedAction';
+import type { ProposedAction, ProposedActionType } from '@utils/interface/proposedAction';
 
-export const TYPE_LABEL: Record<ProposedActionType, string> = {
-  [ProposedActionType.CreateNews]: 'create news',
-  [ProposedActionType.RouteComment]: 'route comment',
-  [ProposedActionType.SplitComment]: 'split comment',
-  [ProposedActionType.Publish]: 'publish',
-  [ProposedActionType.PromoteType]: 'promote type',
-  [ProposedActionType.Track]: 'track',
-  [ProposedActionType.Untrack]: 'untrack',
-  [ProposedActionType.EditComment]: 'edit comment',
-  [ProposedActionType.FillNews]: 'fill news',
-};
+import {
+  extractActionComments as extractActionCommentsCore,
+  getProposedActionMainTitle as getProposedActionMainTitleCore,
+  getProposedActionTargetNewsId as getProposedActionTargetNewsIdCore,
+  TYPE_LABEL as TYPE_LABEL_CORE,
+} from './rowDisplayCore';
+
+export const TYPE_LABEL = TYPE_LABEL_CORE as Record<ProposedActionType, string>;
 
 export type CommentPreview = {
   commentType?: string;
@@ -20,31 +17,14 @@ export type CommentPreview = {
   bytes?: number;
 };
 
-function asString(value: unknown): string | undefined {
-  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
-}
-
-function asNumber(value: unknown): number | undefined {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string' && value.trim() && !Number.isNaN(Number(value))) {
-    return Number(value);
-  }
-  return undefined;
-}
-
 export function getProposedActionTargetNewsId(action: ProposedAction): number | undefined {
-  const payload = action.payload ?? {};
-  const destinations = Array.isArray(payload.destinations) ? payload.destinations : [];
-  const firstDestination =
-    destinations.length > 0 && destinations[0] && typeof destinations[0] === 'object'
-      ? (destinations[0] as Record<string, unknown>)
-      : undefined;
-  return (
-    asNumber(payload.targetNewsId) ??
-    asNumber(firstDestination?.targetNewsId) ??
-    asNumber(payload.newsId) ??
-    asNumber(action.newsId)
-  );
+  return getProposedActionTargetNewsIdCore(action) as number | undefined;
+}
+
+export function extractActionComments(
+  action: Pick<ProposedAction, 'actionType' | 'payload'>,
+): CommentPreview[] {
+  return extractActionCommentsCore(action) as CommentPreview[];
 }
 
 export function getProposedActionMainTitle(
@@ -52,27 +32,5 @@ export function getProposedActionMainTitle(
   comments: CommentPreview[],
   targetTitle?: string,
 ) {
-  const payload = action.payload ?? {};
-  const payloadTitle = asString(payload.title);
-
-  if (
-    action.actionType === ProposedActionType.RouteComment ||
-    action.actionType === ProposedActionType.SplitComment
-  ) {
-    const targetNewsId = getProposedActionTargetNewsId(action);
-    return (
-      targetTitle ??
-      (targetNewsId ? `news #${targetNewsId}` : undefined) ??
-      payloadTitle ??
-      comments[0]?.title ??
-      TYPE_LABEL[action.actionType]
-    );
-  }
-
-  return (
-    payloadTitle ??
-    comments[0]?.title ??
-    targetTitle ??
-    (action.newsId ? `news #${action.newsId}` : TYPE_LABEL[action.actionType])
-  );
+  return getProposedActionMainTitleCore(action, comments, targetTitle) as string;
 }

@@ -1,11 +1,11 @@
-import HeadMeta from '@components/common/HeadMeta';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
-import { commentType, NewsType, newsTypesToKorFull } from '@utils/interface/news';
-import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { prepare, layout } from '@chenglou/pretext';
-
 import { useEffect, useMemo, useRef, useState } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+import { layout, prepare } from '@chenglou/pretext';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import HeadMeta from '@components/common/HeadMeta';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import { commentType, NewsType, newsTypesToKorFull } from '@utils/interface/news';
 
 /* ===== Dummy Data ===== */
 
@@ -25,62 +25,137 @@ const dbUpdates = {
   details: [
     { action: '뉴스 생성', items: ['#955 제13회 국무회의', '#956 2026년도 1분기 경제지표'] },
     { action: '뉴스 발행', items: ['#955 제13회 국무회의'] },
-    { action: '자료 추가', items: [
-      '#914 추경 — 청와대 +1',
-      '#905 프랑스 국빈방한 — 청와대 +1',
-      '#955 국무회의 — 행정부 +1',
-      '#956 경제지표 — 행정부 +1',
-      '#953 4월 1주차 — 청와대 +3, 행정부 +7',
-      '#906 인도네시아 방한 — 청와대 +3',
-    ]},
+    {
+      action: '자료 추가',
+      items: [
+        '#914 추경 — 청와대 +1',
+        '#905 프랑스 국빈방한 — 청와대 +1',
+        '#955 국무회의 — 행정부 +1',
+        '#956 경제지표 — 행정부 +1',
+        '#953 4월 1주차 — 청와대 +3, 행정부 +7',
+        '#906 인도네시아 방한 — 청와대 +3',
+      ],
+    },
   ],
 };
 
 const todayNews = [
-  { summary: '이재명 대통령, 국회에서 2026 추가경정예산안 시정연설', newsTitle: '26년 추가경정예산', newsId: 914 },
-  { summary: '중동 사태 장기화에 공공부문 차량 5부제 시행, 전 국민 에너지 절약 실천 요청', newsTitle: '2026년 4월 1주차', newsId: 953 },
+  {
+    summary: '이재명 대통령, 국회에서 2026 추가경정예산안 시정연설',
+    newsTitle: '26년 추가경정예산',
+    newsId: 914,
+  },
+  {
+    summary: '중동 사태 장기화에 공공부문 차량 5부제 시행, 전 국민 에너지 절약 실천 요청',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
   { summary: '프랑스 대통령 국빈방한 친교 만찬 개최', newsTitle: '프랑스 국빈 방한', newsId: 905 },
-  { summary: '교육부, 라이즈(RISE) 재구조화 방안 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '광명 신안산선 터널 붕괴사고 조사결과 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '트럼프 대통령 대국민 담화 관련 청와대 브리핑', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '국가데이터처, 2026년 3월 소비자물가동향 발표', newsTitle: '2026년도 1분기 경제지표', newsId: 956 },
+  {
+    summary: '교육부, 라이즈(RISE) 재구조화 방안 발표',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
+  {
+    summary: '광명 신안산선 터널 붕괴사고 조사결과 발표',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
+  {
+    summary: '트럼프 대통령 대국민 담화 관련 청와대 브리핑',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
+  {
+    summary: '국가데이터처, 2026년 3월 소비자물가동향 발표',
+    newsTitle: '2026년도 1분기 경제지표',
+    newsId: 956,
+  },
   { summary: '법제처, 4월의 주요 시행법령 안내', newsTitle: '제13회 국무회의', newsId: 955 },
-  { summary: '김혜경 여사, 한복생활 유네스코 등재추진단 차담회', newsTitle: '2026년 4월 1주차', newsId: 953 },
-  { summary: '국민권익위, 다자녀주택 주차 관련 제도개선 발표', newsTitle: '2026년 4월 1주차', newsId: 953 },
+  {
+    summary: '김혜경 여사, 한복생활 유네스코 등재추진단 차담회',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
+  {
+    summary: '국민권익위, 다자녀주택 주차 관련 제도개선 발표',
+    newsTitle: '2026년 4월 1주차',
+    newsId: 953,
+  },
 ];
 
 const partyPositions = [
   {
     party: '국민의힘',
-    summary: '민주당의 상임위 100% 독식 선언을 의회민주주의 파괴로 규탄. 국내 비축유 해외 반출을 \'4월 에너지 대란설\' 속 모럴 해저드로 비판. 유엔 북한인권결의안 불참 검토를 비굴한 유화책으로 지적.',
+    summary:
+      "민주당의 상임위 100% 독식 선언을 의회민주주의 파괴로 규탄. 국내 비축유 해외 반출을 '4월 에너지 대란설' 속 모럴 해저드로 비판. 유엔 북한인권결의안 불참 검토를 비굴한 유화책으로 지적.",
   },
   {
     party: '더불어민주당',
-    summary: '중동발 경제 위기에 당정 협력으로 실행력 있는 대응 강조. 국민의힘이 일을 안 하면 다수당이 해내야 한다며 상임위 구성 정당화. 오보에도 탄압 타령하는 언론 성역론을 적반하장으로 비판.',
+    summary:
+      '중동발 경제 위기에 당정 협력으로 실행력 있는 대응 강조. 국민의힘이 일을 안 하면 다수당이 해내야 한다며 상임위 구성 정당화. 오보에도 탄압 타령하는 언론 성역론을 적반하장으로 비판.',
   },
 ];
 
 const partyConversation = [
   { party: '국민의힘', text: '상임위까지 독식하겠다는 건 의회민주주의를 삼키겠다는 겁니다.' },
-  { party: '더불어민주당', text: '국민의힘이 일을 하지 않으니 누군가는 해내야 합니다. 다수 의석은 민심입니다.' },
-  { party: '국민의힘', text: '비축유를 해외에 반출하면서 에너지 대란은 누가 책임집니까? 심각한 모럴 해저드입니다.' },
-  { party: '더불어민주당', text: '불안만 부추기지 마시고 책임 있는 대안과 협력으로 답해주시기 바랍니다.' },
+  {
+    party: '더불어민주당',
+    text: '국민의힘이 일을 하지 않으니 누군가는 해내야 합니다. 다수 의석은 민심입니다.',
+  },
+  {
+    party: '국민의힘',
+    text: '비축유를 해외에 반출하면서 에너지 대란은 누가 책임집니까? 심각한 모럴 해저드입니다.',
+  },
+  {
+    party: '더불어민주당',
+    text: '불안만 부추기지 마시고 책임 있는 대안과 협력으로 답해주시기 바랍니다.',
+  },
 ];
 
 const revivedNews = [
-  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', lastUpdate: '2026-03-30', originalDate: '2023-01-29',
-    added: [{ type: '행정부', count: 1 }] },
-  { id: 944, title: '중대재해처벌법', lastUpdate: '2026-03-30', originalDate: '2022-11-20',
-    added: [{ type: '행정부', count: 1 }] },
-  { id: 462, title: '화물연대 총파업', lastUpdate: '2026-03-30', originalDate: '2022-12-09',
-    added: [{ type: '청와대', count: 1 }, { type: '국민의힘', count: 9 }, { type: '더불어민주당', count: 10 }] },
+  {
+    id: 749,
+    title: '정부 도심 주택공급 확대 및 다주택자 규제',
+    lastUpdate: '2026-03-30',
+    originalDate: '2023-01-29',
+    added: [{ type: '행정부', count: 1 }],
+  },
+  {
+    id: 944,
+    title: '중대재해처벌법',
+    lastUpdate: '2026-03-30',
+    originalDate: '2022-11-20',
+    added: [{ type: '행정부', count: 1 }],
+  },
+  {
+    id: 462,
+    title: '화물연대 총파업',
+    lastUpdate: '2026-03-30',
+    originalDate: '2022-12-09',
+    added: [
+      { type: '청와대', count: 1 },
+      { type: '국민의힘', count: 9 },
+      { type: '더불어민주당', count: 10 },
+    ],
+  },
 ];
 
-
-
 const ongoingVotes = [
-  { id: 501, title: '간호법 재의결', status: '본회의 표결 예정', chamber: '국회', date: '2026-04-02' },
-  { id: 502, title: '전세사기 특별법 개정안', status: '법사위 심사 중', chamber: '국회', date: '2026-04-01' },
+  {
+    id: 501,
+    title: '간호법 재의결',
+    status: '본회의 표결 예정',
+    chamber: '국회',
+    date: '2026-04-02',
+  },
+  {
+    id: 502,
+    title: '전세사기 특별법 개정안',
+    status: '법사위 심사 중',
+    chamber: '국회',
+    date: '2026-04-01',
+  },
 ];
 
 const nextElection = {
@@ -90,9 +165,30 @@ const nextElection = {
 };
 
 const upcomingNews = [
-  { id: 940, type: 'weekly', typeLabel: '주간', title: '2026년 3월 4주차', date: '2026-03-29', status: '작성 중' },
-  { id: 615, type: 'weekly', typeLabel: '주간', title: '2022년 11월 5주차', date: '2022-12-04', status: '작성 중' },
-  { id: 483, type: 'constitution', typeLabel: '헌재', title: '낙태죄 헌법불합치 결정', date: '2019-04-11', status: '작성 중' },
+  {
+    id: 940,
+    type: 'weekly',
+    typeLabel: '주간',
+    title: '2026년 3월 4주차',
+    date: '2026-03-29',
+    status: '작성 중',
+  },
+  {
+    id: 615,
+    type: 'weekly',
+    typeLabel: '주간',
+    title: '2022년 11월 5주차',
+    date: '2022-12-04',
+    status: '작성 중',
+  },
+  {
+    id: 483,
+    type: 'constitution',
+    typeLabel: '헌재',
+    title: '낙태죄 헌법불합치 결정',
+    date: '2019-04-11',
+    status: '작성 중',
+  },
 ];
 
 /* ===== Components ===== */
@@ -121,15 +217,33 @@ function DbUpdateSection() {
       <DbUpdateHeader onClick={() => setOpen(!open)}>
         <DbUpdateIcon>
           <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
-            <path d="M4 1h8l4 4v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-            <path d="M12 1v4h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M6 9h6M6 12h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+            <path
+              d="M4 1h8l4 4v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M12 1v4h4"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6 9h6M6 12h4"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              opacity="0.5"
+            />
           </svg>
           <DeltaSymbol>Δ</DeltaSymbol>
         </DbUpdateIcon>
         <DbUpdateSummaryText ref={containerRef}>
           <MarqueeInner ref={textRef} $animate={overflow}>
-            {summaryText}{overflow && `\u00A0\u00A0\u00A0\u00A0\u00A0${summaryText}`}
+            {summaryText}
+            {overflow && `\u00A0\u00A0\u00A0\u00A0\u00A0${summaryText}`}
           </MarqueeInner>
         </DbUpdateSummaryText>
         <DbUpdateToggle>{open ? '▲' : '▼'}</DbUpdateToggle>
@@ -169,7 +283,9 @@ function PartyCard({ party }: { party: { party: string; summary: string } }) {
         <CommentTypeIcon type={party.party as commentType} size={14} />
         <PartyName>{party.party}</PartyName>
       </PartyHeader>
-      <PartySummary ref={ref} $expanded={expanded}>{party.summary}</PartySummary>
+      <PartySummary ref={ref} $expanded={expanded}>
+        {party.summary}
+      </PartySummary>
       {clamped && (
         <PartyExpandBtn onClick={() => setExpanded(!expanded)}>
           {expanded ? '접기' : '펼쳐보기'}
@@ -181,11 +297,36 @@ function PartyCard({ party }: { party: { party: string; summary: string } }) {
 
 const DICE_DOTS: Record<number, [number, number][]> = {
   1: [[7.5, 7.5]],
-  2: [[4.5, 4.5], [10.5, 10.5]],
-  3: [[4.5, 4.5], [7.5, 7.5], [10.5, 10.5]],
-  4: [[4.5, 4.5], [10.5, 4.5], [4.5, 10.5], [10.5, 10.5]],
-  5: [[4.5, 4.5], [10.5, 4.5], [7.5, 7.5], [4.5, 10.5], [10.5, 10.5]],
-  6: [[4.5, 4], [10.5, 4], [4.5, 7.5], [10.5, 7.5], [4.5, 11], [10.5, 11]],
+  2: [
+    [4.5, 4.5],
+    [10.5, 10.5],
+  ],
+  3: [
+    [4.5, 4.5],
+    [7.5, 7.5],
+    [10.5, 10.5],
+  ],
+  4: [
+    [4.5, 4.5],
+    [10.5, 4.5],
+    [4.5, 10.5],
+    [10.5, 10.5],
+  ],
+  5: [
+    [4.5, 4.5],
+    [10.5, 4.5],
+    [7.5, 7.5],
+    [4.5, 10.5],
+    [10.5, 10.5],
+  ],
+  6: [
+    [4.5, 4],
+    [10.5, 4],
+    [4.5, 7.5],
+    [10.5, 7.5],
+    [4.5, 11],
+    [10.5, 11],
+  ],
 };
 
 function DiceIcon({ face }: { face: number }) {
@@ -202,7 +343,8 @@ function DiceIcon({ face }: { face: number }) {
 
 const TODAY_PER_PAGE = 5;
 
-const todaySummaryText = '이재명 대통령이 국회에서 중동 에너지 위기 대응을 위한 추가경정예산안 시정연설을 실시했다. 정부는 공공부문 차량 5부제와 에너지 절약 대책을 본격 시행하며, 프랑스 대통령 국빈방한 친교 만찬이 이어졌다. 교육부는 라이즈(RISE) 재구조화 방안을, 국토부는 광명 신안산선 터널 붕괴 조사결과를 발표했다. 트럼프 대국민 담화에 대한 청와대 브리핑이 있었고, 3월 소비자물가동향과 4월 시행법령도 공개됐다.';
+const todaySummaryText =
+  '이재명 대통령이 국회에서 중동 에너지 위기 대응을 위한 추가경정예산안 시정연설을 실시했다. 정부는 공공부문 차량 5부제와 에너지 절약 대책을 본격 시행하며, 프랑스 대통령 국빈방한 친교 만찬이 이어졌다. 교육부는 라이즈(RISE) 재구조화 방안을, 국토부는 광명 신안산선 터널 붕괴 조사결과를 발표했다. 트럼프 대국민 담화에 대한 청와대 브리핑이 있었고, 3월 소비자물가동향과 4월 시행법령도 공개됐다.';
 
 function TodayNewsSection() {
   const [mode, setMode] = useState<'list' | 'summary'>('list');
@@ -230,22 +372,36 @@ function TodayNewsSection() {
       <TodayHeader>
         <TodayTitleRow>
           <SectionTitle>오늘의 소식</SectionTitle>
-          <RefreshBtn onClick={() => {
-            if (mode === 'list') {
-              setShuffled([...todayNews].sort(() => Math.random() - 0.5));
-              setPage(0);
-            }
-            setDice(Math.floor(Math.random() * 6) + 1);
-          }} title="새로고침">
+          <RefreshBtn
+            onClick={() => {
+              if (mode === 'list') {
+                setShuffled([...todayNews].sort(() => Math.random() - 0.5));
+                setPage(0);
+              }
+              setDice(Math.floor(Math.random() * 6) + 1);
+            }}
+            title="새로고침"
+          >
             <DiceIcon face={dice} />
           </RefreshBtn>
         </TodayTitleRow>
         <ModeToggle>
           <ModeBtn $active={mode === 'list'} onClick={() => setMode('list')} title="목록">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="1.5" cy="2" r="1.5" fill="currentColor"/><rect x="5" y="1" width="9" height="2" rx="1" fill="currentColor"/><circle cx="1.5" cy="7" r="1.5" fill="currentColor"/><rect x="5" y="6" width="9" height="2" rx="1" fill="currentColor"/><circle cx="1.5" cy="12" r="1.5" fill="currentColor"/><rect x="5" y="11" width="9" height="2" rx="1" fill="currentColor"/></svg>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <circle cx="1.5" cy="2" r="1.5" fill="currentColor" />
+              <rect x="5" y="1" width="9" height="2" rx="1" fill="currentColor" />
+              <circle cx="1.5" cy="7" r="1.5" fill="currentColor" />
+              <rect x="5" y="6" width="9" height="2" rx="1" fill="currentColor" />
+              <circle cx="1.5" cy="12" r="1.5" fill="currentColor" />
+              <rect x="5" y="11" width="9" height="2" rx="1" fill="currentColor" />
+            </svg>
           </ModeBtn>
           <ModeBtn $active={mode === 'summary'} onClick={() => setMode('summary')} title="요약">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="1" width="14" height="5" rx="1" fill="currentColor"/><rect x="0" y="8" width="9" height="2" rx="1" fill="currentColor" opacity="0.6"/><rect x="0" y="12" width="6" height="2" rx="1" fill="currentColor" opacity="0.4"/></svg>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="0" y="1" width="14" height="5" rx="1" fill="currentColor" />
+              <rect x="0" y="8" width="9" height="2" rx="1" fill="currentColor" opacity="0.6" />
+              <rect x="0" y="12" width="6" height="2" rx="1" fill="currentColor" opacity="0.4" />
+            </svg>
           </ModeBtn>
         </ModeToggle>
       </TodayHeader>
@@ -255,18 +411,19 @@ function TodayNewsSection() {
           <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <TodayList>
               {visible.map((item, i) => (
-                <TodayItem key={page * TODAY_PER_PAGE + i} $read={read.has(page * TODAY_PER_PAGE + i)}>
+                <TodayItem
+                  key={page * TODAY_PER_PAGE + i}
+                  $read={read.has(page * TODAY_PER_PAGE + i)}
+                >
                   <TodayItemContent>
                     <TodaySummary>{item.summary}</TodaySummary>
-                    <TodayNewsLink href={`/news/${item.newsId}`}>
-                      {item.newsTitle} →
-                    </TodayNewsLink>
+                    <TodayNewsLink href={`/news/${item.newsId}`}>{item.newsTitle} →</TodayNewsLink>
                   </TodayItemContent>
                   <ReadCheck
                     $checked={read.has(page * TODAY_PER_PAGE + i)}
                     onClick={() => {
                       const idx = page * TODAY_PER_PAGE + i;
-                      setRead(prev => {
+                      setRead((prev) => {
                         const next = new Set(prev);
                         next.has(idx) ? next.delete(idx) : next.add(idx);
                         return next;
@@ -301,10 +458,44 @@ function PartySectionComponent() {
         <SectionTitle>정당별 요즘 하는 소리</SectionTitle>
         <ModeToggle>
           <ModeBtn $active={mode === 'party'} onClick={() => setMode('party')} title="정당별">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0.5" y="0.5" width="5.5" height="13" rx="1.5" stroke="currentColor" strokeWidth="1"/><rect x="8" y="0.5" width="5.5" height="13" rx="1.5" stroke="currentColor" strokeWidth="1"/></svg>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect
+                x="0.5"
+                y="0.5"
+                width="5.5"
+                height="13"
+                rx="1.5"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+              <rect
+                x="8"
+                y="0.5"
+                width="5.5"
+                height="13"
+                rx="1.5"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </svg>
           </ModeBtn>
-          <ModeBtn $active={mode === 'conversation'} onClick={() => setMode('conversation')} title="대화">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4l-2 2V2z" stroke="currentColor" strokeWidth="1"/><path d="M5 8v1a1 1 0 0 0 1 1h4l2 2V6a1 1 0 0 0-1-1h-1" stroke="currentColor" strokeWidth="1"/></svg>
+          <ModeBtn
+            $active={mode === 'conversation'}
+            onClick={() => setMode('conversation')}
+            title="대화"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M1 2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4l-2 2V2z"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+              <path
+                d="M5 8v1a1 1 0 0 0 1 1h4l2 2V6a1 1 0 0 0-1-1h-1"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </svg>
           </ModeBtn>
         </ModeToggle>
       </TodayHeader>
@@ -335,12 +526,12 @@ function PartySectionComponent() {
 /* ===== Page ===== */
 
 const PAGE_CONTEXT = [
-  `주요 진행 뉴스: ${onAirNews.map(n => `${n.title}(${n.tag})`).join(', ')}`,
-  `오늘의 소식: ${todayNews.map(n => n.summary).join('; ')}`,
-  `정당 입장 — ${partyPositions.map(p => `${p.party}: ${p.summary}`).join(' / ')}`,
-  `끌올뉴스: ${revivedNews.map(n => n.title).join(', ')}`,
-  `진행중 표결: ${ongoingVotes.map(v => `${v.title}(${v.status})`).join(', ')}`,
-  `예정된 뉴스: ${upcomingNews.map(n => n.title).join(', ')}`,
+  `주요 진행 뉴스: ${onAirNews.map((n) => `${n.title}(${n.tag})`).join(', ')}`,
+  `오늘의 소식: ${todayNews.map((n) => n.summary).join('; ')}`,
+  `정당 입장 — ${partyPositions.map((p) => `${p.party}: ${p.summary}`).join(' / ')}`,
+  `끌올뉴스: ${revivedNews.map((n) => n.title).join(', ')}`,
+  `진행중 표결: ${ongoingVotes.map((v) => `${v.title}(${v.status})`).join(', ')}`,
+  `예정된 뉴스: ${upcomingNews.map((n) => n.title).join(', ')}`,
 ].join('\n');
 
 export default function Home() {
@@ -478,36 +669,200 @@ type NewspaperItem = {
 };
 
 const NEWSPAPER_ITEMS: NewspaperItem[] = [
-  { id: 1146, title: '2026년 4월 3주차', subTitle: '호르무즈 통항 국제연대 · 북 탄도미사일 도발 · 4·19 정신 · 세월호 12주기 국가책임', date: '2026-04-19', newsType: NewsType.weekly, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
-  { id: 1148, title: '인도·베트남 국빈방문', subTitle: '이재명 대통령 순방 공동성명, 포괄적 전략 동반자 관계 격상', date: '2026-04-19', newsType: NewsType.diplomat, comments: ['청와대'] },
-  { id: 914, title: '26년 추가경정예산', subTitle: '국채 없는 26조 2천억 원 추경, 민생지원금·K-패스·에너지 지원 확대', date: '2026-04-15', newsType: NewsType.govern, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
-  { id: 950, title: '중대범죄수사청법', subTitle: '본회의 통과, 검찰청 해체 후속 수사권 재편 본격화', date: '2026-04-17', newsType: NewsType.bill, comments: ['입법부','국민의힘','더불어민주당'] },
-  { id: 649, title: '공직자 조사 TF / 기강 확립', subTitle: '헌법존중 정부혁신 TF 출범 · 공무원 복종의무 폐지 · 서훈 취소 후속 조치', date: '2026-04-19', newsType: NewsType.govern, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
-  { id: 905, title: '프랑스 국빈 방한', subTitle: '마크롱 대통령 국빈방한 공동선언, 방산·에너지 협력 합의', date: '2026-04-10', newsType: NewsType.diplomat, comments: ['청와대'] },
-  { id: 906, title: '한-인도네시아 정상회담', subTitle: '포괄적 방산 협력 확대, 핵심광물 MOU 개정', date: '2026-04-01', newsType: NewsType.diplomat, comments: ['청와대'] },
-  { id: 1147, title: '제16회 국무회의', subTitle: '제5차 비상경제점검회의 병행, 중동 공급망 대응 논의', date: '2026-04-14', newsType: NewsType.cabinet, comments: ['청와대','행정부'] },
-  { id: 955, title: '제13회 국무회의', subTitle: '추경안 심의·RISE 재구조화 보고', date: '2026-04-02', newsType: NewsType.cabinet, comments: ['청와대','행정부'] },
-  { id: 953, title: '2026년 4월 1주차', subTitle: '추경 시정연설 · 공공차량 5부제 · 프랑스 친교 만찬', date: '2026-04-05', newsType: NewsType.weekly, comments: ['청와대','행정부','국민의힘','더불어민주당'] },
-  { id: 665, title: '헌재법 개정', subTitle: '재판관 선출 방식 재조정, 여야 충돌', date: '2026-03-28', newsType: NewsType.bill, comments: ['입법부','국민의힘','더불어민주당'] },
-  { id: 887, title: '상법 개정', subTitle: '이사 충실의무 확대, 경영계 반발', date: '2026-03-20', newsType: NewsType.bill, comments: ['입법부','국민의힘'] },
-  { id: 453, title: '대법원 증원', subTitle: '재판 지연 해소 위한 대법관 정원 확대 논의', date: '2026-03-15', newsType: NewsType.bill, comments: ['입법부'] },
-  { id: 956, title: '2026년도 1분기 경제지표', subTitle: '소비자물가 상승률 확대, 고용동향 둔화', date: '2026-04-02', newsType: NewsType.govern, comments: ['행정부'] },
-  { id: 749, title: '정부 도심 주택공급 확대 및 다주택자 규제', date: '2026-03-30', newsType: NewsType.govern, comments: ['행정부'] },
-  { id: 944, title: '중대재해처벌법', subTitle: '시행 3년 평가, 개정안 발의 움직임', date: '2026-03-30', newsType: NewsType.bill, comments: ['행정부'] },
-  { id: 462, title: '화물연대 총파업', subTitle: '안전운임제 연장 요구, 정부 업무개시명령', date: '2026-03-30', newsType: NewsType.govern, comments: ['청와대','국민의힘','더불어민주당'] },
-  { id: 531, title: '공무원 모범사용자 책임', date: '2026-04-15', newsType: NewsType.govern, comments: ['더불어민주당'] },
-  { id: 686, title: '지역인재 성장엔진', subTitle: '교육부·지자체 라이즈 재구조화 후속', date: '2026-04-15', newsType: NewsType.govern, comments: ['행정부'] },
-  { id: 630, title: '기후·에너지 국제협력', date: '2026-04-17', newsType: NewsType.govern, comments: ['행정부'] },
-  { id: 902, title: '국정조사 쌍방울·대장동', subTitle: '조작기소 의혹 집중 청문, 검찰 수사권 존폐 논의', date: '2026-04-19', newsType: NewsType.investigation, comments: ['국민의힘','더불어민주당'] },
-  { id: 348, title: '특검 활동 점검', date: '2026-04-18', newsType: NewsType.specialcounsel, comments: ['더불어민주당','국민의힘'] },
-  { id: 739, title: '윤석열 부부 수감 논란', date: '2026-04-18', newsType: NewsType.investigation, comments: ['국민의힘'] },
-  { id: 713, title: '선거 허위사실 공표 논쟁', date: '2026-04-16', newsType: NewsType.bill, comments: ['국민의힘'] },
+  {
+    id: 1146,
+    title: '2026년 4월 3주차',
+    subTitle: '호르무즈 통항 국제연대 · 북 탄도미사일 도발 · 4·19 정신 · 세월호 12주기 국가책임',
+    date: '2026-04-19',
+    newsType: NewsType.weekly,
+    comments: ['청와대', '행정부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 1148,
+    title: '인도·베트남 국빈방문',
+    subTitle: '이재명 대통령 순방 공동성명, 포괄적 전략 동반자 관계 격상',
+    date: '2026-04-19',
+    newsType: NewsType.diplomat,
+    comments: ['청와대'],
+  },
+  {
+    id: 914,
+    title: '26년 추가경정예산',
+    subTitle: '국채 없는 26조 2천억 원 추경, 민생지원금·K-패스·에너지 지원 확대',
+    date: '2026-04-15',
+    newsType: NewsType.govern,
+    comments: ['청와대', '행정부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 950,
+    title: '중대범죄수사청법',
+    subTitle: '본회의 통과, 검찰청 해체 후속 수사권 재편 본격화',
+    date: '2026-04-17',
+    newsType: NewsType.bill,
+    comments: ['입법부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 649,
+    title: '공직자 조사 TF / 기강 확립',
+    subTitle: '헌법존중 정부혁신 TF 출범 · 공무원 복종의무 폐지 · 서훈 취소 후속 조치',
+    date: '2026-04-19',
+    newsType: NewsType.govern,
+    comments: ['청와대', '행정부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 905,
+    title: '프랑스 국빈 방한',
+    subTitle: '마크롱 대통령 국빈방한 공동선언, 방산·에너지 협력 합의',
+    date: '2026-04-10',
+    newsType: NewsType.diplomat,
+    comments: ['청와대'],
+  },
+  {
+    id: 906,
+    title: '한-인도네시아 정상회담',
+    subTitle: '포괄적 방산 협력 확대, 핵심광물 MOU 개정',
+    date: '2026-04-01',
+    newsType: NewsType.diplomat,
+    comments: ['청와대'],
+  },
+  {
+    id: 1147,
+    title: '제16회 국무회의',
+    subTitle: '제5차 비상경제점검회의 병행, 중동 공급망 대응 논의',
+    date: '2026-04-14',
+    newsType: NewsType.cabinet,
+    comments: ['청와대', '행정부'],
+  },
+  {
+    id: 955,
+    title: '제13회 국무회의',
+    subTitle: '추경안 심의·RISE 재구조화 보고',
+    date: '2026-04-02',
+    newsType: NewsType.cabinet,
+    comments: ['청와대', '행정부'],
+  },
+  {
+    id: 953,
+    title: '2026년 4월 1주차',
+    subTitle: '추경 시정연설 · 공공차량 5부제 · 프랑스 친교 만찬',
+    date: '2026-04-05',
+    newsType: NewsType.weekly,
+    comments: ['청와대', '행정부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 665,
+    title: '헌재법 개정',
+    subTitle: '재판관 선출 방식 재조정, 여야 충돌',
+    date: '2026-03-28',
+    newsType: NewsType.bill,
+    comments: ['입법부', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 887,
+    title: '상법 개정',
+    subTitle: '이사 충실의무 확대, 경영계 반발',
+    date: '2026-03-20',
+    newsType: NewsType.bill,
+    comments: ['입법부', '국민의힘'],
+  },
+  {
+    id: 453,
+    title: '대법원 증원',
+    subTitle: '재판 지연 해소 위한 대법관 정원 확대 논의',
+    date: '2026-03-15',
+    newsType: NewsType.bill,
+    comments: ['입법부'],
+  },
+  {
+    id: 956,
+    title: '2026년도 1분기 경제지표',
+    subTitle: '소비자물가 상승률 확대, 고용동향 둔화',
+    date: '2026-04-02',
+    newsType: NewsType.govern,
+    comments: ['행정부'],
+  },
+  {
+    id: 749,
+    title: '정부 도심 주택공급 확대 및 다주택자 규제',
+    date: '2026-03-30',
+    newsType: NewsType.govern,
+    comments: ['행정부'],
+  },
+  {
+    id: 944,
+    title: '중대재해처벌법',
+    subTitle: '시행 3년 평가, 개정안 발의 움직임',
+    date: '2026-03-30',
+    newsType: NewsType.bill,
+    comments: ['행정부'],
+  },
+  {
+    id: 462,
+    title: '화물연대 총파업',
+    subTitle: '안전운임제 연장 요구, 정부 업무개시명령',
+    date: '2026-03-30',
+    newsType: NewsType.govern,
+    comments: ['청와대', '국민의힘', '더불어민주당'],
+  },
+  {
+    id: 531,
+    title: '공무원 모범사용자 책임',
+    date: '2026-04-15',
+    newsType: NewsType.govern,
+    comments: ['더불어민주당'],
+  },
+  {
+    id: 686,
+    title: '지역인재 성장엔진',
+    subTitle: '교육부·지자체 라이즈 재구조화 후속',
+    date: '2026-04-15',
+    newsType: NewsType.govern,
+    comments: ['행정부'],
+  },
+  {
+    id: 630,
+    title: '기후·에너지 국제협력',
+    date: '2026-04-17',
+    newsType: NewsType.govern,
+    comments: ['행정부'],
+  },
+  {
+    id: 902,
+    title: '국정조사 쌍방울·대장동',
+    subTitle: '조작기소 의혹 집중 청문, 검찰 수사권 존폐 논의',
+    date: '2026-04-19',
+    newsType: NewsType.investigation,
+    comments: ['국민의힘', '더불어민주당'],
+  },
+  {
+    id: 348,
+    title: '특검 활동 점검',
+    date: '2026-04-18',
+    newsType: NewsType.specialcounsel,
+    comments: ['더불어민주당', '국민의힘'],
+  },
+  {
+    id: 739,
+    title: '윤석열 부부 수감 논란',
+    date: '2026-04-18',
+    newsType: NewsType.investigation,
+    comments: ['국민의힘'],
+  },
+  {
+    id: 713,
+    title: '선거 허위사실 공표 논쟁',
+    date: '2026-04-16',
+    newsType: NewsType.bill,
+    comments: ['국민의힘'],
+  },
 ];
 
 function formatNpDate(d: string) {
   const dt = new Date(d);
   if (isNaN(dt.getTime())) return d;
-  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}`;
+  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}.${String(
+    dt.getDate(),
+  ).padStart(2, '0')}`;
 }
 
 type RhythmedItem = NewspaperItem & {
@@ -524,7 +879,7 @@ type RhythmedItem = NewspaperItem & {
 function seededRandom(seed: number) {
   return () => {
     seed |= 0;
-    seed = (seed + 0x6D2B79F5) | 0;
+    seed = (seed + 0x6d2b79f5) | 0;
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -601,11 +956,9 @@ function NewspaperCard({
     if (item._tone === 'quote') return 0;
 
     // Effective colSpan after mobile snap (3 or 6 on mobile, native on desktop).
-    const effectiveSpan =
-      gridCols === 6 ? (item._colSpan >= 5 ? 6 : 3) : item._colSpan;
+    const effectiveSpan = gridCols === 6 ? (item._colSpan >= 5 ? 6 : 3) : item._colSpan;
     const colUnit = (containerWidth - colGap * (gridCols - 1)) / gridCols;
-    const cellWidth =
-      effectiveSpan * colUnit + (effectiveSpan - 1) * colGap;
+    const cellWidth = effectiveSpan * colUnit + (effectiveSpan - 1) * colGap;
     const contentWidth = Math.max(0, cellWidth - cardPadX * 2);
     if (contentWidth <= 0) return 0;
 
@@ -637,15 +990,8 @@ function NewspaperCard({
       // Mobile forces single-column body (CSS media query); match that here
       // so predicted height stays accurate.
       const effectiveCols = gridCols === 6 ? 1 : item._colBody;
-      const bodyWidth =
-        effectiveCols > 1
-          ? (contentWidth - 10) / effectiveCols
-          : contentWidth;
-      const bodyH = layout(
-        prepare(body, BODY_FONT.font),
-        bodyWidth,
-        BODY_FONT.lineHeight,
-      ).height;
+      const bodyWidth = effectiveCols > 1 ? (contentWidth - 10) / effectiveCols : contentWidth;
+      const bodyH = layout(prepare(body, BODY_FONT.font), bodyWidth, BODY_FONT.lineHeight).height;
       // Multi-col text wraps into N columns, so total visual height ≈ bodyH / cols
       const visualBodyH = bodyH / effectiveCols;
       needed += visualBodyH + 6;
@@ -661,9 +1007,7 @@ function NewspaperCard({
     if (needed <= allocated) return 0;
     const overflow = needed - allocated;
     return Math.ceil(overflow / (rowHeight + rowGap));
-  }, [
-    item, containerWidth, gridCols, rowHeight, colGap, rowGap, cardPadX, cardPadY,
-  ]);
+  }, [item, containerWidth, gridCols, rowHeight, colGap, rowGap, cardPadX, cardPadY]);
 
   const handleCardClick = () => setExpanded(true);
 
@@ -687,15 +1031,13 @@ function NewspaperCard({
         ) : (
           <>
             <NpCardCategory $tone={item._tone}>{newsTypesToKorFull(item.newsType)}</NpCardCategory>
-            <NpCardTitle $size={item._size} $tone={item._tone}>{item.title}</NpCardTitle>
+            <NpCardTitle $size={item._size} $tone={item._tone}>
+              {item.title}
+            </NpCardTitle>
             {item._showImage && <NpImagePlaceholder />}
-            {item._showSub && item.subTitle && (
-              <NpCardLede>{item.subTitle}</NpCardLede>
-            )}
+            {item._showSub && item.subTitle && <NpCardLede>{item.subTitle}</NpCardLede>}
             {(item._size === 'feature' || item._size === 'medium') && (
-              <NpCardBody $cols={item._colBody}>
-                {buildBodyFiller(item.id)}
-              </NpCardBody>
+              <NpCardBody $cols={item._colBody}>{buildBodyFiller(item.id)}</NpCardBody>
             )}
             <NpCardMeta $tone={item._tone}>
               <span>{formatNpDate(item.date)}</span>
@@ -706,13 +1048,11 @@ function NewspaperCard({
       </NpCard>
 
       {expanded && (
-        <NpExpandOverlay
-          onClick={() => setExpanded(false)}
-          role="dialog"
-          aria-modal="true"
-        >
+        <NpExpandOverlay onClick={() => setExpanded(false)} role="dialog" aria-modal="true">
           <NpExpandSheet onClick={(e) => e.stopPropagation()}>
-            <NpExpandClose onClick={() => setExpanded(false)} aria-label="닫기">×</NpExpandClose>
+            <NpExpandClose onClick={() => setExpanded(false)} aria-label="닫기">
+              ×
+            </NpExpandClose>
             <NpExpandCategory>{newsTypesToKorFull(item.newsType)}</NpExpandCategory>
             <NpExpandTitle>{item.title}</NpExpandTitle>
             {item.subTitle && <NpExpandLede>{item.subTitle}</NpExpandLede>}
@@ -721,7 +1061,12 @@ function NewspaperCard({
             <NpExpandMeta>
               <span>{formatNpDate(item.date)}</span>
               <IconRow comments={item.comments} />
-              <NpExpandOpenLink onClick={(e) => { e.stopPropagation(); onNavigate(item.id); }}>
+              <NpExpandOpenLink
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNavigate(item.id);
+                }}
+              >
                 기사로 이동 →
               </NpExpandOpenLink>
             </NpExpandMeta>
@@ -781,7 +1126,7 @@ function NewspaperMode() {
       let size: 'feature' | 'medium' | 'compact';
       if (idx === 0) size = 'feature';
       else if (sizeRoll < 0.18 && item.subTitle) size = 'feature';
-      else if (sizeRoll < 0.50) size = 'compact';
+      else if (sizeRoll < 0.5) size = 'compact';
       else size = 'medium';
 
       // Only one occasional "quote" block — the rest use plain paper styling.
@@ -796,9 +1141,7 @@ function NewspaperMode() {
       }
 
       const showSub =
-        size === 'feature'
-          ? !!item.subTitle
-          : size === 'medium' && !!item.subTitle && rand() < 0.4;
+        size === 'feature' ? !!item.subTitle : size === 'medium' && !!item.subTitle && rand() < 0.4;
 
       // Col/row spans — base on size, then jitter. 12-col grid at wide, halves at mobile.
       const colJitter = rand();
@@ -877,7 +1220,8 @@ const ModeToggleBar = styled.div`
 `;
 
 const ModeToggleBtn = styled.button<{ $active: boolean }>`
-  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.yvote12 : theme.colors.yvote05)};
+  border: 1px solid
+    ${({ theme, $active }) => ($active ? theme.colors.yvote12 : theme.colors.yvote05)};
   background: ${({ theme, $active }) => ($active ? theme.colors.yvote12 : 'transparent')};
   color: ${({ theme, $active }) => ($active ? theme.colors.yvote01 : theme.colors.yvote11)};
   font-family: 'Noto Serif KR', Georgia, serif;
@@ -969,7 +1313,6 @@ const NpContent = styled.main`
     width: 96%;
     padding: 16px 0 80px;
   }
-
 `;
 
 const NpRule = styled.hr`
@@ -1075,8 +1418,12 @@ const NpSecondaryArticle = styled.article`
     border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
     grid-column: span 3;
 
-    &:first-child { grid-column: span 4; }
-    &:nth-child(2) { grid-column: span 2; }
+    &:first-child {
+      grid-column: span 4;
+    }
+    &:nth-child(2) {
+      grid-column: span 2;
+    }
   }
 `;
 
@@ -1135,12 +1482,25 @@ const NpTertiaryArticle = styled.article`
     border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
     grid-column: span 3;
 
-    &:nth-child(1) { grid-column: span 6; }
-    &:nth-child(2) { grid-column: span 2; }
-    &:nth-child(3) { grid-column: span 4; }
-    &:nth-child(4) { grid-column: span 3; }
-    &:nth-child(5) { grid-column: span 3; }
-    &:nth-child(6) { grid-column: span 6; border-bottom: none; }
+    &:nth-child(1) {
+      grid-column: span 6;
+    }
+    &:nth-child(2) {
+      grid-column: span 2;
+    }
+    &:nth-child(3) {
+      grid-column: span 4;
+    }
+    &:nth-child(4) {
+      grid-column: span 3;
+    }
+    &:nth-child(5) {
+      grid-column: span 3;
+    }
+    &:nth-child(6) {
+      grid-column: span 6;
+      border-bottom: none;
+    }
   }
 `;
 
@@ -1208,9 +1568,15 @@ const NpCompactArticle = styled.article`
   @media (max-width: 768px) {
     grid-column: span 3;
 
-    &:nth-child(3n+1) { grid-column: span 4; }
-    &:nth-child(3n+2) { grid-column: span 2; }
-    &:nth-child(5n) { grid-column: span 6; }
+    &:nth-child(3n + 1) {
+      grid-column: span 4;
+    }
+    &:nth-child(3n + 2) {
+      grid-column: span 2;
+    }
+    &:nth-child(5n) {
+      grid-column: span 6;
+    }
   }
 `;
 
@@ -1286,7 +1652,12 @@ const NpMosaicGrid = styled.div`
  */
 const mobileColSpan = (desktopSpan: number) => (desktopSpan >= 5 ? 6 : 3);
 
-const NpCard = styled.article<{ $size: CardSize; $tone: CardTone; $colSpan: number; $rowSpan: number }>`
+const NpCard = styled.article<{
+  $size: CardSize;
+  $tone: CardTone;
+  $colSpan: number;
+  $rowSpan: number;
+}>`
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -1645,7 +2016,7 @@ const DbUpdateSummaryText = styled.span`
 const MarqueeInner = styled.span<{ $animate: boolean }>`
   display: inline-block;
   white-space: nowrap;
-  animation: ${({ $animate }) => $animate ? `${marquee} 12s linear infinite` : 'none'};
+  animation: ${({ $animate }) => ($animate ? `${marquee} 12s linear infinite` : 'none')};
   ${({ $animate }) => $animate && 'padding-right: 40px;'}
 `;
 
@@ -1888,8 +2259,8 @@ const ModeBtn = styled.button<{ $active: boolean }>`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background: ${({ $active, theme }) => $active ? theme.colors.yvote04 : 'transparent'};
-  color: ${({ $active, theme }) => $active ? theme.colors.yvote12 : theme.colors.yvote06};
+  background: ${({ $active, theme }) => ($active ? theme.colors.yvote04 : 'transparent')};
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote06)};
   transition: all 0.15s;
 `;
 
@@ -1939,8 +2310,9 @@ const ReadCheck = styled.button<{ $checked: boolean }>`
   width: 14px;
   height: 14px;
   border-radius: 0;
-  border: 1.5px solid ${({ $checked, theme }) => $checked ? theme.colors.yvote11 : theme.colors.yvote05};
-  background: ${({ $checked, theme }) => $checked ? theme.colors.yvote11 : 'transparent'};
+  border: 1.5px solid
+    ${({ $checked, theme }) => ($checked ? theme.colors.yvote11 : theme.colors.yvote05)};
+  background: ${({ $checked, theme }) => ($checked ? theme.colors.yvote11 : 'transparent')};
   flex-shrink: 0;
   cursor: pointer;
   padding: 0;
@@ -1949,7 +2321,7 @@ const ReadCheck = styled.button<{ $checked: boolean }>`
 
   &::after {
     content: '';
-    display: ${({ $checked }) => $checked ? 'block' : 'none'};
+    display: ${({ $checked }) => ($checked ? 'block' : 'none')};
     position: absolute;
     left: 3px;
     top: 0px;
@@ -1975,7 +2347,7 @@ const PageDot = styled.button<{ $active: boolean }>`
   border: none;
   padding: 0;
   cursor: pointer;
-  background: ${({ $active, theme }) => $active ? theme.colors.yvote09 : theme.colors.yvote04};
+  background: ${({ $active, theme }) => ($active ? theme.colors.yvote09 : theme.colors.yvote04)};
   transition: background 0.2s;
 `;
 
@@ -2022,7 +2394,6 @@ const PartyHeader = styled.div`
   margin-bottom: 6px;
 `;
 
-
 const PartyName = styled.span`
   font-size: 13px;
   font-weight: 700;
@@ -2034,7 +2405,9 @@ const PartySummary = styled.p<{ $expanded?: boolean }>`
   color: ${({ theme }) => theme.colors.yvote12};
   margin: 0;
   line-height: 1.6;
-  ${({ $expanded }) => !$expanded && `
+  ${({ $expanded }) =>
+    !$expanded &&
+    `
     display: -webkit-box;
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
@@ -2050,7 +2423,7 @@ const ConversationList = styled.div`
 
 const ConversationBubble = styled.div<{ $party: string }>`
   max-width: 85%;
-  align-self: ${({ $party }) => $party === '국민의힘' ? 'flex-end' : 'flex-start'};
+  align-self: ${({ $party }) => ($party === '국민의힘' ? 'flex-end' : 'flex-start')};
   background: ${({ theme }) => theme.colors.yvote03};
   border-radius: 10px;
   padding: 6px 10px;
@@ -2141,7 +2514,6 @@ const CommentTypeBadge = styled.span`
   white-space: nowrap;
 `;
 
-
 const StatusBadge = styled.span`
   font-size: 11px;
   color: ${({ theme }) => theme.colors.yvote08};
@@ -2212,4 +2584,3 @@ const ElectionDday = styled.span`
   margin-top: 8px;
   letter-spacing: -0.02em;
 `;
-

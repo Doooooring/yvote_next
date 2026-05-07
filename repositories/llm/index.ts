@@ -1,5 +1,6 @@
-import { HOST_URL } from '@public/assets/url';
 import axios from 'axios';
+
+import { HOST_URL } from '@public/assets/url';
 
 interface Response<T> {
   data: {
@@ -13,7 +14,6 @@ class OpenAIRepository {
     const response: Response<string> = await axios.post(`${HOST_URL}/llm`, {
       message,
       model: 'grok-4-1-fast-reasoning',
-
     });
     if (response.data.success === false) {
       throw new Error('Failed to fetch AI result');

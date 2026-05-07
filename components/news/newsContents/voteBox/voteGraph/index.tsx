@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
-import { Block } from 'typescript';
 
 interface VoteGraphProps {
   vote: number;

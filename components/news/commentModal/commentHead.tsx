@@ -1,6 +1,7 @@
+import styled from 'styled-components';
+
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { commentType } from '@utils/interface/news';
-import styled from 'styled-components';
 
 interface HeadTitleProps {
   comment: commentType;

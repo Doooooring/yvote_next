@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, ReactNode } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 interface ModalContextInfo {
   newsId: number | null;
@@ -10,7 +10,9 @@ interface NewsAIContextType {
   modalInfo: ModalContextInfo;
   setModalNewsId: (id: number | null) => void;
   setModalCommentTitles: (titles: Array<{ commentType: string; title: string }>) => void;
-  setModalActiveComment: (comment: { commentType: string; title: string; body: string } | null) => void;
+  setModalActiveComment: (
+    comment: { commentType: string; title: string; body: string } | null,
+  ) => void;
 }
 
 const defaultModalInfo: ModalContextInfo = {
@@ -19,11 +21,15 @@ const defaultModalInfo: ModalContextInfo = {
   activeComment: null,
 };
 
+const noopSetModalNewsId = () => undefined;
+const noopSetModalCommentTitles = () => undefined;
+const noopSetModalActiveComment = () => undefined;
+
 const NewsAIContext = createContext<NewsAIContextType>({
   modalInfo: defaultModalInfo,
-  setModalNewsId: () => {},
-  setModalCommentTitles: () => {},
-  setModalActiveComment: () => {},
+  setModalNewsId: noopSetModalNewsId,
+  setModalCommentTitles: noopSetModalCommentTitles,
+  setModalActiveComment: noopSetModalActiveComment,
 });
 
 export function NewsAIProvider({ children }: { children: ReactNode }) {
@@ -33,20 +39,28 @@ export function NewsAIProvider({ children }: { children: ReactNode }) {
     if (id === null) {
       setModalInfo(defaultModalInfo);
     } else {
-      setModalInfo(prev => ({ ...prev, newsId: id }));
+      setModalInfo((prev) => ({ ...prev, newsId: id }));
     }
   }, []);
 
-  const setModalCommentTitles = useCallback((titles: Array<{ commentType: string; title: string }>) => {
-    setModalInfo(prev => ({ ...prev, commentTitles: titles }));
-  }, []);
+  const setModalCommentTitles = useCallback(
+    (titles: Array<{ commentType: string; title: string }>) => {
+      setModalInfo((prev) => ({ ...prev, commentTitles: titles }));
+    },
+    [],
+  );
 
-  const setModalActiveComment = useCallback((comment: { commentType: string; title: string; body: string } | null) => {
-    setModalInfo(prev => ({ ...prev, activeComment: comment }));
-  }, []);
+  const setModalActiveComment = useCallback(
+    (comment: { commentType: string; title: string; body: string } | null) => {
+      setModalInfo((prev) => ({ ...prev, activeComment: comment }));
+    },
+    [],
+  );
 
   return (
-    <NewsAIContext.Provider value={{ modalInfo, setModalNewsId, setModalCommentTitles, setModalActiveComment }}>
+    <NewsAIContext.Provider
+      value={{ modalInfo, setModalNewsId, setModalCommentTitles, setModalActiveComment }}
+    >
       {children}
     </NewsAIContext.Provider>
   );

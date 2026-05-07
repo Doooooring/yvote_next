@@ -1,6 +1,7 @@
 import { INF } from '@public/assets/resource';
 import { newsRepository } from '@repositories/news';
 import { NewsState } from '@utils/interface/news';
+
 import { useSuspense } from '../useSuspense';
 
 export default function usePreNewsList() {

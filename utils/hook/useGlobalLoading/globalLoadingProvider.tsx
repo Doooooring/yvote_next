@@ -1,4 +1,5 @@
 import { PropsWithChildren, useState } from 'react';
+
 import { GlobalLoadingContext } from './useGlobalLoading';
 
 export function GlobalLoadingProvider({ children, ...others }: PropsWithChildren) {

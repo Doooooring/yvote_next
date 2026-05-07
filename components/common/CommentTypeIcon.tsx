@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { commentType } from '@utils/interface/news';
 import { commentTypeImg } from '@utils/interface/news/comment';
 
@@ -15,7 +16,16 @@ export default function CommentTypeIcon({ type, size = 16, onClick }: CommentTyp
       alt={type}
       $size={size}
       $clickable={!!onClick}
-      onClick={onClick ? (e) => { e.preventDefault(); e.stopPropagation(); (e.nativeEvent as any).stopImmediatePropagation?.(); onClick(); } : undefined}
+      onClick={
+        onClick
+          ? (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              (e.nativeEvent as any).stopImmediatePropagation?.();
+              onClick();
+            }
+          : undefined
+      }
     />
   );
 }

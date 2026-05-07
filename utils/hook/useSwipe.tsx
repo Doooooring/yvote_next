@@ -61,7 +61,9 @@ export function useSwipe(opts: Options = { axis: 'x' }) {
     onStart?.(e);
     try {
       (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
-    } catch {}
+    } catch {
+      return;
+    }
   };
 
   const onPointerMove: React.PointerEventHandler = (e) => {

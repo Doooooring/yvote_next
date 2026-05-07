@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, ReactNode } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
 
 interface ChatContextType {
   activeContent: string | null;
@@ -6,9 +6,11 @@ interface ChatContextType {
   consumePendingActions: () => string[];
 }
 
+const noopSetActiveContent = () => undefined;
+
 const ChatContext = createContext<ChatContextType>({
   activeContent: null,
-  setActiveContent: () => {},
+  setActiveContent: noopSetActiveContent,
   consumePendingActions: () => [],
 });
 
@@ -33,7 +35,9 @@ export function ChatContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ChatContext.Provider value={{ activeContent, setActiveContent: setActiveContentWrapped, consumePendingActions }}>
+    <ChatContext.Provider
+      value={{ activeContent, setActiveContent: setActiveContentWrapped, consumePendingActions }}
+    >
       {children}
     </ChatContext.Provider>
   );

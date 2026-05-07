@@ -1,8 +1,10 @@
+import Image from 'next/image';
+import styled from 'styled-components';
+
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import { KeyTitle } from '@utils/interface/keywords';
-import Image from 'next/image';
-import styled from 'styled-components';
+
 import { CommonIconButton, CommonLayoutBox, CommonTagBox, Row } from '../../common/commonStyles';
 
 export function KeywordFiltersSideTab({

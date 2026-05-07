@@ -1,6 +1,6 @@
+import { useCallback } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
 
 export function useCustomSearchParams() {
   const router = useRouter();

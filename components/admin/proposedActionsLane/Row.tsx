@@ -15,6 +15,7 @@ import {
 import PayloadEditor from './PayloadEditor';
 import {
   CommentPreview,
+  extractActionComments,
   getProposedActionMainTitle,
   getProposedActionTargetNewsId,
   TYPE_LABEL,
@@ -44,52 +45,6 @@ function newsTypeLabel(value: unknown): string | undefined {
     return newsTypesToKorFull(raw as NewsType);
   }
   return raw;
-}
-
-function commentFromRecord(value: unknown): CommentPreview | null {
-  const record = asRecord(value);
-  if (!record) return null;
-  const title = asString(record.title) ?? asString(record.sourceCommentTitle);
-  const body = asString(record.comment) ?? asString(record.commentBody) ?? asString(record.body);
-  const commentType = asString(record.commentType) ?? asString(record.sourceCommentType);
-  const date = asString(record.date);
-  const bytes = asNumber(record.commentBytes);
-  if (!title && !body && !commentType) return null;
-  return { commentType, title, body, date, bytes };
-}
-
-function extractComments(payload: Record<string, unknown>): CommentPreview[] {
-  const destinationComments = Array.isArray(payload.destinations)
-    ? payload.destinations.flatMap((destination) => {
-        const record = asRecord(destination);
-        const comments = record?.commentPayloads;
-        return Array.isArray(comments) ? comments : [];
-      })
-    : [];
-  const sourceRemainders = Array.isArray(payload.sourceRemainders)
-    ? payload.sourceRemainders
-    : [];
-  const splitComments = [...destinationComments, ...sourceRemainders]
-    .map(commentFromRecord)
-    .filter((c): c is CommentPreview => c !== null);
-  if (splitComments.length) return splitComments;
-
-  const arrays = [
-    payload.commentPayloads,
-    payload.initialComments,
-    asRecord(payload.commentPayloadsSummary)?.previews,
-  ];
-
-  for (const candidate of arrays) {
-    if (!Array.isArray(candidate)) continue;
-    const comments = candidate
-      .map(commentFromRecord)
-      .filter((c): c is CommentPreview => c !== null);
-    if (comments.length) return comments;
-  }
-
-  const single = commentFromRecord(payload.commentPayload) ?? commentFromRecord(payload);
-  return single ? [single] : [];
 }
 
 function getTypeValue(action: ProposedAction, comments: CommentPreview[]) {
@@ -139,7 +94,7 @@ export default function ProposedActionRow({ action }: { action: ProposedAction }
     enabled: targetNewsId != null,
     staleTime: 60_000,
   });
-  const comments = useMemo(() => extractComments(payload), [payload]);
+  const comments = useMemo(() => extractActionComments(action), [action]);
   const editableBatch = useMemo(() => getEditableCommentBatch(payload), [payload]);
   const targetTitle = targetQuery.data?.title;
   const mainTitle = getProposedActionMainTitle(action, comments, targetTitle);

@@ -1,14 +1,21 @@
-import HeadMeta from '@components/common/HeadMeta';
-import LoadingCommon from '@/components/common/loading';
-import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import { NewsType, NewsState, Preview, newsTypesToKorFull, commentType } from '@utils/interface/news';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
-import { newsRepository } from '@/repositories/news';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useQuery } from '@tanstack/react-query';
-import { useState, useMemo } from 'react';
 import styled from 'styled-components';
+
+import LoadingCommon from '@/components/common/loading';
+import { newsRepository } from '@/repositories/news';
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import HeadMeta from '@components/common/HeadMeta';
+import { useQuery } from '@tanstack/react-query';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
+import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
+import {
+  commentType,
+  NewsState,
+  NewsType,
+  newsTypesToKorFull,
+  Preview,
+} from '@utils/interface/news';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const AVAILABLE_YEARS = Array.from({ length: CURRENT_YEAR - 2021 }, (_, i) => CURRENT_YEAR - i);
@@ -27,7 +34,9 @@ function formatDate(dateStr: string | undefined) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(
+    d.getDate(),
+  ).padStart(2, '0')}`;
 }
 
 export default function News3Page(props: pageProps) {
@@ -37,10 +46,15 @@ export default function News3Page(props: pageProps) {
 
   const { data: previews, isFetching } = useQuery({
     queryKey: ['news3-frontpage', year],
-    queryFn: () => newsRepository.getPreviews(
-      0, 9999, '', NewsState.Published,
-      `${year}-01-01`, `${year}-12-31`,
-    ),
+    queryFn: () =>
+      newsRepository.getPreviews(
+        0,
+        9999,
+        '',
+        NewsState.Published,
+        `${year}-01-01`,
+        `${year}-12-31`,
+      ),
   });
 
   const sorted = useMemo(() => {
@@ -70,13 +84,19 @@ export default function News3Page(props: pageProps) {
   const onIcons = (e: React.MouseEvent, item: Preview) => {
     e.stopPropagation();
     if (item.comments?.length) {
-      showCommentModal(item.id, item.comments as commentType[], undefined, item.title, { disableCategorize: item.newsType === 'budget' });
+      showCommentModal(item.id, item.comments as commentType[], undefined, item.title, {
+        disableCategorize: item.newsType === 'budget',
+      });
     }
   };
 
   return (
     <>
-      <HeadMeta title="뉴스 프론트" url={`${props.origin}/news3`} image="/assets/img/og_trump.jpg" />
+      <HeadMeta
+        title="뉴스 프론트"
+        url={`${props.origin}/news3`}
+        image="/assets/img/og_trump.jpg"
+      />
       <Wrapper>
         <Masthead>
           <MastheadInner>
@@ -84,7 +104,9 @@ export default function News3Page(props: pageProps) {
             <MastheadRight>
               <YearSelect value={year} onChange={(e) => setYear(Number(e.target.value))}>
                 {AVAILABLE_YEARS.map((y) => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
                 ))}
               </YearSelect>
             </MastheadRight>
@@ -93,7 +115,9 @@ export default function News3Page(props: pageProps) {
         </Masthead>
 
         {isFetching && !sorted.length && (
-          <LoadingWrapper><LoadingCommon comment="" fontColor="black" /></LoadingWrapper>
+          <LoadingWrapper>
+            <LoadingCommon comment="" fontColor="black" />
+          </LoadingWrapper>
         )}
 
         {hero && (
@@ -448,7 +472,9 @@ const TertiaryArticle = styled.article`
     padding: 10px 0;
     border-right: none;
     border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
   }
 `;
 

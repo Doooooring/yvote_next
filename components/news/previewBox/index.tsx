@@ -1,16 +1,35 @@
+import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { AiFillBell, AiOutlineBell } from 'react-icons/ai';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { CommonLayoutBox, Row } from '@components/common/commonStyles';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import Link from 'next/link';
-import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
+import { commentType, NewsState, NewsType, newsTypesToKor, Preview } from '@utils/interface/news';
 import { sortComment } from '@utils/interface/news/comment';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { getDotDateForm } from '@utils/tools/date';
-import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { AiOutlineBell, AiFillBell } from 'react-icons/ai';
+
+import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 // Custom Y-vote icon: peace symbol with left branch removed (Y in circle)
 const YVoteIcon = ({ size = 14, filled = false }: { size?: number; filled?: boolean }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'} />
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke={filled ? 'none' : 'currentColor'}
+    />
     {filled ? (
       <g stroke="${({ theme }) => theme.colors.yvote01}" strokeWidth={2}>
         <line x1="12" y1="2" x2="12" y2="12" />
@@ -26,8 +45,6 @@ const YVoteIcon = ({ size = 14, filled = false }: { size?: number; filled?: bool
     )}
   </svg>
 );
-import styled from 'styled-components';
-import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -36,7 +53,16 @@ interface PreviewBoxProps {
   showId?: boolean;
   openModalOnClick?: boolean;
 }
-function PreviewBox({ preview, click = () => {}, expanded = false, showId = false, openModalOnClick = false }: PreviewBoxProps) {
+
+const noopClick = () => undefined;
+
+function PreviewBox({
+  preview,
+  click = noopClick,
+  expanded = false,
+  showId = false,
+  openModalOnClick = false,
+}: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
@@ -64,11 +90,7 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
             headView={<_NewsTitle title={title} id={id} showId={showId} newsType={newsType} />}
             contentView={
               <>
-                <_NewsSubTitle
-                  summary={summary}
-                  subTitle={subTitle}
-                  expanded={expanded}
-                />
+                <_NewsSubTitle summary={summary} subTitle={subTitle} expanded={expanded} />
                 <RowWrapper>
                   <_NewsDate date={date} />
                   <_CommentButtons
@@ -128,7 +150,17 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
   }
 }
 
-const _NewsTitle = ({ title, id, showId, newsType }: { title: Preview['title']; id?: number; showId?: boolean; newsType?: NewsType }) => {
+const _NewsTitle = ({
+  title,
+  id,
+  showId,
+  newsType,
+}: {
+  title: Preview['title'];
+  id?: number;
+  showId?: boolean;
+  newsType?: NewsType;
+}) => {
   const typeLabel = newsType ? newsTypesToKor(newsType) : '';
   return (
     <Title>
@@ -163,11 +195,21 @@ const _NewsSubTitle = ({
 
   return (
     <SubTitle $expanded={expanded}>
-      <span className="subtitle-text" ref={textRef} style={isExpanded ? { WebkitLineClamp: 'unset' } : undefined}>
+      <span
+        className="subtitle-text"
+        ref={textRef}
+        style={isExpanded ? { WebkitLineClamp: 'unset' } : undefined}
+      >
         {subTitle || ''}
       </span>
       {isClamped && !isExpanded && (
-        <MoreButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsExpanded(true); }}>
+        <MoreButton
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+        >
           더보기
         </MoreButton>
       )}
@@ -176,15 +218,7 @@ const _NewsSubTitle = ({
 };
 
 const _NewsDate = ({ date }: { date: Preview['date'] }) => {
-  return (
-    <Date>
-      {date ? (
-        <span>{getDotDateForm(date)}</span>
-      ) : (
-        ''
-      )}
-    </Date>
-  );
+  return <Date>{date ? <span>{getDotDateForm(date)}</span> : ''}</Date>;
 };
 
 const _CommentButtons = ({
@@ -521,4 +555,3 @@ const SummaryButtons = styled.div`
   align-items: center;
   margin-bottom: 0px;
 `;
-

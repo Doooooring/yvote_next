@@ -53,26 +53,15 @@ function isAdminJae2OpenPath(path: string) {
   return ADMINJAE2_OPEN_PATHS.includes(firstSegment);
 }
 
-export function shouldInjectAdminToken(
-  path: string,
-  headers: Record<string, string>,
-) {
+export function shouldInjectAdminToken(path: string, headers: Record<string, string>) {
   return (
-    SHOULD_INJECT &&
-    !isAdminJae2OpenPath(path) &&
-    !headers.authorization &&
-    !headers.Authorization
+    SHOULD_INJECT && !isAdminJae2OpenPath(path) && !headers.authorization && !headers.Authorization
   );
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // [[...path]] gives us req.query.path as string[] | undefined.
-  const segments = ([] as string[]).concat(
-    (req.query.path as string[] | string | undefined) || [],
-  );
+  const segments = ([] as string[]).concat((req.query.path as string[] | string | undefined) || []);
   const path = segments.join('/');
   // Preserve query string (Next strips it from req.query when there's a
   // catch-all match overlap; safer to read off req.url).
@@ -81,8 +70,7 @@ export default async function handler(
   const target = `${INTERNAL_API_URL}/${path}${search}`;
 
   const method = (req.method || 'GET').toUpperCase();
-  const body =
-    method === 'GET' || method === 'HEAD' ? undefined : await readBody(req);
+  const body = method === 'GET' || method === 'HEAD' ? undefined : await readBody(req);
 
   const headers: Record<string, string> = {};
   for (const [k, v] of Object.entries(req.headers)) {

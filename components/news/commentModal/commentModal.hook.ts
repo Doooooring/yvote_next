@@ -1,8 +1,8 @@
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+
 import { newsRepository } from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 import { throttle } from '@utils/tools/lodash';
-
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 const PAGE_SIZE = 20;
 

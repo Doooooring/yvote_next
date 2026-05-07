@@ -3,7 +3,7 @@
  * Returns null if the string doesn't match.
  */
 function parseDateStr(date: string): { year: number; month: number; day: number } | null {
-  const m = String(date).match(/^(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
+  const m = String(date).match(/^(\d{4})[.-](\d{1,2})[.-](\d{1,2})/);
   if (!m) return null;
   return { year: +m[1], month: +m[2], day: +m[3] };
 }
@@ -64,7 +64,7 @@ export const getKoreanTimeDifference = (baseDate: string | Date, targetDate: str
   const subfix = diff > 0 ? '전' : '뒤';
   const dateDiff = getDateDiff(baseDate, targetDate);
 
-  let prefix: string = '';
+  let prefix = '';
 
   if (dateDiff == 0) {
     return '오늘';
@@ -104,7 +104,9 @@ export const getDateHidingCurrentYear = (d: string | Date): string => {
     if (!p) return String(d);
     const currentYear = new Date().getFullYear();
     if (p.year !== currentYear) {
-      return `${String(p.month).padStart(2, '0')}/${String(p.day).padStart(2, '0')}/${String(p.year).slice(-2)}`;
+      return `${String(p.month).padStart(2, '0')}/${String(p.day).padStart(2, '0')}/${String(
+        p.year,
+      ).slice(-2)}`;
     }
     return `${String(p.month).padStart(2, '0')}/${String(p.day).padStart(2, '0')}`;
   }

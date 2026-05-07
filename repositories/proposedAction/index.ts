@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { HOST_URL } from '@url';
 import {
   ProposedAction,
@@ -6,6 +7,7 @@ import {
   ProposedActionStatus,
   ProposedActionType,
 } from '@utils/interface/proposedAction';
+
 import { parseProposedActionListResponse } from './parseListResponse';
 
 const BASE = `${HOST_URL}/proposed-action`;
@@ -37,6 +39,11 @@ interface ApplyApprovedNowResult {
   detail?: string;
 }
 
+interface ApplyApprovedBatchResult {
+  started: boolean;
+  ids: number[];
+}
+
 function immediateApplyErrorMessage(e: unknown) {
   if (axios.isAxiosError(e)) {
     const data = e.response?.data as
@@ -59,9 +66,10 @@ class ProposedActionRepository {
     if (opts.newsId !== undefined) params.newsId = opts.newsId;
     if (opts.offset !== undefined) params.offset = opts.offset;
     if (opts.limit !== undefined) params.limit = opts.limit;
-    const res = await axios.get<
-      { success: boolean; result: ProposedAction[] } | ProposedAction[]
-    >(BASE, { params });
+    const res = await axios.get<{ success: boolean; result: ProposedAction[] } | ProposedAction[]>(
+      BASE,
+      { params },
+    );
     return parseProposedActionListResponse(res.data) as ProposedAction[];
   }
 
@@ -71,44 +79,35 @@ class ProposedActionRepository {
   }
 
   async approve(id: number): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.patch(
-      `${BASE}/${id}/approve`,
-      {},
-    );
+    const res: Response<ProposedAction> = await axios.patch(`${BASE}/${id}/approve`, {});
     try {
       await axios.post('/api/adminjae2/apply-approved', { id });
     } catch (e: unknown) {
-      throw new Error(
-        `approved, but immediate apply failed: ${immediateApplyErrorMessage(e)}`,
-      );
+      throw new Error(`approved, but immediate apply failed: ${immediateApplyErrorMessage(e)}`);
     }
     return res.data.result;
   }
 
-  async reject(id: number): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.patch(
-      `${BASE}/${id}/reject`,
-      {},
+  async approveManyInBackground(ids: number[]): Promise<ApplyApprovedBatchResult> {
+    const res: Response<ApplyApprovedBatchResult> = await axios.post(
+      '/api/adminjae2/apply-approved-batch',
+      { ids },
     );
+    return res.data.result;
+  }
+
+  async reject(id: number): Promise<ProposedAction> {
+    const res: Response<ProposedAction> = await axios.patch(`${BASE}/${id}/reject`, {});
     return res.data.result;
   }
 
   async markApplied(id: number): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.patch(
-      `${BASE}/${id}/applied`,
-      {},
-    );
+    const res: Response<ProposedAction> = await axios.patch(`${BASE}/${id}/applied`, {});
     return res.data.result;
   }
 
-  async update(
-    id: number,
-    patch: Partial<ProposedAction>,
-  ): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.patch(
-      `${BASE}/${id}`,
-      patch,
-    );
+  async update(id: number, patch: Partial<ProposedAction>): Promise<ProposedAction> {
+    const res: Response<ProposedAction> = await axios.patch(`${BASE}/${id}`, patch);
     return res.data.result;
   }
 }

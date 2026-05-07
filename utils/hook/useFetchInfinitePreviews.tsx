@@ -1,11 +1,12 @@
-import { newsRepository } from '@repositories/news';
-import { NewsState, Preview } from '@utils/interface/news';
 import { MutableRefObject, useCallback, useRef, useState } from 'react';
 
-export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = false) => {
-  let page = useRef(0);
-  let limit = useRef(defaultLimit);
-  let prevFilter: MutableRefObject<string | null | undefined> = useRef(null);
+import { newsRepository } from '@repositories/news';
+import { NewsState, Preview } from '@utils/interface/news';
+
+export const useFetchNewsPreviews = (defaultLimit: number, isAdmin = false) => {
+  const page = useRef(0);
+  const limit = useRef(defaultLimit);
+  const prevFilter: MutableRefObject<string | null | undefined> = useRef(null);
 
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
   const [isFetchingImages, setIsFetchingImages] = useState<boolean>(false);
@@ -66,7 +67,7 @@ export const useFetchNewsPreviews = (defaultLimit: number, isAdmin: boolean = fa
 
   const fetchNextPreviews = useCallback(
     async (nextLimit?: number) => {
-      let arr = previews;
+      const arr = previews;
       if (page.current === -1) return false;
       if (nextLimit) limit.current = nextLimit;
 

@@ -1,3 +1,7 @@
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+
 import closeImage from '@assets/img/ico_close@2x.png';
 import {
   CommonIconButton,
@@ -8,10 +12,9 @@ import {
 import HorizontalScroll from '@components/common/horizontalScroll/horizontalScroll';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { KeyTitle } from '@utils/interface/keywords';
-import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+
 import IsShow from '../../common/isShow';
+
 import useKeywordsSelected from './useKeywordsSelected';
 import useSearchKeyword from './useSearchKeyword.';
 

@@ -1,12 +1,9 @@
-import NewsContent from '@components/news/newsContents';
-import { newsRepository } from '@repositories/news';
+import { useState } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import styled from 'styled-components';
 
 import LoadingCommon from '@components/common/loading';
-import { useMount } from '@utils/hook/useMount';
-import { NewsInView, NewsType } from '@utils/interface/news';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { useState } from 'react';
-import styled from 'styled-components';
+import NewsContent from '@components/news/newsContents';
 import BillNewsLayout from '@components/news/types/bill';
 import BudgetNewsLayout from '@components/news/types/budget';
 import CabinetNewsLayout from '@components/news/types/cabinet';
@@ -14,6 +11,9 @@ import ExecutiveNewsLayout from '@components/news/types/executive';
 import InvestigationNewsLayout from '@components/news/types/investigation';
 import PlenaryNewsLayout from '@components/news/types/plenary';
 import WeeklyNewsLayout from '@components/news/types/weekly';
+import { newsRepository } from '@repositories/news';
+import { useMount } from '@utils/hook/useMount';
+import { NewsInView, NewsType } from '@utils/interface/news';
 
 type AnswerState = 'left' | 'right' | 'none' | null;
 

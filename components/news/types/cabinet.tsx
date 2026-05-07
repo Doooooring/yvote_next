@@ -1,14 +1,15 @@
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import TimelineList from '@components/news/timeline';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
 import { commentType } from '@utils/interface/news';
 import { getCommentTypeRank } from '@utils/interface/news/comment';
-
 import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+
 import { NewsTypeLayoutProps } from './default';
-import TimelineList from '@components/news/timeline';
-import CommentTypeIcon from '@components/common/CommentTypeIcon';
 
 export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
@@ -30,7 +31,7 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -59,97 +60,99 @@ export default function CabinetNewsLayout({ news }: NewsTypeLayoutProps) {
     ? news.summaries?.find((summary) => summary.commentType === activeSummaryType)
     : undefined;
 
-
   return (
     <Wrapper>
-        <Header>
-          <h1>{news.title}</h1>
-          {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-          <div className="meta">
-            {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-            {commentTypes.length ? (
-              <CommentIcons>
-                {commentTypes.map((type, index) => (
-                  <CommentTypeIcon key={`${type}-${index}`} type={type as commentType} size={12} onClick={() => showCommentModal(news.id, type as commentType, news.title)} />
-                ))}
-              </CommentIcons>
-            ) : null}
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
-          <Section>
-            <SectionTitle>타임라인</SectionTitle>
-            <SectionBody>
-              {timelineGroups.length ? (
-                <TimelineList timeline={timelineGroups} flat />
-              ) : (
-                <EmptyMessage>타임라인이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          {timelineGroups.length ? (
+            <TimelineList timeline={timelineGroups} flat />
+          ) : (
+            <EmptyMessage>타임라인이 없습니다.</EmptyMessage>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>안건 목록</SectionTitle>
-            <SectionBody>
-              {agendaGroups.length ? (
-                <AgendaGroups>
-                  {agendaGroups.map((group) => (
-                    <AgendaGroup key={group.title}>
-                      <summary>
-                        <span>{group.title}</span>
-                        <span className="count">{group.items.length}건</span>
-                      </summary>
-                      <AgendaItems>
-                        {group.items.map((item, idx) => (
-                          <li key={`${group.title}-${idx}`}>
-                            <p>{item}</p>
-                          </li>
-                        ))}
-                      </AgendaItems>
-                    </AgendaGroup>
+      <Section>
+        <SectionTitle>안건 목록</SectionTitle>
+        <SectionBody>
+          {agendaGroups.length ? (
+            <AgendaGroups>
+              {agendaGroups.map((group) => (
+                <AgendaGroup key={group.title}>
+                  <summary>
+                    <span>{group.title}</span>
+                    <span className="count">{group.items.length}건</span>
+                  </summary>
+                  <AgendaItems>
+                    {group.items.map((item, idx) => (
+                      <li key={`${group.title}-${idx}`}>
+                        <p>{item}</p>
+                      </li>
+                    ))}
+                  </AgendaItems>
+                </AgendaGroup>
+              ))}
+            </AgendaGroups>
+          ) : (
+            <EmptyMessage>국무회의 안건이 없습니다.</EmptyMessage>
+          )}
+        </SectionBody>
+      </Section>
+
+      <Section>
+        <SectionTitle>주요 발언 내용</SectionTitle>
+        <SectionBody>
+          {speechGroups.length ? (
+            <SpeechGroupsLayout>
+              {speechGroups.map((group, gidx) => (
+                <SpeechGroup key={group.title + gidx}>
+                  <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
+                  {group.items.map((item, idx) => (
+                    <SpeechQuote key={idx}>{item}</SpeechQuote>
                   ))}
-                </AgendaGroups>
-              ) : (
-                <EmptyMessage>국무회의 안건이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
+                </SpeechGroup>
+              ))}
+            </SpeechGroupsLayout>
+          ) : (
+            <EmptyMessage>주요 발언 내용이 없습니다.</EmptyMessage>
+          )}
+        </SectionBody>
+      </Section>
 
-          <Section>
-            <SectionTitle>주요 발언 내용</SectionTitle>
-            <SectionBody>
-              {speechGroups.length ? (
-                <SpeechGroupsLayout>
-                  {speechGroups.map((group, gidx) => (
-                    <SpeechGroup key={group.title + gidx}>
-                      <SpeechGroupTitle>{group.title}</SpeechGroupTitle>
-                      {group.items.map((item, idx) => (
-                        <SpeechQuote key={idx}>{item}</SpeechQuote>
-                      ))}
-                    </SpeechGroup>
-                  ))}
-                </SpeechGroupsLayout>
-              ) : (
-                <EmptyMessage>주요 발언 내용이 없습니다.</EmptyMessage>
-              )}
-            </SectionBody>
-          </Section>
-
-          <Section>
-            <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SectionBody>
-              <SummaryList>
-                {(news.summaries ?? []).map((summary, idx) => (
-                  <SummaryListItem key={summary.commentType + idx}>
-                    <CommentTypeIcon type={summary.commentType} />
-                    <SummaryHtml
-                      dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }}
-                    />
-                  </SummaryListItem>
-                ))}
-              </SummaryList>
-            </SectionBody>
-          </Section>
+      <Section>
+        <SectionTitle>브리핑 및 기타 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? []).map((summary, idx) => (
+              <SummaryListItem key={summary.commentType + idx}>
+                <CommentTypeIcon type={summary.commentType} />
+                <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary ?? '' }} />
+              </SummaryListItem>
+            ))}
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
@@ -282,7 +285,6 @@ const CommentIcons = styled.div`
   align-items: center;
   gap: 6px;
 `;
-
 
 const Section = styled.section`
   width: 92%;

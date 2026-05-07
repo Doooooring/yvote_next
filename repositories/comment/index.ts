@@ -1,5 +1,6 @@
-import { HOST_URL } from '@public/assets/url';
 import axios from 'axios';
+
+import { HOST_URL } from '@public/assets/url';
 
 interface Response<T> {
   data: {

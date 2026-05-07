@@ -1,42 +1,18 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const ts = require('typescript');
-const vm = require('vm');
 
-const sourcePath = path.join(
-  __dirname,
-  '..',
-  'components',
-  'admin',
-  'proposedActionsLane',
-  'commentBatch.ts',
-);
-
-const source = fs.readFileSync(sourcePath, 'utf8');
-const compiled = ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2019 },
-}).outputText;
-
-const sandbox = { module: { exports: {} }, require };
-sandbox.exports = sandbox.module.exports;
-vm.runInNewContext(compiled, sandbox, { filename: sourcePath });
-
-const { excludeCommentFromPayload, getEditableCommentBatch } = sandbox.module.exports;
-
-function loadTsModule(filePath, requireOverrides = {}) {
-  const moduleSource = fs.readFileSync(filePath, 'utf8');
-  const moduleCompiled = ts.transpileModule(moduleSource, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2019 },
-  }).outputText;
-  const moduleSandbox = {
-    module: { exports: {} },
-    require: (name) => requireOverrides[name] ?? require(name),
-  };
-  moduleSandbox.exports = moduleSandbox.module.exports;
-  vm.runInNewContext(moduleCompiled, moduleSandbox, { filename: filePath });
-  return moduleSandbox.module.exports;
-}
+const {
+  excludeCommentFromPayload,
+  getEditableCommentBatch,
+} = require('../components/admin/proposedActionsLane/commentBatchCore');
+const {
+  extractActionComments,
+  getProposedActionMainTitle,
+} = require('../components/admin/proposedActionsLane/rowDisplayCore');
+const {
+  groupProposedActionsForReview,
+} = require('../components/admin/proposedActionsLane/reviewGroupsCore');
 
 const routePayload = {
   targetNewsId: 1232,
@@ -83,6 +59,43 @@ assert.deepStrictEqual(
   'create_news batches must support excluding initialComments entries',
 );
 
+const splitBatchPayload = {
+  destinations: [
+    {
+      targetNewsId: 1245,
+      commentPayloads: [
+        { commentType: '한나라당', title: 'keep target' },
+        { commentType: '한나라당', title: 'exclude target' },
+      ],
+    },
+  ],
+  sourceReplacements: [
+    { sourceCommentId: 45290, sourceRemainders: [{ title: 'keep remainder' }] },
+    { sourceCommentId: 45291, sourceRemainders: [{ title: 'exclude remainder' }] },
+  ],
+};
+const splitBatch = getEditableCommentBatch(splitBatchPayload);
+assert.strictEqual(
+  splitBatch.key,
+  'destinations',
+  'split_comment batches must expose destination comments as editable comments',
+);
+assert.deepStrictEqual(
+  splitBatch.comments.map((comment) => comment.title),
+  ['keep target', 'exclude target'],
+);
+const trimmedSplitBatch = excludeCommentFromPayload(splitBatchPayload, 'destinations', 1);
+assert.deepStrictEqual(
+  trimmedSplitBatch.destinations[0].commentPayloads,
+  [{ commentType: '한나라당', title: 'keep target' }],
+  'excluding a split target comment must remove that destination payload',
+);
+assert.deepStrictEqual(
+  trimmedSplitBatch.sourceReplacements,
+  [{ sourceCommentId: 45290, sourceRemainders: [{ title: 'keep remainder' }] }],
+  'excluding a split target comment must remove the corresponding source replacement',
+);
+
 assert.strictEqual(
   getEditableCommentBatch({ commentPayloadsSummary: { previews: [{}] } }),
   null,
@@ -91,6 +104,25 @@ assert.strictEqual(
 
 const rowSource = fs.readFileSync(
   path.join(__dirname, '..', 'components', 'admin', 'proposedActionsLane', 'Row.tsx'),
+  'utf8',
+);
+const laneSource = fs.readFileSync(
+  path.join(__dirname, '..', 'components', 'admin', 'proposedActionsLane', 'index.tsx'),
+  'utf8',
+);
+const commentMoveGroupSource = fs.readFileSync(
+  path.join(
+    __dirname,
+    '..',
+    'components',
+    'admin',
+    'proposedActionsLane',
+    'CommentMoveGroup.tsx',
+  ),
+  'utf8',
+);
+const applyApprovedBatchSource = fs.readFileSync(
+  path.join(__dirname, '..', 'pages', 'api', 'adminjae2', 'apply-approved-batch.ts'),
   'utf8',
 );
 assert.doesNotMatch(
@@ -123,27 +155,111 @@ assert.match(
   /showBody \? 'hide body' : 'show body'/,
   'Comment rows should expose a compact show/hide body toggle',
 );
+assert.match(
+  laneSource,
+  /group\.kind === 'comments_to_existing'[\s\S]*<CommentMoveGroup/,
+  'same-target comment moves should render through one merged review group, not repeated rows',
+);
+assert.match(
+  commentMoveGroupSource,
+  /approve all/,
+  'merged comment move group should expose one approve-all action',
+);
+assert.match(
+  commentMoveGroupSource,
+  /approveManyInBackground/,
+  'merged comment move group should start one background grouped approval instead of blocking on every action',
+);
+assert.match(
+  commentMoveGroupSource,
+  /batchStarted/,
+  'merged comment move group should keep approval disabled after the background worker starts',
+);
+assert.match(
+  commentMoveGroupSource,
+  /setBatchStarted\(true\)/,
+  'merged comment move group should latch started background approvals to avoid duplicate workers',
+);
+assert.match(
+  applyApprovedBatchSource,
+  /--approve-only/,
+  'batch approval endpoint should mark all submitted rows approved before starting slow apply',
+);
+assert.match(
+  applyApprovedBatchSource,
+  /approveForApplyQueue\(ids\)[\s\S]*runBackgroundApply\(ids\)/,
+  'batch approval endpoint should approve first, then start the background apply worker',
+);
+assert.doesNotMatch(
+  commentMoveGroupSource,
+  /for \(const action of group\.actions\)[\s\S]*proposedActionRepository\.approve\(action\.id\)/,
+  'merged comment move group should not synchronously approve/apply every action in the browser request',
+);
+assert.match(
+  commentMoveGroupSource,
+  /reject all/,
+  'merged comment move group should expose one reject-all action',
+);
+assert.match(
+  commentMoveGroupSource,
+  /excludeMut\.mutate/,
+  'merged comment move group should keep per-comment exclusions possible',
+);
 
-const {
-  getProposedActionMainTitle,
-} = loadTsModule(
-  path.join(__dirname, '..', 'components', 'admin', 'proposedActionsLane', 'rowDisplay.ts'),
+function plain(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+const splitPayloadForDisplay = {
+  destinations: [
+    {
+      targetNewsId: 1245,
+      commentPayloads: [{ commentType: '민주당', title: '세종시 extracted', body: 'target body' }],
+    },
+  ],
+  sourceRemainders: [{ commentType: '민주당', title: 'weekly remainder', body: 'left in weekly' }],
+};
+assert.deepStrictEqual(
+  plain(extractActionComments({ actionType: 'split_comment', payload: splitPayloadForDisplay })),
+  [{ commentType: '민주당', title: '세종시 extracted', body: 'target body' }],
+  'split_comment review should show only the destination-bound extracted comment, not the weekly remainder',
+);
+
+const grouped = groupProposedActionsForReview([
   {
-    '@utils/interface/proposedAction': {
-      ProposedActionType: {
-        CreateNews: 'create_news',
-        RouteComment: 'route_comment',
-        SplitComment: 'split_comment',
-        PromoteType: 'promote_type',
-        Publish: 'publish',
-        Track: 'track',
-        Untrack: 'untrack',
-        EditComment: 'edit_comment',
-        FillNews: 'fill_news',
-      },
+    id: 1,
+    actionType: 'route_comment',
+    payload: {
+      targetNewsId: 1245,
+      commentPayloads: [{ title: 'whole 세종시 route' }],
     },
   },
+  {
+    id: 2,
+    actionType: 'split_comment',
+    payload: splitPayloadForDisplay,
+  },
+  {
+    id: 3,
+    actionType: 'publish',
+    payload: { newsId: 1254 },
+    newsId: 1254,
+  },
+]);
+assert.strictEqual(
+  grouped.length,
+  2,
+  'comment moves to the same target should collapse into one review category',
 );
+assert.strictEqual(grouped[0].kind, 'comments_to_existing');
+assert.strictEqual(grouped[0].targetNewsId, 1245);
+assert.deepStrictEqual(
+  plain(grouped[0].actions.map((action) => action.id)),
+  [1, 2],
+  'route_comment and split_comment rows for the same target should be reviewed together',
+);
+assert.strictEqual(grouped[1].kind, 'single');
+assert.strictEqual(grouped[1].actions[0].id, 3);
 const splitAction = {
   actionType: 'split_comment',
   payload: { destinations: [{ targetNewsId: 1245 }] },

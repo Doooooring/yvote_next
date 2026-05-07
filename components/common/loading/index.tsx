@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import { LoadingCommonProps } from './loadingCommon.type';
 
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useTypeEffect } from '@utils/hook/useTypeEffect';
+
+import { LoadingCommonProps } from './loadingCommon.type';
 
 /**
  * 로딩 상태 공통 컴포넌트
