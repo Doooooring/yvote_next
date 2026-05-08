@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import { proposedActionRepository } from '@repositories/proposedAction';
@@ -44,7 +43,6 @@ import { ProposedActionSource, ProposedActionType } from '@utils/interface/propo
  */
 export default function FillButton({ newsId, newsType }: { newsId: number; newsType: string }) {
   const qc = useQueryClient();
-  const [stage, setStage] = useState<'idle' | 'filling'>('idle');
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -60,18 +58,16 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
       await proposedActionRepository.approve(created.id);
       return created.id;
     },
-    onSuccess: () => {
-      setStage('filling');
-      qc.invalidateQueries({ queryKey: ['trackedNews'] });
-      qc.invalidateQueries({ queryKey: ['proposedActions'] });
-    },
-    onError: () => {
-      setStage('idle');
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ['trackedNews'] }),
+        qc.invalidateQueries({ queryKey: ['proposedActions'] }),
+      ]);
     },
   });
 
   function onClick() {
-    if (mutation.isPending || stage === 'filling') return;
+    if (mutation.isPending) return;
     const ok = window.confirm(
       `Re-fill news ${newsId}? This re-runs the type-specific pipeline ` +
         `and overwrites generated content fields. State is preserved.`,
@@ -80,9 +76,6 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
     mutation.mutate();
   }
 
-  if (stage === 'filling') {
-    return <Btn disabled>filling…</Btn>;
-  }
   if (mutation.isPending) {
     return <Btn disabled>requesting…</Btn>;
   }

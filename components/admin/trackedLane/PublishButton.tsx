@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import { proposedActionRepository } from '@repositories/proposedAction';
@@ -39,7 +38,6 @@ export default function PublishButton({
   state?: NewsState | string;
 }) {
   const qc = useQueryClient();
-  const [stage, setStage] = useState<'idle' | 'publishing'>('idle');
   const alreadyPublished = state === NewsState.Published;
 
   const mutation = useMutation({
@@ -56,18 +54,16 @@ export default function PublishButton({
       await proposedActionRepository.approve(created.id);
       return created.id;
     },
-    onSuccess: () => {
-      setStage('publishing');
-      qc.invalidateQueries({ queryKey: ['trackedNews'] });
-      qc.invalidateQueries({ queryKey: ['proposedActions'] });
-    },
-    onError: () => {
-      setStage('idle');
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ['trackedNews'] }),
+        qc.invalidateQueries({ queryKey: ['proposedActions'] }),
+      ]);
     },
   });
 
   function onClick() {
-    if (mutation.isPending || stage === 'publishing') return;
+    if (mutation.isPending) return;
     const ok = window.confirm(`Publish news ${newsId}? It will become visible on the live site.`);
     if (!ok) return;
     mutation.mutate();
@@ -79,9 +75,6 @@ export default function PublishButton({
         ✅ published
       </Btn>
     );
-  }
-  if (stage === 'publishing') {
-    return <Btn disabled>publishing…</Btn>;
   }
   if (mutation.isPending) {
     return <Btn disabled>requesting…</Btn>;
