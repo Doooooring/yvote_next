@@ -106,6 +106,30 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
 
   const selectedNewsOptions = useMemo(() => report?.selected_news || [], [report]);
 
+  const decisionsInvalid = useMemo(() => {
+    if (!report) return true;
+    const reasons: string[] = [];
+    report.clusters.forEach((c, i) => {
+      const d = decisions[i];
+      if (!d) return;
+      if (d.action === 'move_to' && !d.target_news_id) {
+        reasons.push(`"${c.label}": 이동 대상 뉴스를 골라야 합니다`);
+      }
+      if (d.action === 'create_new' && !(d.new_title || '').trim()) {
+        reasons.push(`"${c.label}": 새 뉴스 제목이 비어있습니다`);
+      }
+    });
+    if (report.outliers && report.outliers.length > 0) {
+      if (outlierDecision.action === 'move_to' && !outlierDecision.target_news_id) {
+        reasons.push('outliers: 이동 대상 뉴스를 골라야 합니다');
+      }
+      if (outlierDecision.action === 'create_new' && !(outlierDecision.new_title || '').trim()) {
+        reasons.push('outliers: 새 뉴스 제목이 비어있습니다');
+      }
+    }
+    return reasons;
+  }, [report, decisions, outlierDecision]);
+
   const updateDecision = (i: number, patch: Partial<ClusterDecision>) => {
     setDecisions((prev) => {
       const next = [...prev];
@@ -364,9 +388,19 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
         </Body>
         <Footer>
           {submitResult && <SubmitStatus>{submitResult}</SubmitStatus>}
+          {Array.isArray(decisionsInvalid) && decisionsInvalid.length > 0 && (
+            <ValidationHint>{decisionsInvalid.join(' · ')}</ValidationHint>
+          )}
           <FooterButtons>
             <SecondaryButton onClick={onClose}>취소</SecondaryButton>
-            <PrimaryButton onClick={submit} disabled={submitting || !report}>
+            <PrimaryButton
+              onClick={submit}
+              disabled={
+                submitting ||
+                !report ||
+                (Array.isArray(decisionsInvalid) && decisionsInvalid.length > 0)
+              }
+            >
               {submitting ? '적용 중…' : '적용'}
             </PrimaryButton>
           </FooterButtons>
@@ -559,6 +593,11 @@ const FooterButtons = styled.div`
 const SubmitStatus = styled.span`
   font-size: 12px;
   color: #444;
+`;
+const ValidationHint = styled.span`
+  font-size: 12px;
+  color: #b00020;
+  flex: 1;
 `;
 const PrimaryButton = styled.button`
   background: #333;
