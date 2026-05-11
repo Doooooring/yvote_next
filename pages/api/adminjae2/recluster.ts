@@ -40,8 +40,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         maxBuffer: 50 * 1024 * 1024,
         encoding: 'utf8',
         // The LLM call can take a while on large comment sets — match
-        // the worker's _TIMEOUT default (240s) plus a generous buffer.
-        timeout: 5 * 60 * 1000,
+        // the worker's _TIMEOUT default (600s) plus a generous buffer.
+        timeout: 12 * 60 * 1000,
       },
     );
     const report = JSON.parse(stdout.trim() || '{}');
