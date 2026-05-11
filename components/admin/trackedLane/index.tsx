@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import PreviewBox from '@components/news/previewBox';
 import { newsRepository } from '@repositories/news';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import EditableTitle from './EditableTitle';
 import FillButton from './FillButton';
 import PublishButton from './PublishButton';
+import ReclusterModal from './ReclusterModal';
 import UntrackButton from './UntrackButton';
 
 const PREVIEW_LIMIT = 100;
@@ -15,6 +18,7 @@ export default function TrackedLane() {
   // Publishing is not the same as untracking — we want long-running tracked
   // topics (debate threads, ongoing budgets) to remain in this lane until
   // the owner explicitly clicks Untrack.
+  const qc = useQueryClient();
   const { data: tracked = [], isFetching } = useQuery({
     queryKey: ['trackedNews'],
     queryFn: () =>
@@ -32,11 +36,56 @@ export default function TrackedLane() {
     staleTime: 30_000,
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [showRecluster, setShowRecluster] = useState(false);
+
+  const toggleSelect = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const exitEditMode = () => {
+    setIsEditing(false);
+    setSelected(new Set());
+  };
+
+  const onTitleSaved = () => {
+    qc.invalidateQueries({ queryKey: ['trackedNews'] });
+  };
+
+  const closeReclusterModal = () => {
+    setShowRecluster(false);
+    // Refresh tracked list — reclustering creates/moves rows that
+    // change what shows here.
+    qc.invalidateQueries({ queryKey: ['trackedNews'] });
+  };
+
+  const selectedIds = Array.from(selected);
+
   return (
     <Wrapper>
       <Heading>
         추적 중<span className="count">{tracked.length}</span>
         {isFetching && <span className="loading">...</span>}
+        <HeaderActions>
+          {isEditing ? (
+            <>
+              {selectedIds.length > 0 && (
+                <RedistributeButton onClick={() => setShowRecluster(true)}>
+                  재배분 ({selectedIds.length})
+                </RedistributeButton>
+              )}
+              <EditToggle onClick={exitEditMode}>편집 종료</EditToggle>
+            </>
+          ) : (
+            <EditToggle onClick={() => setIsEditing(true)}>편집</EditToggle>
+          )}
+        </HeaderActions>
       </Heading>
       <SectionRule />
       {tracked.length === 0 ? (
@@ -46,18 +95,41 @@ export default function TrackedLane() {
         </EmptyHint>
       ) : (
         <Grid>
-          {tracked.map((item) => (
-            <TrackedRow key={item.id}>
-              <PreviewBox preview={item} />
-              {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
-              <ButtonRow>
-                <FillButton newsId={item.id} newsType={item.newsType} />
-                <PublishButton newsId={item.id} state={item.state} />
-                <UntrackButton newsId={item.id} />
-              </ButtonRow>
-            </TrackedRow>
-          ))}
+          {tracked.map((item) => {
+            const isSelected = selected.has(item.id);
+            return (
+              <TrackedRow key={item.id} $editing={isEditing} $selected={isSelected}>
+                {isEditing && (
+                  <EditControls>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelect(item.id)}
+                      />{' '}
+                      선택
+                    </label>
+                    <EditableTitle
+                      newsId={item.id}
+                      initialTitle={item.title || ''}
+                      onSaved={onTitleSaved}
+                    />
+                  </EditControls>
+                )}
+                <PreviewBox preview={item} />
+                {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
+                <ButtonRow>
+                  <FillButton newsId={item.id} newsType={item.newsType} />
+                  <PublishButton newsId={item.id} state={item.state} />
+                  <UntrackButton newsId={item.id} />
+                </ButtonRow>
+              </TrackedRow>
+            );
+          })}
         </Grid>
+      )}
+      {showRecluster && (
+        <ReclusterModal newsIds={selectedIds} onClose={closeReclusterModal} />
       )}
     </Wrapper>
   );
@@ -95,6 +167,40 @@ const Heading = styled.h2`
   }
 `;
 
+const HeaderActions = styled.span`
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+`;
+
+const EditToggle = styled.button`
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid #888;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #333;
+  &:hover {
+    background: #f5f5f5;
+  }
+`;
+
+const RedistributeButton = styled.button`
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #333;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background: #111;
+  }
+`;
+
 const SectionRule = styled.hr`
   border: none;
   border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
@@ -124,10 +230,30 @@ const Grid = styled.div`
   }
 `;
 
-const TrackedRow = styled.div`
+const TrackedRow = styled.div<{ $editing?: boolean; $selected?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  ${({ $editing, $selected, theme }) =>
+    $editing && $selected
+      ? `outline: 2px solid ${theme.colors.yvote12}; outline-offset: 4px; border-radius: 4px;`
+      : ''}
+`;
+
+const EditControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: #fafafa;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
 `;
 
 const Note = styled.div`
