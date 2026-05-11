@@ -106,6 +106,19 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
 
   const selectedNewsOptions = useMemo(() => report?.selected_news || [], [report]);
 
+  const sourceBreakdown = (refs: string[]): string => {
+    if (!report) return '';
+    const counts: Record<number, number> = {};
+    refs.forEach((ref) => {
+      const e = report.comment_index[ref];
+      if (!e) return;
+      counts[e.news_id] = (counts[e.news_id] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([nid, n]) => `#${nid}×${n}`)
+      .join(' + ');
+  };
+
   const decisionsInvalid = useMemo(() => {
     if (!report) return true;
     const reasons: string[] = [];
@@ -210,6 +223,7 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
                     <ClusterHeader>
                       <ClusterLabel>{c.label}</ClusterLabel>
                       <ClusterMeta>{c.comment_refs.length}개 댓글</ClusterMeta>
+                      <SourceTag>현재 위치: {sourceBreakdown(c.comment_refs) || '(없음)'}</SourceTag>
                     </ClusterHeader>
                     {c.rationale && <Rationale>{c.rationale}</Rationale>}
                     <CommentList>
@@ -245,10 +259,10 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
                             updateDecision(i, { target_news_id: Number(e.target.value) || undefined })
                           }
                         >
-                          <option value="">(news id)</option>
+                          <option value="">(뉴스 선택)</option>
                           {selectedNewsOptions.map((n) => (
                             <option key={n.id} value={n.id}>
-                              {n.id} — {n.title.slice(0, 30)}
+                              → 뉴스 #{n.id} [{n.newsType}] {n.title.slice(0, 30)}
                             </option>
                           ))}
                         </select>
@@ -295,6 +309,7 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
                   <ClusterHeader>
                     <ClusterLabel>(outliers)</ClusterLabel>
                     <ClusterMeta>{report.outliers.length}개</ClusterMeta>
+                    <SourceTag>현재 위치: {sourceBreakdown(report.outliers) || '(없음)'}</SourceTag>
                   </ClusterHeader>
                   <Rationale>
                     어느 군집에도 자연스럽게 안 붙는 댓글들. 일괄 처리 또는 weekly로 회수.
@@ -543,6 +558,15 @@ const ClusterLabel = styled.h4`
 const ClusterMeta = styled.span`
   font-size: 12px;
   color: #666;
+`;
+const SourceTag = styled.span`
+  font-size: 11px;
+  color: #555;
+  background: #f0f0f0;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, monospace;
 `;
 const Rationale = styled.p`
   margin: 4px 0;
