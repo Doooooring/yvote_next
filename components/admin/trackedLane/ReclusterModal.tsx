@@ -9,6 +9,7 @@ interface CommentIndexEntry {
   title: string;
   date: string;
   body_head: string;
+  body?: string;
 }
 
 interface ClusterFromServer {
@@ -431,7 +432,11 @@ function CommentItem({ entry, fallback }: { entry?: CommentIndexEntry; fallback:
     return <li>{fallback}</li>;
   }
   const titleText = entry.title || '(no title)';
-  const bodyHead = entry.body_head || '';
+  // Prefer full body when available; fall back to body_head if the
+  // worker version is older.
+  const fullBody = (entry.body || '').trim();
+  const headBody = (entry.body_head || '').trim();
+  const display = fullBody || headBody;
   return (
     <CommentLi>
       <CommentTitleRow onClick={() => setOpen((v) => !v)}>
@@ -442,13 +447,8 @@ function CommentItem({ entry, fallback }: { entry?: CommentIndexEntry; fallback:
         <span>{titleText}</span>
         {entry.date && <CommentDate>({entry.date})</CommentDate>}
       </CommentTitleRow>
-      {open && bodyHead && (
-        <CommentBody>
-          {bodyHead}
-          {bodyHead.length >= 200 && ' …'}
-        </CommentBody>
-      )}
-      {open && !bodyHead && <CommentBody><em>(본문 없음)</em></CommentBody>}
+      {open && display && <CommentBody>{display}</CommentBody>}
+      {open && !display && <CommentBody><em>(본문 없음)</em></CommentBody>}
     </CommentLi>
   );
 }
