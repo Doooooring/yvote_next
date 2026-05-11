@@ -5,7 +5,6 @@ import PreviewBox from '@components/news/previewBox';
 import { newsRepository } from '@repositories/news';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import EditableTitle from './EditableTitle';
 import FillButton from './FillButton';
 import PublishButton from './PublishButton';
 import ReclusterModal from './ReclusterModal';
@@ -54,10 +53,6 @@ export default function TrackedLane() {
     setSelected(new Set());
   };
 
-  const onTitleSaved = () => {
-    qc.invalidateQueries({ queryKey: ['trackedNews'] });
-  };
-
   const closeReclusterModal = () => {
     setShowRecluster(false);
     // Refresh tracked list — reclustering creates/moves rows that
@@ -98,23 +93,30 @@ export default function TrackedLane() {
           {tracked.map((item) => {
             const isSelected = selected.has(item.id);
             return (
-              <TrackedRow key={item.id} $editing={isEditing} $selected={isSelected}>
+              <TrackedRow
+                key={item.id}
+                $editing={isEditing}
+                $selected={isSelected}
+                onClick={
+                  isEditing
+                    ? (e) => {
+                        // Clicking anywhere on the row toggles selection while in
+                        // edit mode, except on the action buttons / links.
+                        const target = e.target as HTMLElement;
+                        if (target.closest('button, a, input')) return;
+                        toggleSelect(item.id);
+                      }
+                    : undefined
+                }
+              >
                 {isEditing && (
-                  <EditControls>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleSelect(item.id)}
-                      />{' '}
-                      선택
-                    </label>
-                    <EditableTitle
-                      newsId={item.id}
-                      initialTitle={item.title || ''}
-                      onSaved={onTitleSaved}
-                    />
-                  </EditControls>
+                  <SelectCheckbox
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleSelect(item.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label={`select news ${item.id}`}
+                  />
                 )}
                 <PreviewBox preview={item} />
                 {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
@@ -231,29 +233,30 @@ const Grid = styled.div`
 `;
 
 const TrackedRow = styled.div<{ $editing?: boolean; $selected?: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  ${({ $editing }) => ($editing ? 'cursor: pointer;' : '')}
   ${({ $editing, $selected, theme }) =>
     $editing && $selected
-      ? `outline: 2px solid ${theme.colors.yvote12}; outline-offset: 4px; border-radius: 4px;`
+      ? `
+        background: ${theme.colors.yvote02 || '#eef4ff'};
+        outline: 2px solid ${theme.colors.yvote12};
+        outline-offset: 2px;
+        border-radius: 4px;
+      `
       : ''}
 `;
 
-const EditControls = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 6px;
-  background: #fafafa;
-  border: 1px dashed #ccc;
-  border-radius: 4px;
-  font-size: 12px;
-  label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
+const SelectCheckbox = styled.input`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  z-index: 2;
+  cursor: pointer;
 `;
 
 const Note = styled.div`
