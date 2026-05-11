@@ -56,6 +56,10 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
   const [report, setReport] = useState<ServerReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [decisions, setDecisions] = useState<ClusterDecision[]>([]);
+  const [outlierDecision, setOutlierDecision] = useState<ClusterDecision>({
+    action: 'to_weekly',
+    new_news_type: 'debate',
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<string | null>(null);
 
@@ -85,6 +89,8 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
               new_news_type: c.suggested_new_news_type || 'debate',
             })),
           );
+          // Outliers default to weekly fallback.
+          setOutlierDecision({ action: 'to_weekly', new_news_type: 'debate' });
         }
       })
       .catch((e) => {
@@ -108,28 +114,39 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
     });
   };
 
+  const buildDecisionEntry = (
+    refs: string[],
+    d: ClusterDecision,
+    label: string,
+  ): Record<string, unknown> => {
+    const base: Record<string, unknown> = {
+      action: d.action,
+      refs,
+      cluster_label: label,
+    };
+    if (d.action === 'move_to') {
+      base.target_news_id = d.target_news_id;
+    }
+    if (d.action === 'create_new') {
+      base.title = (d.new_title || label || '').trim() || label;
+      base.newsType = d.new_news_type || 'debate';
+    }
+    return base;
+  };
+
   const submit = async () => {
     if (!report) return;
     setSubmitting(true);
     setSubmitResult(null);
-    const payload = {
-      decisions: report.clusters.map((c, i) => {
-        const d = decisions[i] || { action: 'keep_in' };
-        const base: Record<string, unknown> = {
-          action: d.action,
-          refs: c.comment_refs,
-          cluster_label: c.label,
-        };
-        if (d.action === 'move_to') {
-          base.target_news_id = d.target_news_id;
-        }
-        if (d.action === 'create_new') {
-          base.title = (d.new_title || c.label || '').trim() || c.label;
-          base.newsType = d.new_news_type || 'debate';
-        }
-        return base;
-      }),
-    };
+    const clusterDecisions = report.clusters.map((c, i) => {
+      const d = decisions[i] || { action: 'keep_in' };
+      return buildDecisionEntry(c.comment_refs, d, c.label);
+    });
+    const outlierEntry =
+      report.outliers && report.outliers.length > 0
+        ? [buildDecisionEntry(report.outliers, outlierDecision, '(outliers)')]
+        : [];
+    const payload = { decisions: [...clusterDecisions, ...outlierEntry] };
     try {
       const r = await fetch('/api/adminjae2/recluster-apply', {
         method: 'POST',
@@ -172,18 +189,11 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
                     </ClusterHeader>
                     {c.rationale && <Rationale>{c.rationale}</Rationale>}
                     <CommentList>
-                      {c.comment_refs.slice(0, 12).map((ref) => {
-                        const e = report.comment_index[ref];
-                        if (!e) return <li key={ref}>{ref}</li>;
-                        return (
-                          <li key={ref}>
-                            <CommentSrc>[news {e.news_id} / {e.commentType}]</CommentSrc>{' '}
-                            {e.title || '(no title)'}
-                          </li>
-                        );
-                      })}
-                      {c.comment_refs.length > 12 && (
-                        <li>… +{c.comment_refs.length - 12}개</li>
+                      {c.comment_refs.slice(0, 30).map((ref) => (
+                        <CommentItem key={ref} entry={report.comment_index[ref]} fallback={ref} />
+                      ))}
+                      {c.comment_refs.length > 30 && (
+                        <li>… +{c.comment_refs.length - 30}개</li>
                       )}
                     </CommentList>
                     <ActionRow>
@@ -262,19 +272,91 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
                     <ClusterLabel>(outliers)</ClusterLabel>
                     <ClusterMeta>{report.outliers.length}개</ClusterMeta>
                   </ClusterHeader>
+                  <Rationale>
+                    어느 군집에도 자연스럽게 안 붙는 댓글들. 일괄 처리 또는 weekly로 회수.
+                  </Rationale>
                   <CommentList>
-                    {report.outliers.slice(0, 12).map((ref) => {
-                      const e = report.comment_index[ref];
-                      if (!e) return <li key={ref}>{ref}</li>;
-                      return (
-                        <li key={ref}>
-                          <CommentSrc>[news {e.news_id} / {e.commentType}]</CommentSrc>{' '}
-                          {e.title || '(no title)'}
-                        </li>
-                      );
-                    })}
+                    {report.outliers.slice(0, 30).map((ref) => (
+                      <CommentItem key={ref} entry={report.comment_index[ref]} fallback={ref} />
+                    ))}
+                    {report.outliers.length > 30 && (
+                      <li>… +{report.outliers.length - 30}개</li>
+                    )}
                   </CommentList>
-                  <Hint>* outliers는 자동 처리되지 않음. 필요하면 별도로 조치하세요.</Hint>
+                  <ActionRow>
+                    <Picker>
+                      <label>
+                        <input
+                          type="radio"
+                          checked={outlierDecision.action === 'keep_in'}
+                          onChange={() => setOutlierDecision({ ...outlierDecision, action: 'keep_in' })}
+                        />{' '}
+                        유지 (원래 위치)
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          checked={outlierDecision.action === 'move_to'}
+                          onChange={() => setOutlierDecision({ ...outlierDecision, action: 'move_to' })}
+                        />{' '}
+                        이동 →
+                      </label>
+                      <select
+                        disabled={outlierDecision.action !== 'move_to'}
+                        value={outlierDecision.target_news_id || ''}
+                        onChange={(e) =>
+                          setOutlierDecision({
+                            ...outlierDecision,
+                            target_news_id: Number(e.target.value) || undefined,
+                          })
+                        }
+                      >
+                        <option value="">(news id)</option>
+                        {selectedNewsOptions.map((n) => (
+                          <option key={n.id} value={n.id}>
+                            {n.id} — {n.title.slice(0, 30)}
+                          </option>
+                        ))}
+                      </select>
+                      <label>
+                        <input
+                          type="radio"
+                          checked={outlierDecision.action === 'create_new'}
+                          onChange={() => setOutlierDecision({ ...outlierDecision, action: 'create_new' })}
+                        />{' '}
+                        새 뉴스 생성
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="새 뉴스 제목"
+                        value={outlierDecision.new_title || ''}
+                        disabled={outlierDecision.action !== 'create_new'}
+                        onChange={(e) =>
+                          setOutlierDecision({ ...outlierDecision, new_title: e.target.value })
+                        }
+                      />
+                      <select
+                        disabled={outlierDecision.action !== 'create_new'}
+                        value={outlierDecision.new_news_type || 'debate'}
+                        onChange={(e) =>
+                          setOutlierDecision({ ...outlierDecision, new_news_type: e.target.value })
+                        }
+                      >
+                        <option value="debate">debate</option>
+                        <option value="executive">executive</option>
+                        <option value="diplomat">diplomat</option>
+                        <option value="others">others</option>
+                      </select>
+                      <label>
+                        <input
+                          type="radio"
+                          checked={outlierDecision.action === 'to_weekly'}
+                          onChange={() => setOutlierDecision({ ...outlierDecision, action: 'to_weekly' })}
+                        />{' '}
+                        weekly로 보내기
+                      </label>
+                    </Picker>
+                  </ActionRow>
                 </Cluster>
               )}
             </>
@@ -293,6 +375,65 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
     </Backdrop>
   );
 }
+
+function CommentItem({ entry, fallback }: { entry?: CommentIndexEntry; fallback: string }) {
+  const [open, setOpen] = useState(false);
+  if (!entry) {
+    return <li>{fallback}</li>;
+  }
+  const titleText = entry.title || '(no title)';
+  const bodyHead = entry.body_head || '';
+  return (
+    <CommentLi>
+      <CommentTitleRow onClick={() => setOpen((v) => !v)}>
+        <CommentToggle>{open ? '▼' : '▶'}</CommentToggle>
+        <CommentSrc>
+          [news {entry.news_id} / {entry.commentType}]
+        </CommentSrc>{' '}
+        <span>{titleText}</span>
+        {entry.date && <CommentDate>({entry.date})</CommentDate>}
+      </CommentTitleRow>
+      {open && bodyHead && (
+        <CommentBody>
+          {bodyHead}
+          {bodyHead.length >= 200 && ' …'}
+        </CommentBody>
+      )}
+      {open && !bodyHead && <CommentBody><em>(본문 없음)</em></CommentBody>}
+    </CommentLi>
+  );
+}
+
+const CommentLi = styled.li`
+  list-style: none;
+  padding: 2px 0;
+`;
+const CommentTitleRow = styled.div`
+  cursor: pointer;
+  user-select: none;
+  &:hover { color: #333; }
+`;
+const CommentToggle = styled.span`
+  display: inline-block;
+  width: 14px;
+  color: #888;
+  font-size: 10px;
+`;
+const CommentDate = styled.span`
+  color: #999;
+  font-size: 11px;
+  margin-left: 6px;
+`;
+const CommentBody = styled.div`
+  margin: 4px 0 6px 14px;
+  padding: 6px 8px;
+  background: #fafafa;
+  border-left: 2px solid #ddd;
+  font-size: 12px;
+  color: #333;
+  white-space: pre-wrap;
+  line-height: 1.45;
+`;
 
 const Backdrop = styled.div`
   position: fixed;
@@ -376,7 +517,8 @@ const Rationale = styled.p`
 `;
 const CommentList = styled.ul`
   margin: 6px 0;
-  padding-left: 18px;
+  padding-left: 0;
+  list-style: none;
   font-size: 12px;
 `;
 const CommentSrc = styled.span`
