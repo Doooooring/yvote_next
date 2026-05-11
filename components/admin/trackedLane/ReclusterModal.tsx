@@ -196,6 +196,11 @@ export default function ReclusterModal({ newsIds, onClose }: Props) {
         setSubmitResult(`실패: ${JSON.stringify(data.report || data.error)}`);
       } else {
         setSubmitResult(`완료: ${data.report.results?.length || 0}개 결정 적용됨`);
+        // Auto-close after a short pause so the success message is
+        // briefly visible and the user knows it landed.
+        setTimeout(() => {
+          onClose();
+        }, 800);
       }
     } catch (e: unknown) {
       setSubmitResult(`에러: ${e instanceof Error ? e.message : String(e)}`);
