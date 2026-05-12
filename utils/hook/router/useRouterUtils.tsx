@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
 import { MouseEvent, useCallback } from 'react';
+import { useRouter } from 'next/router';
 
 export function useRouterUtils() {
   const router = useRouter();

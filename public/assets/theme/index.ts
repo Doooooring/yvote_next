@@ -1,17 +1,21 @@
 export const customTheme = {
   colors: {
-    primary: '#0070f3',
-    secondary: '#ff6c00',
-    text: '#333333',
-    yvote01: '#d8eef8', // Brightest
-    yvote02: '#ccebfc',
-    yvote03: '#a2ddf2', // Original yvote01
-    yvote04: '#88cce8',
-    yvote05: '#72beda', // Original yvote02
-    yvote06: '#56b3d1',
-    yvote07: '#2b9fc2', // Original yvote03
-    yvote08: '#1d7ea2',
-    yvote09: '#0d5b7d', // Darkest
+    primary: '#4a453d',
+    secondary: '#8a8178',
+    text: '#1a1a1a',
+    yvote01: '#f8f8f7', // Brightest
+    yvote02: '#f0f0ee',
+    yvote03: '#e8e8e6',
+    yvote04: '#dddddb',
+    yvote05: '#ccccca',
+    yvote06: '#c2c2c0',
+    yvote07: '#a0a09e',
+    yvote08: '#737371',
+    yvote09: '#5a5a58',
+    yvote10: '#4a4a48',
+    yvote11: '#3a3a38',
+    yvote12: '#252525',
+    yvote13: '#151515', // Darkest
     gray100: '#fcfcfc',
     gray200: '#efefef',
     gray300: '#e1e1e1',
@@ -21,7 +25,7 @@ export const customTheme = {
     gray700: '#979797',
     gray800: '#7c7c7c',
     gray900: '#555555',
-    fallback: '#F2F2F2',
+    fallback: '#f0f0ee',
     hovergray: '#f0f0f0',
   },
   fonts: {

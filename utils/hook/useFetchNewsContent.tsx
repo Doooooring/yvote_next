@@ -1,6 +1,6 @@
-import { newsRepository } from '@repositories/news';
 import { useCallback, useState } from 'react';
 
+import { newsRepository } from '@repositories/news';
 import { NewsInView } from '@utils/interface/news';
 
 type AnswerState = 'left' | 'right' | 'none' | null;

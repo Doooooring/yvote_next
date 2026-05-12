@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { Device } from '../interface/common';
 
 export const useDevice = () => {

@@ -5,15 +5,47 @@ export enum commentType {
   입법부 = '입법부',
   행정부 = '행정부',
   청와대 = '청와대',
+  // 윤석열 정부 시기 (2022-05-10 ~ 2025-12-29) 한정 명칭. 외부 시기는 청와대.
+  대통령실 = '대통령실',
   국민의힘 = '국민의힘',
   더불어민주당 = '더불어민주당',
+  // Historical lineage names — see yvote_automation party_history.py.
+  // Backfill scrapes for past dates emit these instead of the modern
+  // canonical names.
+  한나라당 = '한나라당',
+  새누리당 = '새누리당',
+  자유한국당 = '자유한국당',
+  미래통합당 = '미래통합당',
+  통합민주당 = '통합민주당',
+  민주당 = '민주당',
+  민주통합당 = '민주통합당',
+  새정치민주연합 = '새정치민주연합',
   기타 = '기타',
   헌법재판소 = '헌법재판소',
 }
 
+// Set of commentTypes considered "current" — used by /news recent
+// articles to filter out historical-only buckets from the category
+// tabs (per owner direction). Past-name commentTypes still render
+// inside individual news rows where they exist as real DB rows.
+export const CURRENT_COMMENT_TYPES: ReadonlySet<commentType> = new Set([
+  commentType.와이보트,
+  commentType.입법부,
+  commentType.행정부,
+  // Whichever presidential-office name is current right now (the
+  // current era is 청와대 again as of 2025-12-29). 대통령실 is a
+  // historical-only commentType from /news recent articles' POV.
+  commentType.청와대,
+  commentType.국민의힘,
+  commentType.더불어민주당,
+  commentType.기타,
+  commentType.헌법재판소,
+]);
+
 export enum NewsType {
   bill = 'bill',
-  teukprosecution = 'teukprosecution',
+  specialcounsel = 'specialcounsel',
+  northkorea = 'northkorea',
   constitution = 'constitution',
   executive = 'executive',
   cabinet = 'cabinet',
@@ -22,6 +54,10 @@ export enum NewsType {
   debate = 'debate',
   election = 'election',
   weekly = 'weekly',
+  investigation = 'investigation',
+  budget = 'budget',
+  economics = 'economics',
+  plenary = 'plenary',
   others = 'others',
   //헌재 종류별 만들 것
 }
@@ -31,13 +67,13 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.bill:
       return '법률';
     case NewsType.constitution:
-      return '헌법재판소';
+      return '헌재';
     case NewsType.executive:
       return '시행령';
     case NewsType.cabinet:
-      return '국무회의';
+      return '국무';
     case NewsType.diplomat:
-      return '정상외교';
+      return '외교';
     case NewsType.govern:
       return '행정';
     case NewsType.debate:
@@ -45,13 +81,42 @@ export const newsTypesToKor = (newsType: NewsType) => {
     case NewsType.election:
       return '선거';
     case NewsType.weekly:
-      return '일주일';
-    case NewsType.teukprosecution:
+      return '주간';
+    case NewsType.specialcounsel:
       return '특검';
+    case NewsType.northkorea:
+      return '북한';
+    case NewsType.investigation:
+      return '조사';
+    case NewsType.budget:
+      return '예산';
+    case NewsType.economics:
+      return '경제';
+    case NewsType.plenary:
+      return '본회의';
     case NewsType.others:
       return '기타';
     default:
       return '기타';
+  }
+};
+
+export const newsTypesToKorFull = (newsType: NewsType) => {
+  switch (newsType) {
+    case NewsType.cabinet:
+      return '국무회의';
+    case NewsType.diplomat:
+      return '정상외교';
+    case NewsType.investigation:
+      return '국정조사';
+    case NewsType.constitution:
+      return '헌법재판소';
+    case NewsType.specialcounsel:
+      return '특별검사';
+    case NewsType.plenary:
+      return '본회의';
+    default:
+      return newsTypesToKor(newsType);
   }
 };
 
@@ -104,10 +169,11 @@ export interface Comment {
   news: Partial<News>;
 }
 
-export interface Article
-  extends Pick<Comment, 'id' | 'commentType' | 'title' | 'comment' | 'date'> {
+export interface Article extends Pick<Comment, 'id' | 'commentType' | 'title' | 'date'> {
+  comment?: string;
   news: {
     id: number;
+    title?: string;
     state: NewsState;
   };
 }
@@ -120,6 +186,16 @@ export interface PartyVote {
   against: number;
   abstain: number;
   absent: number;
+}
+
+export interface BillItem {
+  billNo: string;
+  billName: string;
+  detail?: string;
+  proposalReason?: string;
+  voteResult?: string;
+  voteTotal?: number;
+  voteByParty?: PartyVote[];
 }
 
 export interface News {
@@ -140,6 +216,7 @@ export interface News {
   billVoteResult?: string;
   billVoteTotal?: number;
   billVoteByParty?: PartyVote[];
+  bills?: BillItem[];
   date?: string;
   keywords: Array<Keyword>;
   newsImage: string;
@@ -149,6 +226,8 @@ export interface News {
   opinionLeft: string;
   opinionRight: string;
   comments: Array<Comment>;
+  tracked?: boolean;
+  trackedNote?: string | null;
   votes: {
     left: number;
     right: number;
@@ -174,6 +253,8 @@ export interface Preview
     | 'date'
     | 'keywords'
     | 'state'
+    | 'tracked'
+    | 'trackedNote'
   > {
   comments: Array<commentType>;
 }

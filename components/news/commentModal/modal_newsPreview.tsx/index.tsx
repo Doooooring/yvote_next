@@ -1,10 +1,12 @@
+import { useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { CommonIconButton } from '@components/common/commonStyles';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
-import { commentTypeImg, sortComment } from '@utils/interface/news/comment';
-import Image from 'next/image';
-import { useMemo, useState } from 'react';
-import styled from 'styled-components';
+import { sortComment } from '@utils/interface/news/comment';
+
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
 
@@ -12,9 +14,19 @@ interface Modal_NewsPreviewProp {
   id: number;
   commentTypes: Array<commentType>;
   close: () => void;
+  initialCommentId?: number;
+  newsTitle?: string;
+  disableCategorize?: boolean;
 }
 
-export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_NewsPreviewProp) {
+export function CommentModal_NewsPreview({
+  id,
+  commentTypes,
+  close,
+  initialCommentId,
+  newsTitle,
+  disableCategorize,
+}: Modal_NewsPreviewProp) {
   const commentTypesSorted = useMemo(() => {
     return sortComment(commentTypes);
   }, [commentTypes]);
@@ -22,7 +34,11 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
 
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper>
+      <ModalBodyWrapper
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          if (e.target === e.currentTarget) close();
+        }}
+      >
         {commentTypes.length > 0 && (
           <>
             <CommentButtons>
@@ -35,17 +51,19 @@ export function CommentModal_NewsPreview({ id, commentTypes, close }: Modal_News
                       setCommentSelected(commentType);
                     }}
                   >
-                    <Image
-                      src={commentTypeImg(commentType)}
-                      alt={commentType}
-                      width="20"
-                      height="20"
-                    />
+                    <CommentTypeIcon type={commentType} size={16} />
                   </CommentButton>
                 );
               })}
             </CommentButtons>
-            <CommentBodyCommon id={id} commentType={commentSelected} close={close} />
+            <CommentBodyCommon
+              id={id}
+              commentType={commentSelected}
+              close={close}
+              initialCommentId={initialCommentId}
+              newsTitle={newsTitle}
+              disableCategorize={disableCategorize}
+            />
           </>
         )}
       </ModalBodyWrapper>
@@ -70,21 +88,24 @@ const _ModalBodyWrapper = styled.div`
 `;
 
 const CommentButtons = styled.div`
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 0.5rem;
-
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  justify-content: center;
+  gap: 4px;
+  padding: 0.3rem 0 0.5rem;
 `;
 
 const CommentButton = styled(CommonIconButton)<{ $selected: boolean }>`
-  padding: 0.4rem;
-  background-color: white !important;
+  padding: 0.25rem;
+  border-radius: 4px;
+  background-color: ${({ $selected, theme }) =>
+    $selected ? theme.colors.yvote02 : theme.colors.yvote01} !important;
   border: ${({ $selected, theme }) =>
-    $selected ? `2px solid ${theme.colors.yvote03}` : `2px solid ${theme.colors.gray400}`};
-  filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.7)')};
+    $selected ? `1px solid ${theme.colors.yvote06}` : `1px solid ${theme.colors.yvote04}`};
+  filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.6)')};
+  transition: all 0.15s ease;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote02} !important;
+    border-color: ${({ theme }) => theme.colors.yvote06};
+  }
 `;

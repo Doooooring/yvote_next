@@ -1,11 +1,14 @@
+import { MouseEvent } from 'react';
+import Link from 'next/link';
+
 import { useRouterUtils } from '@/utils/hook/router/useRouterUtils';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { Article, NewsState } from '@utils/interface/news';
-import Link from 'next/link';
-import { MouseEvent } from 'react';
+import { shareLink } from '@utils/tools/share';
+
 import { useToastMessage } from '../../../../utils/hook/useToastMessage';
 import { TextButton } from '../../../common/commonStyles';
-import { CommonMessageBox } from '../../../common/messageBox';
+import { CommonMessageBox, DefaultMessageBox } from '../../../common/messageBox';
 import CommentBodyExplain from '../commentBodyExplain';
 import CommentHead from '../commentHead';
 import { useListScrollheight, useScrollInfo } from '../commentModal.hook';
@@ -20,18 +23,43 @@ interface CommentModalProps {
 
 export default function CommentModal({
   close,
-  article: { news, commentType, title, comment, date },
+  article: { id, news, commentType, title, comment, date },
 }: CommentModalProps) {
   const { show } = useToastMessage();
   const { routeWithMouseEvent } = useRouterUtils();
   const { target: targetRef, moveToScrollHeight } = useListScrollheight();
   const { scrollHeight, maxScrollHeight } = useScrollInfo(targetRef);
 
+  const handleShare = async () => {
+    const url = `${window.location.origin}/news/c/${news.id}/${commentType}/${id}`;
+    const result = await shareLink({ url });
+    if (result === 'copied') {
+      show(
+        <DefaultMessageBox>
+          <p>링크가 복사되었습니다</p>
+        </DefaultMessageBox>,
+        2000,
+      );
+    } else if (result === 'failed') {
+      show(
+        <DefaultMessageBox>
+          <p>링크 복사에 실패했습니다</p>
+        </DefaultMessageBox>,
+        2000,
+      );
+    }
+  };
+
   return (
     <CommonModalLayout onOutClick={close}>
-      <ModalBodyWrapper>
+      <ModalBodyWrapper
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          if (e.target === e.currentTarget) close();
+        }}
+      >
         <ModalLayout
           close={close}
+          onShare={handleShare}
           headView={<CommentHead comment={commentType} />}
           bodyView={
             <ScrollWrapper ref={targetRef} className="common-scroll-style">
@@ -40,7 +68,7 @@ export default function CommentModal({
                 maxScrollHeight={maxScrollHeight}
                 moveToScrollHeight={moveToScrollHeight}
               />
-              <CommentBodyExplain id={news.id} title={title} explain={comment} date={date} />
+              <CommentBodyExplain id={news.id} title={title} explain={comment ?? ''} date={date} />
             </ScrollWrapper>
           }
           footerView={

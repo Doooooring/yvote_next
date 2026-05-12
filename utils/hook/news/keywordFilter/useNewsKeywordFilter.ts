@@ -1,8 +1,9 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+
 import KeywordsRepository from '@repositories/keywords';
 import { KeyTitle } from '@utils/interface/keywords';
 import { getRenderingEnvironment } from '@utils/tools';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
 
 const CUSTOM_KEYWORDS_KEY = 'CUSTOM_KEYWORDS';
 

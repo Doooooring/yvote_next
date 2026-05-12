@@ -1,6 +1,8 @@
-import { Backdrop, FallbackBox, Row, backgroundSlide } from '@components/common/commonStyles';
 import { memo } from 'react';
 import styled from 'styled-components';
+
+import { Backdrop, backgroundSlide, FallbackBox, Row } from '@components/common/commonStyles';
+
 import { PreviewBoxLayout_Published } from '../previewBox/previewBox.style';
 
 function PreviewBoxFallback() {

@@ -1,12 +1,50 @@
-import { CommonIconButton, CommonLayoutBox, Row } from '@components/common/commonStyles';
-import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
-import Link from 'next/link';
-import { commentType, NewsState, NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
-import { commentTypeImg } from '@utils/interface/news/comment';
-import { getDotDateForm } from '@utils/tools/date';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { AiFillBell, AiOutlineBell } from 'react-icons/ai';
 import styled from 'styled-components';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import { CommonLayoutBox, Row } from '@components/common/commonStyles';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
+import { commentType, NewsState, NewsType, newsTypesToKor, Preview } from '@utils/interface/news';
+import { sortComment } from '@utils/interface/news/comment';
+import { getDotDateForm } from '@utils/tools/date';
+
 import { PreviewBoxLayout_Pending, PreviewBoxLayout_Published } from './previewBox.style';
+// Custom Y-vote icon: peace symbol with left branch removed (Y in circle)
+const YVoteIcon = ({ size = 14, filled = false }: { size?: number; filled?: boolean }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke={filled ? 'none' : 'currentColor'}
+    />
+    {filled ? (
+      <g stroke="${({ theme }) => theme.colors.yvote01}" strokeWidth={2}>
+        <line x1="12" y1="2" x2="12" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="22" />
+        <line x1="12" y1="12" x2="19" y2="19" />
+      </g>
+    ) : (
+      <g>
+        <line x1="12" y1="2" x2="12" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="22" />
+        <line x1="12" y1="12" x2="19" y2="19" />
+      </g>
+    )}
+  </svg>
+);
 
 interface PreviewBoxProps {
   preview: Preview;
@@ -15,35 +53,44 @@ interface PreviewBoxProps {
   showId?: boolean;
   openModalOnClick?: boolean;
 }
-function PreviewBox({ preview, click = () => {}, expanded = false, showId = false, openModalOnClick = false }: PreviewBoxProps) {
+
+const noopClick = () => undefined;
+
+function PreviewBox({
+  preview,
+  click = noopClick,
+  expanded = false,
+  showId = false,
+  openModalOnClick = false,
+}: PreviewBoxProps) {
   const { id, title, subTitle, summary, date, comments = [], state, newsType } = preview;
   const { showCommentModal } = useCommentModal_Preview();
 
   const openComments = useCallback(() => {
-    showCommentModal(id, comments);
-  }, [id, comments]);
+    showCommentModal(id, comments, undefined, title, { disableCategorize: newsType === 'budget' });
+  }, [id, comments, title, newsType]);
 
   switch (state) {
     case NewsState.Published:
       return (
         <PreviewWrapper
           href={`/news/${id}`}
-          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+          navigable={!openModalOnClick}
+          onClick={(e?: MouseEvent<HTMLElement>) => {
+            if (openModalOnClick) {
+              openComments();
+              return;
+            }
             click(id, e);
             return;
           }}
         >
           <PreviewBoxLayout_Published
             expanded={expanded}
-            headView={<_NewsTitle title={title} id={id} showId={showId} />}
+            headView={<_NewsTitle title={title} id={id} showId={showId} newsType={newsType} />}
             contentView={
               <>
-                <_NewsSubTitle
-                  summary={summary}
-                  subTitle={subTitle}
-                  expanded={expanded}
-                  newsType={newsType}
-                />
+                <_NewsSubTitle summary={summary} subTitle={subTitle} expanded={expanded} />
                 <RowWrapper>
                   <_NewsDate date={date} />
                   <_CommentButtons
@@ -52,8 +99,18 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                       openComments();
                     }}
                   />
+                  <BottomButtonRow>
+                    <_AlarmButton />
+                    <_VoteButton />
+                  </BottomButtonRow>
                 </RowWrapper>
               </>
+            }
+            sideView={
+              <MobileSideButtonStack>
+                <_AlarmButton />
+                <_VoteButton />
+              </MobileSideButtonStack>
             }
           />
         </PreviewWrapper>
@@ -63,7 +120,8 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
       return (
         <PreviewWrapper
           href={`/adminjae/${id}`}
-          onClick={(e?: MouseEvent<HTMLDivElement>) => {
+          navigable={!openModalOnClick}
+          onClick={(e?: MouseEvent<HTMLElement>) => {
             if (openModalOnClick) {
               openComments();
               return;
@@ -85,15 +143,28 @@ function PreviewBox({ preview, click = () => {}, expanded = false, showId = fals
                 />
               </>
             }
+            sideView={<_AlarmButton />}
           />
         </PreviewWrapper>
       );
   }
 }
 
-const _NewsTitle = ({ title, id, showId }: { title: Preview['title']; id?: number; showId?: boolean }) => {
+const _NewsTitle = ({
+  title,
+  id,
+  showId,
+  newsType,
+}: {
+  title: Preview['title'];
+  id?: number;
+  showId?: boolean;
+  newsType?: NewsType;
+}) => {
+  const typeLabel = newsType ? newsTypesToKor(newsType) : '';
   return (
     <Title>
+      {typeLabel && <TypeBadge>{typeLabel}</TypeBadge>}
       <div className="title">
         {title}
         {showId && id !== undefined && <IdSpan> [{id}] </IdSpan>}
@@ -106,83 +177,48 @@ const _NewsSubTitle = ({
   summary,
   subTitle,
   expanded = false,
-  newsType,
 }: {
   summary: Preview['summary'];
   subTitle: Preview['subTitle'];
   expanded?: boolean;
-  newsType: NewsType;
 }) => {
-  const overlayText = newsType ? newsTypesToKor(newsType) : '';
-  const [hideOverlay, setHideOverlay] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollVars, setScrollVars] = useState<React.CSSProperties | undefined>();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const textRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const overflow = el.scrollHeight - el.clientHeight;
-    if (overflow > 4) {
-      const dur = Math.max(3, overflow * 0.06);
-      setScrollVars({
-        '--scroll-dist': `-${overflow}px`,
-        '--scroll-dur': `${dur}s`,
-        '--container-h': `${el.clientHeight}px`,
-      } as React.CSSProperties);
-    } else {
-      setScrollVars(undefined);
+    const el = textRef.current;
+    if (el) {
+      setIsClamped(el.scrollHeight > el.clientHeight + 2);
     }
   }, [subTitle]);
 
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = event.touches[0]?.clientX ?? null;
-  };
-
-  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (touchStartX.current === null) return;
-    const currentX = event.touches[0]?.clientX ?? null;
-    if (currentX === null) return;
-    if (Math.abs(currentX - touchStartX.current) > 24) {
-      setHideOverlay(true);
-      touchStartX.current = null;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    touchStartX.current = null;
-  };
-
   return (
-    <SubTitle
-      ref={containerRef}
-      $expanded={expanded}
-      $showOverlay={expanded && !hideOverlay}
-      $overlayText={overlayText}
-      $canScroll={!!scrollVars}
-      data-overlay={overlayText}
-      style={scrollVars}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      <span className="subtitle-text">
+    <SubTitle $expanded={expanded}>
+      <span
+        className="subtitle-text"
+        ref={textRef}
+        style={isExpanded ? { WebkitLineClamp: 'unset' } : undefined}
+      >
         {subTitle || ''}
       </span>
+      {isClamped && !isExpanded && (
+        <MoreButton
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+        >
+          더보기
+        </MoreButton>
+      )}
     </SubTitle>
   );
 };
 
 const _NewsDate = ({ date }: { date: Preview['date'] }) => {
-  return (
-    <Date>
-      {date ? (
-        <span>{getDotDateForm(date)}</span>
-      ) : (
-        ''
-      )}
-    </Date>
-  );
+  return <Date>{date ? <span>{getDotDateForm(date)}</span> : ''}</Date>;
 };
 
 const _CommentButtons = ({
@@ -196,15 +232,13 @@ const _CommentButtons = ({
 
   return (
     <SummaryButtons>
-      {comments.map((commentType, index) => (
-        <SummaryButton
+      {sortComment([...comments]).map((ct, index) => (
+        <CommentTypeIcon
           key={index}
-          zindex={10 - index}
-          image={commentTypeImg(commentType)}
-          onClick={(e) => {
-            e.stopPropagation();
-            (e.nativeEvent as any).stopImmediatePropagation?.();
-            openComments(commentType);
+          type={ct as commentType}
+          size={14}
+          onClick={() => {
+            openComments(ct);
           }}
         />
       ))}
@@ -220,60 +254,178 @@ const PreviewWrapper = ({
   href,
   onClick,
   children,
+  navigable = true,
 }: {
   href: string;
-  onClick: (e?: MouseEvent<HTMLDivElement>) => void;
+  onClick: (e?: MouseEvent<HTMLElement>) => void;
   children: ReactNode;
+  navigable?: boolean;
 }) => {
-  return (
-    <>
+  if (navigable) {
+    return (
       <Wrapper
-        onClick={(e: MouseEvent<HTMLDivElement>) => {
+        as="a"
+        href={href}
+        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
           e.preventDefault();
           onClick(e);
         }}
       >
         {children}
-        <Link href={href}>
-          <></>
-        </Link>
       </Wrapper>
-    </>
+    );
+  }
+  return (
+    <Wrapper
+      onClick={(e: MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
+      {children}
+    </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
-  filter: saturate(80%);
   width: 100%;
   text-decoration: none;
   font-family: Noto Sans KR, Helvetica, sans-serif;
-  transition: filter 0.2s ease;
   margin-bottom: 1px;
   img {
     transition: transform 0.3s ease-in-out;
   }
 
-  .title {
-    transition: color 0.3s ease;
-  }
-
   &:hover {
-    filter: saturate(130%);
-
     img {
       transform: scale(1.1);
     }
   }
 `;
 
+const BottomButtonRow = styled.div`
+  display: none;
+  @media screen and (min-width: 769px) {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+`;
+
+const MobileSideButtonStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-left: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+
+  @media screen and (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const _VoteButton = () => {
+  const [active, setActive] = useState(false);
+  return (
+    <VoteToggle
+      $active={active}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive((prev) => !prev);
+      }}
+    >
+      {active ? <YVoteIcon size={14} /> : <YVoteIcon size={14} />}
+    </VoteToggle>
+  );
+};
+
+const VoteToggle = styled.button<{ $active: boolean }>`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+  padding: 0;
+  cursor: pointer;
+  color: ${({ $active, theme }) => ($active ? '#c0392b' : theme.colors.yvote06)};
+
+  @media screen and (max-width: 768px) {
+    height: auto;
+    flex: 1;
+    border-top: 0.5px solid ${({ theme }) => theme.colors.yvote04};
+  }
+
+  @media screen and (min-width: 769px) {
+    border-top: none;
+  }
+`;
+
+const _AlarmButton = () => {
+  const [active, setActive] = useState(false);
+  return (
+    <AlarmToggle
+      $active={active}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive((prev) => !prev);
+      }}
+    >
+      {active ? <AiFillBell size="14px" /> : <AiOutlineBell size="14px" />}
+    </AlarmToggle>
+  );
+};
+
+const AlarmToggle = styled.button<{ $active: boolean }>`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote11 : theme.colors.yvote06)};
+
+  @media screen and (max-width: 768px) {
+    height: auto;
+    flex: 1;
+  }
+`;
+
+const TypeBadge = styled.span`
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote08};
+  background: ${({ theme }) => theme.colors.yvote03};
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 6px;
+  white-space: nowrap;
+  line-height: 1.3;
+
+  @media screen and (max-width: 768px) {
+    font-size: 10px;
+    padding: 1px 4px;
+    margin-right: 4px;
+  }
+`;
+
 const IdSpan = styled.span`
-  color: #3b82f6; /* very slight blue, adjust as needed */
+  color: #3b82f6;
   font-weight: 500;
 `;
 
 const Title = styled(Row)`
   border: 0;
   margin: 0;
+  line-height: 1;
+  align-items: center;
 
   .title {
     flex: 0 1 auto;
@@ -283,23 +435,44 @@ const Title = styled(Row)`
     text-align: left;
     padding: 0;
     padding-right: 2px;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-text-size-adjust: none;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+      -webkit-line-clamp: 2;
+    }
   }
 `;
 
-const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $overlayText?: string; $canScroll?: boolean }>`
-  @keyframes subtitleScroll {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(var(--scroll-dist)); }
-  }
+const MoreButton = styled.button`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border: none;
+  background: linear-gradient(90deg, transparent, ${({ theme }) => theme.colors.yvote02} 30%);
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 12px;
+  padding: 0 0 0 24px;
+  margin: 0;
+  cursor: pointer;
+  line-height: 24px;
+  white-space: nowrap;
 
+  @media screen and (max-width: 768px) {
+    line-height: 20px;
+    font-size: 11px;
+  }
+`;
+
+const SubTitle = styled.div<{ $expanded?: boolean }>`
   -webkit-text-size-adjust: none;
   text-align: left;
   padding: 0;
@@ -308,84 +481,24 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
   font-weight: 400;
   vertical-align: baseline;
   color: rgb(80, 80, 80);
-  margin: 0;
-  margin-bottom: 6px;
+  margin: 8px 0;
   font-size: 15px;
-  line-height: 20px;
+  line-height: 24px;
   height: auto;
-  min-height: 60px;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-height: 48px;
   position: relative;
 
-  @media (hover: hover) {
-    ${({ $canScroll }) =>
-      $canScroll
-        ? `
-      &:hover {
-        -webkit-line-clamp: unset;
-        -webkit-box-orient: unset;
-        display: block;
-        height: var(--container-h, auto);
-        text-overflow: clip;
-
-        .subtitle-text {
-          display: block;
-          animation: subtitleScroll var(--scroll-dur, 4s) linear infinite;
-        }
-      }
-    `
-        : ''}
+  .subtitle-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  @media (hover: none) {
-    ${({ $canScroll }) =>
-      $canScroll
-        ? `
-      -webkit-line-clamp: unset;
-      -webkit-box-orient: unset;
-      display: block;
-      height: var(--container-h, auto);
-      text-overflow: clip;
-
-      .subtitle-text {
-        display: block;
-        animation: subtitleScroll var(--scroll-dur, 4s) ease-in-out infinite;
-      }
-    `
-        : ''}
-  }
-
-  ${({ $showOverlay }) =>
-    $showOverlay
-      ? `
-    &::after {
-      content: attr(data-overlay);
-      position: absolute;
-      inset: 0;
-      background-color: rgba(255, 255, 255, 0.85);
-      opacity: 1;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #334155;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-shadow: 0 1px 1px rgba(15, 23, 42, 0.08);
-    }
-    &:hover::after {
-      opacity: 0;
-    }
-  `
-      : ''}
   @media screen and (max-width: 768px) {
+    font-size: 13px;
+    line-height: 20px;
+    min-height: 40px;
     color: rgb(100, 100, 100);
     font-size: 13.5px;
   }
@@ -393,13 +506,12 @@ const SubTitle = styled.div<{ $expanded?: boolean; $showOverlay?: boolean; $over
 
 const Date = styled.div`
   flex: 0 1 auto;
-  margin-bottom: 0;
+  margin: 0;
   font-size: 11px;
   color: ${({ theme }) => theme.colors.gray600};
   white-space: nowrap;
   font-weight: 400;
-  line-height: 1.2;
-  align-self: center;
+  line-height: 1;
 `;
 
 interface NewProps {
@@ -418,7 +530,8 @@ const RowWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 0;
+  margin: 0;
+  line-height: 1;
 `;
 
 const SummaryButtonWrapper = styled(Row)`
@@ -442,27 +555,3 @@ const SummaryButtons = styled.div`
   align-items: center;
   margin-bottom: 0px;
 `;
-
-const SummaryButton = styled(CommonIconButton)<{
-  image: string;
-  zindex: number;
-}>`
-  margin-left: -8px;
-
-  &:first-child {
-    margin-left: 0px;
-  }
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
-  background-color: white !important;
-  background-image: url(${({ image }) => image});
-  background-size: 16px 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  outline: none;
-  box-sizing: border-box;
-  z-index: ${({ zindex }) => zindex};
-`; // 여기선 이거 클릭해도 그냥 프리뷰 클릭한 것처럼 뉴스 디테일로 이동

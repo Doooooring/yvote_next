@@ -1,11 +1,15 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
-import { commentType } from '@utils/interface/news';
-import { commentTypeImg, getCommentTypeRank } from '@utils/interface/news/comment';
-import { getDotDateForm } from '@utils/tools/date';
-import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
-import { NewsTypeLayoutProps } from './default';
+
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import SharedTimelineList from '@components/news/timeline';
 import { customTheme } from '@public/assets/theme';
+import { useCommentModal } from '@utils/hook/news/useCommentModal_NewsDetail';
+import { BillItem, commentType } from '@utils/interface/news';
+import { getCommentTypeRank } from '@utils/interface/news/comment';
+import { getDotDateForm } from '@utils/tools/date';
+
+import { NewsTypeLayoutProps } from './default';
 
 type BillArticle = { title: string; contentHtml: string };
 
@@ -40,13 +44,98 @@ function parseBillArticles(html: string): BillArticle[] {
   return articles;
 }
 
+function toEffectiveBills(news: NewsTypeLayoutProps['news']): BillItem[] {
+  if (news.bills && news.bills.length > 0) return news.bills;
+  // Legacy single-bill fallback — wrap flat fields into one pseudo-item.
+  const hasAny =
+    !!(news.billDetail ?? '').trim() ||
+    !!(news.billVoteResult ?? '') ||
+    !!(news.billVoteTotal ?? 0) ||
+    (news.billVoteByParty ?? []).length > 0;
+  if (!hasAny) return [];
+  return [
+    {
+      billNo: '',
+      billName: '',
+      detail: news.billDetail,
+      voteResult: news.billVoteResult,
+      voteTotal: news.billVoteTotal,
+      voteByParty: news.billVoteByParty,
+    },
+  ];
+}
+
 export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
 
+  const effectiveBills = useMemo(() => toEffectiveBills(news), [news]);
+  const [billIndex, setBillIndex] = useState(0);
+  useEffect(() => {
+    setBillIndex((i) => (i >= effectiveBills.length ? 0 : i));
+  }, [effectiveBills.length]);
+
+  const currentBill: BillItem | null = effectiveBills[billIndex] ?? null;
+  const hasMultipleBills = effectiveBills.length > 1;
+
+  const gotoPrev = useCallback(() => {
+    setBillIndex((i) => (i <= 0 ? effectiveBills.length - 1 : i - 1));
+  }, [effectiveBills.length]);
+  const gotoNext = useCallback(() => {
+    setBillIndex((i) => (i >= effectiveBills.length - 1 ? 0 : i + 1));
+  }, [effectiveBills.length]);
+
+  // Keyboard: left/right arrows navigate between bills.
+  // Ignored when focus is in a form field or contenteditable area.
+  useEffect(() => {
+    if (!hasMultipleBills) return;
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        gotoPrev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        gotoNext();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [hasMultipleBills, gotoPrev, gotoNext]);
+
+  // Touch swipe handlers (mobile).
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!hasMultipleBills) return;
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    },
+    [hasMultipleBills],
+  );
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current == null || touchStartY.current == null) return;
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const dx = endX - touchStartX.current;
+      const dy = endY - touchStartY.current;
+      touchStartX.current = null;
+      touchStartY.current = null;
+      // Require mostly-horizontal swipe >60px to avoid false positives during scroll.
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx < 0) gotoNext();
+        else gotoPrev();
+      }
+    },
+    [gotoPrev, gotoNext],
+  );
+
   const [billArticles, setBillArticles] = useState<BillArticle[]>([]);
   useEffect(() => {
-    setBillArticles(parseBillArticles(news.billDetail ?? ''));
-  }, [news.billDetail]);
+    setBillArticles(parseBillArticles(currentBill?.detail ?? ''));
+  }, [currentBill?.detail]);
 
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
@@ -59,7 +148,7 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      titles.forEach(title => {
+      titles.forEach((title) => {
         groups[dateKey].push({ title, type: tl.commentType ?? commentType.기타 });
       });
     });
@@ -73,8 +162,8 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
     [news.comments],
   );
 
-  // Vote summary — computed from billVoteByParty
-  const partyVotes = news.billVoteByParty ?? [];
+  // Vote summary — per-bill, derived from currentBill.voteByParty
+  const partyVotes = currentBill?.voteByParty ?? [];
   const voteTotals = useMemo(() => {
     const sums = { for: 0, against: 0, abstain: 0, absent: 0 };
     partyVotes.forEach((pv) => {
@@ -85,15 +174,13 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
     });
     return sums;
   }, [partyVotes]);
-  const totalVotes = news.billVoteTotal ?? 0;
+  const totalVotes = currentBill?.voteTotal ?? 0;
 
   // Vote detail toggle
   const [showVoteDetail, setShowVoteDetail] = useState(false);
 
   // Mobile tab state
   const [activeTab, setActiveTab] = useState(0);
-
-  const showAmendment = !!(news.billAmendment?.replace(/<[^>]*>/g, '').trim());
 
   const debateSlides = useMemo(() => {
     return [
@@ -104,47 +191,67 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
 
   return (
     <Wrapper>
-      <Content>
-        <Header>
-          <div className="header-text">
-            <h1>{news.title}</h1>
-            {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
-            <div className="meta">
-              {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
-              {commentTypes.length ? (
-                <CommentIcons>
-                  {commentTypes.map((type, index) => (
-                    <CommentIconButton
-                      key={`${type}-${index}`}
-                      image={commentTypeImg(type as commentType)}
-                      onClick={() => showCommentModal(news.id, type as commentType)}
-                      aria-label={`${type} 평론 보기`}
-                    />
-                  ))}
-                </CommentIcons>
-              ) : null}
-            </div>
-          </div>
-        </Header>
+      <Header>
+        <h1>{news.title}</h1>
+        {news.subTitle ? <p className="subtitle">{news.subTitle}</p> : null}
+        <div className="meta">
+          {news.date ? <span>{getDotDateForm(news.date)}</span> : null}
+          {commentTypes.length ? (
+            <CommentIcons>
+              {commentTypes.map((type, index) => (
+                <CommentTypeIcon
+                  key={`${type}-${index}`}
+                  type={type as commentType}
+                  size={12}
+                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                />
+              ))}
+            </CommentIcons>
+          ) : null}
+        </div>
+      </Header>
 
-        <Grid>
-          <Card>
-            <SectionTitle>타임라인</SectionTitle>
-            <TimelineList timeline={timelineGroups} />
-          </Card>
+      <Section>
+        <SectionTitle>타임라인</SectionTitle>
+        <SectionBody>
+          <SharedTimelineList timeline={timelineGroups} flat />
+        </SectionBody>
+      </Section>
 
-          <Card>
-            <SectionTitle>법안 요약</SectionTitle>
-            <SummaryHtml style={{ display: 'block', marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }} />
-          </Card>
+      <Section>
+        <SectionTitle>법안 요약</SectionTitle>
+        <SectionBody>
+          <SummaryHtml
+            style={{ display: 'block', marginLeft: 0 }}
+            dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }}
+          />
+        </SectionBody>
+      </Section>
 
-          <Card>
-            <SectionTitle>본회의 표결 및 토론</SectionTitle>
-
-            {totalVotes > 0 && (
+      <Section>
+        <SectionTitle>본회의 표결 및 토론</SectionTitle>
+        <SectionBody>
+          {totalVotes > 0 && (
+            <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              {hasMultipleBills && (
+                <BillNav>
+                  <NavButton onClick={gotoPrev} aria-label="이전 법안">
+                    ◀
+                  </NavButton>
+                  <BillNavLabel>
+                    <span className="index">
+                      {billIndex + 1} / {effectiveBills.length}
+                    </span>
+                    <span className="name">{currentBill?.billName ?? ''}</span>
+                  </BillNavLabel>
+                  <NavButton onClick={gotoNext} aria-label="다음 법안">
+                    ▶
+                  </NavButton>
+                </BillNav>
+              )}
               <VoteSummarySection>
-                {news.billVoteResult && (
-                  <VoteResultBadge>{news.billVoteResult}</VoteResultBadge>
+                {currentBill?.voteResult && (
+                  <VoteResultBadge>{currentBill.voteResult}</VoteResultBadge>
                 )}
                 <VoteNumbers>
                   <VoteItem>
@@ -165,243 +272,214 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                   </VoteItem>
                 </VoteNumbers>
                 <VoteBar>
-                  <VoteBarSegment $width={(voteTotals.for / totalVotes) * 100} $color="#1e293b" />
-                  <VoteBarSegment $width={(voteTotals.against / totalVotes) * 100} $color="#64748b" />
-                  <VoteBarSegment $width={(voteTotals.abstain / totalVotes) * 100} $color="#94a3b8" />
-                  <VoteBarSegment $width={(voteTotals.absent / totalVotes) * 100} $color="#e2e8f0" />
+                  <VoteBarSegment
+                    $width={(voteTotals.for / totalVotes) * 100}
+                    $color={customTheme.colors.yvote12}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.against / totalVotes) * 100}
+                    $color={customTheme.colors.yvote08}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.abstain / totalVotes) * 100}
+                    $color={customTheme.colors.yvote07}
+                  />
+                  <VoteBarSegment
+                    $width={(voteTotals.absent / totalVotes) * 100}
+                    $color={customTheme.colors.yvote04}
+                  />
                 </VoteBar>
                 {partyVotes.length > 0 && (
                   <>
                     <VoteDetailToggle onClick={() => setShowVoteDetail(!showVoteDetail)}>
                       상세보기 {showVoteDetail ? '▴' : '▾'}
                     </VoteDetailToggle>
-                    {showVoteDetail && (() => {
-                      const sorted = [...partyVotes].sort((a, b) => {
-                        const denomA = a.for + a.against + a.abstain + a.absent;
-                        const denomB = b.for + b.against + b.abstain + b.absent;
-                        const ratioA = denomA > 0 ? a.for / denomA : 0;
-                        const ratioB = denomB > 0 ? b.for / denomB : 0;
-                        return ratioB - ratioA;
-                      });
-                      return (
-                        <VoteDetailTable>
-                          <thead>
-                            <tr>
-                              <th />
-                              {sorted.map((pv, idx) => (
-                                <th key={idx}>{pv.party}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr><td>찬성</td>{sorted.map((pv, i) => <td key={i}>{pv.for}</td>)}</tr>
-                            <tr><td>반대</td>{sorted.map((pv, i) => <td key={i}>{pv.against}</td>)}</tr>
-                            <tr><td>기권</td>{sorted.map((pv, i) => <td key={i}>{pv.abstain}</td>)}</tr>
-                            <tr><td>불참</td>{sorted.map((pv, i) => <td key={i}>{pv.absent}</td>)}</tr>
-                          </tbody>
-                        </VoteDetailTable>
-                      );
-                    })()}
+                    {showVoteDetail &&
+                      (() => {
+                        const sorted = [...partyVotes].sort((a, b) => {
+                          const denomA = a.for + a.against + a.abstain + a.absent;
+                          const denomB = b.for + b.against + b.abstain + b.absent;
+                          const ratioA = denomA > 0 ? a.for / denomA : 0;
+                          const ratioB = denomB > 0 ? b.for / denomB : 0;
+                          return ratioB - ratioA;
+                        });
+                        return (
+                          <VoteDetailTable>
+                            <thead>
+                              <tr>
+                                <th />
+                                {sorted.map((pv, idx) => (
+                                  <th key={idx}>{pv.party}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>찬성</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.for}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>반대</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.against}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>기권</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.abstain}</td>
+                                ))}
+                              </tr>
+                              <tr>
+                                <td>불참</td>
+                                {sorted.map((pv, i) => (
+                                  <td key={i}>{pv.absent}</td>
+                                ))}
+                              </tr>
+                            </tbody>
+                          </VoteDetailTable>
+                        );
+                      })()}
                   </>
                 )}
               </VoteSummarySection>
-            )}
-
-            {showAmendment && (
-              <AmendmentBox $show>
-                <DebateLabel>수정안 내용</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
-              </AmendmentBox>
-            )}
-
-            {/* PC: side by side */}
-            <DebateGrid>
-              <DebateSide>
-                <DebateLabel>찬성</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
-              </DebateSide>
-              <DebateSide>
-                <DebateLabel>반대</DebateLabel>
-                <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
-              </DebateSide>
-            </DebateGrid>
-
-            {/* Mobile: toggle tabs */}
-            <MobileDebateWrapper>
-              <DebateTabs>
-                {debateSlides.map((slide, i) => (
-                  <DebateTab
-                    key={i}
-                    $active={i === activeTab}
-                    onClick={() => setActiveTab(i)}
-                  >
-                    {slide.label}
-                  </DebateTab>
-                ))}
-              </DebateTabs>
-              <DebateTabContent
-                dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
-              />
-            </MobileDebateWrapper>
-          </Card>
-
-          {billArticles.length > 0 && (
-            <Card>
-              <SectionTitle>법안 상세보기</SectionTitle>
-              <BillArticleGroups>
-                {billArticles.map((article, idx) => (
-                  <BillArticleGroup key={idx}>
-                    <summary>
-                      <span dangerouslySetInnerHTML={{ __html: article.title }} />
-                    </summary>
-                    <BillArticleContent dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-                  </BillArticleGroup>
-                ))}
-              </BillArticleGroups>
-            </Card>
+            </BillSwipeBlock>
           )}
 
-          <Card>
-            <SectionTitle>브리핑 및 기타 반응</SectionTitle>
-            <SummaryList>
-              {(news.summaries ?? []).filter(s => s.summary?.replace(/<[^>]*>/g, '').trim()).map((summary, idx) => (
+          {/* PC: side by side */}
+          <DebateGrid>
+            <DebateSide>
+              <DebateLabel>찬성</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.proDebate ?? '' }} />
+            </DebateSide>
+            <DebateSide>
+              <DebateLabel>반대</DebateLabel>
+              <DebateContent dangerouslySetInnerHTML={{ __html: news.conDebate ?? '' }} />
+            </DebateSide>
+          </DebateGrid>
+
+          {/* Mobile: toggle tabs */}
+          <MobileDebateWrapper>
+            <DebateTabs>
+              {debateSlides.map((slide, i) => (
+                <DebateTab key={i} $active={i === activeTab} onClick={() => setActiveTab(i)}>
+                  {slide.label}
+                </DebateTab>
+              ))}
+            </DebateTabs>
+            <DebateTabContent
+              dangerouslySetInnerHTML={{ __html: debateSlides[activeTab]?.content ?? '' }}
+            />
+          </MobileDebateWrapper>
+        </SectionBody>
+      </Section>
+
+      {effectiveBills.length > 0 && (
+        <Section>
+          <SectionTitle>법안 상세보기</SectionTitle>
+          <SectionBody>
+            <BillSwipeBlock onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              {hasMultipleBills && (
+                <BillNav>
+                  <NavButton onClick={gotoPrev} aria-label="이전 법안">
+                    ◀
+                  </NavButton>
+                  <BillNavLabel>
+                    <span className="index">
+                      {billIndex + 1} / {effectiveBills.length}
+                    </span>
+                    <span className="name">{currentBill?.billName ?? ''}</span>
+                  </BillNavLabel>
+                  <NavButton onClick={gotoNext} aria-label="다음 법안">
+                    ▶
+                  </NavButton>
+                </BillNav>
+              )}
+              {billArticles.length > 0 ? (
+                <BillArticleGroups>
+                  {billArticles.map((article, idx) => (
+                    <BillArticleGroup key={idx}>
+                      <summary>
+                        <span dangerouslySetInnerHTML={{ __html: article.title }} />
+                      </summary>
+                      <BillArticleContent
+                        dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+                      />
+                    </BillArticleGroup>
+                  ))}
+                </BillArticleGroups>
+              ) : (
+                <EmptyBillDetail>상세 내용이 등록되지 않았습니다.</EmptyBillDetail>
+              )}
+            </BillSwipeBlock>
+          </SectionBody>
+        </Section>
+      )}
+
+      <Section>
+        <SectionTitle>브리핑 및 기타 반응</SectionTitle>
+        <SectionBody>
+          <SummaryList>
+            {(news.summaries ?? [])
+              .filter((s) => s.summary?.replace(/<[^>]*>/g, '').trim())
+              .map((summary, idx) => (
                 <SummaryListItem key={summary.commentType + idx}>
                   <CommentTypeIcon type={summary.commentType} />
-                  <SummaryHtml
-                    dangerouslySetInnerHTML={{ __html: summary.summary }}
-                  />
+                  <SummaryHtml dangerouslySetInnerHTML={{ __html: summary.summary }} />
                 </SummaryListItem>
               ))}
-            </SummaryList>
-          </Card>
-        </Grid>
-      </Content>
+          </SummaryList>
+        </SectionBody>
+      </Section>
     </Wrapper>
   );
 }
-
-// --- CommentTypeIcon ---
-
-const CommentTypeIcon = ({ type }: { type: commentType }) => (
-  <CommentTypeIconWrapper>
-    <img
-      src={commentTypeImg(type)}
-      alt={type}
-      style={{ width: 16, height: 16, verticalAlign: 'middle' }}
-    />
-  </CommentTypeIconWrapper>
-);
-
-// --- TimelineList ---
-
-type TimelineItem = { title: string; type: commentType };
-type TimelineListProps = {
-  timeline: [string, TimelineItem[]][];
-};
-
-const TimelineList = ({ timeline }: TimelineListProps) => {
-  if (!timeline || timeline.length === 0) return <TimelineEmpty>타임라인이 없습니다.</TimelineEmpty>;
-  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-
-  const currentYear = new Date().getFullYear().toString();
-
-  function formatKoreanDate(date: string) {
-    const match = date.match(/^(?:(\d{4})[.\-])?(\d{1,2})[.\-](\d{1,2})/);
-    if (!match) return date;
-    const [, year, month, day] = match;
-    if (year && year !== currentYear) {
-      return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-    }
-    return `${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-
-  return (
-    <TimelineListLayout>
-      {timeline.map(([date, items]) => {
-        const displayDate = formatKoreanDate(date);
-        const count = items.length;
-        const isOpen = !!expanded[date];
-        return (
-          <TimelineListItem key={date}>
-            <TimelineRow>
-              <TimelineDate>{displayDate}</TimelineDate>
-              <TimelineControls>
-                <TimelineTypeRow
-                  data-open={isOpen}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setExpanded((prev) => ({ ...prev, [date]: !isOpen }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setExpanded((prev) => ({ ...prev, [date]: !isOpen }));
-                    }
-                  }}
-                  aria-label={isOpen ? '접기' : '펼치기'}
-                >
-                  <TimelineIconButton aria-hidden="true">
-                    <TimelineCountText>
-                      {count}건
-                    </TimelineCountText>
-                  </TimelineIconButton>
-                </TimelineTypeRow>
-              </TimelineControls>
-            </TimelineRow>
-            {isOpen && (
-              <TimelineExpandableGrid>
-                {items.map((item, idx) => (
-                  <TimelineExpandableItem key={`${date}-${idx}`}>
-                    <CommentTypeIcon type={item.type} /> {item.title}
-                  </TimelineExpandableItem>
-                ))}
-              </TimelineExpandableGrid>
-            )}
-          </TimelineListItem>
-        );
-      })}
-    </TimelineListLayout>
-  );
-};
 
 // --- Styled Components ---
 
 const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
   display: flex;
-  justify-content: center;
-  padding: 16px 0 40px;
-`;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 60px;
 
-const Content = styled.div`
-  width: 98%;
-  max-width: 1120px;
-  color: #0f172a;
-
-  @media screen and (max-width: 768px) {
-    max-width: none;
+  @media (max-width: 768px) {
+    padding: 12px 0 40px;
   }
 `;
 
-const Header = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  padding: 22px;
-  display: block;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+const Header = styled.header`
+  width: 92%;
+  max-width: 1200px;
+  padding: 0 0 16px;
 
-  .header-text h1 {
-    margin: 8px 0 6px;
-    font-size: 1.6rem;
+  @media (max-width: 768px) {
+    width: 96%;
+  }
+
+  h1 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
     line-height: 1.4;
+    letter-spacing: -0.02em;
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
   }
 
   .subtitle {
-    color: #475569;
+    color: ${({ theme }) => theme.colors.yvote09};
     line-height: 1.6;
     margin: 0 0 8px;
+    font-size: 14px;
   }
 
   .meta {
@@ -409,8 +487,8 @@ const Header = styled.section`
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    color: #64748b;
-    font-size: 0.9rem;
+    color: ${({ theme }) => theme.colors.yvote08};
+    font-size: 13px;
   }
 `;
 
@@ -420,54 +498,112 @@ const CommentIcons = styled.div`
   gap: 6px;
 `;
 
-const CommentIconButton = styled.button<{ image: string }>`
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  background-image: url(${({ image }) => image});
-  background-size: 14px 14px;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  padding: 0;
-`;
+const Section = styled.section`
+  width: 92%;
+  max-width: 1200px;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0 0;
+  margin-bottom: 40px;
 
-const Grid = styled.div`
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-`;
-
-const Card = styled.section`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  @media (max-width: 768px) {
+    width: 96%;
+    margin-bottom: 32px;
+  }
 `;
 
 const SectionTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote13};
+  letter-spacing: -0.02em;
   margin: 0 0 8px;
-  font-size: 1.05rem;
-  color: #0f172a;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
-const CommentTypeIconWrapper = styled.span`
+const SectionBody = styled.div`
+  padding: 0 6px;
+
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
+`;
+
+// Per-bill swipe navigation
+
+const BillSwipeBlock = styled.div`
+  touch-action: pan-y;
+`;
+
+const BillNav = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 4px 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin-bottom: 12px;
+`;
+
+const NavButton = styled.button`
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  color: ${({ theme }) => theme.colors.yvote12};
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  margin-left: 4px;
-  border-radius: 50%;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
-  box-sizing: border-box;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.yvote03};
+  }
+`;
+
+const BillNavLabel = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+
+  .index {
+    font-size: 11px;
+    color: ${({ theme }) => theme.colors.yvote08};
+    letter-spacing: 0.04em;
+  }
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.yvote12};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .name {
+      font-size: 13px;
+    }
+  }
+`;
+
+const EmptyBillDetail = styled.div`
+  padding: 16px 0;
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 0.9rem;
+  text-align: center;
 `;
 
 // Bill article styles
@@ -491,9 +627,9 @@ const BillArticleGroup = styled.details`
     gap: 6px;
     cursor: pointer;
     font-weight: 500;
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
     padding: 6px 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
   summary::-webkit-details-marker {
@@ -503,7 +639,7 @@ const BillArticleGroup = styled.details`
   summary::after {
     content: '▾';
     font-size: 0.85rem;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
     margin-left: 4px;
   }
 
@@ -514,7 +650,7 @@ const BillArticleGroup = styled.details`
 
 const BillArticleContent = styled.div`
   padding: 8px 0 0;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
   word-break: break-word;
@@ -560,7 +696,6 @@ const BillArticleContent = styled.div`
   p.ql-align-center {
     text-align: center;
   }
-
 `;
 
 // Debate styles
@@ -576,39 +711,23 @@ const DebateGrid = styled.div`
 `;
 
 const DebateSide = styled.div`
-  padding: 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  background: #fafafa;
+  padding: 14px 0;
 `;
 
 const DebateLabel = styled.div`
   display: inline-block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   background: transparent;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid ${({ theme }) => theme.colors.yvote05};
   padding: 3px 10px;
   border-radius: 999px;
   margin-bottom: 10px;
 `;
 
-const AmendmentBox = styled.div<{ $show: boolean }>`
-  display: ${({ $show }) => ($show ? 'block' : 'none')};
-  margin-bottom: 16px;
-  padding: 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  background: #fafafa;
-
-  @media screen and (max-width: 768px) {
-    display: ${({ $show }) => ($show ? 'block' : 'none')};
-  }
-`;
-
 const DebateContent = styled.div`
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 0.95rem;
   word-break: break-word;
@@ -622,17 +741,15 @@ const DebateContent = styled.div`
 
 const VoteSummarySection = styled.div`
   margin-bottom: 20px;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
+  padding: 16px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote05};
 `;
 
 const VoteResultBadge = styled.div`
   text-align: center;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #334155;
+  color: ${({ theme }) => theme.colors.yvote11};
   margin-bottom: 12px;
 `;
 
@@ -653,12 +770,12 @@ const VoteItem = styled.div`
 const VoteCount = styled.span`
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: ${({ theme }) => theme.colors.yvote13};
 `;
 
 const VoteCountLabel = styled.span`
   font-size: 0.8rem;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
 `;
 
 const VoteBar = styled.div`
@@ -666,7 +783,7 @@ const VoteBar = styled.div`
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: #f1f5f9;
+  background: ${({ theme }) => theme.colors.yvote01};
 `;
 
 const VoteBarSegment = styled.div<{ $width: number; $color: string }>`
@@ -680,13 +797,13 @@ const VoteDetailToggle = styled.button`
   margin: 12px auto 0;
   background: none;
   border: none;
-  color: #64748b;
+  color: ${({ theme }) => theme.colors.yvote08};
   font-size: 0.85rem;
   cursor: pointer;
   padding: 4px 8px;
 
   &:hover {
-    color: #1e293b;
+    color: ${({ theme }) => theme.colors.yvote12};
   }
 `;
 
@@ -700,20 +817,20 @@ const VoteDetailTable = styled.table`
     padding: 6px 8px;
     text-align: center;
     font-weight: 600;
-    color: #1e293b;
-    border-bottom: 1px solid #e2e8f0;
+    color: ${({ theme }) => theme.colors.yvote12};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote04};
   }
 
   td {
     padding: 6px 8px;
     text-align: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.yvote01};
   }
 
   td:first-child {
     text-align: left;
     font-weight: 500;
-    color: #64748b;
+    color: ${({ theme }) => theme.colors.yvote08};
   }
 `;
 
@@ -736,22 +853,20 @@ const DebateTabs = styled.div`
 const DebateTab = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 8px 0;
-  border: 1.5px solid ${({ $active }) => ($active ? '#1e293b' : '#cbd5e1')};
-  border-radius: 999px;
-  background: ${({ $active }) => ($active ? '#1e293b' : 'transparent')};
-  color: ${({ $active }) => ($active ? '#fff' : '#1e293b')};
+  border: 1px solid
+    ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote05)};
+  border-radius: 2px;
+  background: transparent;
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote13 : theme.colors.yvote08)};
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.15s, border-color 0.15s;
 `;
 
 const DebateTabContent = styled.div`
-  padding: 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  background: #fafafa;
-  color: #1e293b;
+  padding: 14px 0;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 0.95rem;
   word-break: break-word;
@@ -762,113 +877,6 @@ const DebateTabContent = styled.div`
 `;
 
 // Timeline styles
-
-const TimelineListLayout = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-const TimelineListItem = styled.li`
-  padding: 0 0 1rem;
-`;
-
-const TimelineDate = styled.div`
-  font-size: 0.95rem;
-  color: #1e293b;
-  font-weight: 400;
-  display: flex;
-  align-self: center;
-  align-items: center;
-  line-height: 1.2;
-`;
-
-const TimelineRow = styled.div`
-  display: flex;
-  align-self: center;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
-`;
-
-const TimelineControls = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-`;
-
-const TimelineTypeRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #1e293b;
-
-  &::after {
-    content: '▾';
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-left: 6px;
-    transition: transform 0.18s;
-  }
-
-  &[data-open='true']::after {
-    transform: rotate(180deg);
-  }
-`;
-
-const TimelineIconButton = styled.button`
-  display: flex;
-  align-items: center;
-  align-self: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-`;
-
-const TimelineCountText = styled.span`
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
-`;
-
-const TimelineExpandableGrid = styled.ul`
-  list-style: none;
-  margin: 0.5rem 0 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px 10px;
-  width: 100%;
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TimelineExpandableItem = styled.li`
-  font-size: 0.85rem;
-  color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-  padding: 3px 0;
-  border-left: 2px solid #e2e8f0;
-  background: transparent;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-`;
-
-const TimelineEmpty = styled.div`
-  color: #aaa;
-  text-align: center;
-  padding: 1.5rem 0;
-`;
 
 // Summary styles
 
@@ -883,18 +891,18 @@ const SummaryListItem = styled.li`
   align-items: center;
   gap: 8px;
   padding: 4px 0 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote05};
 
   &:first-child {
     border-top: none;
-    padding-top: 24px;
+    padding-top: 8px;
   }
 `;
 
 const SummaryHtml = styled.div`
   display: inline;
   margin-left: 6px;
-  color: #1e293b;
+  color: ${({ theme }) => theme.colors.yvote12};
   line-height: 1.6;
   font-size: 1rem;
 

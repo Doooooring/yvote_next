@@ -1,35 +1,53 @@
 import Head from 'next/head';
 
+// Defaults — kept as constants so caller-passed `null` (which JS default-
+// params do NOT coalesce) can fall back to the same values inside the body.
+// See `keywords/[keyword]/index.tsx` passing `keyword.keywordImage` which is
+// `string | null` from the DB.
+const DEFAULT_TITLE = '와이보트';
+const DEFAULT_DESCRIPTION =
+  '와이보트를 통해 최소한의 필요한 뉴스만을 가장 효율적인 방법으로 만나보세요.';
+const DEFAULT_IMAGE = `https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75`;
+const DEFAULT_URL = `https://yvoting.com`;
+const DEFAULT_TYPE = 'website';
+
 interface HeadMetaProps {
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
-  type?: string;
+  // Allow null in addition to undefined — call sites pass DB columns
+  // directly (e.g. `image: keyword.keywordImage`) which are nullable.
+  title?: string | null;
+  description?: string | null;
+  image?: string | null;
+  url?: string | null;
+  type?: string | null;
 }
 
-function HeadMeta({
-  title = '와이보트',
-  description = '와이보트를 통해 최소한의 필요한 뉴스만을 가장 효율적인 방법으로 만나보세요.',
-  image = `https://yvoting.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo_image.d0e9b968.png&w=128&q=75`,
-  url = `https://yvoting.com`,
-  type = 'website',
-}: HeadMetaProps) {
+function HeadMeta({ title, description, image, url, type }: HeadMetaProps) {
+  // Nullish-coalesce so both `undefined` (prop omitted) and `null`
+  // (DB column) fall back to the defaults. `.startsWith` / `new URL()`
+  // below would crash on null otherwise.
+  const safeTitle = title ?? DEFAULT_TITLE;
+  const safeDescription = description ?? DEFAULT_DESCRIPTION;
+  const safeImage = image ?? DEFAULT_IMAGE;
+  const safeUrl = url ?? DEFAULT_URL;
+  const safeType = type ?? DEFAULT_TYPE;
+  const resolvedImage = safeImage.startsWith('http')
+    ? safeImage
+    : `${new URL(safeUrl).origin}${safeImage}`;
   return (
     <Head>
-      <title>{title}</title>
-      <meta name="description" content={description} />
+      <title>{safeTitle}</title>
+      <meta name="description" content={safeDescription} />
       <meta name="author" content={'와이보트'} />
-      <link rel="canonical" href={url} />
+      <link rel="canonical" href={safeUrl} />
       <meta name="robots" content="index, follow" />
       <meta httpEquiv="content-language" content="ko" />
       <meta name="application-name" content="와이보트" />
-      <meta name="apple-mobile-web-app-title" content={title} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:url" content={url} />
-      <meta property="og:type" content={type} />
+      <meta name="apple-mobile-web-app-title" content={safeTitle} />
+      <meta property="og:title" content={safeTitle} />
+      <meta property="og:description" content={safeDescription} />
+      <meta property="og:image" content={resolvedImage} />
+      <meta property="og:url" content={safeUrl} />
+      <meta property="og:type" content={safeType} />
       <meta property="og:article:author" content={'와이보트'} />
       <meta
         name="viewport"

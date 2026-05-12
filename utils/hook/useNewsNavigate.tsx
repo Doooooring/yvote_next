@@ -1,5 +1,6 @@
-import { useRouter } from 'next/router';
 import { MouseEvent, useCallback } from 'react';
+import { useRouter } from 'next/router';
+
 import { useRouterUtils } from './router/useRouterUtils';
 
 export const useNewsNavigate = () => {

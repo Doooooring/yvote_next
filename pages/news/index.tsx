@@ -1,32 +1,215 @@
-import HeadMeta from '@components/common/HeadMeta';
-import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
+import {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { AiOutlineCalendar } from 'react-icons/ai';
+import styled from 'styled-components';
+
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
+import { useChatContext } from '@/utils/context/chatContext';
+import { NewsAIProvider, useNewsAI } from '@/utils/context/newsAIContext';
 import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
+import HeadMeta from '@components/common/HeadMeta';
 import NewsArticlesSection from '@components/news/recentarticles';
+import { newsRepository } from '@repositories/news';
+import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import { useNewsNavigate } from '@utils/hook/useNewsNavigate';
-import { NewsType, Preview, newsTypesToKor } from '@utils/interface/news';
-import { GetStaticProps } from 'next';
-import { ChangeEvent, FormEvent, KeyboardEvent, ReactNode, useRef, useState, useTransition } from 'react';
-import { AiOutlineDown, AiOutlineUp, AiOutlineCalendar } from 'react-icons/ai';
-import styled from 'styled-components';
+import {
+  commentType,
+  NewsState,
+  NewsType,
+  newsTypesToKor,
+  newsTypesToKorFull,
+  Preview,
+} from '@utils/interface/news';
+import { getTextContentFromHtmlText } from '@utils/tools';
+
+interface PageMeta {
+  title: string;
+  description: string;
+  image?: string;
+  url: string;
+}
+
+// Kakao link cards cap title at ~2 lines; beyond ~55 Korean chars the
+// card starts hiding the description to fit the overflowing title.
+// Truncate server-side so description stays visible.
+const MAX_OG_TITLE_CHARS = 37;
+function truncateTitle(s: string, max: number = MAX_OG_TITLE_CHARS): string {
+  const trimmed = (s || '').trim();
+  if (trimmed.length <= max) return trimmed;
+  return trimmed.slice(0, max - 3).trimEnd() + '...';
+}
 
 interface pageProps {
   data: Array<Preview>;
+  origin: string;
+  meta: PageMeta | null;
 }
 
-export const getStaticProps: GetStaticProps<pageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<pageProps> = async (context) => {
+  const proto = (context.req.headers['x-forwarded-proto'] as string) || 'https';
+  const host = context.req.headers.host || 'yvoting.com';
+  const origin = `${proto}://${host}`;
+
+  // Deep-link OG tags: `/news/c/{newsId}/{commentType}[/{commentId}]` rewrites
+  // to this page with query params. Fetch the news to emit item-specific
+  // og:title / og:description so share unfurls show meaningful info.
+  const q = context.query;
+  const newsId = typeof q.newsId === 'string' ? q.newsId : null;
+  const commentTypeRaw = typeof q.commentType === 'string' ? q.commentType : null;
+  const commentId = typeof q.commentId === 'string' ? q.commentId : null;
+
+  let meta: PageMeta | null = null;
+  if (newsId) {
+    try {
+      const news = await newsRepository.getNewsContent(Number(newsId), null);
+      if (news) {
+        const cType = commentTypeRaw ? decodeURIComponent(commentTypeRaw) : null;
+        const baseTitle = news.title ?? '';
+        const sub =
+          news.subTitle ?? getTextContentFromHtmlText(news.summary ?? '')?.split('.')[0] ?? '';
+
+        let title = baseTitle;
+        let description = sub;
+
+        if (cType) {
+          // Fetch the commentType's comment list once — used for both the
+          // single-comment (find one by id) and commentType-level (build a
+          // titles description) cases.
+          let comments: Array<{ id: number; title: string; comment: string }> = [];
+          try {
+            const res = await newsRepository.getNewsComment(
+              Number(newsId),
+              cType as commentType,
+              0,
+              1000,
+            );
+            comments = res ?? [];
+          } catch {
+            // ignore — fall back to news-level meta
+          }
+
+          if (commentId) {
+            const match = comments.find((c) => c.id === Number(commentId));
+            if (match) {
+              title = match.title || baseTitle;
+              const body = getTextContentFromHtmlText(match.comment ?? '') || '';
+              // Replace DB paragraph separator `$` with space, collapse runs.
+              const flattened = body.replace(/\$/g, ' ').replace(/\s+/g, ' ').trim();
+              description = (flattened || baseTitle).slice(0, 200);
+            } else {
+              title = baseTitle ? `${baseTitle} · ${cType} 논평` : `${cType} 논평`;
+              description = sub || baseTitle;
+            }
+          } else {
+            title = baseTitle ? `${baseTitle} · ${cType} 자료` : `${cType} 자료`;
+            const titles = comments.map((c) => c.title).filter(Boolean);
+            if (titles.length > 0) {
+              // Join titles into a single description. OG descriptions
+              // typically render ~160–200 chars; over-truncated tail gets
+              // trimmed on the receiving side.
+              description = titles.join(' | ').slice(0, 300);
+            } else {
+              description = sub || baseTitle;
+            }
+          }
+        }
+
+        // Build the canonical URL for the share link (reverse the rewrite).
+        let path = `/news/${newsId}`;
+        if (cType && commentId)
+          path = `/news/c/${newsId}/${encodeURIComponent(cType)}/${commentId}`;
+        else if (cType) path = `/news/c/${newsId}/${encodeURIComponent(cType)}`;
+
+        meta = {
+          title: truncateTitle(title),
+          description,
+          // Keep existing image behavior (site default for /news/c/* shares).
+          url: `${origin}${path}`,
+        };
+      }
+    } catch {
+      // Swallow SSR fetch errors — fall back to default site OG.
+    }
+  }
+
   return {
-    props: { data: [] },
-    revalidate: 300,
+    props: { data: [], origin, meta },
   };
 };
 
 export default function NewsPage(props: pageProps) {
+  return (
+    <NewsAIProvider>
+      <NewsPageInner {...props} />
+    </NewsAIProvider>
+  );
+}
+
+function NewsPageInner(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const searchParams = useCustomSearchParams();
   const keywordFilter = searchParams.get('keyword') ?? null;
+
+  const { setActiveContent } = useChatContext();
+  const handleArticleExpand = (
+    info: {
+      newsId: number;
+      newsTitle: string;
+      commentId: number;
+      title: string;
+      commentType: string;
+      body: string;
+    } | null,
+  ) => {
+    if (info) {
+      const newsLabel = info.newsTitle
+        ? `"${info.newsTitle}" (뉴스 ${info.newsId})`
+        : `뉴스 ${info.newsId}`;
+      setActiveContent(
+        `코멘트 "${info.title}" 클릭함 (${newsLabel}, ${info.commentType}, 코멘트 ${info.commentId})`,
+      );
+    } else {
+      setActiveContent(null);
+    }
+  };
+
+  const { showCommentModal } = useCommentModal_Preview();
+  const deepLinkApplied = useRef(false);
+
+  const router = useRouter();
+  useEffect(() => {
+    if (deepLinkApplied.current) return;
+    const newsId = (router.query.newsId as string) || searchParams.get('newsId');
+    const rawCType = (router.query.commentType as string) || searchParams.get('commentType');
+    const cType = rawCType ? decodeURIComponent(rawCType) : null;
+    const commentId = (router.query.commentId as string) || searchParams.get('commentId');
+    const newsType = (router.query.newsType as string) || searchParams.get('newsType') || undefined;
+    if (newsId && cType) {
+      deepLinkApplied.current = true;
+      const newsTitle =
+        (router.query.newsTitle as string) || searchParams.get('newsTitle') || undefined;
+      showCommentModal(
+        Number(newsId),
+        [cType as commentType],
+        commentId ? Number(commentId) : undefined,
+        newsTitle,
+        { disableCategorize: newsType === 'budget' },
+      );
+    }
+  }, [router.query, searchParams]);
 
   const showNewsContent = useNewsNavigate();
   const [typeFilterOpen, setTypeFilterOpen] = useState(false);
@@ -65,195 +248,219 @@ export default function NewsPage(props: pageProps) {
   return (
     <>
       <HeadMeta
-        {...{
-          title: '뉴스 모아보기',
-          url: `https://yvoting.com/news`,
-        }}
+        {...(props.meta
+          ? {
+              title: props.meta.title,
+              description: props.meta.description,
+              image: props.meta.image ?? `/assets/img/og_trump.jpg`,
+              url: props.meta.url,
+              type: 'article',
+            }
+          : {
+              title: '뉴스 모아보기',
+              url: `${props.origin}/news`,
+              image: `/assets/img/og_trump.jpg`,
+            })}
       />
       <Wrapper>
+        {/* <PageHeader>
+          <PageTitle>뉴스 모아보기</PageTitle>
+          <PageSubtitle>yVote에서 발행한 뉴스를 모아봅니다</PageSubtitle>
+        </PageHeader> */}
+
         <ArticlesWrapper>
-          <NewsArticlesSection />
+          <NewsArticlesSection onExpandedContent={handleArticleExpand} />
         </ArticlesWrapper>
-        <div className="main-contents">
-          <div className="main-contents-body" ref={ref}>
-            <ToggleContainer initialHeight={200}>
-              {(isOpen: boolean, initialHeight: number) => (
-                <>
-                  <SectionHeader>
-                    <SectionTitle>작성 중 뉴스</SectionTitle>
-                    <HeaderControls>
-                      <TypeFilter>
-                        <TypeFilterButton
-                          onClick={() => {
-                            setWritingFilterOpen((prev) => !prev);
-                            setTypeFilterOpen(false);
-                          }}
-                          aria-expanded={writingFilterOpen}
-                        >
-                          {writingSelectedType === 'all'
-                            ? '전체'
-                            : newsTypesToKor(writingSelectedType)}
-                        </TypeFilterButton>
-                        {writingFilterOpen && (
-                          <TypeFilterMenu>
-                            <TypeFilterItem
-                              onClick={() => {
-                                setWritingFilterOpen(false);
-                                startTransition(() => setWritingSelectedType('all'));
-                              }}
-                            >
-                              전체
-                            </TypeFilterItem>
-                            {Object.values(NewsType).map((type) => (
-                              <TypeFilterItem
-                                key={type}
-                                onClick={() => {
-                                  setWritingFilterOpen(false);
-                                  startTransition(() => setWritingSelectedType(type));
-                                }}
-                              >
-                                {newsTypesToKor(type)}
-                              </TypeFilterItem>
-                            ))}
-                          </TypeFilterMenu>
-                        )}
-                      </TypeFilter>
-                      <InlineSearchBox>
-                        <SearchInput
-                          type="search"
-                          placeholder="제목 검색"
-                          value={writingTitleSearchInput}
-                          onChange={(event) => {
-                            setWritingTitleSearchInput(event.target.value);
-                            startTransition(() => setWritingTitleSearch(event.target.value));
-                          }}
-                          aria-label="작성 중 뉴스 제목 검색"
-                        />
-                        <SearchButton type="button" onClick={() => startTransition(() => setWritingTitleSearch(writingTitleSearchInput))} aria-label="작성 중 뉴스 검색">
-                          <SearchIcon src="/assets/img/ico_search.png" alt="" />
-                        </SearchButton>
-                      </InlineSearchBox>
-                    </HeaderControls>
-                  </SectionHeader>
-                  <SectionDescription></SectionDescription>
-                  <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
-                    <PreNewsList
-                      keywordFilter={keywordFilter ?? ''}
-                      newsTypeFilter={writingSelectedType}
-                      titleSearch={writingTitleSearch}
-                      openModalOnClick
-                    />
-                  </ScrollableContent>
-                </>
-              )}
-            </ToggleContainer>
-            <SectionContainer>
-              <SectionHeader>
-                <SectionTitle>발행 완료 뉴스</SectionTitle>
-                <HeaderControls>
+
+        <MainContent ref={ref}>
+          <ToggleContainer initialHeight={240}>
+            {(isOpen: boolean, initialHeight: number) => (
+              <>
+                <SectionHeader>
+                  <SectionTitle>한조, 대기 중...</SectionTitle>
+                  <HeaderControls>
                     <TypeFilter>
-                    <TypeFilterButton
-                      onClick={() => {
-                        setTypeFilterOpen((prev) => !prev);
-                        setWritingFilterOpen(false);
-                      }}
-                      aria-expanded={typeFilterOpen}
-                    >
-                      {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
-                    </TypeFilterButton>
-                    {typeFilterOpen && (
-                      <TypeFilterMenu>
-                        <TypeFilterItem
-                          onClick={() => {
-                            setTypeFilterOpen(false);
-                            startTransition(() => setSelectedType('all'));
-                          }}
-                        >
-                          전체
-                        </TypeFilterItem>
-                        {Object.values(NewsType).map((type) => (
+                      <TypeFilterButton
+                        onClick={() => {
+                          setWritingFilterOpen((prev) => !prev);
+                          setTypeFilterOpen(false);
+                        }}
+                        aria-expanded={writingFilterOpen}
+                      >
+                        {writingSelectedType === 'all'
+                          ? '전체'
+                          : newsTypesToKor(writingSelectedType)}
+                      </TypeFilterButton>
+                      {writingFilterOpen && (
+                        <TypeFilterMenu>
                           <TypeFilterItem
-                            key={type}
                             onClick={() => {
-                              setTypeFilterOpen(false);
-                              startTransition(() => setSelectedType(type));
+                              setWritingFilterOpen(false);
+                              startTransition(() => setWritingSelectedType('all'));
                             }}
                           >
-                            {newsTypesToKor(type)}
+                            전체
                           </TypeFilterItem>
-                        ))}
-                      </TypeFilterMenu>
-                    )}
-                  </TypeFilter>
-                  <SearchBox
-                    onSubmit={(event: FormEvent<HTMLFormElement>) => {
-                      event.preventDefault();
-                      startTransition(() => setAllTitleSearch(allTitleSearchInput));
-                    }}
-                  >
-                    <SearchInput
-                      type="search"
-                      placeholder="제목 검색"
-                      value={allTitleSearchInput}
-                      onChange={(event) => setAllTitleSearchInput(event.target.value)}
-                      onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          startTransition(() => setAllTitleSearch(allTitleSearchInput));
+                          {Object.values(NewsType).map((type) => (
+                            <TypeFilterItem
+                              key={type}
+                              onClick={() => {
+                                setWritingFilterOpen(false);
+                                startTransition(() => setWritingSelectedType(type));
+                              }}
+                            >
+                              {newsTypesToKorFull(type)}
+                            </TypeFilterItem>
+                          ))}
+                        </TypeFilterMenu>
+                      )}
+                    </TypeFilter>
+                    <InlineSearchBox>
+                      <SearchInput
+                        type="search"
+                        placeholder="제목 검색"
+                        value={writingTitleSearchInput}
+                        onChange={(event) => {
+                          setWritingTitleSearchInput(event.target.value);
+                          startTransition(() => setWritingTitleSearch(event.target.value));
+                        }}
+                        aria-label="작성 중 뉴스 제목 검색"
+                      />
+                      <SearchButton
+                        type="button"
+                        onClick={() =>
+                          startTransition(() => setWritingTitleSearch(writingTitleSearchInput))
                         }
-                      }}
-                      aria-label="발행 완료 뉴스 제목 검색"
-                    />
-                    <SearchButton type="submit" aria-label="발행 완료 뉴스 검색">
-                      <SearchIcon src="/assets/img/ico_search.png" alt="" />
-                    </SearchButton>
-                  </SearchBox>
-                  <DatePickerWrapper>
-                    <DesktopDateInput
-                      type="text"
-                      placeholder="YYYY-MM-DD"
-                      value={dateInputValue}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleDateTextChange(event.target.value)}
-                      onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-                        if (event.key === 'Enter') applyDateFilter();
-                      }}
-                      onBlur={() => { if (dateInputValue === '') startTransition(() => setDateFilter('')); }}
-                      aria-label="날짜 필터"
-                    />
-                    <HiddenDateInput
-                      ref={dateInputRef}
-                      type="date"
-                      value={dateInputValue}
-                      onChange={(event) => {
-                        const val = event.target.value;
-                        setDateInputValue(val);
-                        startTransition(() => setDateFilter(val));
-                      }}
-                      aria-label="날짜 필터 (모바일)"
-                    />
-                    <DatePickerButton
-                      onClick={() => dateInputRef.current?.showPicker()}
-                      title={dateFilter || '날짜 필터'}
-                      $active={!!dateFilter}
-                    >
-                      <AiOutlineCalendar />
-                    </DatePickerButton>
-                  </DatePickerWrapper>
-                </HeaderControls>
-              </SectionHeader>
-              <SectionDescription></SectionDescription>
-              <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-                <NewsListSection
-                  keywordFilter={keywordFilter ?? ''}
-                  clickPreviews={showNewsContent}
-                  newsTypeFilter={selectedType}
-                  titleSearch={allTitleSearch}
-                  dateFilter={dateFilter}
-                />
-              </div>
-            </SectionContainer>
-          </div>
-        </div>
+                        aria-label="작성 중 뉴스 검색"
+                      >
+                        <SearchIcon src="/assets/img/ico_search.png" alt="" />
+                      </SearchButton>
+                    </InlineSearchBox>
+                  </HeaderControls>
+                </SectionHeader>
+                <Divider />
+                <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
+                  <PreNewsList
+                    keywordFilter={keywordFilter ?? ''}
+                    newsTypeFilter={writingSelectedType}
+                    titleSearch={writingTitleSearch}
+                    openModalOnClick
+                  />
+                </ScrollableContent>
+              </>
+            )}
+          </ToggleContainer>
+
+          <SectionContainer data-section>
+            <SectionHeader>
+              <SectionTitle>발행 완료</SectionTitle>
+              <HeaderControls>
+                <TypeFilter>
+                  <TypeFilterButton
+                    onClick={() => {
+                      setTypeFilterOpen((prev) => !prev);
+                      setWritingFilterOpen(false);
+                    }}
+                    aria-expanded={typeFilterOpen}
+                  >
+                    {selectedType === 'all' ? '전체' : newsTypesToKor(selectedType)}
+                  </TypeFilterButton>
+                  {typeFilterOpen && (
+                    <TypeFilterMenu>
+                      <TypeFilterItem
+                        onClick={() => {
+                          setTypeFilterOpen(false);
+                          startTransition(() => setSelectedType('all'));
+                        }}
+                      >
+                        전체
+                      </TypeFilterItem>
+                      {Object.values(NewsType).map((type) => (
+                        <TypeFilterItem
+                          key={type}
+                          onClick={() => {
+                            setTypeFilterOpen(false);
+                            startTransition(() => setSelectedType(type));
+                          }}
+                        >
+                          {newsTypesToKorFull(type)}
+                        </TypeFilterItem>
+                      ))}
+                    </TypeFilterMenu>
+                  )}
+                </TypeFilter>
+                <SearchBox
+                  onSubmit={(event: FormEvent<HTMLFormElement>) => {
+                    event.preventDefault();
+                    startTransition(() => setAllTitleSearch(allTitleSearchInput));
+                  }}
+                >
+                  <SearchInput
+                    type="search"
+                    placeholder="제목 검색"
+                    value={allTitleSearchInput}
+                    onChange={(event) => setAllTitleSearchInput(event.target.value)}
+                    onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                        startTransition(() => setAllTitleSearch(allTitleSearchInput));
+                      }
+                    }}
+                    aria-label="발행 완료 제목 검색"
+                  />
+                  <SearchButton type="submit" aria-label="발행 완료 검색">
+                    <SearchIcon src="/assets/img/ico_search.png" alt="" />
+                  </SearchButton>
+                </SearchBox>
+                <DatePickerWrapper>
+                  <DesktopDateInput
+                    type="text"
+                    placeholder="YYYY-MM-DD"
+                    value={dateInputValue}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      handleDateTextChange(event.target.value)
+                    }
+                    onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                      if (event.key === 'Enter') applyDateFilter();
+                    }}
+                    onBlur={() => {
+                      if (dateInputValue === '') startTransition(() => setDateFilter(''));
+                    }}
+                    aria-label="날짜 필터"
+                  />
+                  <HiddenDateInput
+                    ref={dateInputRef}
+                    type="date"
+                    value={dateInputValue}
+                    onChange={(event) => {
+                      const val = event.target.value;
+                      setDateInputValue(val);
+                      startTransition(() => setDateFilter(val));
+                    }}
+                    aria-label="날짜 필터 (모바일)"
+                  />
+                  <DatePickerButton
+                    onClick={() => dateInputRef.current?.showPicker()}
+                    title={dateFilter || '날짜 필터'}
+                    $active={!!dateFilter}
+                  >
+                    <AiOutlineCalendar />
+                  </DatePickerButton>
+                </DatePickerWrapper>
+              </HeaderControls>
+            </SectionHeader>
+            <Divider />
+            <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+              <NewsListSection
+                keywordFilter={keywordFilter ?? ''}
+                clickPreviews={showNewsContent}
+                newsTypeFilter={selectedType}
+                titleSearch={allTitleSearch}
+                dateFilter={dateFilter}
+              />
+            </div>
+          </SectionContainer>
+        </MainContent>
       </Wrapper>
     </>
   );
@@ -270,11 +477,11 @@ function ToggleContainer({
   const ref = useRef<HTMLDivElement | null>(null);
 
   return (
-    <SectionContainer ref={ref} style={{}}>
+    <SectionContainer ref={ref}>
       <ContentContainer $isOpen={isOpen} initialHeight={initialHeight}>
         {children(isOpen, initialHeight)}
       </ContentContainer>
-      <OpenToggleButton
+      <ToggleBar
         onClick={() => {
           if (isOpen && ref.current) {
             ref.current?.scrollIntoView({ block: 'start' });
@@ -282,180 +489,133 @@ function ToggleContainer({
           setIsOpen(!isOpen);
         }}
       >
-        {isOpen ? (
-          <>
-            <AiOutlineUp size="20px" />
-          </>
-        ) : (
-          <>
-            <AiOutlineDown size="20px" />
-          </>
-        )}
-      </OpenToggleButton>
+        <span>{isOpen ? '접기' : '더 보기'}</span>
+      </ToggleBar>
     </SectionContainer>
   );
 }
 
+/* ===== Page Layout ===== */
+
 const Wrapper = styled.div`
   width: 100%;
-  height: 100%;
-  -webkit-text-size-adjust: none;
-  color: #666;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-family: Helvetica, sans-serif;
-  box-sizing: inherit;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 50px;
-  background-color: rgb(242, 244, 246);
-  overflow: visible;
+  padding: 32px 0 80px;
 
-  ::-webkit-scrollbar {
-    display: none;
+  @media (max-width: 768px) {
+    padding-top: 0;
   }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  background-color: ${({ theme }) => theme.colors.yvote02};
+`;
 
-  .main-header-wrapper {
-    -webkit-text-size-adjust: none;
-    color: #666;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
-    height: 15px;
-    .main-header {
-      width: 70%;
-      min-width: 800px;
-      text-align: left;
-      padding-left: 10px;
-      .category-name {
-        display: inline;
-        width: 70%;
-        margin-left: 10px;
-        font-weight: 700;
-        font-size: 18px;
-        @media screen and (max-width: 768px) {
-          width: 90%;
-          min-width: 0px;
-        }
-      }
-    }
-  }
+const PageHeader = styled.header`
+  width: 92%;
+  max-width: 1200px;
+  padding: 48px 0 20px;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.yvote13};
+  margin-bottom: 28px;
+  text-align: left;
 
-  .main-contents {
-    display: flex;
-    flex-direction: row;
-    -webkit-text-size-adjust: none;
-    width: 92%;
-    max-width: 1200px;
-    min-width: 0px;
-    color: #666;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    box-sizing: inherit;
-
-    @media screen and (max-width: 768px) {
-      width: 98%;
-      min-width: 0px;
-    }
-  }
-
-  .main-contents-body {
-    width: 100%;
-    color: #666;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font: inherit;
-    vertical-align: baseline;
-    position: relative;
+  @media screen and (max-width: 768px) {
+    width: 96%;
+    padding: 32px 0 16px;
+    margin-bottom: 20px;
   }
 `;
 
-const Header = styled(CommonLayoutBox)`
-  flex-shrink: 0;
-  text-align: center;
-  padding: 12px 10px;
+const PageTitle = styled.h1`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.yvote13};
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 
-  .head {
-    display: inline;
-    color: ${({ theme }) => theme.colors.gray800};
-    font-weight: 700;
-    font-size: 1rem;
+  @media screen and (max-width: 768px) {
+    font-size: 28px;
   }
+`;
 
-  .sub-head {
-    display: inline;
-    color: ${({ theme }) => theme.colors.gray600};
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
+const PageSubtitle = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.yvote08};
+  margin-top: 8px;
+  letter-spacing: 0.02em;
 `;
 
 const ArticlesWrapper = styled.div`
   width: 92%;
   max-width: 1200px;
-  min-width: 0px;
-  position: relative;
+  margin-bottom: 0;
 
   @media screen and (max-width: 768px) {
-    width: 98%;
-    min-width: 0px;
+    width: 96%;
+    margin-bottom: 0;
+    padding: 6px;
   }
 `;
 
-const SectionContainer = styled(CommonLayoutBox)`
-  padding: 20px;
-  margin-bottom: 16px;
-  position: relative;
+const MainContent = styled.div`
+  width: 92%;
+  max-width: 1200px;
 
   @media screen and (max-width: 768px) {
-    padding: 16px 7px;
-    margin-bottom: 12px;
+    width: 96%;
   }
 `;
 
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray800};
-  margin: 0 0 8px 0;
-  text-align: left;
+/* ===== Sections ===== */
+
+const SectionContainer = styled.section`
+  background: transparent;
+  border-top: 2px solid ${({ theme }) => theme.colors.yvote12};
+  padding: 12px 0;
+  margin-bottom: 24px;
   position: relative;
 
   @media screen and (max-width: 768px) {
-    font-size: 16px;
-    margin: 0 0 6px 0;
-    white-space: nowrap;
-    flex-shrink: 0;
-
-    &::before {
-      width: 3px;
-      height: 16px;
-    }
+    padding: 16px 0;
+    margin-bottom: 16px;
   }
 `;
 
 const SectionHeader = styled.div`
   display: flex;
   align-items: baseline;
-  justify-content: flex-start;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: nowrap;
   overflow: visible;
 `;
+
+const SectionTitle = styled.h2`
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.yvote12};
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+  margin: 0;
+
+  @media screen and (max-width: 768px) {
+    font-size: 17px;
+  }
+`;
+
+const Divider = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.yvote04};
+  margin: 6px 0 6px;
+
+  @media screen and (max-width: 768px) {
+    margin: 4px 0 4px;
+  }
+`;
+
+/* ===== Filter Controls ===== */
 
 const HeaderControls = styled.div`
   display: inline-flex;
@@ -476,119 +636,74 @@ const TypeFilter = styled.div`
 `;
 
 const TypeFilterButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote11};
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-size: 0.82rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  z-index: 1;
+  transition: color 0.15s, border-color 0.15s;
+
   &:after {
-    content: '▾';
-    font-size: 0.75rem;
-    color: ${({ theme }) => theme.colors.gray500};
+    content: '\\25BE';
+    font-size: 0.7rem;
+    color: ${({ theme }) => theme.colors.yvote07};
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote13};
+    border-color: ${({ theme }) => theme.colors.yvote13};
   }
 `;
 
-const DatePickerWrapper = styled.div`
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  border-radius: 8px;
-  height: 32px;
-  box-sizing: border-box;
-
-  @media screen and (max-width: 768px) {
-    border: none;
-    background: transparent;
-    height: auto;
-  }
+const TypeFilterMenu = styled.div`
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: ${({ theme }) => theme.colors.yvote02};
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  border-radius: 2px;
+  padding: 4px;
+  min-width: 140px;
+  overflow: visible;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(40, 35, 28, 0.08);
 `;
 
-const DesktopDateInput = styled.input`
+const TypeFilterItem = styled.button`
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
   border: none;
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 28px 6px 10px;
-  font-size: 0.85rem;
-  height: 32px;
-  width: 130px;
-  box-sizing: border-box;
-  &:focus {
-    outline: none;
-  }
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.gray400};
-  }
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const HiddenDateInput = styled.input`
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-`;
-
-interface DatePickerButtonProps {
-  $active: boolean;
-}
-
-const DatePickerButton = styled.button<DatePickerButtonProps>`
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.gray500};
-  padding: 0;
-  width: 18px;
-  height: 18px;
+  color: ${({ theme }) => theme.colors.yvote10};
+  border-radius: 2px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
+  font-size: 0.82rem;
 
-  @media screen and (max-width: 768px) {
-    position: static;
-    transform: none;
-    border: 1px solid ${({ theme }) => theme.colors.gray300};
-    background: #ffffff;
-    color: ${({ theme }) => theme.colors.gray500};
-    padding: 6px 10px;
-    border-radius: 8px;
-    height: 32px;
-    width: auto;
-    white-space: nowrap;
-    box-sizing: border-box;
+  &:hover {
+    background: ${({ theme }) => theme.colors.yvote03};
+    color: ${({ theme }) => theme.colors.yvote13};
   }
 `;
-
 
 const SearchBox = styled.form`
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  border-radius: 8px;
-  height: 32px;
-  padding-right: 30px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  background: transparent;
+  border-radius: 2px;
+  height: 30px;
+  padding-right: 28px;
   box-sizing: border-box;
-  width: 160px;
-  min-width: 110px;
-  flex: 0 1 160px;
+  width: 150px;
+  min-width: 100px;
+  flex: 0 1 150px;
   flex-shrink: 0;
 
   @media screen and (max-width: 768px) {
@@ -601,33 +716,37 @@ const InlineSearchBox = styled.div`
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  border-radius: 8px;
-  height: 32px;
-  padding-right: 30px;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
+  background: transparent;
+  border-radius: 2px;
+  height: 30px;
+  padding-right: 28px;
   box-sizing: border-box;
-  width: 160px;
-  min-width: 110px;
-  flex: 0 1 160px;
+  width: 150px;
+  min-width: 100px;
+  flex: 0 1 150px;
   flex-shrink: 0;
 `;
 
 const SearchInput = styled.input`
   border: none;
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  min-width: 140px;
+  color: ${({ theme }) => theme.colors.yvote12};
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  min-width: 80px;
   width: 100%;
 
   &:focus {
     outline: none;
   }
 
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.yvote07};
+  }
+
   @media screen and (max-width: 768px) {
-    min-width: 100px;
+    min-width: 60px;
   }
 
   &::-webkit-search-cancel-button,
@@ -653,61 +772,116 @@ const SearchButton = styled.button`
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 const SearchIcon = styled.img`
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 `;
 
-const TypeFilterMenu = styled.div`
-  position: absolute;
-  top: 110%;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid ${({ theme }) => theme.colors.gray200};
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
-  border-radius: 10px;
-  padding: 6px;
-  min-width: 140px;
-  overflow: visible;
-  z-index: 2;
-`;
-
-const TypeFilterItem = styled.button`
-  width: 100%;
-  text-align: left;
-  padding: 8px 10px;
-  border: none;
+const DatePickerWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.colors.yvote05};
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray700};
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  &:hover {
-    background: ${({ theme }) => theme.colors.hovergray};
-  }
-`;
-
-const SectionDescription = styled.p`
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.gray600};
-  margin: 0 0 16px 0;
-  text-align: left;
-  line-height: 1.5;
+  border-radius: 2px;
+  height: 30px;
+  box-sizing: border-box;
 
   @media screen and (max-width: 768px) {
-    font-size: 13px;
-    margin: 0 0 12px 0;
+    border: none;
+    background: transparent;
+    height: auto;
   }
 `;
+
+const DesktopDateInput = styled.input`
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote12};
+  padding: 5px 26px 5px 10px;
+  font-size: 0.82rem;
+  height: 30px;
+  width: 125px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.yvote07};
+  }
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const HiddenDateInput = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+`;
+
+interface DatePickerButtonProps {
+  $active: boolean;
+}
+
+const DatePickerButton = styled.button<DatePickerButtonProps>`
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote07)};
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote12};
+  }
+
+  @media screen and (max-width: 768px) {
+    position: static;
+    transform: none;
+    border: 1px solid ${({ theme }) => theme.colors.yvote05};
+    background: transparent;
+    color: ${({ $active, theme }) => ($active ? theme.colors.yvote12 : theme.colors.yvote07)};
+    padding: 5px 10px;
+    border-radius: 2px;
+    height: 30px;
+    width: auto;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+`;
+
+/* ===== Toggle / Expand ===== */
 
 const ContentContainer = styled.div<{ $isOpen: boolean; initialHeight: number }>`
   width: 100%;
@@ -721,26 +895,37 @@ const ScrollableContent = styled.div<{ $isOpen?: boolean; initialHeight?: number
   overflow-x: hidden;
   position: relative;
 
-  /* transition: max-height 0.8s ease; */
-
   ::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+`;
 
+const ToggleBar = styled.button`
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 16px 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+
+  &::before,
   &::after {
-    content: none;
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => theme.colors.yvote05};
   }
-`;
 
-const OpenToggleButton = styled(CommonIconButton)`
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-const LoadingWrapper = styled(CommonLayoutBox)`
-  background-color: white;
+  &:hover {
+    color: ${({ theme }) => theme.colors.yvote12};
+  }
 `;

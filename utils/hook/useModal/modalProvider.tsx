@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
+
 import { ModalContext } from './useModal';
 
 export function ModalProvider({ children }: { children: ReactNode }) {

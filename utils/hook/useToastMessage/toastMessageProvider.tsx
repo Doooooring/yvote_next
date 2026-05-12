@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import styled from 'styled-components';
+
 import { ToastDirection, ToastMessageContext } from './useToastMessage';
 
 let id = 0;
@@ -21,7 +22,7 @@ export function ToastMessageProvider({ children, ...others }: PropsWithChildren)
       direction?: ToastDirection;
     },
   ) => {
-    let nodeId = (id += 1);
+    const nodeId = (id += 1);
 
     console.log('option : ', option);
 

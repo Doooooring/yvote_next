@@ -1,16 +1,17 @@
+import axios from 'axios';
+
 import { HOST_URL } from '@url';
 import {
   Article,
   Comment,
+  commentType,
   News,
   NewsInView,
   NewsState,
   Preview,
-  commentType,
 } from '@utils/interface/news';
-
 import { clone, getTextContentFromHtmlText } from '@utils/tools';
-import axios from 'axios';
+
 import { getRecentUpdatedCommentsQueryOption } from './newsRepository.type';
 
 type AnswerState = 'left' | 'right' | 'none';
@@ -50,6 +51,8 @@ class NewsRepository {
     startDate?: string,
     endDate?: string,
     newsType?: string,
+    title?: string,
+    tracked?: boolean,
   ): Promise<Array<Preview>> {
     const params = {
       offset: curNum,
@@ -59,6 +62,8 @@ class NewsRepository {
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),
+      ...(title ? { title } : {}),
+      ...(tracked !== undefined ? { tracked: tracked ? 'true' : 'false' } : {}),
     };
     console.log('newsRepository.getPreviews params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
@@ -86,6 +91,7 @@ class NewsRepository {
     startDate?: string,
     endDate?: string,
     newsType?: string,
+    title?: string,
   ): Promise<Array<Preview>> {
     const params = {
       isAdmin: true,
@@ -96,6 +102,7 @@ class NewsRepository {
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),
       ...(state !== undefined ? { state } : {}),
+      ...(title ? { title } : {}),
     };
     console.log('newsRepository.getPreviewsAdmin params:', params);
     const response: Response<Array<Preview>> = await axios.get(`${HOST_URL}/news/previews`, {
@@ -146,12 +153,22 @@ class NewsRepository {
   }
 
   /**
+   * 평론 본문 단건 조회 API
+   */
+  async getCommentBody(commentId: number): Promise<string | null> {
+    const response: Response<{ id: number; comment: string }> = await axios.get(
+      `${HOST_URL}/news/comment/${commentId}/body`,
+    );
+    return response.data.result?.comment ?? null;
+  }
+
+  /**
    * 해당 뉴스의 평론 정보 조회 API
    * @param id 뉴스 아이디
    * @param type 평론 타입
    * @param page 불러온 평론 페이지 (현재 보여진 평론 개수)
    */
-  async getNewsComment(id: News['id'], type: commentType, page: number, limit: number = 20) {
+  async getNewsComment(id: News['id'], type: commentType, page: number, limit = 20) {
     const response: Response<Comment[]> = await axios.get(
       `${HOST_URL}/news/${id}/comment?type=${type}&offset=${page}&limit=${limit}`,
     );

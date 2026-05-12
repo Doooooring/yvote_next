@@ -1,17 +1,11 @@
-import NewsContent from '@components/news/newsContents';
-import { newsRepository } from '@repositories/news';
+import { useState } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 import LoadingCommon from '@components/common/loading';
+import { renderNewsByType } from '@components/news/types';
+import { newsRepository } from '@repositories/news';
 import { useMount } from '@utils/hook/useMount';
-import { NewsInView, NewsType } from '@utils/interface/news';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { useState } from 'react';
-import styled from 'styled-components';
-import BillNewsLayout from '@components/news/types/bill';
-import CabinetNewsLayout from '@components/news/types/cabinet';
-import WeeklyNewsLayout from '@components/news/types/weekly';
-
-type AnswerState = 'left' | 'right' | 'none' | null;
+import { NewsInView } from '@utils/interface/news';
 
 interface pageProps {
   data: {
@@ -54,64 +48,6 @@ export default function NewsDetailPage({ data }: pageProps) {
     setNews(news);
   });
 
-  return (
-    <>
-      {news ? (
-        news.newsType === NewsType.bill ? (
-          <BillNewsLayout news={news} />
-        ) : news.newsType === NewsType.weekly ? (
-          <WeeklyNewsLayout news={news} />
-        ) : news.newsType === NewsType.cabinet ? (
-          <CabinetNewsLayout news={news} />
-        ) : (
-          <Wrapper>
-            <div className="main-contents">
-              <div className="main-contents-body">
-                <div className="news-contents-wrapper">
-                  <NewsContent newsContent={news} voteHistory={null} />
-                </div>
-              </div>
-            </div>
-          </Wrapper>
-        )
-      ) : (
-        <LoadingCommon comment={'기다려주세요~'} />
-      )}
-    </>
-  );
+  if (!news) return <LoadingCommon comment={'기다려주세요~'} />;
+  return renderNewsByType(news);
 }
-
-const Wrapper = styled.div`
-  font-family: Helvetica, sans-serif;
-  height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: 20px;
-  background-color: rgb(242, 242, 242);
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  .main-contents {
-    width: 70%;
-    min-width: 800px;
-    @media screen and (max-width: 768px) {
-      width: 90%;
-      min-width: 0px;
-    }
-  }
-
-  .main-contents-body {
-    position: relative;
-    .news-contents-wrapper {
-      width: 100%;
-      height: 800px;
-      font-size: 13px;
-    }
-  }
-`;

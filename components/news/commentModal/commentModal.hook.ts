@@ -1,8 +1,8 @@
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+
 import { newsRepository } from '@repositories/news';
 import { Comment, commentType } from '@utils/interface/news';
 import { throttle } from '@utils/tools/lodash';
-
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 const PAGE_SIZE = 20;
 
@@ -10,35 +10,42 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
   const curPage = useRef(0);
   const [curComments, setCurComments] = useState<Array<Comment>>([]);
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(false);
 
-  async function fetchNewsComment(offset: number) {
+  async function fetchNewsComment(offset: number): Promise<Comment[] | null> {
     try {
       setIsRequesting(true);
-      const response = await newsRepository.getNewsComment(id, comment!, offset, PAGE_SIZE);
+      const response = await newsRepository.getNewsComment(id, comment!, offset, PAGE_SIZE + 1);
       if (!response || response.length == 0) {
-        return false;
+        return null;
       } else {
-        setCurComments(response);
-        return true;
+        const hasNextPage = response.length > PAGE_SIZE;
+        const pageComments = hasNextPage ? response.slice(0, PAGE_SIZE) : response;
+        setCurComments(pageComments);
+        setHasMore(hasNextPage);
+        return pageComments;
       }
     } catch (e) {
       console.log(e);
-      return false;
+      return null;
     } finally {
       setIsRequesting(false);
     }
   }
 
-  const getPageBefore = async () => {
-    if (curPage.current === 0) return false;
+  const getPageBefore = async (): Promise<Comment[] | null> => {
+    if (curPage.current === 0) return null;
     curPage.current -= PAGE_SIZE;
-    const response = await fetchNewsComment(curPage.current);
-    return response;
+    return await fetchNewsComment(curPage.current);
   };
-  const getPageAfter = async () => {
+  const getPageAfter = async (): Promise<Comment[] | null> => {
     const response = await fetchNewsComment(curPage.current + PAGE_SIZE);
-    if (response) curPage.current += PAGE_SIZE;
-    return response;
+    if (response) {
+      curPage.current += PAGE_SIZE;
+      return response;
+    }
+    setHasMore(false);
+    return null;
   };
 
   useEffect(() => {
@@ -47,6 +54,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
       return;
     }
     curPage.current = 0;
+    setHasMore(false);
     fetchNewsComment(0);
   }, [comment]);
 
@@ -54,6 +62,7 @@ export const useFetchNewsComment = (id: number, comment: commentType | null) => 
     page: curPage.current,
     curComments,
     isRequesting,
+    hasMore,
     getPageBefore,
     getPageAfter,
   };

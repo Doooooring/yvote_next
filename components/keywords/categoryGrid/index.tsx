@@ -1,10 +1,12 @@
+import Image from 'next/image';
+import styled from 'styled-components';
+
 import { LeftButton, RightButton } from '@components/common/figure/buttons';
 import KeywordBox from '@components/keywords/categoryGrid/keywordBox';
 import keywordRepository from '@repositories/keywords';
 import { useSlide } from '@utils/hook/useSlide';
 import { KeywordToView } from '@utils/interface/keywords';
-import Image from 'next/image';
-import styled from 'styled-components';
+
 import { KeywordCategoryImgUrl, KeywordCategoryKoreanName } from './categoryGrid.tool';
 
 interface CategoryGridProps {
@@ -22,10 +24,8 @@ export default function CategoryGrid({ category, keywords }: CategoryGridProps) 
     }
     try {
       const response = await keywordRepository.getKeywordsShort(curView, 20, { category });
-      if (!response) {
-      } else {
-        //setKeywords([...keywords, ...response]);
-      }
+      void response;
+      // setKeywords([...keywords, ...response]);
     } catch (e) {
       console.log(e);
     }

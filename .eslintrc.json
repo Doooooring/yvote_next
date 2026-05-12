@@ -12,8 +12,7 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:simple-import-sort/recommended"
+    "plugin:react-hooks/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"

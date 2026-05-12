@@ -1,8 +1,8 @@
 import axios from 'axios';
 
+import { INF } from '@public/assets/resource';
 import { HOST_URL } from '@url';
 import { KeywordCategory, KeywordOnDetail, KeywordToView } from '@utils/interface/keywords';
-import { INF } from '@public/assets/resource';
 
 interface Response<T> {
   data: {
@@ -20,7 +20,7 @@ export interface getKeywordDetailResponse {
 }
 
 class KeywordsRepository {
-  async getKeywordsKeyList(offset: number = 0, limit: number = INF) {
+  async getKeywordsKeyList(offset = 0, limit: number = INF) {
     const response: Response<Array<{ id: number; keyword: string }>> = await axios.get(
       `${HOST_URL}/keyword/key-list`,
     );

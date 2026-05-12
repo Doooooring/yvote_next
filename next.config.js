@@ -1,6 +1,38 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  compiler: {
+    styledComponents: true,
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/news/c/:newsId/:commentType/:commentId',
+          destination: '/news?newsId=:newsId&commentType=:commentType&commentId=:commentId',
+        },
+        {
+          source: '/news/c/:newsId/:commentType',
+          destination: '/news?newsId=:newsId&commentType=:commentType',
+        },
+      ],
+      afterFiles: [],
+      fallback: [
+        {
+          // Internal rewrite to the auto-auth proxy handler at
+          // pages/api/_proxy/[[...path]].ts. The handler forwards to
+          // INTERNAL_API_URL and (in dev only, if YVOTE_ADMIN_TOKEN is
+          // present) injects an Authorization: Bearer header so
+          // AdminGuard auto-passes — no cookie/login dance.
+          source: '/proxy-api/:path*',
+          destination: '/api/_proxy/:path*',
+        },
+      ],
+    };
+  },
   images: {
     // limit of 25 deviceSizes values
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

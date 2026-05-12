@@ -1,7 +1,9 @@
-import logoImage from '@images/logo_image.png';
-import Image from 'next/image';
 import { Component, ReactNode } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
+
+import logoImage from '@images/logo_image.png';
+
 import { Column } from '../commonStyles';
 
 interface CommonErrorBoundaryProps {

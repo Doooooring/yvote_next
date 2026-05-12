@@ -8,8 +8,4 @@ interface TopSheetProps {
 
 export default function TopSheet({ state, outClickAction, closeHandler }: TopSheetProps) {
   const [isTopSheetDown, setIsTopSheetDown] = useState(false);
-
-
-  
-
 }

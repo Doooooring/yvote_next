@@ -2,6 +2,7 @@ _next
 .next
 node_modules
 .env*
+logs
 # OS
 .DS_Store
 *.swp
@@ -13,3 +14,5 @@ node_modules
 .idea
 *.code-workspace
 build-menifest.json
+# TypeScript incremental build info
+tsconfig.tsbuildinfo

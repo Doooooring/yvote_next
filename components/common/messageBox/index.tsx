@@ -1,6 +1,8 @@
-import { RGB, RGBA } from '@utils/tools';
 import { CSSProperties, PropsWithChildren } from 'react';
 import styled from 'styled-components';
+
+import { RGB, RGBA } from '@utils/tools';
+
 import { CommonLayoutBox } from '../commonStyles';
 
 interface MessageBoxProps extends PropsWithChildren {

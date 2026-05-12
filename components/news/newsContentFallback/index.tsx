@@ -1,5 +1,6 @@
-import { Backdrop, CommonLayoutBox, FallbackBox, Row } from '@components/common/commonStyles';
 import styled from 'styled-components';
+
+import { Backdrop, CommonLayoutBox, FallbackBox, Row } from '@components/common/commonStyles';
 
 export default function NewsContentFallback() {
   return (

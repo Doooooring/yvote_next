@@ -1,9 +1,11 @@
+import { useMemo, useRef } from 'react';
+import Image from 'next/image';
+import styled, { CSSProperties } from 'styled-components';
+
 import menuImage from '@assets/img/menu_icon.svg';
 import reloadImage from '@assets/img/reload_icon.svg';
 import { KeyTitle } from '@utils/interface/keywords';
-import Image from 'next/image';
-import { useMemo, useRef } from 'react';
-import styled, { CSSProperties } from 'styled-components';
+
 import { useDevice } from '../../../utils/hook/useDevice';
 import { useScrollInfo } from '../../../utils/hook/useScrollInfo';
 import { HeaderHeight } from '../../../utils/layout';

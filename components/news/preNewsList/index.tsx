@@ -1,13 +1,14 @@
+import { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+
+import { CommonLayoutBox } from '@/components/common/commonStyles';
+import LoadingCommon from '@/components/common/loading';
 import { INF } from '@/public/assets/resource';
 import { newsRepository } from '@/repositories/news';
 import { NewsState, Preview } from '@/utils/interface/news';
-import LoadingCommon from '@/components/common/loading';
-import { CommonLayoutBox } from '@/components/common/commonStyles';
 import PreviewBox from '@components/news/previewBox';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import styled from 'styled-components';
-import { useMemo, useCallback } from 'react';
-import { useRouter } from 'next/router';
 
 export function PreNewsList({
   keywordFilter,
@@ -29,24 +30,31 @@ export function PreNewsList({
     ...getPreNewsListQueryOption({ keyword: keywordFilter, state }),
   });
 
-  const handleClick = useCallback((id: number) => {
-    router.push(`/adminjae/${id}`);
-  }, [router]);
+  const handleClick = useCallback(
+    (id: number) => {
+      router.push(`/adminjae/${id}`);
+    },
+    [router],
+  );
 
   const normalizedTitleSearch = titleSearch.trim().toLowerCase();
 
-  const filteredPreNewsList = useMemo(() => preNewsList.filter((item: Preview) => {
-    if (newsTypeFilter !== 'all' && item.newsType !== newsTypeFilter) {
-      return false;
-    }
-    if (normalizedTitleSearch) {
-      const title = item.title?.toLowerCase() ?? '';
-      if (!title.includes(normalizedTitleSearch)) {
-        return false;
-      }
-    }
-    return true;
-  }), [preNewsList, newsTypeFilter, normalizedTitleSearch]);
+  const filteredPreNewsList = useMemo(
+    () =>
+      preNewsList.filter((item: Preview) => {
+        if (newsTypeFilter !== 'all' && item.newsType !== newsTypeFilter) {
+          return false;
+        }
+        if (normalizedTitleSearch) {
+          const title = item.title?.toLowerCase() ?? '';
+          if (!title.includes(normalizedTitleSearch)) {
+            return false;
+          }
+        }
+        return true;
+      }),
+    [preNewsList, newsTypeFilter, normalizedTitleSearch],
+  );
 
   if (preNewsList.length === 0 && isFetching) {
     return (
@@ -82,16 +90,17 @@ const getPreNewsListQueryOption = ({ keyword, state }: { keyword: string; state?
     },
   });
 
-const LoadingWrapper = styled(CommonLayoutBox)`
-  background-color: white;
+const LoadingWrapper = styled.div`
+  background-color: transparent;
 `;
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
+  gap: 0 10px;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 `;

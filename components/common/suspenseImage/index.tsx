@@ -1,7 +1,8 @@
-import { useSuspense } from '@utils/hook/useSuspense';
-import { fetchImg } from '@utils/tools/async';
 import Image, { ImageProps } from 'next/image';
 import { CSSProperties } from 'styled-components';
+
+import { useSuspense } from '@utils/hook/useSuspense';
+import { fetchImg } from '@utils/tools/async';
 
 interface ImageFallbackProps extends ImageProps {
   blurImg?: string;

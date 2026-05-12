@@ -1,12 +1,12 @@
+import { ReactNode } from 'react';
 import styled from 'styled-components';
-
-import Header from '@components/common/header';
 
 import { ModalProvider } from '@utils/hook/useModal';
 import { ToastMessageProvider } from '@utils/hook/useToastMessage';
-import { ReactNode } from 'react';
+
 import { GlobalLoadingProvider } from '../../../utils/hook/useGlobalLoading/globalLoadingProvider';
 import GlobalErrorBoundary from '../commonErrorBounbdary/globalErrorBoundary';
+
 import LoadingIndicator from './loadingIndicator';
 import { QueryProvider } from './queryProvider';
 import RouteLoading from './routeLoading';
@@ -19,7 +19,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <ToastMessageProvider>
           <ModalProvider>
             <Wrapper>
-              <Header />
               <GlobalErrorBoundary>
                 <Body>{children}</Body>
               </GlobalErrorBoundary>
@@ -35,7 +34,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 export default Layout;
 
 const Wrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 `;
 
@@ -43,9 +42,16 @@ const Body = styled.div`
   width: 100%;
   height: 100%;
 
-  background-color: rgb(242, 242, 242);
+  background-color: ${({ theme }) => theme.colors.yvote02};
 
   flex: 1 0 auto;
+
+  body.chat-open & > * > * {
+    @media (min-width: 1200px) {
+      position: relative !important;
+      left: calc((100% - min(92%, 1200px)) / 4) !important;
+    }
+  }
 `;
 
 interface ForegroundProps {

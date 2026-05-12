@@ -1,16 +1,18 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+
 import { CommonLayoutBox } from '@/components/common/commonStyles';
 import LoadingCommon from '@/components/common/loading';
 import { DefaultMessageBox } from '@/components/common/messageBox';
+import { newsRepository } from '@/repositories/news';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
+import { NewsState, Preview } from '@/utils/interface/news';
 import { getSessionItem, saveSessionItem } from '@/utils/tools/session';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+
 import NewsListFallback from '../newsListFallback';
 import PreviewBox from '../previewBox';
-import { NewsState, Preview } from '@/utils/interface/news';
-import { newsRepository } from '@/repositories/news';
 
 export const PREVIEWS_PAGES_LIMIT = 18;
 
@@ -22,6 +24,7 @@ export default function NewsListSection({
   dateFilter = '',
   isAdmin = false,
   showId,
+  onVisibleItems,
 }: {
   keywordFilter: string;
   clickPreviews: (id: number) => void;
@@ -30,6 +33,7 @@ export default function NewsListSection({
   dateFilter?: string;
   isAdmin?: boolean;
   showId?: boolean;
+  onVisibleItems?: (items: Array<Preview>) => void;
 }) {
   const router = useRouter();
   const { page } = getCachedInfo();
@@ -51,29 +55,22 @@ export default function NewsListSection({
       const start = pageIndex * PREVIEWS_PAGES_LIMIT;
       const serverNewsType = newsTypeFilter !== 'all' ? newsTypeFilter : undefined;
       const serverEndDate = dateFilter || undefined;
-      const needsClientFilter = (isAdmin) || normalizedTitleSearch;
+      const serverTitle = normalizedTitleSearch || undefined;
+      // Only need client-side loop when admin filtering (to hide pending items across pages)
+      const needsClientFilter = isAdmin;
 
       // Fast path: no client-side filtering needed → single API call at exact offset
       if (!needsClientFilter) {
-        const previews = isAdmin
-          ? await newsRepository.getPreviewsAdmin(
-              start,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              undefined,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            )
-          : await newsRepository.getPreviews(
-              start,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              NewsState.Published,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            );
+        const previews = await newsRepository.getPreviews(
+          start,
+          PREVIEWS_PAGES_LIMIT,
+          keywordFilter,
+          NewsState.Published,
+          undefined,
+          serverEndDate,
+          serverNewsType,
+          serverTitle,
+        );
 
         return {
           items: previews,
@@ -81,7 +78,7 @@ export default function NewsListSection({
         };
       }
 
-      // Slow path: client-side filtering required → loop until page is filled
+      // Slow path: admin client-side filtering (hide pending items) → loop until page is filled
       const end = start + PREVIEWS_PAGES_LIMIT;
       const aggregated: Array<Preview> = [];
       let offset = 0;
@@ -91,10 +88,6 @@ export default function NewsListSection({
 
       const shouldInclude = (preview: Preview) => {
         if (isAdmin && preview.state === NewsState.Pending) return false;
-        if (normalizedTitleSearch) {
-          const title = preview.title?.toLowerCase() ?? '';
-          if (!title.includes(normalizedTitleSearch)) return false;
-        }
         return true;
       };
 
@@ -104,25 +97,16 @@ export default function NewsListSection({
           break;
         }
 
-        const previews = isAdmin
-          ? await newsRepository.getPreviewsAdmin(
-              offset,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              undefined,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            )
-          : await newsRepository.getPreviews(
-              offset,
-              PREVIEWS_PAGES_LIMIT,
-              keywordFilter,
-              NewsState.Published,
-              undefined,
-              serverEndDate,
-              serverNewsType,
-            );
+        const previews = await newsRepository.getPreviewsAdmin(
+          offset,
+          PREVIEWS_PAGES_LIMIT,
+          keywordFilter,
+          undefined,
+          undefined,
+          serverEndDate,
+          serverNewsType,
+          serverTitle,
+        );
 
         const filtered = previews.filter(shouldInclude);
         aggregated.push(...filtered);
@@ -172,7 +156,12 @@ export default function NewsListSection({
     setPageIndex(0);
   }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
 
+  useEffect(() => {
+    onVisibleItems?.(data.items);
+  }, [data.items]);
+
   const hasNextPage = data.hasNextPage;
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   if (data.items.length === 0 && isFetching) {
     return (
@@ -183,7 +172,7 @@ export default function NewsListSection({
   }
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       <Grid>
         {data.items.map((item) => (
           <PreviewBox key={item.id} preview={item} click={clickPreviews} expanded showId={showId} />
@@ -193,35 +182,44 @@ export default function NewsListSection({
       {/* {isFetching && <NewsListFallback length={PREVIEWS_PAGES_LIMIT} />} */}
 
       <PaginationBar>
-        <PageButton
-          disabled={pageIndex === 0}
+        <div />
+        <PaginationCenter>
+          <PageButton
+            disabled={pageIndex === 0}
+            onClick={() => {
+              if (pageIndex === 0) return;
+              setPageIndex((prev) => Math.max(prev - 1, 0));
+            }}
+          >
+            이전
+          </PageButton>
+          <PageIndicator>{pageIndex + 1}</PageIndicator>
+          <PageButton
+            disabled={!hasNextPage}
+            onClick={() => {
+              if (!hasNextPage) {
+                showToastMessage(
+                  <DefaultMessageBox>
+                    <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
+                  </DefaultMessageBox>,
+                  2000,
+                );
+                return;
+              }
+              setPageIndex((prev) => prev + 1);
+            }}
+          >
+            다음
+          </PageButton>
+        </PaginationCenter>
+        <ScrollTopButton
           onClick={() => {
-            if (pageIndex === 0) return;
-            setPageIndex((prev) => Math.max(prev - 1, 0));
-            window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+            const el = wrapperRef.current?.closest('[data-section]');
+            el?.scrollIntoView({ behavior: 'smooth' });
           }}
         >
-          이전
-        </PageButton>
-        <PageIndicator>{pageIndex + 1}</PageIndicator>
-        <PageButton
-          disabled={!hasNextPage}
-          onClick={() => {
-            if (!hasNextPage) {
-              showToastMessage(
-                <DefaultMessageBox>
-                  <p>{'와이보트가 준비한 소식을 모두 받아왔어요'}</p>
-                </DefaultMessageBox>,
-                2000,
-              );
-              return;
-            }
-            setPageIndex((prev) => prev + 1);
-            window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
-          }}
-        >
-          다음
-        </PageButton>
+          맨 위로
+        </ScrollTopButton>
       </PaginationBar>
     </Wrapper>
   );
@@ -279,35 +277,37 @@ const Wrapper = styled.div`
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0 10px;
   width: 100%;
   align-items: start;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 `;
 
 const PaginationBar = styled.div`
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
   margin-top: 16px;
 `;
 
 const PageButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.colors.gray300};
-  background: #ffffff;
-  color: ${({ theme }) => theme.colors.gray800};
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.yvote12};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote12};
+  padding: 4px 10px;
+  border-radius: 0;
+  font-size: 0.85rem;
   cursor: pointer;
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
+    border-bottom-color: ${({ theme }) => theme.colors.yvote07};
   }
 `;
 
@@ -316,8 +316,33 @@ const PageIndicator = styled.span`
   color: ${({ theme }) => theme.colors.gray700};
 `;
 
-const LoadingWrapper = styled(CommonLayoutBox)`
-  background-color: white;
+const PaginationCenter = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+`;
+
+const ScrollTopButton = styled.button`
+  justify-self: end;
+  border: 1px solid ${({ theme }) => theme.colors.yvote07};
+  border-radius: 2px;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.yvote08};
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 4px 10px;
+  transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote07};
+    color: ${({ theme }) => theme.colors.yvote01};
+  }
+`;
+
+const LoadingWrapper = styled.div`
+  background-color: transparent;
 `;
 
 const FetchButton = styled(CommonLayoutBox)`
