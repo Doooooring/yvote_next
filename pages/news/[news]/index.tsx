@@ -7,23 +7,9 @@ import styled from 'styled-components';
 import { useChatContext } from '@/utils/context/chatContext';
 import { useToastMessage } from '@/utils/hook/useToastMessage';
 import HeadMeta from '@components/common/HeadMeta';
-import BillNewsLayout from '@components/news/types/bill';
-import BudgetNewsLayout from '@components/news/types/budget';
-import CabinetNewsLayout from '@components/news/types/cabinet';
-import ConstitutionNewsLayout from '@components/news/types/constitution';
-import DebateNewsLayout from '@components/news/types/debate';
-import DefaultNewsLayout from '@components/news/types/default';
-import DiplomatNewsLayout from '@components/news/types/diplomat';
-import EconomicsNewsLayout from '@components/news/types/economics';
-import ElectionNewsLayout from '@components/news/types/election';
-import ExecutiveNewsLayout from '@components/news/types/executive';
-import GovernNewsLayout from '@components/news/types/govern';
-import InvestigationNewsLayout from '@components/news/types/investigation';
-import OthersNewsLayout from '@components/news/types/others';
-import PlenaryNewsLayout from '@components/news/types/plenary';
-import WeeklyNewsLayout from '@components/news/types/weekly';
+import { renderNewsByType } from '@components/news/types';
 import { newsRepository } from '@repositories/news';
-import { NewsInView, NewsState, NewsType, newsTypesToKorFull } from '@utils/interface/news';
+import { NewsInView, NewsState, newsTypesToKorFull } from '@utils/interface/news';
 import { getTextContentFromHtmlText } from '@utils/tools';
 import { shareLink } from '@utils/tools/share';
 
@@ -114,23 +100,7 @@ export default function NewsDetailPage({ data }: pageProps) {
     return () => setActiveContent(null);
   }, [id, news]);
 
-  const renderByType = () => {
-    if (news.newsType === NewsType.bill) return <BillNewsLayout news={news} />;
-    if (news.newsType === NewsType.constitution) return <ConstitutionNewsLayout news={news} />;
-    if (news.newsType === NewsType.executive) return <ExecutiveNewsLayout news={news} />;
-    if (news.newsType === NewsType.cabinet) return <CabinetNewsLayout news={news} />;
-    if (news.newsType === NewsType.plenary) return <PlenaryNewsLayout news={news} />;
-    if (news.newsType === NewsType.investigation) return <InvestigationNewsLayout news={news} />;
-    if (news.newsType === NewsType.diplomat) return <DiplomatNewsLayout news={news} />;
-    if (news.newsType === NewsType.govern) return <GovernNewsLayout news={news} />;
-    if (news.newsType === NewsType.debate) return <DebateNewsLayout news={news} />;
-    if (news.newsType === NewsType.election) return <ElectionNewsLayout news={news} />;
-    if (news.newsType === NewsType.weekly) return <WeeklyNewsLayout news={news} />;
-    if (news.newsType === NewsType.others) return <OthersNewsLayout news={news} />;
-    if (news.newsType === NewsType.budget) return <BudgetNewsLayout news={news} />;
-    if (news.newsType === NewsType.economics) return <EconomicsNewsLayout news={news} />;
-    return <DefaultNewsLayout news={news} />;
-  };
+  const renderByType = () => renderNewsByType(news);
 
   return (
     <>
