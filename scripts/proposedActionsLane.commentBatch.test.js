@@ -180,15 +180,20 @@ assert.match(
   /setBatchStarted\(true\)/,
   'merged comment move group should latch started background approvals to avoid duplicate workers',
 );
-assert.match(
+assert.doesNotMatch(
   applyApprovedBatchSource,
   /--approve-only/,
-  'batch approval endpoint should mark all submitted rows approved before starting slow apply',
+  'batch approval endpoint must not expose approved rows before the background worker owns them',
+);
+assert.doesNotMatch(
+  applyApprovedBatchSource,
+  /approveForApplyQueue\(ids\)[\s\S]*runBackgroundApply\(ids\)/,
+  'batch approval endpoint must not approve first, then start the background apply worker',
 );
 assert.match(
   applyApprovedBatchSource,
-  /approveForApplyQueue\(ids\)[\s\S]*runBackgroundApply\(ids\)/,
-  'batch approval endpoint should approve first, then start the background apply worker',
+  /runBackgroundApply\(ids\)/,
+  'batch approval endpoint should start the sequential background apply worker directly',
 );
 assert.doesNotMatch(
   commentMoveGroupSource,

@@ -8,27 +8,15 @@ import { ProposedActionSource, ProposedActionType } from '@utils/interface/propo
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
  *
- * Click = order (no second-step approval). Owner-confirmed 2026-04-27.
+ * Renders Publish on draft rows (state=1) and Unpublish on already-
+ * published rows (state=0). Both are owner-initiated, no auto-approve,
+ * and use the same single-tier PA flow (create + approve + apply).
  *
- * NOTE: this manual button does NOT carry `generatedContent`. If a
- * news needs auto-filled content (cabinet/plenary/bill/...), the
- * scan_finished worker creates a pending PUBLISH proposed_action on
- * the ProposedActionsLane carrying `generatedContent` — owner approves
- * THAT one instead of clicking this manual button.
+ * Publish:   state '1' → '0' (visible on live site)
+ * Unpublish: state '0' → '1' (hidden from live site, comments preserved)
  *
- * Flow:
- *   1. window.confirm()
- *   2. proposedActionRepository.create({ Publish, source=User,
- *        payload:{ newsId } })
- *   3. proposedActionRepository.approve(returnedId) — approves and
- *      immediately calls the local Python apply entrypoint.
- *   4. invalidate ['trackedNews']; news state flips '1' → '0'. The row
- *      stays in TrackedLane (tracked=true survives publish) — only
- *      Untrack removes it from this lane.
- *
- * Phase 6.2 of 2026-04-27-news-lifecycle-cross-repo.md.
- *
- * Mirrors the Telegram `publish <id>` command (Phase 7).
+ * After success, invalidates ['trackedNews'] so the row re-renders into
+ * the other section. Row stays in the lane until Untrack.
  */
 export default function PublishButton({
   newsId,
@@ -38,52 +26,70 @@ export default function PublishButton({
   state?: NewsState | string;
 }) {
   const qc = useQueryClient();
-  const alreadyPublished = state === NewsState.Published;
+  const isPublished = state === NewsState.Published;
 
-  const mutation = useMutation({
-    mutationFn: async () => {
-      const created = await proposedActionRepository.create({
-        actionType: ProposedActionType.Publish,
-        newsId,
-        payload: { newsId },
-        source: ProposedActionSource.User,
-      });
-      if (typeof created?.id !== 'number') {
-        throw new Error('proposed_action create returned no id');
-      }
-      await proposedActionRepository.approve(created.id);
-      return created.id;
-    },
-    onSuccess: async () => {
-      await Promise.all([
-        qc.invalidateQueries({ queryKey: ['trackedNews'] }),
-        qc.invalidateQueries({ queryKey: ['proposedActions'] }),
-      ]);
-    },
+  const publishMutation = useMutation({
+    mutationFn: () => emitAndApprove(ProposedActionType.Publish, newsId),
+    onSuccess: invalidate(qc),
   });
 
-  function onClick() {
-    if (mutation.isPending) return;
-    const ok = window.confirm(`Publish news ${newsId}? It will become visible on the live site.`);
-    if (!ok) return;
-    mutation.mutate();
-  }
+  const unpublishMutation = useMutation({
+    mutationFn: () => emitAndApprove(ProposedActionType.Unpublish, newsId),
+    onSuccess: invalidate(qc),
+  });
 
-  if (alreadyPublished) {
+  if (isPublished) {
+    const onClick = () => {
+      if (unpublishMutation.isPending) return;
+      const ok = window.confirm(
+        `Unpublish news ${newsId}? It will be hidden from the live site (comments preserved).`,
+      );
+      if (!ok) return;
+      unpublishMutation.mutate();
+    };
+    if (unpublishMutation.isPending) return <Btn disabled>requesting…</Btn>;
     return (
-      <Btn disabled title="Already published">
-        ✅ published
+      <Btn onClick={onClick} title="Unpublish: flip state 0 → 1 (hides from live site)">
+        ↩ unpublish
       </Btn>
     );
   }
-  if (mutation.isPending) {
-    return <Btn disabled>requesting…</Btn>;
-  }
+
+  const onClick = () => {
+    if (publishMutation.isPending) return;
+    const ok = window.confirm(`Publish news ${newsId}? It will become visible on the live site.`);
+    if (!ok) return;
+    publishMutation.mutate();
+  };
+  if (publishMutation.isPending) return <Btn disabled>requesting…</Btn>;
   return (
     <Btn onClick={onClick} title="Publish this news (fires immediately)">
       🚀 publish
     </Btn>
   );
+}
+
+async function emitAndApprove(actionType: ProposedActionType, newsId: number) {
+  const created = await proposedActionRepository.create({
+    actionType,
+    newsId,
+    payload: { newsId },
+    source: ProposedActionSource.User,
+  });
+  if (typeof created?.id !== 'number') {
+    throw new Error('proposed_action create returned no id');
+  }
+  await proposedActionRepository.approve(created.id);
+  return created.id;
+}
+
+function invalidate(qc: ReturnType<typeof useQueryClient>) {
+  return async () => {
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ['trackedNews'] }),
+      qc.invalidateQueries({ queryKey: ['proposedActions'] }),
+    ]);
+  };
 }
 
 const Btn = styled.button`

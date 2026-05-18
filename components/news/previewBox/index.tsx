@@ -165,10 +165,8 @@ const _NewsTitle = ({
   return (
     <Title>
       {typeLabel && <TypeBadge>{typeLabel}</TypeBadge>}
-      <div className="title">
-        {title}
-        {showId && id !== undefined && <IdSpan> [{id}] </IdSpan>}
-      </div>
+      <div className="title">{title}</div>
+      {showId && id !== undefined && <IdSpan>[{id}]</IdSpan>}
     </Title>
   );
 };
@@ -417,8 +415,13 @@ const TypeBadge = styled.span`
 `;
 
 const IdSpan = styled.span`
+  flex-shrink: 0;
+  margin-left: 6px;
   color: #3b82f6;
   font-weight: 500;
+  font-size: 13px;
+  font-family: Helvetica, sans-serif;
+  white-space: nowrap;
 `;
 
 const Title = styled(Row)`

@@ -31,11 +31,12 @@ import { ProposedActionSource, ProposedActionType } from '@utils/interface/propo
  *   1. window.confirm()
  *   2. proposedActionRepository.create({ FillNews, source=User,
  *        payload:{ newsId, newsType } })
- *   3. proposedActionRepository.approve(returnedId) — approves and
- *      immediately calls the local Python apply entrypoint.
+ *   3. proposedActionRepository.approveManyInBackground([returnedId]) —
+ *      approves and starts the local Python apply entrypoint out of band.
+ *      fill_news may call LLM pipelines and can outlive a single HTTP request.
  *   4. invalidate ['trackedNews', 'proposedActions']. The TrackedLane
  *      row stays put (Fill doesn't move it) — the user sees the
- *      refreshed PreviewBox after react-query refetch.
+ *      refreshed row after react-query refetch / manual refresh.
  *
  * Phase 8.5 of 2026-04-27-news-lifecycle-cross-repo.md.
  *
@@ -55,7 +56,7 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
       if (typeof created?.id !== 'number') {
         throw new Error('proposed_action create returned no id');
       }
-      await proposedActionRepository.approve(created.id);
+      await proposedActionRepository.approveManyInBackground([created.id]);
       return created.id;
     },
     onSuccess: async () => {
@@ -80,7 +81,7 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
     return <Btn disabled>requesting…</Btn>;
   }
   return (
-    <Btn onClick={onClick} title="Re-run the fill pipeline (state preserved)">
+    <Btn onClick={onClick} title="Queue the fill pipeline in the background (state preserved)">
       ✨ fill
     </Btn>
   );

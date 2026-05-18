@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { execFileSync, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
@@ -40,21 +40,6 @@ function runBackgroundApply(actionIds: number[]) {
   fs.closeSync(out);
 }
 
-function approveForApplyQueue(actionIds: number[]) {
-  const python = process.env.YVOTE_AUTOMATION_PYTHON || 'python3';
-  const stdout = execFileSync(
-    python,
-    ['-m', 'company.ceo.apply_approved_many_now', '--approve-only', ...actionIds.map(String)],
-    {
-      cwd: automationDir(),
-      env: process.env,
-      maxBuffer: 10 * 1024 * 1024,
-      encoding: 'utf8',
-    },
-  );
-  return JSON.parse(stdout.trim() || '{}') as { ok?: boolean; results?: unknown[] };
-}
-
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -69,13 +54,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const approved = approveForApplyQueue(ids);
-    if (!approved.ok) {
-      res.status(500).json({ success: false, result: approved });
-      return;
-    }
     runBackgroundApply(ids);
-    res.status(202).json({ success: true, result: { started: true, ids, approved } });
+    res.status(202).json({ success: true, result: { started: true, ids } });
   } catch (e: unknown) {
     res.status(500).json({
       success: false,

@@ -23,6 +23,18 @@ assert.match(
   'FillButton must include newsType in fill_news payload',
 );
 
+assert.match(
+  source,
+  /approveManyInBackground\(\s*\[\s*created\.id\s*\]\s*\)/s,
+  'FillButton must use the background apply path because fill_news can take longer than an HTTP request',
+);
+
+assert.doesNotMatch(
+  source,
+  /proposedActionRepository\.approve\(\s*created\.id\s*\)/,
+  'FillButton must not use synchronous immediate apply for long-running fill_news',
+);
+
 assert.doesNotMatch(
   source,
   /setStage\('filling'\)/,
