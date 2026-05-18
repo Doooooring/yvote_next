@@ -124,7 +124,11 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                       <div
                         className="comment_box_footer_text"
                         onClick={() => {
-                          if (activeWriter) showCommentModal(id, activeWriter, title);
+                          if (activeWriter) {
+                            showCommentModal(id, activeWriter, title, {
+                              commentTypes: commentToShow,
+                            });
+                          }
                         }}
                       >
                         자료 보기

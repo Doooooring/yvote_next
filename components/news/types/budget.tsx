@@ -206,6 +206,7 @@ export default function BudgetNewsLayout({ news }: NewsTypeLayoutProps) {
                   onClick={() =>
                     showCommentModal(news.id, type as commentType, news.title, {
                       disableCategorize: true,
+                      commentTypes,
                     })
                   }
                 />

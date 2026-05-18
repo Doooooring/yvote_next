@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { proposedActionRepository } from '@repositories/proposedAction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
+
+import { runTrackedAction } from './trackedActionApi';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
@@ -11,9 +11,8 @@ import { ProposedActionSource, ProposedActionType } from '@utils/interface/propo
  * Click = order (no second-step approval). Owner-confirmed 2026-04-27.
  * Flow:
  *   1. window.confirm()
- *   2. proposedActionRepository.create({ Untrack, source=User, payload:{} })
- *   3. proposedActionRepository.approve(returnedId) — approves and
- *      immediately calls the local Python apply entrypoint.
+ *   2. POST /api/adminjae2/tracked-action { action:"untrack" }
+ *   3. the local Python owner-command bridge records + approves + applies.
  *   4. invalidate ['trackedNews']; the news drops out of TrackedLane
  *      on next refresh.
  *
@@ -26,26 +25,20 @@ export default function UntrackButton({ newsId }: { newsId: number }) {
   const [stage, setStage] = useState<'idle' | 'untracking'>('idle');
 
   const mutation = useMutation({
-    mutationFn: async () => {
-      const created = await proposedActionRepository.create({
-        actionType: ProposedActionType.Untrack,
-        newsId,
-        payload: {},
-        source: ProposedActionSource.User,
-      });
-      if (typeof created?.id !== 'number') {
-        throw new Error('proposed_action create returned no id');
-      }
-      await proposedActionRepository.approve(created.id);
-      return created.id;
-    },
-    onSuccess: () => {
+    mutationFn: () => runTrackedAction('untrack', newsId),
+    onSuccess: async () => {
       setStage('untracking');
-      qc.invalidateQueries({ queryKey: ['trackedNews'] });
-      qc.invalidateQueries({ queryKey: ['proposedActions'] });
+      qc.setQueryData<Array<{ id: number }>>(['trackedNews'], (current) =>
+        current ? current.filter((item) => item.id !== newsId) : current,
+      );
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ['trackedNews'] }),
+        qc.invalidateQueries({ queryKey: ['proposedActions'] }),
+      ]);
     },
-    onError: () => {
+    onError: (error) => {
       setStage('idle');
+      window.alert(`Untrack failed for news ${newsId}: ${formatActionError(error)}`);
     },
   });
 
@@ -67,6 +60,21 @@ export default function UntrackButton({ newsId }: { newsId: number }) {
       🚪 untrack
     </Btn>
   );
+}
+
+function formatActionError(error: unknown) {
+  const responseData =
+    error && typeof error === 'object' && 'response' in error
+      ? (error as { response?: { data?: unknown } }).response?.data
+      : null;
+  if (responseData && typeof responseData === 'object') {
+    const detail = (responseData as { error?: unknown; result?: { detail?: unknown } }).error;
+    if (typeof detail === 'string' && detail) return detail;
+    const resultDetail = (responseData as { result?: { detail?: unknown } }).result?.detail;
+    if (typeof resultDetail === 'string' && resultDetail) return resultDetail;
+  }
+  if (error instanceof Error) return error.message;
+  return String(error);
 }
 
 const Btn = styled.button`

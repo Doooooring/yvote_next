@@ -1,7 +1,11 @@
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import CommentTypeIcon from '@components/common/CommentTypeIcon';
+import { CommonIconButton } from '@components/common/commonStyles';
 import { CommonModalLayout } from '@components/common/modal/component';
 import { commentType } from '@utils/interface/news';
+import { sortComment } from '@utils/interface/news/comment';
 
 import CommentBodyCommon from '../commentBodyCommon';
 import { ModalBodyWrapper } from '../figure';
@@ -9,16 +13,27 @@ import { ModalBodyWrapper } from '../figure';
 export function CommentModal({
   id,
   commentType,
+  commentTypes,
   close,
   newsTitle,
   disableCategorize,
 }: {
   id: number;
   commentType: commentType;
+  commentTypes?: Array<commentType>;
   close: () => void;
   newsTitle?: string;
   disableCategorize?: boolean;
 }) {
+  const commentTypesSorted = useMemo(() => {
+    return sortComment(Array.from(new Set([commentType, ...(commentTypes ?? [])])));
+  }, [commentType, commentTypes]);
+  const [commentSelected, setCommentSelected] = useState<commentType>(commentType);
+
+  useEffect(() => {
+    setCommentSelected(commentType);
+  }, [id, commentType]);
+
   return (
     <CommonModalLayout onOutClick={close}>
       <ModalBodyWrapper
@@ -26,9 +41,22 @@ export function CommentModal({
           if (e.target === e.currentTarget) close();
         }}
       >
+        {commentTypesSorted.length > 1 && (
+          <CommentButtons>
+            {commentTypesSorted.map((type) => (
+              <CommentButton
+                key={type}
+                $selected={type === commentSelected}
+                onClick={() => setCommentSelected(type)}
+              >
+                <CommentTypeIcon type={type} size={16} />
+              </CommentButton>
+            ))}
+          </CommentButtons>
+        )}
         <CommentBodyCommon
           id={id}
-          commentType={commentType}
+          commentType={commentSelected}
           close={close}
           newsTitle={newsTitle}
           disableCategorize={disableCategorize}
@@ -38,18 +66,25 @@ export function CommentModal({
   );
 }
 
-const _ModalBodyWrapper = styled.div`
-  width: 60%;
-  min-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const CommentButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 4px;
+  padding: 0.3rem 0 0.5rem;
+`;
 
-  @media screen and (max-width: 768px) {
-    width: 99%;
-    min-width: 0px;
+const CommentButton = styled(CommonIconButton)<{ $selected: boolean }>`
+  padding: 0.25rem;
+  border-radius: 4px;
+  background-color: ${({ $selected, theme }) =>
+    $selected ? theme.colors.yvote02 : theme.colors.yvote01} !important;
+  border: ${({ $selected, theme }) =>
+    $selected ? `1px solid ${theme.colors.yvote06}` : `1px solid ${theme.colors.yvote04}`};
+  filter: ${({ $selected }) => ($selected ? 'grayscale(0)' : 'grayscale(0.6)')};
+  transition: all 0.15s ease;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.yvote02} !important;
+    border-color: ${({ theme }) => theme.colors.yvote06};
   }
 `;

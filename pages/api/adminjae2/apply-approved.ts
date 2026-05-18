@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { execFile } from 'child_process';
-import path from 'path';
+
+import { automationDir, automationPython } from '@/utils/server/automationRuntime';
 
 type ApplyApprovedResult = {
   ok?: boolean;
@@ -20,12 +21,8 @@ function parseActionId(body: unknown): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-function automationDir() {
-  return process.env.YVOTE_AUTOMATION_DIR || path.resolve(process.cwd(), '../yvote_automation');
-}
-
 function runImmediateApply(actionId: number): Promise<ApplyApprovedResult> {
-  const python = process.env.YVOTE_AUTOMATION_PYTHON || 'python3';
+  const python = automationPython();
   return new Promise((resolve, reject) => {
     execFile(
       python,

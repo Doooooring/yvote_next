@@ -1,9 +1,61 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { execFileSync } from 'child_process';
-import path from 'path';
 
-function automationDir() {
-  return process.env.YVOTE_AUTOMATION_DIR || path.resolve(process.cwd(), '../yvote_automation');
+import { automationDir, automationPython } from '@/utils/server/automationRuntime';
+
+const UPDATE_NEWS_TITLE_SCRIPT = `
+import json
+import sys
+import traceback
+
+
+def main():
+    from company.infra.db import yvote_elementary as Y
+
+    news_id = int(sys.argv[1])
+    new_title = sys.argv[2].strip()
+    if not new_title:
+        return {"ok": False, "error": "title must be non-empty"}
+
+    res = Y.read_news(news_id)
+    cur = res.get("result") if isinstance(res, dict) else res
+    if not isinstance(cur, dict):
+        return {"ok": False, "error": f"news {news_id} not found"}
+
+    old_title = cur.get("title") or ""
+    if old_title.strip() == new_title:
+        return {
+            "ok": True,
+            "news_id": news_id,
+            "old_title": old_title,
+            "new_title": new_title,
+            "no_op": True,
+        }
+
+    patched = Y.update_news_full(news_id, {"title": new_title})
+    return {
+        "ok": True,
+        "news_id": news_id,
+        "old_title": old_title,
+        "new_title": new_title,
+        "patch_result": patched,
+    }
+
+
+try:
+    print(json.dumps(main(), ensure_ascii=False))
+except Exception as e:
+    print(json.dumps({
+        "ok": False,
+        "error": f"{type(e).__name__}: {e}",
+        "traceback": traceback.format_exc(),
+    }, ensure_ascii=False))
+`;
+
+function readReport(stdout: string) {
+  const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
+  const lastLine = lines[lines.length - 1] || '{}';
+  return JSON.parse(lastLine) as { ok?: boolean; [key: string]: unknown };
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -23,11 +75,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(400).json({ success: false, error: 'title must be non-empty' });
     return;
   }
-  const python = process.env.YVOTE_AUTOMATION_PYTHON || 'python3';
+  const python = automationPython();
   try {
     const stdout = execFileSync(
       python,
-      ['-m', 'company.ceo.update_news_title', String(newsId), newTitle],
+      ['-c', UPDATE_NEWS_TITLE_SCRIPT, String(newsId), newTitle],
       {
         cwd: automationDir(),
         env: process.env,
@@ -36,7 +88,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         timeout: 60 * 1000,
       },
     );
-    const report = JSON.parse(stdout.trim() || '{}');
+    const report = readReport(stdout);
     if (!report.ok) {
       res.status(500).json({ success: false, report });
       return;

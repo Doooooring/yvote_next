@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { proposedActionRepository } from '@repositories/proposedAction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
+
+import { runTrackedAction } from './trackedActionApi';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
@@ -20,20 +20,17 @@ import { ProposedActionSource, ProposedActionType } from '@utils/interface/propo
  * The user explicitly wants this behavior so they can re-roll content
  * when the underlying scrape data changes.
  *
- * NOTE: this manual button does NOT carry `generatedContent`. The
- * conductor's apply path runs the full type-specific pipeline,
- * fetching upstream sources fresh and rewriting fields. If a worker
- * has already pre-baked field content, it should emit its own
- * `fill_news` proposed_action with `generatedContent` in the payload
- * (fast-path) — that one shows up in the ProposedActionsLane.
+ * NOTE: this manual button does NOT add a waiting row to the
+ * ProposedActionsLane. It calls the owner-command bridge, which records
+ * the audit proposed_action and approves it immediately inside the
+ * automation process.
  *
  * Flow:
  *   1. window.confirm()
- *   2. proposedActionRepository.create({ FillNews, source=User,
- *        payload:{ newsId, newsType } })
- *   3. proposedActionRepository.approveManyInBackground([returnedId]) —
- *      approves and starts the local Python apply entrypoint out of band.
- *      fill_news may call LLM pipelines and can outlive a single HTTP request.
+ *   2. POST /api/adminjae2/tracked-action { action:"fill", background:true }
+ *   3. The local Python owner-command bridge creates + approves + applies
+ *      the fill_news PA out of band. fill_news may call LLM pipelines and
+ *      can outlive a single HTTP request.
  *   4. invalidate ['trackedNews', 'proposedActions']. The TrackedLane
  *      row stays put (Fill doesn't move it) — the user sees the
  *      refreshed row after react-query refetch / manual refresh.
@@ -47,17 +44,7 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const created = await proposedActionRepository.create({
-        actionType: ProposedActionType.FillNews,
-        newsId,
-        payload: { newsId, newsType },
-        source: ProposedActionSource.User,
-      });
-      if (typeof created?.id !== 'number') {
-        throw new Error('proposed_action create returned no id');
-      }
-      await proposedActionRepository.approveManyInBackground([created.id]);
-      return created.id;
+      return runTrackedAction('fill', newsId, { background: true });
     },
     onSuccess: async () => {
       await Promise.all([
@@ -70,7 +57,7 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
   function onClick() {
     if (mutation.isPending) return;
     const ok = window.confirm(
-      `Re-fill news ${newsId}? This re-runs the type-specific pipeline ` +
+      `Re-fill ${newsType} news ${newsId}? This re-runs the type-specific pipeline ` +
         `and overwrites generated content fields. State is preserved.`,
     );
     if (!ok) return;
@@ -78,7 +65,7 @@ export default function FillButton({ newsId, newsType }: { newsId: number; newsT
   }
 
   if (mutation.isPending) {
-    return <Btn disabled>requesting…</Btn>;
+    return <Btn disabled>starting…</Btn>;
   }
   return (
     <Btn onClick={onClick} title="Queue the fill pipeline in the background (state preserved)">

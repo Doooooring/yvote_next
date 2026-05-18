@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { execFileSync } from 'child_process';
-import path from 'path';
+
+import { automationDir, automationPython } from '@/utils/server/automationRuntime';
 
 function parseNewsIds(body: unknown): number[] {
   const raw =
@@ -14,10 +15,6 @@ function parseNewsIds(body: unknown): number[] {
   return Array.from(new Set(ids));
 }
 
-function automationDir() {
-  return process.env.YVOTE_AUTOMATION_DIR || path.resolve(process.cwd(), '../yvote_automation');
-}
-
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -29,7 +26,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(400).json({ success: false, error: 'news_ids must include positive integers' });
     return;
   }
-  const python = process.env.YVOTE_AUTOMATION_PYTHON || 'python3';
+  const python = automationPython();
   try {
     const stdout = execFileSync(
       python,

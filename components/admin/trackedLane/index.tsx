@@ -10,6 +10,7 @@ import { commentType, NewsState, newsTypesToKor, Preview } from '@utils/interfac
 import { sortComment } from '@utils/interface/news/comment';
 
 import FillButton from './FillButton';
+import MetadataEditor from './MetadataEditor';
 import PublishButton from './PublishButton';
 import ReclusterModal from './ReclusterModal';
 import UntrackButton from './UntrackButton';
@@ -199,13 +200,14 @@ function TrackedRow({
   onToggleSelect: () => void;
   onToggleExpand: () => void;
 }) {
+  const [isMetadataEditing, setIsMetadataEditing] = useState(false);
   const typeLabel = item.newsType ? newsTypesToKor(item.newsType) : '';
   const subBody = item.subTitle || item.summary || '';
   const { showCommentModal } = useCommentModal_Preview();
   const handleRowClick = isEditing
     ? (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.target as HTMLElement;
-        if (target.closest('button, a, input')) return;
+        if (target.closest('button, a, input, select, textarea, form')) return;
         onToggleSelect();
       }
     : undefined;
@@ -267,11 +269,26 @@ function TrackedRow({
           <AiOutlineDown size={11} />
         </Chevron>
         <Actions onClick={(e) => e.stopPropagation()}>
+          <MetaEditButton
+            type="button"
+            onClick={() => setIsMetadataEditing((current) => !current)}
+            title="Edit title and news type"
+          >
+            {isMetadataEditing ? 'close' : 'edit'}
+          </MetaEditButton>
           <FillButton newsId={item.id} newsType={item.newsType} />
           <PublishButton newsId={item.id} state={item.state} />
           <UntrackButton newsId={item.id} />
         </Actions>
       </RowTop>
+      {isMetadataEditing && (
+        <MetadataEditor
+          newsId={item.id}
+          title={item.title}
+          newsType={item.newsType}
+          onClose={() => setIsMetadataEditing(false)}
+        />
+      )}
       {isExpanded && (
         <RowExpanded>
           {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
@@ -534,6 +551,20 @@ const Actions = styled.div`
     justify-content: flex-end;
     margin-left: 0;
     padding-top: 2px;
+  }
+`;
+
+const MetaEditButton = styled.button`
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #555;
+  background: #fff;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
   }
 `;
 

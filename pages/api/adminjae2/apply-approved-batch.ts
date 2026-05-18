@@ -3,6 +3,8 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+import { automationDir, automationPython } from '@/utils/server/automationRuntime';
+
 function parseActionIds(body: unknown): number[] {
   const raw =
     body && typeof body === 'object' && 'ids' in body ? (body as { ids?: unknown }).ids : null;
@@ -13,10 +15,6 @@ function parseActionIds(body: unknown): number[] {
   return Array.from(new Set(ids));
 }
 
-function automationDir() {
-  return process.env.YVOTE_AUTOMATION_DIR || path.resolve(process.cwd(), '../yvote_automation');
-}
-
 function logPath() {
   const dir = path.join(automationDir(), 'state', 'adminjae2_apply_logs');
   fs.mkdirSync(dir, { recursive: true });
@@ -24,7 +22,7 @@ function logPath() {
 }
 
 function runBackgroundApply(actionIds: number[]) {
-  const python = process.env.YVOTE_AUTOMATION_PYTHON || 'python3';
+  const python = automationPython();
   const out = fs.openSync(logPath(), 'a');
   const child = spawn(
     python,

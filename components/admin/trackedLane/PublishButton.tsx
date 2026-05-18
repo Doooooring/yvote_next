@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 
-import { proposedActionRepository } from '@repositories/proposedAction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { NewsState } from '@utils/interface/news';
-import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
+
+import { runTrackedAction } from './trackedActionApi';
 
 /**
  * /adminjae2 TrackedLane row button — fires immediately on click.
  *
  * Renders Publish on draft rows (state=1) and Unpublish on already-
- * published rows (state=0). Both are owner-initiated, no auto-approve,
- * and use the same single-tier PA flow (create + approve + apply).
+ * published rows (state=0). Both are owner-initiated direct actions:
+ * the API bridge records the audit PA and approves/applies it in one
+ * automation call, so the click never leaves a waiting review item.
  *
  * Publish:   state '1' → '0' (visible on live site)
  * Unpublish: state '0' → '1' (hidden from live site, comments preserved)
@@ -29,12 +30,12 @@ export default function PublishButton({
   const isPublished = state === NewsState.Published;
 
   const publishMutation = useMutation({
-    mutationFn: () => emitAndApprove(ProposedActionType.Publish, newsId),
+    mutationFn: () => runTrackedAction('publish', newsId),
     onSuccess: invalidate(qc),
   });
 
   const unpublishMutation = useMutation({
-    mutationFn: () => emitAndApprove(ProposedActionType.Unpublish, newsId),
+    mutationFn: () => runTrackedAction('unpublish', newsId),
     onSuccess: invalidate(qc),
   });
 
@@ -67,20 +68,6 @@ export default function PublishButton({
       🚀 publish
     </Btn>
   );
-}
-
-async function emitAndApprove(actionType: ProposedActionType, newsId: number) {
-  const created = await proposedActionRepository.create({
-    actionType,
-    newsId,
-    payload: { newsId },
-    source: ProposedActionSource.User,
-  });
-  if (typeof created?.id !== 'number') {
-    throw new Error('proposed_action create returned no id');
-  }
-  await proposedActionRepository.approve(created.id);
-  return created.id;
 }
 
 function invalidate(qc: ReturnType<typeof useQueryClient>) {

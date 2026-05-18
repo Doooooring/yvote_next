@@ -203,7 +203,9 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
                   key={`${type}-${index}`}
                   type={type as commentType}
                   size={12}
-                  onClick={() => showCommentModal(news.id, type as commentType, news.title)}
+                  onClick={() =>
+                    showCommentModal(news.id, type as commentType, news.title, { commentTypes })
+                  }
                 />
               ))}
             </CommentIcons>

@@ -13,12 +13,13 @@ export function useCommentModal() {
       newsId: number,
       commentType: commentType,
       newsTitle?: string,
-      opts?: { disableCategorize?: boolean },
+      opts?: { disableCategorize?: boolean; commentTypes?: Array<commentType> },
     ) => {
       show(
         <CommentModal
           id={newsId}
           commentType={commentType}
+          commentTypes={opts?.commentTypes}
           close={close}
           newsTitle={newsTitle}
           disableCategorize={opts?.disableCategorize}
