@@ -1,26 +1,39 @@
-import axios from 'axios';
+import { proposedActionRepository } from '@repositories/proposedAction';
+import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
 
-export type TrackedLaneAction = 'fill' | 'publish' | 'unpublish' | 'untrack';
+export type TrackedLaneAction = 'publish' | 'unpublish' | 'untrack';
 
 export type TrackedLaneActionResult = {
   ok?: boolean;
   pa_id?: number | null;
   detail?: string;
-  applied_id?: number | null;
-  started?: boolean;
   action?: TrackedLaneAction;
   news_id?: number;
+};
+
+const ACTION_TYPE: Record<TrackedLaneAction, ProposedActionType> = {
+  publish: ProposedActionType.Publish,
+  unpublish: ProposedActionType.Unpublish,
+  untrack: ProposedActionType.Untrack,
 };
 
 export async function runTrackedAction(
   action: TrackedLaneAction,
   newsId: number,
-  opts: { background?: boolean } = {},
 ): Promise<TrackedLaneActionResult> {
-  const res = await axios.post('/api/adminjae2/tracked-action', {
+  const created = await proposedActionRepository.create({
+    actionType: ACTION_TYPE[action],
+    newsId,
+    payload: { newsId },
+    source: ProposedActionSource.User,
+    note: `adminjae2 ${action} button`,
+  });
+  const approved = await proposedActionRepository.approveAndApply(created.id);
+  return {
+    ok: approved.ok,
+    pa_id: approved.pa_id ?? created.id,
+    detail: approved.detail ?? `${action} applied`,
     action,
     news_id: newsId,
-    background: opts.background === true,
-  });
-  return res.data.result;
+  };
 }

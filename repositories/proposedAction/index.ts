@@ -34,24 +34,17 @@ interface Response<T> {
   };
 }
 
-interface ApplyApprovedNowResult {
-  ok?: boolean;
-  detail?: string;
-}
-
 interface ApplyApprovedBatchResult {
   started: boolean;
   ids: number[];
+  pid?: number;
 }
 
-function immediateApplyErrorMessage(e: unknown) {
-  if (axios.isAxiosError(e)) {
-    const data = e.response?.data as
-      | { result?: ApplyApprovedNowResult; error?: string }
-      | undefined;
-    return data?.result?.detail || data?.error || e.message;
-  }
-  return e instanceof Error ? e.message : String(e);
+interface ApplyApprovedResult {
+  ok: boolean;
+  pa_id?: number | null;
+  detail?: string;
+  applied_id?: number | null;
 }
 
 class ProposedActionRepository {
@@ -78,20 +71,19 @@ class ProposedActionRepository {
     return res.data.result ?? null;
   }
 
-  async approve(id: number): Promise<ProposedAction> {
-    const res: Response<ProposedAction> = await axios.patch(`${BASE}/${id}/approve`, {});
-    try {
-      await axios.post('/api/adminjae2/apply-approved', { id });
-    } catch (e: unknown) {
-      throw new Error(`approved, but immediate apply failed: ${immediateApplyErrorMessage(e)}`);
-    }
+  async approveAndApply(id: number): Promise<ApplyApprovedResult> {
+    const res = await axios.post<{ success: boolean; result: ApplyApprovedResult }>(
+      '/api/adminjae2/apply-approved',
+      { id },
+    );
     return res.data.result;
   }
 
-  async approveManyInBackground(ids: number[]): Promise<ApplyApprovedBatchResult> {
-    const res: Response<ApplyApprovedBatchResult> = await axios.post(
-      '/api/adminjae2/apply-approved-batch',
-      { ids },
+  async approveAndApplyManyInBackground(ids: number[]): Promise<ApplyApprovedBatchResult> {
+    const uniqueIds = Array.from(new Set(ids.filter((id) => Number.isInteger(id) && id > 0)));
+    const res = await axios.post<{ success: boolean; result: ApplyApprovedBatchResult }>(
+      '/api/adminjae2/apply-approved-many',
+      { ids: uniqueIds },
     );
     return res.data.result;
   }

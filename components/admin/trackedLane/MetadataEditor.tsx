@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { proposedActionRepository } from '@repositories/proposedAction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Preview } from '@utils/interface/news';
 import { NewsType, newsTypesToKorFull } from '@utils/interface/news';
+import { ProposedActionSource, ProposedActionType } from '@utils/interface/proposedAction';
 
 type Props = {
   newsId: number;
@@ -26,40 +27,28 @@ export default function MetadataEditor({ newsId, title, newsType, onClose }: Pro
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const payload: { news_id: number; title?: string; newsType?: NewsType } = {
-        news_id: newsId,
-      };
+      const fields: { title?: string; newsType?: NewsType } = {};
       if (draftTitle.trim() !== title.trim()) {
-        payload.title = draftTitle.trim();
+        fields.title = draftTitle.trim();
       }
       if (draftNewsType !== newsType) {
-        payload.newsType = draftNewsType;
+        fields.newsType = draftNewsType;
       }
-      const response = await fetch('/api/adminjae2/update-news-meta', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const created = await proposedActionRepository.create({
+        actionType: ProposedActionType.EditNews,
+        newsId,
+        payload: { fields },
+        source: ProposedActionSource.User,
+        note: 'adminjae2 metadata edit',
       });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.success) {
-        throw new Error(formatResponseError(data, response.statusText));
-      }
-      return data;
+      return proposedActionRepository.approveAndApply(created.id);
     },
     onSuccess: async () => {
-      qc.setQueryData<Array<Preview>>(['trackedNews'], (current) =>
-        current?.map((item) =>
-          item.id === newsId
-            ? {
-                ...item,
-                title: draftTitle.trim(),
-                newsType: draftNewsType,
-              }
-            : item,
-        ),
-      );
       onClose();
-      await qc.invalidateQueries({ queryKey: ['trackedNews'] });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ['trackedNews'] }),
+        qc.invalidateQueries({ queryKey: ['proposedActions'] }),
+      ]);
     },
     onError: (error) => {
       window.alert(`Metadata update failed for news ${newsId}: ${formatError(error)}`);
@@ -101,21 +90,6 @@ export default function MetadataEditor({ newsId, title, newsType, onClose }: Pro
       </CancelButton>
     </EditorForm>
   );
-}
-
-function formatResponseError(data: unknown, fallback: string) {
-  if (data && typeof data === 'object') {
-    const error = (data as { error?: unknown }).error;
-    if (typeof error === 'string' && error) return error;
-    const report = (data as { report?: unknown }).report;
-    if (report && typeof report === 'object') {
-      const title = (report as { title?: { error?: unknown } }).title?.error;
-      if (typeof title === 'string' && title) return title;
-      const newsType = (report as { newsType?: { error?: unknown } }).newsType?.error;
-      if (typeof newsType === 'string' && newsType) return newsType;
-    }
-  }
-  return fallback || 'unknown error';
 }
 
 function formatError(error: unknown) {

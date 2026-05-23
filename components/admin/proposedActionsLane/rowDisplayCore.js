@@ -6,8 +6,8 @@ const ACTION_TYPE = {
   Publish: 'publish',
   Track: 'track',
   Untrack: 'untrack',
+  EditNews: 'edit_news',
   EditComment: 'edit_comment',
-  FillNews: 'fill_news',
 };
 
 const TYPE_LABEL = {
@@ -18,8 +18,8 @@ const TYPE_LABEL = {
   [ACTION_TYPE.PromoteType]: 'promote type',
   [ACTION_TYPE.Track]: 'track',
   [ACTION_TYPE.Untrack]: 'untrack',
+  [ACTION_TYPE.EditNews]: 'edit news',
   [ACTION_TYPE.EditComment]: 'edit comment',
-  [ACTION_TYPE.FillNews]: 'fill news',
 };
 
 function asRecord(value) {

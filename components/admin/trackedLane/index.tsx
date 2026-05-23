@@ -4,15 +4,13 @@ import styled from 'styled-components';
 
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
 import { newsRepository } from '@repositories/news';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCommentModal_Preview } from '@utils/hook/news/useCommentModal_NewsPreview';
 import { commentType, NewsState, newsTypesToKor, Preview } from '@utils/interface/news';
 import { sortComment } from '@utils/interface/news/comment';
 
-import FillButton from './FillButton';
 import MetadataEditor from './MetadataEditor';
 import PublishButton from './PublishButton';
-import ReclusterModal from './ReclusterModal';
 import UntrackButton from './UntrackButton';
 
 const PREVIEW_LIMIT = 100;
@@ -22,7 +20,6 @@ export default function TrackedLane() {
   // Publishing is not the same as untracking — we want long-running tracked
   // topics (debate threads, ongoing budgets) to remain in this lane until
   // the owner explicitly clicks Untrack.
-  const qc = useQueryClient();
   const { data: tracked = [], isFetching } = useQuery({
     queryKey: ['trackedNews'],
     queryFn: () =>
@@ -40,19 +37,7 @@ export default function TrackedLane() {
     staleTime: 30_000,
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [selected, setSelected] = useState<Set<number>>(new Set());
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
-  const [showRecluster, setShowRecluster] = useState(false);
-
-  const toggleSelect = (id: number) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
 
   const toggleExpand = (id: number) => {
     setExpanded((prev) => {
@@ -62,18 +47,6 @@ export default function TrackedLane() {
       return next;
     });
   };
-
-  const exitEditMode = () => {
-    setIsEditing(false);
-    setSelected(new Set());
-  };
-
-  const closeReclusterModal = () => {
-    setShowRecluster(false);
-    qc.invalidateQueries({ queryKey: ['trackedNews'] });
-  };
-
-  const selectedIds = Array.from(selected);
 
   const pending = tracked.filter(
     (t) => t.state === NewsState.Pending || t.state === NewsState.NotPublished,
@@ -85,20 +58,6 @@ export default function TrackedLane() {
       <Heading>
         추적 중<span className="count">{tracked.length}</span>
         {isFetching && <span className="loading">...</span>}
-        <HeaderActions>
-          {isEditing ? (
-            <>
-              {selectedIds.length > 0 && (
-                <RedistributeButton onClick={() => setShowRecluster(true)}>
-                  재배분 ({selectedIds.length})
-                </RedistributeButton>
-              )}
-              <EditToggle onClick={exitEditMode}>편집 종료</EditToggle>
-            </>
-          ) : (
-            <EditToggle onClick={() => setIsEditing(true)}>편집</EditToggle>
-          )}
-        </HeaderActions>
       </Heading>
       <SectionRule />
       {tracked.length === 0 ? (
@@ -112,10 +71,7 @@ export default function TrackedLane() {
             label="대기"
             count={pending.length}
             items={pending}
-            isEditing={isEditing}
-            selected={selected}
             expanded={expanded}
-            onToggleSelect={toggleSelect}
             onToggleExpand={toggleExpand}
             emptyHint="대기 중인 뉴스가 없습니다."
           />
@@ -123,16 +79,12 @@ export default function TrackedLane() {
             label="발행"
             count={published.length}
             items={published}
-            isEditing={isEditing}
-            selected={selected}
             expanded={expanded}
-            onToggleSelect={toggleSelect}
             onToggleExpand={toggleExpand}
             emptyHint="발행 완료된 뉴스가 없습니다."
           />
         </>
       )}
-      {showRecluster && <ReclusterModal newsIds={selectedIds} onClose={closeReclusterModal} />}
     </Wrapper>
   );
 }
@@ -141,20 +93,14 @@ function SubSection({
   label,
   count,
   items,
-  isEditing,
-  selected,
   expanded,
-  onToggleSelect,
   onToggleExpand,
   emptyHint,
 }: {
   label: string;
   count: number;
   items: Preview[];
-  isEditing: boolean;
-  selected: Set<number>;
   expanded: Set<number>;
-  onToggleSelect: (id: number) => void;
   onToggleExpand: (id: number) => void;
   emptyHint: string;
 }) {
@@ -172,10 +118,7 @@ function SubSection({
             <TrackedRow
               key={item.id}
               item={item}
-              isEditing={isEditing}
-              isSelected={selected.has(item.id)}
               isExpanded={expanded.has(item.id)}
-              onToggleSelect={() => onToggleSelect(item.id)}
               onToggleExpand={() => onToggleExpand(item.id)}
             />
           ))}
@@ -187,30 +130,17 @@ function SubSection({
 
 function TrackedRow({
   item,
-  isEditing,
-  isSelected,
   isExpanded,
-  onToggleSelect,
   onToggleExpand,
 }: {
   item: Preview;
-  isEditing: boolean;
-  isSelected: boolean;
   isExpanded: boolean;
-  onToggleSelect: () => void;
   onToggleExpand: () => void;
 }) {
   const [isMetadataEditing, setIsMetadataEditing] = useState(false);
   const typeLabel = item.newsType ? newsTypesToKor(item.newsType) : '';
   const subBody = item.subTitle || item.summary || '';
   const { showCommentModal } = useCommentModal_Preview();
-  const handleRowClick = isEditing
-    ? (e: React.MouseEvent<HTMLDivElement>) => {
-        const target = e.target as HTMLElement;
-        if (target.closest('button, a, input, select, textarea, form')) return;
-        onToggleSelect();
-      }
-    : undefined;
   const openComments = () => {
     if (!item.comments?.length) return;
     showCommentModal(item.id, item.comments as commentType[], undefined, item.title, {
@@ -219,16 +149,7 @@ function TrackedRow({
   };
 
   return (
-    <Row $editing={isEditing} $selected={isSelected} onClick={handleRowClick}>
-      {isEditing && (
-        <SelectCheckbox
-          type="checkbox"
-          checked={isSelected}
-          onChange={onToggleSelect}
-          onClick={(e) => e.stopPropagation()}
-          aria-label={`select news ${item.id}`}
-        />
-      )}
+    <Row>
       <RowTop>
         {typeLabel && <TypeBadge>{typeLabel}</TypeBadge>}
         <TitleText
@@ -237,14 +158,12 @@ function TrackedRow({
           aria-expanded={isExpanded}
           onClick={(e) => {
             e.stopPropagation();
-            if (isEditing) onToggleSelect();
-            else onToggleExpand();
+            onToggleExpand();
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              if (isEditing) onToggleSelect();
-              else onToggleExpand();
+              onToggleExpand();
             }
           }}
         >
@@ -276,7 +195,6 @@ function TrackedRow({
           >
             {isMetadataEditing ? 'close' : 'edit'}
           </MetaEditButton>
-          <FillButton newsId={item.id} newsType={item.newsType} />
           <PublishButton newsId={item.id} state={item.state} />
           <UntrackButton newsId={item.id} />
         </Actions>
@@ -291,7 +209,7 @@ function TrackedRow({
       )}
       {isExpanded && (
         <RowExpanded>
-          {item.trackedNote && <Note>📌 {item.trackedNote}</Note>}
+          {item.trackedNote && <Note>{item.trackedNote}</Note>}
           {subBody ? <SubBody>{subBody}</SubBody> : <SubEmpty>(no subtitle/summary)</SubEmpty>}
         </RowExpanded>
       )}
@@ -328,40 +246,6 @@ const Heading = styled.h2`
 
   @media screen and (max-width: 768px) {
     font-size: 17px;
-  }
-`;
-
-const HeaderActions = styled.span`
-  margin-left: auto;
-  display: flex;
-  gap: 6px;
-`;
-
-const EditToggle = styled.button`
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  padding: 4px 10px;
-  background: white;
-  border: 1px solid #888;
-  border-radius: 4px;
-  cursor: pointer;
-  color: #333;
-  &:hover {
-    background: #f5f5f5;
-  }
-`;
-
-const RedistributeButton = styled.button`
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  padding: 4px 10px;
-  background: #333;
-  color: white;
-  border: 1px solid #333;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background: #111;
   }
 `;
 
@@ -423,38 +307,17 @@ const List = styled.div`
   flex-direction: column;
 `;
 
-const Row = styled.div<{ $editing?: boolean; $selected?: boolean }>`
+const Row = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 6px 8px 6px ${({ $editing }) => ($editing ? '28px' : '4px')};
+  padding: 6px 8px 6px 4px;
   border-bottom: 0.5px solid ${({ theme }) => theme.colors.yvote04};
-  ${({ $editing }) => ($editing ? 'cursor: pointer;' : '')}
-  ${({ $editing, $selected, theme }) =>
-    $editing && $selected
-      ? `
-        background: ${theme.colors.yvote02 || '#eef4ff'};
-        outline: 2px solid ${theme.colors.yvote12};
-        outline-offset: -2px;
-        border-radius: 4px;
-      `
-      : ''}
 
   &:last-child {
     border-bottom: none;
   }
-`;
-
-const SelectCheckbox = styled.input`
-  position: absolute;
-  top: 50%;
-  left: 6px;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  z-index: 2;
-  cursor: pointer;
 `;
 
 const RowTop = styled.div`

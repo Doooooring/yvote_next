@@ -102,7 +102,7 @@ export default function ProposedActionRow({ action }: { action: ProposedAction }
   const meta = getActionMeta(action, comments);
 
   const approveMut = useMutation({
-    mutationFn: () => proposedActionRepository.approve(action.id),
+    mutationFn: () => proposedActionRepository.approveAndApply(action.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['proposedActions'] }),
   });
   const rejectMut = useMutation({
@@ -243,7 +243,7 @@ export default function ProposedActionRow({ action }: { action: ProposedAction }
           }}
           disabled={actionPending}
         >
-          {approveMut.isPending ? '...' : '✓ approve'}
+          {approveMut.isPending ? 'applying...' : '✓ approve + apply'}
         </ApproveBtn>
         <RejectBtn
           onClick={() => {

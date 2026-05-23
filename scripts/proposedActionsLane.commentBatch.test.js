@@ -121,10 +121,18 @@ const commentMoveGroupSource = fs.readFileSync(
   ),
   'utf8',
 );
-const applyApprovedBatchSource = fs.readFileSync(
-  path.join(__dirname, '..', 'pages', 'api', 'adminjae2', 'apply-approved-batch.ts'),
+const proposedActionRepositorySource = fs.readFileSync(
+  path.join(__dirname, '..', 'repositories', 'proposedAction', 'index.ts'),
   'utf8',
 );
+const adminApiDir = path.join(__dirname, '..', 'pages', 'api', 'adminjae2');
+const adminApiSources = fs.existsSync(adminApiDir)
+  ? fs
+      .readdirSync(adminApiDir)
+      .filter((name) => name.endsWith('.ts') || name.endsWith('.tsx'))
+      .map((name) => fs.readFileSync(path.join(adminApiDir, name), 'utf8'))
+      .join('\n')
+  : '';
 assert.doesNotMatch(
   rowSource,
   /comments\.slice\(\s*0\s*,\s*4\s*\)/,
@@ -162,13 +170,13 @@ assert.match(
 );
 assert.match(
   commentMoveGroupSource,
-  /approve all/,
-  'merged comment move group should expose one approve-all action',
+  /approve \+ apply all/,
+  'merged comment move group should expose one approve-and-apply-all action',
 );
 assert.match(
   commentMoveGroupSource,
-  /approveManyInBackground/,
-  'merged comment move group should start one background grouped approval instead of blocking on every action',
+  /approveAndApplyManyInBackground/,
+  'merged comment move group should start one background grouped apply instead of blocking on every action',
 );
 assert.match(
   commentMoveGroupSource,
@@ -180,20 +188,30 @@ assert.match(
   /setBatchStarted\(true\)/,
   'merged comment move group should latch started background approvals to avoid duplicate workers',
 );
-assert.doesNotMatch(
-  applyApprovedBatchSource,
-  /--approve-only/,
-  'batch approval endpoint must not expose approved rows before the background worker owns them',
-);
-assert.doesNotMatch(
-  applyApprovedBatchSource,
-  /approveForApplyQueue\(ids\)[\s\S]*runBackgroundApply\(ids\)/,
-  'batch approval endpoint must not approve first, then start the background apply worker',
+assert.match(
+  proposedActionRepositorySource,
+  /\/api\/adminjae2\/apply-approved/,
+  'approve buttons should use the local admin immediate-apply endpoint',
 );
 assert.match(
-  applyApprovedBatchSource,
-  /runBackgroundApply\(ids\)/,
-  'batch approval endpoint should start the sequential background apply worker directly',
+  proposedActionRepositorySource,
+  /approveAndApply\(id: number\)/,
+  'single approve helper should make immediate apply explicit in its name',
+);
+assert.match(
+  adminApiSources,
+  /workflow\.s06_apply_recovery_stage\.p03_apply_approved_actions\.apply_approved_now/,
+  'adminjae2 immediate apply endpoint must call the current workflow apply module',
+);
+assert.doesNotMatch(
+  adminApiSources,
+  /manual\./,
+  'adminjae2 API endpoints must not call the stale manual.* automation path',
+);
+assert.match(
+  proposedActionRepositorySource,
+  /\/api\/adminjae2\/apply-approved-many/,
+  'batch approve should start the current grouped immediate-apply worker',
 );
 assert.doesNotMatch(
   commentMoveGroupSource,

@@ -6,12 +6,11 @@ import { NewsState } from '@utils/interface/news';
 import { runTrackedAction } from './trackedActionApi';
 
 /**
- * /adminjae2 TrackedLane row button — fires immediately on click.
+ * /adminjae2 TrackedLane row button.
  *
  * Renders Publish on draft rows (state=1) and Unpublish on already-
- * published rows (state=0). Both are owner-initiated direct actions:
- * the API bridge records the audit PA and approves/applies it in one
- * automation call, so the click never leaves a waiting review item.
+ * published rows (state=0). Both clicks create, approve, and apply a
+ * proposed action through the adminjae2 immediate-apply route.
  *
  * Publish:   state '1' → '0' (visible on live site)
  * Unpublish: state '0' → '1' (hidden from live site, comments preserved)
@@ -48,10 +47,10 @@ export default function PublishButton({
       if (!ok) return;
       unpublishMutation.mutate();
     };
-    if (unpublishMutation.isPending) return <Btn disabled>requesting…</Btn>;
+    if (unpublishMutation.isPending) return <Btn disabled>applying...</Btn>;
     return (
-      <Btn onClick={onClick} title="Unpublish: flip state 0 → 1 (hides from live site)">
-        ↩ unpublish
+      <Btn onClick={onClick} title="Apply unpublish action">
+        unpublish
       </Btn>
     );
   }
@@ -62,10 +61,10 @@ export default function PublishButton({
     if (!ok) return;
     publishMutation.mutate();
   };
-  if (publishMutation.isPending) return <Btn disabled>requesting…</Btn>;
+  if (publishMutation.isPending) return <Btn disabled>applying...</Btn>;
   return (
-    <Btn onClick={onClick} title="Publish this news (fires immediately)">
-      🚀 publish
+    <Btn onClick={onClick} title="Apply publish action">
+      publish
     </Btn>
   );
 }

@@ -68,7 +68,9 @@ export default function CommentMoveGroup({ group }: { group: ProposedActionRevie
 
   const approveAllMut = useMutation({
     mutationFn: () =>
-      proposedActionRepository.approveManyInBackground(group.actions.map((action) => action.id)),
+      proposedActionRepository.approveAndApplyManyInBackground(
+        group.actions.map((action) => action.id),
+      ),
     onSuccess: () => setBatchStarted(true),
     onSettled: () => qc.invalidateQueries({ queryKey: ['proposedActions'] }),
   });
@@ -199,7 +201,11 @@ export default function CommentMoveGroup({ group }: { group: ProposedActionRevie
             if (!isPending && canMutate) approveAllMut.mutate();
           }}
         >
-          {approveAllMut.isPending ? '...' : batchStarted ? 'queued' : '✓ approve all'}
+          {approveAllMut.isPending
+            ? 'starting...'
+            : batchStarted
+              ? 'applying...'
+              : '✓ approve + apply all'}
         </ApproveBtn>
         <RejectBtn
           type="button"

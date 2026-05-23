@@ -7,19 +7,14 @@ export enum ProposedActionType {
   Unpublish = 'unpublish',
   Track = 'track',
   Untrack = 'untrack',
+  EditNews = 'edit_news',
   EditComment = 'edit_comment',
-  FillNews = 'fill_news',
 }
 
 // Note: `finish_news` was removed 2026-04-27 (Phase 8.3 of the
 // 2026-04-27-news-lifecycle-cross-repo plan). The yvote-api enum
 // dropped it in the same release; yvote_automation's apply.py shim
 // rewrites legacy `finish_news` rows to `publish` at apply-time.
-//
-// `fill_news` was added 2026-04-28 (single-tier rule, Phase 8.5):
-// per-row content (re)generation. Powers the /adminjae2 Fill button
-// (TrackedLane) and the Telegram `fill <id>` command. Preserves the
-// row's `state` (works on draft state=1 AND already-published state=0).
 
 export enum ProposedActionStatus {
   // Renamed 2026-05-04: 'pending' → 'waiting' to disambiguate from

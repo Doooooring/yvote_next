@@ -1,89 +1,57 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { execFile } from 'child_process';
+import path from 'path';
+import { promisify } from 'util';
 
-import { automationDir, automationPython } from '@/utils/server/automationRuntime';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-type ApplyApprovedResult = {
-  ok?: boolean;
-  pa_id?: number | null;
-  detail?: string;
-  applied_id?: number | null;
-  title_review?: {
-    reviewed: number;
-    errors: Array<Record<string, unknown>>;
-  };
-};
+const execFileAsync = promisify(execFile);
 
-function parseActionId(body: unknown): number | null {
-  const raw =
-    body && typeof body === 'object' && 'id' in body ? (body as { id?: unknown }).id : null;
-  const id = typeof raw === 'number' ? raw : Number(raw);
-  return Number.isInteger(id) && id > 0 ? id : null;
-}
+const AUTOMATION_CWD =
+  process.env.YVOTE_AUTOMATION_CWD ?? path.resolve(process.cwd(), '..', 'yvote_automation');
+const PYTHON_BIN = process.env.YVOTE_PYTHON_BIN ?? 'python3';
+const APPLY_MODULE =
+  'workflow.s06_apply_recovery_stage.p03_apply_approved_actions.apply_approved_now';
 
-function runImmediateApply(actionId: number): Promise<ApplyApprovedResult> {
-  const python = automationPython();
-  return new Promise((resolve, reject) => {
-    execFile(
-      python,
-      ['-m', 'company.ceo.apply_approved_now', String(actionId)],
-      {
-        cwd: automationDir(),
-        env: process.env,
-        maxBuffer: 10 * 1024 * 1024,
-      },
-      (error, stdout, stderr) => {
-        let parsed: ApplyApprovedResult | null = null;
-        try {
-          parsed = JSON.parse(stdout.trim() || '{}') as ApplyApprovedResult;
-        } catch (parseError) {
-          reject({
-            message: parseError instanceof Error ? parseError.message : String(parseError),
-            stderr,
-            stdout,
-          });
-          return;
-        }
-
-        if (error) {
-          reject({
-            message: error.message,
-            result: parsed,
-            stderr,
-          });
-          return;
-        }
-        resolve(parsed);
-      },
-    );
-  });
+function parseActionId(value: unknown): number | null {
+  const n = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : NaN;
+  return Number.isInteger(n) && n > 0 ? n : null;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    res.status(405).json({ success: false, error: 'method not allowed' });
-    return;
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const actionId = parseActionId(req.body);
-  if (!actionId) {
-    res.status(400).json({ success: false, error: 'id must be a positive integer' });
-    return;
+  const id = parseActionId(req.body?.id ?? req.query?.id);
+  if (!id) {
+    return res.status(400).json({ success: false, error: 'id must be a positive integer' });
   }
 
   try {
-    const result = await runImmediateApply(actionId);
-    if (!result.ok) {
-      res.status(500).json({ success: false, result });
-      return;
+    const { stdout, stderr } = await execFileAsync(
+      PYTHON_BIN,
+      ['-B', '-m', APPLY_MODULE, String(id)],
+      {
+        cwd: AUTOMATION_CWD,
+        maxBuffer: 50 * 1024 * 1024,
+      },
+    );
+    const trimmed = stdout.trim();
+    const result = trimmed ? JSON.parse(trimmed.split('\n').at(-1) as string) : null;
+    if (!result?.ok) {
+      return res.status(500).json({
+        success: false,
+        error: result?.detail ?? 'apply returned a non-ok result',
+        result,
+        stderr,
+      });
     }
-    res.status(200).json({ success: true, result });
+    return res.status(200).json({ success: true, result, stderr });
   } catch (e: unknown) {
-    res.status(500).json({
+    const message = e instanceof Error ? e.message : String(e);
+    return res.status(500).json({
       success: false,
-      error: e && typeof e === 'object' && 'message' in e ? e.message : String(e),
-      detail: e,
+      error: `approved, but immediate apply failed: ${message}`,
     });
   }
 }
