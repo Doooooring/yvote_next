@@ -26,7 +26,6 @@ export default function TrackedLane() {
       newsRepository.getPreviews(
         0,
         PREVIEW_LIMIT,
-        '',
         undefined,
         undefined,
         undefined,

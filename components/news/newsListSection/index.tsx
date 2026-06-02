@@ -17,7 +17,6 @@ import PreviewBox from '../previewBox';
 export const PREVIEWS_PAGES_LIMIT = 18;
 
 export default function NewsListSection({
-  keywordFilter,
   clickPreviews,
   newsTypeFilter = 'all',
   titleSearch = '',
@@ -26,7 +25,6 @@ export default function NewsListSection({
   showId,
   onVisibleItems,
 }: {
-  keywordFilter: string;
   clickPreviews: (id: number) => void;
   newsTypeFilter?: 'all' | string;
   titleSearch?: string;
@@ -44,7 +42,6 @@ export default function NewsListSection({
   const { data = { items: [], hasNextPage: false }, isFetching } = useQuery({
     queryKey: [
       'getNewsPreviewsFilled',
-      keywordFilter,
       isAdmin,
       newsTypeFilter,
       normalizedTitleSearch,
@@ -64,7 +61,6 @@ export default function NewsListSection({
         const previews = await newsRepository.getPreviews(
           start,
           PREVIEWS_PAGES_LIMIT,
-          keywordFilter,
           NewsState.Published,
           undefined,
           serverEndDate,
@@ -100,7 +96,6 @@ export default function NewsListSection({
         const previews = await newsRepository.getPreviewsAdmin(
           offset,
           PREVIEWS_PAGES_LIMIT,
-          keywordFilter,
           undefined,
           undefined,
           serverEndDate,
@@ -154,7 +149,7 @@ export default function NewsListSection({
 
   useEffect(() => {
     setPageIndex(0);
-  }, [keywordFilter, isAdmin, newsTypeFilter, titleSearch, dateFilter]);
+  }, [isAdmin, newsTypeFilter, titleSearch, dateFilter]);
 
   useEffect(() => {
     onVisibleItems?.(data.items);

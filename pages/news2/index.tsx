@@ -61,7 +61,6 @@ export default function News2Page(props: pageProps) {
       const previews = await newsRepository.getPreviews(
         0,
         9999,
-        '',
         NewsState.Published,
         `${year}-01-01`,
         `${year}-12-31`,

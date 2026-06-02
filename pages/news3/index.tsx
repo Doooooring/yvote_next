@@ -50,7 +50,6 @@ export default function News3Page(props: pageProps) {
       newsRepository.getPreviews(
         0,
         9999,
-        '',
         NewsState.Published,
         `${year}-01-01`,
         `${year}-12-31`,

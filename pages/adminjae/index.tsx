@@ -13,7 +13,6 @@ import styled from 'styled-components';
 
 import NewsListSection from '@/components/news/newsListSection';
 import { PreNewsList } from '@/components/news/preNewsList';
-import { useCustomSearchParams } from '@/utils/hook/router/useCustomSearchParams';
 import { CommonIconButton, CommonLayoutBox } from '@components/common/commonStyles';
 import HeadMeta from '@components/common/HeadMeta';
 // import NewsArticlesSection from '@components/news/recentarticles';
@@ -41,9 +40,6 @@ export const getStaticProps: GetStaticProps<pageProps> = async () => {
 export default function NewsPage(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
-
-  const searchParams = useCustomSearchParams();
-  const keywordFilter = searchParams.get('keyword') ?? null;
 
   const showNewsContent = useNewsNavigate();
   const [isPending, startTransition] = useTransition();
@@ -162,7 +158,6 @@ export default function NewsPage(props: pageProps) {
                   <SectionDescription />
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
                     <PreNewsList
-                      keywordFilter={keywordFilter ?? ''}
                       newsTypeFilter={hiddenSelectedType}
                       titleSearch={hiddenTitleSearch}
                       showId={true}
@@ -241,7 +236,6 @@ export default function NewsPage(props: pageProps) {
                   <SectionDescription></SectionDescription>
                   <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
                     <PreNewsList
-                      keywordFilter={keywordFilter ?? ''}
                       newsTypeFilter={writingSelectedType}
                       titleSearch={writingTitleSearch}
                       state={NewsState.Pending}
@@ -352,7 +346,6 @@ export default function NewsPage(props: pageProps) {
               <SectionDescription></SectionDescription>
               <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
                 <NewsListSection
-                  keywordFilter={keywordFilter ?? ''}
                   clickPreviews={showNewsContent}
                   newsTypeFilter={selectedType}
                   titleSearch={allTitleSearch}

@@ -1,5 +1,3 @@
-import { Keyword } from '../keywords';
-
 export enum commentType {
   와이보트 = '와이보트',
   입법부 = '입법부',
@@ -218,8 +216,6 @@ export interface News {
   billVoteByParty?: PartyVote[];
   bills?: BillItem[];
   date?: string;
-  keywords: Array<Keyword>;
-  newsImage: string;
   isPublished: boolean;
   state: NewsState;
   timeline: Array<Timeline>;
@@ -235,8 +231,7 @@ export interface News {
   };
 }
 
-export interface NewsInView extends Omit<News, 'keywords' | 'comments' | ''> {
-  keywords: Array<{ id: number; keyword: string }>;
+export interface NewsInView extends Omit<News, 'comments' | ''> {
   comments: Array<commentType>;
 }
 
@@ -245,13 +240,11 @@ export interface Preview
     News,
     | 'id'
     | 'order'
-    | 'newsImage'
     | 'title'
     | 'subTitle'
     | 'newsType'
     | 'summary'
     | 'date'
-    | 'keywords'
     | 'state'
     | 'tracked'
     | 'trackedNote'

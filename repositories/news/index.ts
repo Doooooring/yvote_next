@@ -41,12 +41,10 @@ class NewsRepository {
   /**
    * 뉴스 블록들 조회 API
    * @param curNum 현재 페이지 (보여지고 있는 뉴스 개수)
-   * @param keyword 검색 키워드 (전체 검색시 null)
    */
   async getPreviews(
     curNum: number,
     limit: number,
-    keyword: string | null = '',
     state?: NewsState,
     startDate?: string,
     endDate?: string,
@@ -57,7 +55,6 @@ class NewsRepository {
     const params = {
       offset: curNum,
       limit: limit,
-      keyword: keyword ?? '',
       ...(state !== undefined ? { state } : {}),
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
@@ -81,12 +78,10 @@ class NewsRepository {
    * (@FIXME) 뉴스 블록들 조회 API (ADMIN)
    * @param curNum offset (보여지고 있는 뉴스 개수)
    * @param limit  limit (보여지고 있는 뉴스 개수)
-   * @param keyword 검색 키워드 (전체 검색시 null)
    */
   async getPreviewsAdmin(
     curNum: number,
     limit: number,
-    keyword: string | null = '',
     state?: NewsState,
     startDate?: string,
     endDate?: string,
@@ -97,7 +92,6 @@ class NewsRepository {
       isAdmin: true,
       offset: curNum,
       limit,
-      keyword: keyword ?? '',
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
       ...(newsType ? { newsType } : {}),

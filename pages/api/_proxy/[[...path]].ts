@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const upstream = await fetch(target, {
       method,
       headers,
-      body: body && body.length ? body : undefined,
+      body: (body && body.length ? body : undefined) as BodyInit | undefined,
       redirect: 'manual',
     });
 

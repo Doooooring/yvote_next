@@ -11,14 +11,12 @@ import PreviewBox from '@components/news/previewBox';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
 export function PreNewsList({
-  keywordFilter,
   newsTypeFilter = 'all',
   titleSearch = '',
   state,
   showId = false,
   openModalOnClick = false,
 }: {
-  keywordFilter: string;
   newsTypeFilter?: 'all' | string;
   titleSearch?: string;
   state?: NewsState;
@@ -27,7 +25,7 @@ export function PreNewsList({
 }) {
   const router = useRouter();
   const { data: preNewsList = [], isFetching } = useQuery({
-    ...getPreNewsListQueryOption({ keyword: keywordFilter, state }),
+    ...getPreNewsListQueryOption({ state }),
   });
 
   const handleClick = useCallback(
@@ -82,11 +80,11 @@ export function PreNewsList({
   );
 }
 
-const getPreNewsListQueryOption = ({ keyword, state }: { keyword: string; state?: NewsState }) =>
+const getPreNewsListQueryOption = ({ state }: { state?: NewsState }) =>
   queryOptions({
-    queryKey: ['getPreNewsList', keyword, state],
+    queryKey: ['getPreNewsList', state],
     queryFn: () => {
-      return newsRepository.getPreviews(0, INF, keyword, state ?? NewsState.Pending);
+      return newsRepository.getPreviews(0, INF, state ?? NewsState.Pending);
     },
   });
 

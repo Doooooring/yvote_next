@@ -1,7 +1,5 @@
-import { Suspense, useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import CommentTypeIcon from '@components/common/CommentTypeIcon';
@@ -20,8 +18,6 @@ interface NewsContentProps {
   voteHistory: 'left' | 'right' | 'none' | null;
 }
 
-const SuspenseImage = dynamic(() => import('@components/common/suspenseImage'), { ssr: false });
-
 export default function NewsContent({ newsContent, voteHistory }: NewsContentProps) {
   const {
     id,
@@ -29,8 +25,6 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
     order,
     summary,
     summaries,
-    newsImage,
-    keywords,
     state,
     timeline,
     opinionLeft,
@@ -38,7 +32,6 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
     subTitle,
     votes,
   } = newsContent;
-  const router = useRouter();
   const { showCommentModal } = useCommentModal();
 
   const [isLeft, showLeft, showRight] = useBool(true);
@@ -56,22 +49,6 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
         <BodyLeft state={isLeft}>
           <div className="contents-body">
             <div className="right">
-              <div className="main-image-wrapper">
-                <Suspense fallback={<></>}>
-                  <SuspenseImage
-                    src={newsImage}
-                    alt={title}
-                    fill
-                    style={{
-                      objectFit: 'cover',
-                    }}
-                  >
-                    <p className="img-head">
-                      <span>{title}</span>
-                    </p>
-                  </SuspenseImage>
-                </Suspense>
-              </div>
               <div className="summary content">
                 <h1 className="head">
                   <span>
@@ -143,21 +120,6 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
                       summaries.filter((s) => s.commentType === activeWriter)[0]?.summary ?? '',
                   }}
                 />
-                <div className="keyword-wrapper content">
-                  {keywords?.map(({ id, keyword }) => {
-                    return (
-                      <p
-                        className="keyword"
-                        key={keyword}
-                        onClick={() => {
-                          router.push(`/keywords/${id}`);
-                        }}
-                      >
-                        {`# ${keyword}`}
-                      </p>
-                    );
-                  })}
-                </div>
                 <VoteBox
                   id={id}
                   state={state}
@@ -211,38 +173,6 @@ const BodyLeft = styled.div<BodyProps>`
   }
 
   .contents-body {
-    .main-image-wrapper {
-      width: 100%;
-      height: 250px;
-      position: relative;
-      padding: 0;
-      overflow: hidden;
-      @media screen and (max-width: 760px) {
-        height: 160px;
-      }
-      .img-head {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        backdrop-filter: brightness(0.3);
-        font-size: 24px !important;
-        font-weight: 600;
-        color: rgb(220, 220, 220);
-        text-align: center;
-        position: relative;
-        z-index: 2;
-        span {
-          padding: 1rem;
-          line-height: 1.2;
-          @media screen and (max-width: 760px) {
-            font-size: 20px;
-          }
-        }
-      }
-    }
     .right {
       .head {
         display: flex;
@@ -344,25 +274,6 @@ const BodyLeft = styled.div<BodyProps>`
         }
       }
 
-      .keyword-wrapper {
-        line-height: 1;
-        padding: 20px 0 40px;
-        .keyword {
-          display: inline-block;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 500;
-          color: ${({ theme }) => theme.colors.yvote08};
-          margin: 0;
-          margin-left: 3px;
-          margin-right: 6px;
-          margin-bottom: 6px;
-          padding: 0.25rem 0.25rem;
-          background-color: ${({ theme }) => theme.colors.yvote02};
-          border-radius: 4px;
-          cursor: pointer;
-        }
-      }
     }
   }
 `;

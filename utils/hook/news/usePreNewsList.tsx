@@ -6,7 +6,7 @@ import { useSuspense } from '../useSuspense';
 
 export default function usePreNewsList() {
   const read = useSuspense('preNewsList', async () => {
-    const response = await newsRepository.getPreviews(0, INF, null, NewsState.Pending);
+    const response = await newsRepository.getPreviews(0, INF, NewsState.Pending);
     return response;
   });
 

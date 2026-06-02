@@ -161,7 +161,6 @@ function NewsPageInner(props: pageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const searchParams = useCustomSearchParams();
-  const keywordFilter = searchParams.get('keyword') ?? null;
 
   const { setActiveContent } = useChatContext();
   const handleArticleExpand = (
@@ -341,7 +340,6 @@ function NewsPageInner(props: pageProps) {
                 <Divider />
                 <ScrollableContent $isOpen={isOpen} initialHeight={initialHeight}>
                   <PreNewsList
-                    keywordFilter={keywordFilter ?? ''}
                     newsTypeFilter={writingSelectedType}
                     titleSearch={writingTitleSearch}
                     openModalOnClick
@@ -452,7 +450,6 @@ function NewsPageInner(props: pageProps) {
             <Divider />
             <div style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
               <NewsListSection
-                keywordFilter={keywordFilter ?? ''}
                 clickPreviews={showNewsContent}
                 newsTypeFilter={selectedType}
                 titleSearch={allTitleSearch}
