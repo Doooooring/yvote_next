@@ -3,9 +3,6 @@ import { GetStaticProps } from 'next';
 import styled from 'styled-components';
 
 import { ADMINJAE2_STORAGE_KEY, isAdminJae2Password } from '@components/admin/adminjae2Auth';
-import IncidentsLane from '@components/admin/incidentsLane';
-import ProposedActionsLane from '@components/admin/proposedActionsLane';
-import TrackedLane from '@components/admin/trackedLane';
 import HeadMeta from '@components/common/HeadMeta';
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -45,7 +42,7 @@ export default function AdminJae2() {
     <>
       <HeadMeta
         {...{
-          title: '제안/추적 (관리자)',
+          title: '자료 분배 (관리자)',
           url: `https://yvoting.com/adminjae2`,
         }}
       />
@@ -59,9 +56,11 @@ export default function AdminJae2() {
                     Lock
                   </button>
                 </div>
-                <ProposedActionsLane />
-                <TrackedLane />
-                <IncidentsLane />
+                {/* TODO: step1·2 자료 분배(기존 뉴스에 삽입 / 새 뉴스 생성) UI */}
+                <div className="adminjae2-placeholder">
+                  <h2>자료 분배 UI</h2>
+                  <p>여기에 step1·2에서 온 자료를 기존 뉴스에 넣거나 새 뉴스로 만드는 화면이 들어갑니다.</p>
+                </div>
               </>
             ) : (
               <form className="adminjae2-login" onSubmit={handleSubmit}>
@@ -139,6 +138,25 @@ const Wrapper = styled.div`
       color: ${({ theme }) => theme.colors.yvote12};
       font-size: 14px;
       cursor: pointer;
+    }
+  }
+
+  .adminjae2-placeholder {
+    padding: 40px 22px;
+    border: 1px dashed ${({ theme }) => theme.colors.gray400};
+    border-radius: 8px;
+    background: ${({ theme }) => theme.colors.yvote01};
+    color: ${({ theme }) => theme.colors.yvote12};
+    text-align: center;
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: ${({ theme }) => theme.colors.yvote09};
     }
   }
 
