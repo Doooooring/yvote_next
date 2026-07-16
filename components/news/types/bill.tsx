@@ -45,22 +45,23 @@ function parseBillArticles(html: string): BillArticle[] {
 }
 
 function toEffectiveBills(news: NewsTypeLayoutProps['news']): BillItem[] {
-  if (news.bills && news.bills.length > 0) return news.bills;
+  const d = news.detail;
+  if (d?.bills && d.bills.length > 0) return d.bills;
   // Legacy single-bill fallback — wrap flat fields into one pseudo-item.
   const hasAny =
-    !!(news.billDetail ?? '').trim() ||
-    !!(news.billVoteResult ?? '') ||
-    !!(news.billVoteTotal ?? 0) ||
-    (news.billVoteByParty ?? []).length > 0;
+    !!(d?.billDetail ?? '').trim() ||
+    !!(d?.billVoteResult ?? '') ||
+    !!(d?.billVoteTotal ?? 0) ||
+    (d?.billVoteByParty ?? []).length > 0;
   if (!hasAny) return [];
   return [
     {
       billNo: '',
       billName: '',
-      detail: news.billDetail,
-      voteResult: news.billVoteResult,
-      voteTotal: news.billVoteTotal,
-      voteByParty: news.billVoteByParty,
+      detail: d?.billDetail,
+      voteResult: d?.billVoteResult,
+      voteTotal: d?.billVoteTotal,
+      voteByParty: d?.billVoteByParty,
     },
   ];
 }
@@ -225,7 +226,7 @@ export default function BillNewsLayout({ news }: NewsTypeLayoutProps) {
         <SectionBody>
           <SummaryHtml
             style={{ display: 'block', marginLeft: 0 }}
-            dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }}
+            dangerouslySetInnerHTML={{ __html: news.detail?.billSummary ?? '' }}
           />
         </SectionBody>
       </Section>

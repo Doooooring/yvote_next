@@ -196,18 +196,12 @@ export interface BillItem {
   voteByParty?: PartyVote[];
 }
 
-export interface News {
-  id: number;
-  order: number;
-  title: string;
-  subTitle: string;
-  newsType: NewsType;
-  summary: string;
-  summaries: Array<NewsSummary>;
+// 타입별로 있을 수도/없을 수도 한 필드들을 담는 자유 JSON (News.detail).
+// 2026-07 린 리셋에서 이 필드들이 top-level 컬럼 → detail JSON 안으로 이동.
+// 스키마는 채우면서 정의 — 아래는 잠정 키.
+export interface NewsDetail {
   agendaList?: string;
   speechContent?: string;
-  proDebate?: string;
-  conDebate?: string;
   billAmendment?: string;
   billSummary?: string;
   billDetail?: string;
@@ -215,15 +209,24 @@ export interface News {
   billVoteTotal?: number;
   billVoteByParty?: PartyVote[];
   bills?: BillItem[];
+}
+
+export interface News {
+  id: number;
+  title: string;
+  subTitle: string;
+  newsType: NewsType;
+  summary: string;
+  summaries: Array<NewsSummary>;
+  proDebate?: string;
+  conDebate?: string;
+  detail?: NewsDetail;
   date?: string;
-  isPublished: boolean;
   state: NewsState;
   timeline: Array<Timeline>;
   opinionLeft: string;
   opinionRight: string;
   comments: Array<Comment>;
-  tracked?: boolean;
-  trackedNote?: string | null;
   votes: {
     left: number;
     right: number;
@@ -236,18 +239,6 @@ export interface NewsInView extends Omit<News, 'comments' | ''> {
 }
 
 export interface Preview
-  extends Pick<
-    News,
-    | 'id'
-    | 'order'
-    | 'title'
-    | 'subTitle'
-    | 'newsType'
-    | 'summary'
-    | 'date'
-    | 'state'
-    | 'tracked'
-    | 'trackedNote'
-  > {
+  extends Pick<News, 'id' | 'title' | 'subTitle' | 'newsType' | 'summary' | 'date' | 'state'> {
   comments: Array<commentType>;
 }

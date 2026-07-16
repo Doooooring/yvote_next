@@ -20,8 +20,8 @@ export default function EconomicsNewsLayout({ news }: NewsTypeLayoutProps) {
 
   const [groups, setGroups] = useState<IndicatorGroup[]>([]);
   useEffect(() => {
-    setGroups(parseIndicatorGroups(news?.agendaList ?? ''));
-  }, [news?.agendaList]);
+    setGroups(parseIndicatorGroups(news.detail?.agendaList ?? ''));
+  }, [news.detail?.agendaList]);
 
   const timelineGroups = useMemo(() => {
     const buckets: Record<string, Array<{ title: string; type: commentType }>> = {};

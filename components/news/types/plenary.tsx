@@ -15,8 +15,8 @@ export default function PlenaryNewsLayout({ news }: NewsTypeLayoutProps) {
   // Hydration fix: Only parse agenda on client
   const [agendaGroups, setAgendaGroups] = useState<AgendaGroupShape[]>([]);
   useEffect(() => {
-    setAgendaGroups(parseAgendaGroups(news?.agendaList ?? ''));
-  }, [news?.agendaList]);
+    setAgendaGroups(parseAgendaGroups(news.detail?.agendaList ?? ''));
+  }, [news.detail?.agendaList]);
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
     (news.timeline ?? []).forEach((tl) => {

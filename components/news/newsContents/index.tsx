@@ -22,7 +22,6 @@ export default function NewsContent({ newsContent, voteHistory }: NewsContentPro
   const {
     id,
     title,
-    order,
     summary,
     summaries,
     state,

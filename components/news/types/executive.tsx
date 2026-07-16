@@ -49,8 +49,8 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
 
   const [billArticles, setBillArticles] = useState<BillArticle[]>([]);
   useEffect(() => {
-    setBillArticles(parseBillArticles(news.billDetail ?? ''));
-  }, [news.billDetail]);
+    setBillArticles(parseBillArticles(news.detail?.billDetail ?? ''));
+  }, [news.detail?.billDetail]);
 
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
@@ -80,7 +80,7 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
   // Mobile tab state
   const [activeTab, setActiveTab] = useState(0);
 
-  const showAmendment = !!news.billAmendment?.replace(/<[^>]*>/g, '').trim();
+  const showAmendment = !!news.detail?.billAmendment?.replace(/<[^>]*>/g, '').trim();
 
   const debateSlides = useMemo(() => {
     return [
@@ -125,7 +125,7 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
         <SectionBody>
           <SummaryHtml
             style={{ display: 'block', marginLeft: 0 }}
-            dangerouslySetInnerHTML={{ __html: news.billSummary ?? '' }}
+            dangerouslySetInnerHTML={{ __html: news.detail?.billSummary ?? '' }}
           />
         </SectionBody>
       </Section>
@@ -136,7 +136,9 @@ export default function ExecutiveNewsLayout({ news }: NewsTypeLayoutProps) {
           {showAmendment && (
             <AmendmentBox $show>
               <DebateLabel>수정안 내용</DebateLabel>
-              <DebateContent dangerouslySetInnerHTML={{ __html: news.billAmendment ?? '' }} />
+              <DebateContent
+                dangerouslySetInnerHTML={{ __html: news.detail?.billAmendment ?? '' }}
+              />
             </AmendmentBox>
           )}
 

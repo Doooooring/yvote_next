@@ -13,7 +13,7 @@ import { resolveAchievementBody } from './diplomatCore';
 
 // ─── Hero data shape ───────────────────────────────────────────────
 // Diplomat-specific structured metadata is stored on the News row in the
-// existing `agendaList` string column (same column cabinet/budget use for
+// `detail.agendaList` string field (same key cabinet/budget use for
 // their type-specific JSON). Schema:
 //   {
 //     "hero": { kind, countries, orgName?, orgNameKo? },
@@ -67,8 +67,8 @@ type CountryFacts = CountrySeed & {
 export default function DiplomatNewsLayout({ news }: NewsTypeLayoutProps) {
   const { showCommentModal } = useCommentModal();
   const agenda = useMemo<DiplomatAgenda | null>(
-    () => parseDiplomatAgenda(news.agendaList ?? null),
-    [news.agendaList],
+    () => parseDiplomatAgenda(news.detail?.agendaList ?? null),
+    [news.detail?.agendaList],
   );
   const hero = agenda?.hero ?? null;
   const achievementsByKey = agenda?.achievementsByKey;

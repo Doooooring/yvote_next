@@ -17,9 +17,9 @@ export default function InvestigationNewsLayout({ news }: NewsTypeLayoutProps) {
   const [agendaGroups, setAgendaGroups] = useState<AgendaGroupShape[]>([]);
   const [speechGroups, setSpeechGroups] = useState<AgendaGroupShape[]>([]);
   useEffect(() => {
-    setAgendaGroups(parseAgendaGroups(news?.agendaList ?? ''));
-    setSpeechGroups(parseAgendaGroups(news?.speechContent ?? ''));
-  }, [news?.agendaList, news?.speechContent]);
+    setAgendaGroups(parseAgendaGroups(news.detail?.agendaList ?? ''));
+    setSpeechGroups(parseAgendaGroups(news.detail?.speechContent ?? ''));
+  }, [news.detail?.agendaList, news.detail?.speechContent]);
   const timelineGroups = useMemo(() => {
     const groups: Record<string, Array<{ title: string; type: commentType }>> = {};
     (news.timeline ?? []).forEach((tl) => {
